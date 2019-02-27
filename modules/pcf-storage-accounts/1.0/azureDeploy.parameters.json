@@ -1,0 +1,8 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "storage-accounts": {
+        "value": "${ENV:ENVIRONMENT-TYPE.storage-accounts}"
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "access-policies": {
+        "value": [
+            {
+                "tenantId": "${general.tenant-id}",
+                "objectId": "${general.deployment-user-id}",
+                "permissions": {
+                    "certificates": [
+                        "All"
+                    ],
+                    "keys": [
+                        "All"
+                    ],
+                    "secrets": [
+                        "All"
+                    ]
+                }
+            }
+        ]
+    },
+    "enable-vault-for-deployment": {
+        "value": true
+    },
+    "enable-vault-for-diskEncryption": {
+        "value": true
+    },
+    "enable-vault-for-templateDeployment": {
+        "value": true
+    },
+    "logs-retention-in-days": {
+        "value": 30
+    },
+    "vault-sku": {
+        "value": "Premium"
+    },
+    "secrets-object": {
+        "value": {
+            "secrets": "${ENV:ENVIRONMENT-TYPE.keyvault.secrets}"
+        }
+    }
+}

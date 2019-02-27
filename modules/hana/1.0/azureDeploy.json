@@ -1,0 +1,588 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                 "description": ""
+             }
+        },
+        "sas-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":""
+            }
+        },
+        "output-params-storage-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account Key. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "output-params-storage-account-name":{  
+            "type":"string",
+            "metadata":{  
+                "description":""
+            }
+        },
+        "extension-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the extension deployment."
+            }
+        },
+        "vnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Shared services virtual network."
+            }
+        },
+        "vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group name of the Shared services virtual network."
+            }
+        },
+        "default-subnet-name": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+                "description": "Name of the management subnet inside the workload virtual network."
+            }
+        },
+        "data-asg-name": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "hana-address-start": {
+            "type": "string",
+            "metadata": {
+                "description": "Private IP value assigned to HANA VMs"
+            }
+        },
+        "hana-lb-ip": {
+            "type": "string",
+            "metadata": {
+                "description": "Private IP value assigned to HANA ILB"
+            }
+        },
+        "virtualMachine-size": {
+            "type": "string",
+            "metadata": {
+                "description": "VM Size"
+            },
+            "defaultValue": "Standard_E16_v3"
+        },
+        "virtualMachine-count": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Number of NVA VMs to be created."
+            }
+        },
+        "admin-username": {
+            "type": "string",
+            "metadata": {
+                "description": "The username used to establish ADDS VMs"
+            }
+        },
+        "admin-password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password given to the admin user"
+            }
+        },
+        "os-type": {
+            "type": "string",
+            "metadata": {
+                "description": "Operating system for HANA Machine"
+            },
+            "defaultValue": "SLES for SAP 12 SP3",
+            "allowedValues": [
+                "SLES for SAP 12 SP3",
+                "SLES for SAP 12 SP2",
+                "RHEL 7.2 for SAP HANA"
+            ]
+        },
+        "hana-sid": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP HANA System ID"
+            },
+            "defaultValue": "H10"
+        },
+        "iscsi-ip": {
+            "type": "string",
+            "metadata": {
+                "description": "Private IP value assigned to ISCSI VM"
+            }
+        },
+        "subscription-email": {
+            "type": "string",
+            "metadata": {
+                "description": "OS Subscription Email for BYOS, blank for PAYG"
+            },
+            "defaultValue": ""
+        },
+        "subscription-id": {
+            "type": "string",
+            "metadata": {
+                "description": "OS Subscription ID for BYOS, blank for PAYG"
+            },
+            "defaultValue": ""
+        },
+        "smt-uri": {
+            "type": "string",
+            "metadata": {
+                "description": "SMT URI, blank for none"
+            },
+            "defaultValue": ""
+        },
+        "enable-hsr": {
+            "type": "string",
+            "metadata": {
+                "description": "Should we configure HSR for the VM"
+            },
+            "defaultValue": "no",
+            "allowedValues": [
+                "yes",
+                "no"
+            ]
+        }
+    },
+    "variables": {
+        "availabilitySet-name": "[concat(parameters('deployment-prefix'), '-as')]",
+        "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('default-subnet-name'))]",
+        "configuration-url-sasToken": "[concat('?', parameters('sas-key'))]",
+        "resource-prefix": "[concat(parameters('deployment-prefix'), '-', parameters('extension-name'))]",
+        "hana-lb-name": "[concat(variables('resource-prefix'), '-lb')]",
+        "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+        "diagnostic-storageAccount-prefix": "[concat(parameters('extension-name'), 'diag')]",
+        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]",
+        "networkWatcher-extension-name": "NetworkWatcher",
+        "hana-lb-frontend": "hana-lb-frontend",
+        "hana-backend-pool": "hana-backend-pool",
+        "hana-probe": "hana-probe",
+        "os-image": {
+            "publisher": "[if (contains(parameters('os-type'),'SLES'),'SUSE','RedHat')]",
+            "offer": "[if (contains(parameters('os-type'),'SLES'),'SLES-SAP','RHEL-SAP-HANA')]",
+            "sku": "[if (contains(parameters('os-type'),'12 SP3'),'12-SP3',if (contains(parameters('os-type'),'12 SP2'),'12-SP2','7.2'))]"
+        },
+        "diskConfig": {
+            "shared": 511,
+            "sap": 63,
+            "backup": 511,
+            "data1": 511,
+            "data2": 511,
+            "data3": 511,
+            "log1": 511,
+            "log2": 511
+        },
+        "data-asg-id": "[resourceId(parameters('vnet-resourceGroup'), 'Microsoft.Network/applicationSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('data-asg-name'), '-asg'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('diagnostic-storageAccount-name')]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "tags": {
+                "displayName": "Management Diagnostic Storage Account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('availabilitySet-name')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Aligned"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 20
+            }
+        },
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "name": "[variables('hana-lb-name')]",
+            "apiVersion": "2018-01-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('hana-lb-frontend')]",
+                        "properties": {
+                            "privateIPAddress": "[parameters('hana-lb-ip')]",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            }
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "hana-lb-30313",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/frontendIpConfigurations/', variables('hana-lb-frontend'))]"
+                            },
+                            "frontendPort": 30013,
+                            "backendPort": 30013,
+                            "enableFloatingIP": true,
+                            "idleTimeoutInMinutes": 30,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "disableOutboundSnat": false,
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('hana-lb-name')), '/backendAddressPools/', variables('hana-backend-pool'))]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/probes/', variables('hana-probe'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "hana-lb-30315",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/frontendIpConfigurations/', variables('hana-lb-frontend'))]"
+                            },
+                            "frontendPort": 30015,
+                            "backendPort": 30015,
+                            "enableFloatingIP": true,
+                            "idleTimeoutInMinutes": 30,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "disableOutboundSnat": false,
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('hana-lb-name')), '/backendAddressPools/', variables('hana-backend-pool'))]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/probes/', variables('hana-probe'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "hana-lb-30317",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/frontendIpConfigurations/', variables('hana-lb-frontend'))]"
+                            },
+                            "frontendPort": 30017,
+                            "backendPort": 30017,
+                            "enableFloatingIP": true,
+                            "idleTimeoutInMinutes": 30,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "disableOutboundSnat": false,
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('hana-lb-name')), '/backendAddressPools/', variables('hana-backend-pool'))]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/probes/', variables('hana-probe'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "hana-lb-7630",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/frontendIpConfigurations/', variables('hana-lb-frontend'))]"
+                            },
+                            "frontendPort": 7630,
+                            "backendPort": 7630,
+                            "enableFloatingIP": true,
+                            "idleTimeoutInMinutes": 30,
+                            "protocol": "Tcp",
+                            "loadDistribution": "Default",
+                            "disableOutboundSnat": false,
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',variables('hana-lb-name')), '/backendAddressPools/', variables('hana-backend-pool'))]"
+                            },
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/probes/', variables('hana-probe'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('hana-backend-pool')]"
+                    }
+                ],
+                "probes": [
+                    {
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 62503,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        },
+                        "name": "[variables('hana-probe')]"
+                    }
+                ],
+                "inboundNatRules": [],
+                "outboundNatRules": [],
+                "inboundNatPools": []
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-09-01",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/loadBalancers/', variables('hana-lb-name'))]"
+            ],
+            "properties": {
+                "enableAcceleratedNetworking": true,
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[vdc.nextIP(parameters('hana-address-start'), copyIndex())]",
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            },
+                            "applicationSecurityGroups": [
+                                {
+                                    "id": "[variables('data-asg-id')]"
+                                }
+                            ],
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('hana-lb-name')), '/backendAddressPools/', variables('hana-backend-pool'))]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts',variables('diagnostic-storageAccount-name'))]"
+            ],
+            "copy": {
+                "name": "vmLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachine-size')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('extension-name'), '-vm',copyindex(1))]",
+                    "adminUsername": "[parameters('admin-username')]",
+                    "adminPassword": "[parameters('admin-password')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('os-image').publisher]",
+                        "offer": "[variables('os-image').offer]",
+                        "sku": "[variables('os-image').sku]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[replace(toLower(substring(concat(variables('virtualMachine-name-prefix'), copyindex(1), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 40)), '-', '')]",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-shared', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').shared]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        },
+                        {
+                            "lun": 1,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-sap', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').sap]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        },
+                        {
+                            "lun": 2,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-backup1', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').backup]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        },
+                        {
+                            "lun": 3,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-data1', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').data1]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        },
+                        {
+                            "lun": 4,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-data2', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').data2]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        },
+                        {
+                            "lun": 5,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-data3', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').data3]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        },
+                        {
+                            "lun": 6,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-log1', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').log1]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        },
+                        {
+                            "lun": 7,
+                            "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-log2', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]", 
+                            "diskSizeGB": "[variables('diskConfig').log2]",
+                            "createOption": "Empty",
+                            "managedDisk":{
+                                "storageAccountType": "Premium_LRS"
+                            }
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[variables('networkWatcher-extension-name')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyIndex(1)))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.NetworkWatcher",
+                        "type": "NetworkWatcherAgentLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true
+                    }
+                }
+            ]
+        }
+    ],
+    "functions":[
+        {
+            "namespace": "vdc",
+            "members": {
+                "nextIP": {
+                    "parameters": [
+                        {
+                            "name": "ip",
+                            "type": "string"
+                        },
+                        {
+                            "name": "operand",
+                            "type": "int"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(split(parameters('ip'), '.')[0], '.' ,split(parameters('ip'), '.')[1], '.' ,split(parameters('ip'), '.')[2], '.', add(int(split(parameters('ip'), '.')[3]), parameters('operand')))]"
+                    }
+                },
+                "splitIP": {
+                    "parameters": [
+                        {
+                            "name": "initialIP",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "array",
+                        "value": "[split(parameters('initialIP'), '.')]"
+                    }
+                },
+                "removeAddressRange":{
+                    "parameters": [
+                        {
+                            "name": "ip",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(indexOf(parameters('ip'), '/'), 0), substring(parameters('ip'), 0, add(indexOf(parameters('ip'), '/'), 0)), parameters('ip'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

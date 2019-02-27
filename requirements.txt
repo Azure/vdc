@@ -1,0 +1,12 @@
+azure-mgmt-resource
+azure
+azure-cli-core
+adal
+argparse
+python-interface
+azure_devtools
+pytest
+PyGithub
+jinja2
+GitPython
+requests

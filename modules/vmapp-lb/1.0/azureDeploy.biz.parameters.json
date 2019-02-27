@@ -1,0 +1,67 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "extension-name": {
+        "value": "biz-appb"
+    },
+    "os-image": {
+        "value": {
+            "offer": "WindowsServer",
+            "publisher": "MicrosoftWindowsServer",
+            "sku": "2016-Datacenter"
+        }
+    },
+    "os-type": {
+        "value": "Windows"
+    },
+    "virtualMachine-count": {
+        "value": 2
+    },
+    "virtualMachine-size": {
+        "value": "Standard_DS1_v2"
+    },
+    "domain-name": {
+        "value": "${shared-services.active-directory.domain-name}"
+    },
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
+    },
+    "domain-admin-user": {
+        "value": "${shared-services.active-directory.domain-admin-user}"
+    },
+    "domain-admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${shared-services.active-directory.domain-admin-user}"
+        }
+    },
+    "vmapp-lb-backend-pool-name": {
+        "value": "biz-pool"
+    },
+    "asg-name": {
+        "value": "${workload.network.application-security-groups[1].name}"
+    },
+    "vmapp-lb-ip-address": {
+        "value": "next-ip(${workload.vm-configuration.vmapp-lb-ip-address}, 8)"
+    },
+    "vmapp-start-ip-address": {
+        "value": "next-ip(${workload.vm-configuration.vmapp-start-ip-address}, 5)"
+    },
+    "enable-encryption": {
+        "value": "${workload.vm-configuration.enable-encryption}"
+    }
+}

@@ -1,0 +1,64 @@
+interactions:
+- request:
+    body: '{"name": "mgmtgrpglobal"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Cache-Control: [no-cache]
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
+          azure-mgmt-managementgroups/0.1.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/providers/Microsoft.Management/managementGroups/mgmtgrpglobal?api-version=2018-03-01-preview
+  response:
+    body: {string: '{"id":"/providers/Microsoft.Management/managementGroups/mgmtgrpglobal","type":"/providers/Microsoft.Management/managementGroups","name":"mgmtgrpglobal","status":"NotStarted"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['174']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 19:30:09 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/providers/Microsoft.Management/operationResults/create/managementGroups/mgmtgrpglobal?api-version=2018-03-01-preview']
+      pragma: [no-cache]
+      request-id: [7515cdf0-1a39-4819-a52d-3a41d03795c4]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-ba-restapi: [1.0.3.1282]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-writes: ['1199']
+      x-powered-by: [ASP.NET]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
+          azure-mgmt-managementgroups/0.1.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Management/operationResults/create/managementGroups/mgmtgrpglobal?api-version=2018-03-01-preview
+  response:
+    body: {string: '{"id":"/providers/Microsoft.Management/managementGroups/mgmtgrpglobal","type":"/providers/Microsoft.Management/managementGroups","name":"mgmtgrpglobal","status":"Succeeded","properties":{"tenantId":"00000000-0000-0000-0000-000000000000","displayName":"mgmtgrpglobal","details":{"version":1,"updatedTime":"2019-01-13T19:30:14.2709203Z","updatedBy":"00000000-0000-0000-0000-000000000000","parent":{"id":"/providers/Microsoft.Management/managementGroups/00000000-0000-0000-0000-000000000000","name":"00000000-0000-0000-0000-000000000000","displayName":"root"}}}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['559']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 19:30:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      request-id: [8bafa367-a6fe-4015-89a8-6ebc7ecd05d4]
+      server: [Microsoft-IIS/8.5]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: ['Accept-Encoding,Accept-Encoding']
+      x-aspnet-version: [4.0.30319]
+      x-ba-restapi: [1.0.3.1282]
+      x-content-type-options: [nosniff]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

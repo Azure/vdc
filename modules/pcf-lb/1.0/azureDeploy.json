@@ -1,0 +1,313 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "load-balancers": {
+            "type": "array",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "vnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the hub virtual network."
+            }
+        },
+        "pas-subnet-name": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+                "description": "Name of the management subnet inside the spoke virtual network."
+            }
+        },
+        "tcp-lb-static-ip": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "mysql-lb-static-ip": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        }
+    },
+    "variables": {
+        "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('pas-subnet-name'))]",
+        "https-probe-name": "https-probe",
+        "http-probe-name": "http-probe",
+        "tcp-probe-name": "tcp-probe",
+        "mysql-probe-name": "tcp-probe",
+        "backend-address-pool-name": "web-backend-pool",
+        "load-balancer-frontend-name": "web-front-end",
+        "http-loadbalancing-rule": "http-loadbalancing-rule",
+        "https-loadbalancing-rule": "https-loadbalancing-rule",
+        "tcp-load-balancer-name": "tcp-lb",
+        "tcp-load-balancer-frontend-name": "web-front-end",
+        "tcp-backend-address-pool-name": "tcp-backend-pool",
+        "tcp-loadbalancing-rule": "tcp-loadbalancing-rule",
+        "mysql-load-balancer-name": "mysql-lb",
+        "mysql-load-balancer-frontend-name": "mysql-front-end",
+        "mysql-backend-address-pool-name": "mysql-backend-pool",
+        "mysql-loadbalancing-rule": "mysql-loadbalancing-rule"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-08-01",
+            "name": "[parameters('load-balancers')[copyIndex()].name]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "lbLoop",
+                "count": "[length(parameters('load-balancers'))]"
+            },
+            "tags": {
+                "displayName": "[parameters('load-balancers')[copyIndex()].name]"
+            },
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('load-balancer-frontend-name')]",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            },
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('load-balancers')[copyIndex()].ip]"
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "[variables('http-loadbalancing-rule')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('load-balancers')[copyIndex()].name),'/frontendIPConfigurations/', variables('load-balancer-frontend-name'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('load-balancers')[copyIndex()].name),'/backendAddressPools/', variables('backend-address-pool-name'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 5,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('load-balancers')[copyIndex()].name), '/probes/', variables('http-probe-name'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[variables('https-loadbalancing-rule')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('load-balancers')[copyIndex()].name),'/frontendIPConfigurations/', variables('load-balancer-frontend-name'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('load-balancers')[copyIndex()].name),'/backendAddressPools/', variables('backend-address-pool-name'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": 443,
+                            "backendPort": 443,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 5,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('load-balancers')[copyIndex()].name), '/probes/', variables('https-probe-name'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('backend-address-pool-name')]"
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[variables('http-probe-name')]",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 80,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    },
+                    {
+                        "name": "[variables('https-probe-name')]",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 443,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2017-08-01",
+            "name": "[variables('tcp-load-balancer-name')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[variables('tcp-load-balancer-name')]"
+            },
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('load-balancer-frontend-name')]",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            },
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('tcp-lb-static-ip')]"
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "[variables('tcp-loadbalancing-rule')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('tcp-load-balancer-name')), '/frontendIPConfigurations/', variables('tcp-load-balancer-frontend-name'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('tcp-load-balancer-name')),'/backendAddressPools/', variables('tcp-backend-address-pool-name'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 5,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('tcp-load-balancer-name')), '/probes/', variables('tcp-probe-name'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('tcp-backend-address-pool-name')]"
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[variables('tcp-probe-name')]",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 80,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2017-08-01",
+            "name": "[variables('mysql-load-balancer-name')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[variables('mysql-load-balancer-name')]"
+            },
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('mysql-load-balancer-frontend-name')]",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            },
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('mysql-lb-static-ip')]"
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "[variables('mysql-loadbalancing-rule')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mysql-load-balancer-name')),'/frontendIPConfigurations/', variables('mysql-load-balancer-frontend-name'))]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mysql-load-balancer-name')),'/backendAddressPools/', variables('mysql-backend-address-pool-name'))]"
+                            },
+                            "protocol": "Tcp",
+                            "frontendPort": 3306,
+                            "backendPort": 3306,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 5,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('mysql-load-balancer-name')), '/probes/', variables('mysql-probe-name'))]"                                
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('mysql-backend-address-pool-name')]"
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "[variables('mysql-probe-name')]",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 1936,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "apps-lb-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/loadBalancers',parameters('load-balancers')[0].name)]"
+        },
+        "apps-lb-name": {
+            "type": "string",
+            "value": "[parameters('load-balancers')[0].name]"
+        },
+        "sys-lb-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/loadBalancers',parameters('load-balancers')[1].name)]"
+        },
+        "sys-lb-name": {
+            "type": "string",
+            "value": "[parameters('load-balancers')[1].name]"
+        },
+        "mysql-lb-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/loadBalancers', variables('mysql-load-balancer-name'))]"
+        },
+        "mysql-lb-name": {
+            "type": "string",
+            "value": "[variables('mysql-load-balancer-name')]"
+        },
+        "tcp-lb-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/loadBalancers', variables('tcp-load-balancer-name'))]"
+        },
+        "tcp-lb-name": {
+            "type": "string",
+            "value": "[variables('tcp-load-balancer-name')]"
+        }
+    }
+}

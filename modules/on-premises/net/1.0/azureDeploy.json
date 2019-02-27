@@ -1,0 +1,81 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                 "description": ""
+            }
+        },
+        "subnets": {
+            "type": "array",
+            "metadata": {
+                "description": ""
+           }
+        },
+        "vnet-address-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+           }
+        },
+        "vnet-dns-servers": {
+            "type": "array",
+            "metadata": {
+                "description": "Specifies the DNS servers to be associated to the Shared services Virtual Network"
+            }
+        }
+    },
+    "variables": {
+        "on-premises-vnet-name": "[concat(parameters('deployment-prefix'), '-vnet')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('on-premises-vnet-name')]",
+            "tags": {
+                "displayName":"[variables('on-premises-vnet-name')]"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnet-address-prefix')]"
+                    ]
+                },
+                "dhcpOptions": {
+                    "dnsServers": "[parameters('vnet-dns-servers')]"
+                },
+                "copy": [
+                    {
+                        "name": "subnets",
+                        "count": "[length(parameters('subnets'))]",
+                        "input": {
+                            "name": "[parameters('subnets')[copyIndex('subnets')].name]",
+                            "properties": {
+                                "addressPrefix": "[parameters('subnets')[copyIndex('subnets')]['address-prefix']]",
+                                "networkSecurityGroup": "[if(equals(parameters('subnets')[copyIndex('subnets')]['network-security-group'], ''), json('null'), json(concat('{\"id\": \"', resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('subnets')[copyIndex('subnets')]['network-security-group'], '-nsg')), '\"}')))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "vnet-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks', variables('on-premises-vnet-name'))]"
+        },
+        "vnet-name": {
+            "type": "string",
+            "value": "[variables('on-premises-vnet-name')]"
+        },
+        "vnet-resourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        }
+    }
+}

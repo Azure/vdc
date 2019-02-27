@@ -1,0 +1,9 @@
+{
+    "policies":
+    [  
+        {  
+            "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/fee5cb2b-9d9b-410e-afe3-2902d90d0004",
+            "name": "AppInstalledInLinux"
+        }
+    ]
+}

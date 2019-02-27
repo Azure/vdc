@@ -1,0 +1,20 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${on-premises.deployment-name}"
+    },
+    "gateway-type": {
+        "value": "${on-premises.network.virtual-gateway.gateway-type}"
+    },
+    "vpn-type": {
+        "value": "${on-premises.network.virtual-gateway.vpn-type}"
+    },
+    "subscription-id": {
+        "value": "${on-premises.subscription-id}"
+    },
+    "gateway-sku": {
+        "value": "${on-premises.network.virtual-gateway.gateway-sku}"
+    },
+    "gateway-subnet-name": {
+        "value": "${on-premises.network.subnets[1].name}"
+    }
+}

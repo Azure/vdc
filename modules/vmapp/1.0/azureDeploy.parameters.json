@@ -1,0 +1,61 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.local-admin-user}"
+        }
+    },
+    "admin-username": {
+        "value": "${workload.local-admin-user}"
+    },
+    "extension-name": {
+        "value": "${workload.vmapp-prefix}-as"
+    },
+    "os-image": {
+        "value": {
+            "offer": "WindowsServer",
+            "publisher": "MicrosoftWindowsServer",
+            "sku": "2016-Datacenter"
+        }
+    },
+    "os-type": {
+        "value": "Windows"
+    },
+    "virtualMachine-count": {
+        "value": 1
+    },
+    "virtualMachine-size": {
+        "value": "Standard_DS1_v2"
+    },
+    "domain-name": {
+        "value": "${shared-services.domain-name}"
+    },
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
+    },
+    "domain-admin-user": {
+        "value": "${on-premises.active-directory.domain-admin-user}"
+    },
+    "domain-admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${on-premises.active-directory.domain-admin-user}"
+        }
+    },
+    "asg-name": {
+        "value": "${workload.network.application-security-groups[0].name}"
+    },
+    "vmapp-start-ip-address": {
+        "value": "${workload.vmapp-start-ip-address}"
+    },
+    "enable-encryption": {
+        "value": "${workload.vm-configuration.enable-encryption}"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${on-premises.deployment-name}"
+    },
+    "network-security-groups": {
+        "value": "${on-premises.network.network-security-groups}"
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "data-retention": {
+        "value": 30
+    },
+    "location": {
+        "value": "${ENV:ENVIRONMENT-TYPE.log-analytics.region}"
+    },
+    "service-tier": {
+        "value": "PerNode"
+    }
+}

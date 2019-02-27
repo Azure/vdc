@@ -1,0 +1,67 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${shared-services.deployment-name}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${shared-services.vm-configuration.local-admin-user}"
+        }
+    },
+    "admin-username": {
+        "value": "${shared-services.vm-configuration.local-admin-user}"
+    },
+    "extension-name": {
+        "value": "jb"
+    },
+    "windows-os-image": {
+        "value": {
+            "offer": "WindowsServer",
+            "publisher": "MicrosoftWindowsServer",
+            "sku": "2016-Datacenter"
+        }
+    },
+    "windows-os-type": {
+        "value": "Windows"
+    },
+    "windows-virtualMachine-count": {
+        "value": 1
+    },
+    "windows-virtualMachine-size": {
+        "value": "Standard_DS2_v2"
+    },
+    "linux-os-image": {
+        "value": {
+            "offer": "UbuntuServer",
+            "publisher": "Canonical",
+            "sku": "14.04.5-LTS",
+            "version": "latest"
+        }
+    },
+    "linux-os-type": {
+        "value": "Linux"
+    },
+    "linux-virtualMachine-count": {
+        "value": 1
+    },
+    "linux-virtualMachine-size": {
+        "value": "Standard_DS2_v2"
+    },
+    "linux-sequence-version": {
+        "value": "a37ae7a2115d"
+    },
+    "shared-services-subnet-name": {
+        "value": "${shared-services.network.subnets[0].name}"
+    },
+    "enable-encryption": {
+        "value": "${shared-services.vm-configuration.enable-encryption}"
+    },
+    "jb-asg-name": {
+        "value": "${shared-services.network.application-security-groups[1].name}"
+    },
+    "organization-name": {
+        "value": "${general.organization-name}"
+    }
+}

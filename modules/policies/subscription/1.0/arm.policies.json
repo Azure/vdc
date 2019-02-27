@@ -1,0 +1,193 @@
+{
+    "policies":
+    [  
+        {  
+            "name":"permittedRegions",
+            "description":"Policy to restrict resource creation to only certain regions",
+            "rules":{    
+                "if":{
+                    "not":{
+                        "field":"location",
+                        "in":["eastus", "westus", "westus2", "centralus", "westcentralus", "westeurope"]
+                    }
+                },
+                "then":{
+                    "effect":"audit"
+                }
+            }
+        },
+        {  
+            "name":"enforceStandardTags",
+            "description":"Policy to enforce standard tags",
+            "rules":{    
+                "if": {
+                        "anyOf": [
+                            {
+                                "field": "tags.environment",
+                                "exists": false
+                            },
+                            {
+                                "field": "tags.appCode",
+                                "exists": false
+                            },
+                            {
+                                "field": "tags.managedBy",
+                                "exists": false
+                            },
+                            {
+                                "field": "tags.source",
+                                "exists": false
+                            },
+                            {
+                                "field": "tags.dataClassification",
+                                "exists": false
+                            },
+                            {
+                                "field": "tags.supportTier",
+                                "exists": false
+                            },
+                            {
+                                "field": "tags.costCenter",
+                                "exists": false
+                            }
+                        ]
+                    },
+                "then": {
+                    "effect": "audit"
+                }            
+            }
+        },
+        {
+            "name":"enforceAllowedVMImages",
+            "description":"Policy to enforce the use of specific VM Images",
+            "parameters":{
+                "imageIds": {
+                    "type": "array",
+                    "metadata": {
+                        "description": "The list of allowed VM Images.",
+                        "displayName": "Allowed VM Images"
+                    }
+                }
+            },
+            "rules":{
+                "if": {
+                    "allOf": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.Compute/virtualMachines"
+                        },
+                        {
+                            "not": {
+                                "field": "Microsoft.Compute/imageId",
+                                "in": "[parameters('imageIds')]"
+                            }
+                        }
+                    ]
+                },
+                "then": {
+                    "effect": "audit"
+                }
+            }
+        },
+        {
+            "name":"auditNSGUnassigned",
+            "description":"Policy that audits all NSGs that are not assigned to a NIC or Subnet",
+            "rules":{
+                "if": {
+                    "allOf": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.Network/networkSecurityGroups"
+                        },
+                        {
+                            "allOf": [
+                            {
+                                "not": {
+                                "field": "Microsoft.Network/networkSecurityGroups/subnets[*].id",
+                                "exists": true
+                                }
+                            },
+                            {
+                                "not": {
+                                "field": "Microsoft.Network/networkSecurityGroups/networkInterfaces[*].id",
+                                "exists": true
+                                }
+                            }
+                            ]
+                        }
+                    ]
+                },
+                "then": {
+                    "effect": "audit"
+                }
+            }
+        },
+        {
+            "name":"enforceStorageEncryption",
+            "description":"Policy to restrict storage account creation to only those applying encryption",
+            "rules":{    
+                "if":{
+                    "allOf":[
+                        {
+                            "field":"type",
+                            "equals":"Microsoft.Storage/storageAccounts"
+                        },
+                        {
+                            "not":{
+                                "field":"Microsoft.Storage/storageAccounts/enableBlobEncryption",
+                                "equals":"true"
+                            }
+                        }
+                    ]
+                },
+                "then":{
+                    "effect":"audit"
+                }
+            }
+        },
+        {
+            "name":"enforceStorageHttpsAccess",
+            "description":"Policy to enforce Https Access",
+            "rules":{
+                "if": {
+                    "allOf": [
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.Storage/storageAccounts"
+                        },
+                        {
+                            "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
+                            "equals": "false"
+                        }
+                    ]
+                },
+                "then": {
+                    "effect": "audit"
+                }
+            }
+        },
+        {
+            "name":"enforceStorageServiceEndpoint",
+            "description":"Policy to enforce Storage Account service endpoint",
+            "rules":{
+                "if": {
+                    "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Storage/storageAccounts"
+                    },
+                    {
+                        "not": {
+                        "field": "Microsoft.Storage/storageAccounts/networkAcls.virtualNetworkRules[*].id",
+                        "exists": true
+                        }
+                    }
+                    ]
+                },
+                "then": {
+                    "effect": "audit"
+                }
+            }
+        }
+    ]
+}

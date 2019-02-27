@@ -1,0 +1,55 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "extension-name": {
+        "value": "hana"
+    },
+    "hana-address-start": {
+        "value": "${workload.vm-configuration.hana-address-start}"
+    },
+    "hana-lb-ip": {
+        "value": "${workload.vm-configuration.hana-lb-ip}"
+    },
+    "virtualMachine-size": {
+        "value": "Standard_E16s_v3"
+    },
+    "virtualMachine-count": {
+        "value": 2
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "os-type": {
+        "value": "${workload.vm-configuration.hana-os-type}"
+    },
+    "hana-sid": {
+        "value": "${workload.vm-configuration.hana-sid}"
+    },
+    "iscsi-ip": {
+        "value": "${workload.vm-configuration.iscsi-ip}"
+    },
+    "subscription-email": {
+        "value": "${workload.vm-configuration.subscription-email}"
+    },
+    "subscription-id": {
+        "value": "${workload.subscription-id}"
+    },
+    "enable-hsr": {
+        "value": "yes"
+    },
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
+    },
+    "data-asg-name": {
+        "value": "${workload.network.application-security-groups[2].name}"
+    }
+}

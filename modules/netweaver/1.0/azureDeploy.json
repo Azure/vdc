@@ -1,0 +1,505 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {  
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                 "description": ""
+             }
+        },
+        "sas-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":""
+            }
+        },
+        "output-params-storage-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account Key. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "output-params-storage-account-name":{  
+            "type":"string",
+            "metadata":{  
+                "description":""
+            }
+        },
+        "extension-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the extension deployment."
+            }
+        },
+        "vnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Shared services virtual network."
+            }
+        },
+        "vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group name of the Shared services virtual network."
+            }
+        },
+        "default-subnet-name": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+                "description": "Name of the management subnet inside the workload virtual network."
+            }
+        },
+        "business-asg-name": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "nw-address-start": {
+            "type": "string",
+            "metadata": {
+                "description": "Private IP value assigned to Netweaver VMs"
+            }
+        },
+        "virtualMachine-size": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_DS2_v2",
+                "Standard_DS13_v2",
+                "Standard_DS14_v2"
+            ],
+            "metadata": {
+                "description": "The vmSize to create based on your specifications."
+            },
+            "defaultValue": "Standard_DS2_v2"
+        },
+        "virtualMachine-count": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of VMs to be created."
+            }
+        },
+        "admin-username": {
+            "type": "string",
+            "metadata": {
+                "description": "The username used to establish ADDS VMs"
+            }
+        },
+        "admin-password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password given to the admin user"
+            }
+        },
+        "os-type": {
+            "type": "string",
+            "allowedValues": [
+                "Windows Server 2016 Datacenter",
+                "SLES 12 SP3",
+                "SLES 12 SP3 BYOS",
+                "SLES 12 SP2",
+                "SLES 12 SP2 BYOS"
+            ],
+            "defaultValue": "SLES 12 SP3",
+            "metadata": {
+                "description": "The type of the operating system you want to deploy."
+            }
+        },
+        "faultDomain-max": {
+            "type": "int",
+            "allowedValues": [
+                1,
+                2,
+                3
+            ],
+            "metadata": {
+                "description": "The number of fault domains for the availability set."
+            },
+            "defaultValue": 2
+        },
+        "is-primary": {
+            "type": "string",
+            "metadata": {
+                "description": "Is this the primart app server"
+            },
+            "defaultValue": "yes"
+        },
+        "NFSILBIP": {
+            "type": "string",
+            "metadata": {
+                "description": "IP for NFS Load Balancer"
+            },
+            "defaultValue": "10.0.1.10"
+        },
+        "ASCSVM1": {
+            "type": "string",
+            "metadata": {
+                "description": "ASCS VM1 Name"
+            },
+            "defaultValue": "ascs1"
+        },
+        "ASCSIP1": {
+            "type": "string",
+            "metadata": {
+                "description": "ASCS VM1 Ip address"
+            },
+            "defaultValue": "10.0.1.17"
+        },
+        "ASCSVM2": {
+            "type": "string",
+            "metadata": {
+                "description": "ASCS VM2 Name"
+            },
+            "defaultValue": "ascs2"
+        },
+        "ASCSIP2": {
+            "type": "string",
+            "metadata": {
+                "description": "ASCS VM2 Ip address"
+            },
+            "defaultValue": "10.0.1.18"
+        },
+        "MASTERPASSWORD": {
+            "type": "securestring",
+            "metadata": {
+                "description": "SAP Master Password."
+            },
+            "defaultValue": "P@ssw0rdForCat"
+        },
+        "SAPADMUID": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP ADMU ID."
+            },
+            "defaultValue": "1050"
+        },
+        "SAPSYSGID": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP SYSG ID."
+            },
+            "defaultValue": "1001"
+        },
+        "SIDADMUID": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP ADMU ID."
+            },
+            "defaultValue": "1040"
+        },
+        "DBHOST": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP DB Host."
+            },
+            "defaultValue": "00"
+        },
+        "DBSID": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP DB SID."
+            },
+            "defaultValue": "00"
+        },
+        "DBINSTANCE": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP DB Instance."
+            },
+            "defaultValue": "03"
+        },
+        "ASCSSID": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP ASCD ID."
+            },
+            "defaultValue": "04"
+        },
+        "ASCSHOST": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP ASCD Host."
+            },
+            "defaultValue": "ascs1"
+        },
+        "NWINSTANCE": {
+            "type": "string",
+            "metadata": {
+                "description": "SAP NW Instance."
+            },
+            "defaultValue": "05"
+        }
+    },
+    "variables": {
+        "availabilitySet-name": "[concat(parameters('deployment-prefix'), '-as')]",
+        "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('default-subnet-name'))]",
+        "configuration-url-sasToken": "[concat('?', parameters('sas-key'))]",
+        "resource-prefix": "[concat(parameters('deployment-prefix'), '-', parameters('extension-name'))]",
+        "hana-lb-name": "[concat(variables('resource-prefix'), '-lb')]",
+        "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+        "diagnostic-storageAccount-prefix": "[concat(parameters('extension-name'), 'diag')]",
+        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]",
+        "networkWatcher-extension-name": "NetworkWatcher",
+        "ipDot": ".",
+        "images": {
+            "Windows Server 2016 Datacenter": {
+                "sku": "2016-Datacenter",
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "version": "latest",
+                "OSType": "Windows"
+            },
+            "SLES 12 SP3": {
+                "sku": "12-SP3",
+                "offer": "SLES-SAP",
+                "publisher": "SUSE",
+                "version": "latest",
+                "OSType": "Linux"
+            },
+            "SLES 12 SP3BYOS": {
+                "sku": "12-SP3",
+                "offer": "SLES-SAP-BYOS",
+                "publisher": "SUSE",
+                "OSType": "Linux",
+                "version": "latest"
+            },
+            "SLES 12 SP2": {
+                "sku": "12-SP2",
+                "offer": "SLES-SAP",
+                "publisher": "SUSE",
+                "version": "latest",
+                "OSType": "Linux"
+            },
+            "SLES 12 SP2 BYOS": {
+                "sku": "12-SP2",
+                "offer": "SLES-SAP-BYOS",
+                "publisher": "SUSE",
+                "OSType": "Linux",
+                "version": "latest"
+            }
+        },
+        "internal-os-type": "[variables('images')[parameters('os-type')].OSType]",
+        "script-folder": ".",
+        "ipName-prefix": "ipconfig",
+        "storage-accountType": "Premium_LRS",
+        "business-asg-id": "[resourceId(parameters('vnet-resourceGroup'), 'Microsoft.Network/applicationSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('business-asg-name'), '-asg'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('diagnostic-storageAccount-name')]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "tags": {
+                "displayName": "Management Diagnostic Storage Account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('availabilitySet-name')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "sku": {
+                "name": "Aligned"
+            },
+            "properties": {
+                "platformFaultDomainCount": "[parameters('faultDomain-max')]",
+                "platformUpdateDomainCount": 20
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-09-01",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyIndex(1),'-nic')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySet-name'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[concat(variables('ipName-prefix'))]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[vdc.nextIP(parameters('nw-address-start'), copyIndex())]",
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            },
+                            "applicationSecurityGroups": [
+                                {
+                                    "id": "[variables('business-asg-id')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyIndex(1))]",
+            "copy": {
+                "name": "vmLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat(variables('virtualMachine-name-prefix'), copyIndex(1), '-nic')]"
+            ],            
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachine-size')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('extension-name'), '-vm', copyIndex(1))]",
+                    "adminUsername": "[parameters('admin-username')]",
+                    "adminPassword": "[parameters('admin-password')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('images')[parameters('os-type')].publisher]",
+                        "offer": "[variables('images')[parameters('os-type')].offer]",
+                        "sku": "[variables('images')[parameters('os-type')].sku]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[variables('storage-accountType')]"
+                        },
+                        "diskSizeGB": 128
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyIndex(1), '-nic'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[variables('networkWatcher-extension-name')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyIndex(1)))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.NetworkWatcher",
+                        "type": "NetworkWatcherAgentLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true
+                    }
+                },
+                {
+                    "type": "extensions",
+                    "name": "NWCustomScript",
+                    "apiVersion": "2017-12-01",
+                    "location": "[resourceGroup().location]",
+                    "condition": "[bool('false')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyIndex(1)))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.Extensions",
+                        "type": "CustomScript",
+                        "typeHandlerVersion": "2.0",
+                        "autoUpgradeMinorVersion": true,
+                        "protectedSettings": {
+                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                            "fileUris": [
+                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/nw-server.sh')]"
+                            ],
+                            "commandToExecute": "[concat('sh nw-server.sh',' \"', concat(variables('virtualMachine-name-prefix'), '1'),'\" \"', parameters('nw-address-start'),'\" \"', parameters('is-primary'),'\" \"', concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net'),'\" \"', concat(variables('virtualMachine-name-prefix'), '1'),'\" \"', concat(variables('virtualMachine-name-prefix'), '1'),'\" \"', concat(variables('virtualMachine-name-prefix'), '1'),'\" \"', parameters('NFSILBIP'),'\" \"',parameters('ASCSVM1'),'\" \"',parameters('ASCSIP1'),'\" \"',parameters('ASCSVM2'),'\" \"',parameters('ASCSIP2'),'\" \"',parameters('MASTERPASSWORD'),'\" \"',parameters('SAPADMUID'),'\" \"',parameters('SAPSYSGID'),'\" \"',parameters('SIDADMUID'),'\" \"',parameters('DBHOST'),'\" \"',parameters('DBSID'),'\" \"',parameters('DBINSTANCE'),'\" \"',parameters('ASCSSID'),'\" \"',parameters('ASCSHOST'),'\" \"',parameters('NWINSTANCE'),'\"')]"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "functions":[
+        {
+            "namespace": "vdc",
+            "members": {
+                "nextIP": {
+                    "parameters": [
+                        {
+                            "name": "ip",
+                            "type": "string"
+                        },
+                        {
+                            "name": "operand",
+                            "type": "int"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(split(parameters('ip'), '.')[0], '.' ,split(parameters('ip'), '.')[1], '.' ,split(parameters('ip'), '.')[2], '.', add(int(split(parameters('ip'), '.')[3]), parameters('operand')))]"
+                    }
+                },
+                "splitIP": {
+                    "parameters": [
+                        {
+                            "name": "initialIP",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "array",
+                        "value": "[split(parameters('initialIP'), '.')]"
+                    }
+                },
+                "removeAddressRange":{
+                    "parameters": [
+                        {
+                            "name": "ip",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[if(greater(indexOf(parameters('ip'), '/'), 0), substring(parameters('ip'), 0, add(indexOf(parameters('ip'), '/'), 0)), parameters('ip'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

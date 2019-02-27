@@ -1,0 +1,80 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "username": {
+        "value": "${shared-services.active-directory.domain-admin-user}@${shared-services.active-directory.domain-name}"
+    },
+    "extension-name": {
+        "value": "kdc"
+    },
+    "domain-name": {
+        "value": "${shared-services.active-directory.domain-name}"
+    },
+    "domain-admin-user": {
+        "value": "${shared-services.active-directory.domain-admin-user}"
+    },
+    "domain-admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${shared-services.active-directory.domain-admin-user}"
+        }
+    },
+    "os-image": {
+        "value": {
+            "offer": "CentOS-CI",
+            "publisher": "OpenLogic",
+            "sku": "7-CI",
+            "version": "7.4.20180417"
+        }
+    },
+    "os-type": {
+        "value": "Linux"
+    },
+    "virtualMachine-count": {
+        "value": 2
+    },
+    "virtualMachine-size": {
+        "value": "Standard_D2s_v3"
+    },
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
+    },
+    "default-subnet-address-prefix": {
+        "value": "${workload.network.subnets[0].address-prefix}"
+    },
+    "kdc-asg-name": {
+        "value": "${workload.network.application-security-groups[1].name}"
+    },
+    "adds-vm1-hostname": {
+        "value": "${shared-services.adds.adds-vm1-hostname}"
+    },
+    "adds-vm2-hostname": {
+        "value": "${shared-services.adds.adds-vm2-hostname}"
+    },
+    "adds-resourceGroup": {
+        "value": "${shared-services.adds.resource-group-name}"
+    },
+    "adds-subscriptionId": {
+        "value": "${shared-services.subscription-id}"
+    },
+    "adds-vm1-resource-name": {
+        "value": "${shared-services.adds.adds-vm1-resource-name}"
+    },
+    "discovery-custom-domain": {
+        "value": "${shared-services.active-directory.discovery-custom-domain}"
+    }
+}

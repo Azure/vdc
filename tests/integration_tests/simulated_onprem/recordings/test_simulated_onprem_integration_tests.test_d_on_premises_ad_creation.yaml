@@ -1,0 +1,1414 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 azure-mgmt-storage/2.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body: {string: '{"keys":[{"keyName":"key1","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA==","permissions":"FULL"},{"keyName":"key2","value":"i6qj7OB3AYeCFizUvPPi6d9uSvbMkEdVmGDVwhwTw9qmtFo597nyvohXgOMiDzYb8nMuu1ER9gumkA66Fi+tEw==","permissions":"FULL"}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['288']
+      content-type: [application/json]
+      date: ['Fri, 11 Jan 2019 19:10:17 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: ['Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0
+          Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 azure-mgmt-storage/2.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body: {string: '{"keys":[{"keyName":"key1","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA==","permissions":"FULL"},{"keyName":"key2","value":"i6qj7OB3AYeCFizUvPPi6d9uSvbMkEdVmGDVwhwTw9qmtFo597nyvohXgOMiDzYb8nMuu1ER9gumkA66Fi+tEw==","permissions":"FULL"}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['288']
+      content-type: [application/json]
+      date: ['Fri, 11 Jan 2019 19:10:19 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: ['Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0
+          Microsoft-HTTPAPI/2.0']
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.3.1 (Python CPython 3.6.4; Linux 4.9.125-linuxkit)]
+      x-ms-date: ['Fri, 11 Jan 2019 19:10:19 GMT']
+      x-ms-range: [bytes=0-33554431]
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/org-on-premises-onprem/parameters/net/azureDeploy.parameters.output.json
+  response:
+    body: {string: '{"vnet-id": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Network/virtualNetworks/org-onprem-vnet"},
+        "vnet-name": { "value": "org-onprem-vnet"}, "vnet-resourceGroup": { "value":
+        "org-onprem-net-rg"}}'}
+    headers:
+      accept-ranges: [bytes]
+      content-length: ['286']
+      content-range: [bytes 0-285/286]
+      content-type: [application/octet-stream]
+      date: ['Fri, 11 Jan 2019 19:10:18 GMT']
+      etag: ['"0x8D677F5A596CFF8"']
+      last-modified: ['Fri, 11 Jan 2019 18:50:24 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-blob-content-md5: [tIlhnJg6uZvo4lGIMZ9Ayg==]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-creation-time: ['Fri, 11 Jan 2019 18:50:24 GMT']
+      x-ms-lease-state: [available]
+      x-ms-lease-status: [unlocked]
+      x-ms-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 206, message: Partial Content}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: HEAD
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg?api-version=2018-05-01
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['112']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:10:19 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-failure-cause: [gateway]
+    status: {code: 404, message: Not Found}
+- request:
+    body: '{"location": "Central US"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['26']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg","name":"org-onprem-ad-rg","location":"centralus","properties":{"provisioningState":"Succeeded"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['196']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:10:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 201, message: Created}
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      28268 is larger than 10KB. !!!'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['19608']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad","name":"org-on-premises-onprem-deployment-ad","properties":{"templateHash":"8381498053305788296","parameters":{"deployment-prefix":{"type":"String","value":"org-onprem"},"sas-key":{"type":"String","value":"se=2019-01-12T19%3A10%3A18Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=IdkYdE50hKXN1hkjqXnSuoGbwImaXU2iTdiRkpSpPS8%3D"},"output-params-storage-account-name":{"type":"String","value":"storage"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Network/virtualNetworks/org-onprem-vnet"},"default-subnet-name":{"type":"String","value":"default"},"extension-name":{"type":"String","value":"ad"},"admin-username":{"type":"String","value":"org"},"admin-password":{"type":"SecureString"},"virtualMachine-size":{"type":"String","value":"Standard_DS2_v2"},"os-type":{"type":"String","value":"Windows"},"os-image":{"type":"Object","value":{"offer":"WindowsServer","publisher":"MicrosoftWindowsServer","sku":"2016-Datacenter"}},"domain-name":{"type":"String","value":"org.com"},"cloud-zone":{"type":"String","value":"orgcloud.com"},"primaryDC-IP":{"type":"String","value":"192.168.1.4"},"aD-sitename":{"type":"String","value":"Cloud-Site"},"vnet-name":{"type":"String","value":"org-onprem-vnet"},"vnet-resourceGroup":{"type":"String","value":"org-onprem-net-rg"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-01-11T19:10:23.4830409Z","duration":"PT1.0278327S","correlationId":"15850220-0c07-4168-97c2-ce2a60396408","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"publicIPAddresses","locations":["centralus"]},{"resourceType":"networkInterfaces","locations":["centralus"]}]},{"namespace":"Microsoft.Storage","resourceTypes":[{"resourceType":"storageAccounts","locations":["centralus"]}]},{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"virtualMachines","locations":["centralus"]},{"resourceType":"virtualMachines/extensions","locations":["centralus"]}]},{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/publicIPAddresses/org-onprem-ad-vm-nic-pip","resourceType":"Microsoft.Network/publicIPAddresses","resourceName":"org-onprem-ad-vm-nic-pip"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b","apiVersion":"2016-12-01"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSAntimalware"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSDiagnostics"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/NetworkWatcher"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudSiteNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudSiteNestedDeployment"}]}}'}
+    headers:
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01']
+      cache-control: [no-cache]
+      content-length: ['8381']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:10:22 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-subscription-writes: ['1199']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:10:53 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:11:24 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:11:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:12:25 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:12:55 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:13:26 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:13:56 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:14:27 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:14:57 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:15:27 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:15:57 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:16:28 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:16:58 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:17:29 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:17:59 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:18:30 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:19:00 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:19:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:20:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:20:32 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:21:02 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:21:33 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:22:04 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:22:33 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:23:05 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:23:35 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:24:05 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:24:36 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:25:06 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:25:37 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:26:08 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:26:38 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:27:09 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:27:39 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:28:09 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:28:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:29:10 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:29:41 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:30:14 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:30:45 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:31:16 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:31:46 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:32:16 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:32:47 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:33:18 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:33:49 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:34:19 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:34:50 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:35:20 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Running"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['20']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:35:51 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+  response:
+    body: {string: '{"status":"Succeeded"}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['22']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:36:21 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
+          msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad?api-version=2018-05-01
+  response:
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad","name":"org-on-premises-onprem-deployment-ad","properties":{"templateHash":"8381498053305788296","parameters":{"deployment-prefix":{"type":"String","value":"org-onprem"},"sas-key":{"type":"String","value":"se=2019-01-12T19%3A10%3A18Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=IdkYdE50hKXN1hkjqXnSuoGbwImaXU2iTdiRkpSpPS8%3D"},"output-params-storage-account-name":{"type":"String","value":"storage"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Network/virtualNetworks/org-onprem-vnet"},"default-subnet-name":{"type":"String","value":"default"},"extension-name":{"type":"String","value":"ad"},"admin-username":{"type":"String","value":"org"},"admin-password":{"type":"SecureString"},"virtualMachine-size":{"type":"String","value":"Standard_DS2_v2"},"os-type":{"type":"String","value":"Windows"},"os-image":{"type":"Object","value":{"offer":"WindowsServer","publisher":"MicrosoftWindowsServer","sku":"2016-Datacenter"}},"domain-name":{"type":"String","value":"org.com"},"cloud-zone":{"type":"String","value":"orgcloud.com"},"primaryDC-IP":{"type":"String","value":"192.168.1.4"},"aD-sitename":{"type":"String","value":"Cloud-Site"},"vnet-name":{"type":"String","value":"org-onprem-vnet"},"vnet-resourceGroup":{"type":"String","value":"org-onprem-net-rg"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-01-11T19:36:10.640126Z","duration":"PT25M48.1849178S","correlationId":"15850220-0c07-4168-97c2-ce2a60396408","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"publicIPAddresses","locations":["centralus"]},{"resourceType":"networkInterfaces","locations":["centralus"]}]},{"namespace":"Microsoft.Storage","resourceTypes":[{"resourceType":"storageAccounts","locations":["centralus"]}]},{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"virtualMachines","locations":["centralus"]},{"resourceType":"virtualMachines/extensions","locations":["centralus"]}]},{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/publicIPAddresses/org-onprem-ad-vm-nic-pip","resourceType":"Microsoft.Network/publicIPAddresses","resourceName":"org-onprem-ad-vm-nic-pip"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b","apiVersion":"2016-12-01"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSAntimalware"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSDiagnostics"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/NetworkWatcher"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudSiteNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudSiteNestedDeployment"}],"outputs":{},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/createNewDnsZone"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSAntimalware"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSDiagnostics"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/publicIPAddresses/org-onprem-ad-vm-nic-pip"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b"}]}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['10027']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 11 Jan 2019 19:36:22 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.3.1 (Python CPython 3.6.4; Linux 4.9.125-linuxkit)]
+      x-ms-date: ['Fri, 11 Jan 2019 19:36:23 GMT']
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storage.blob.core.windows.net/output?restype=container
+  response:
+    body: {string: ''}
+    headers:
+      date: ['Fri, 11 Jan 2019 19:36:22 GMT']
+      etag: ['"0x8D677F58F5F4F8F"']
+      last-modified: ['Fri, 11 Jan 2019 18:49:47 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+      x-ms-has-immutability-policy: ['false']
+      x-ms-has-legal-hold: ['false']
+      x-ms-lease-state: [available]
+      x-ms-lease-status: [unlocked]
+      x-ms-version: ['2018-03-28']
+    status: {code: 200, message: OK}
+- request:
+    body: '{}'
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['2']
+      User-Agent: [Azure-Storage/1.4.0-1.3.1 (Python CPython 3.6.4; Linux 4.9.125-linuxkit)]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-date: ['Fri, 11 Jan 2019 19:36:23 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storage.blob.core.windows.net/output/org-on-premises-onprem/parameters/ad/azureDeploy.parameters.output.json
+  response:
+    body: {string: ''}
+    headers:
+      content-md5: [mZFLkyvTelC5g8XnyQrpOw==]
+      date: ['Fri, 11 Jan 2019 19:36:23 GMT']
+      etag: ['"0x8D677FC11EB6FE9"']
+      last-modified: ['Fri, 11 Jan 2019 19:36:23 GMT']
+      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      transfer-encoding: [chunked]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+version: 1

@@ -1,0 +1,120 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
+          azure-mgmt-billing/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Billing/enrollmentAccounts?api-version=2018-03-01-preview
+  response:
+    body: {string: '{"value":[{"id":"/providers/Microsoft.Billing/enrollmentAccounts/00000000-0000-0000-0000-000000000000","name":"00000000-0000-0000-0000-000000000000","properties":{"principalName":"virtualdatacenter@myaddomain.onmicrosoft.com","offerTypes":["MS-AZR-0017P","MS-AZR-0041P"]},"type":"Microsoft.Billing/enrollmentAccounts"}]}'}
+    headers:
+      api-supported-versions: [2018-03-01-preview]
+      cache-control: [no-cache]
+      content-length: ['315']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 19:30:24 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-resource-requests: ['499']
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"displayName": "TestSubscription02", "owners": [{"objectId": "00000000-0000-0000-0000-000000000000"}],
+      "offerType": "MS-AZR-0017P"}'
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['132']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
+          azure-mgmt-subscription/0.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.Billing/enrollmentAccounts/00000000-0000-0000-0000-000000000000/providers/Microsoft.Subscription/createSubscription?api-version=2018-03-01-preview
+  response:
+    body: {string: '{}'}
+    headers:
+      api-supported-versions: ['2017-11-01-preview, 2018-03-01-preview, 2018-11-01-preview']
+      cache-control: [no-cache]
+      content-length: ['2']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 19:30:43 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/providers/Microsoft.Subscription/subscriptionOperations/0de11890-0810-429d-b0be-df25ebeb65af?api-version=2018-03-01-preview']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-ratelimit-remaining-tenant-resource-requests: ['499']
+      x-powered-by: [ASP.NET]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
+          azure-mgmt-subscription/0.2.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Subscription/subscriptionOperations/0de11890-0810-429d-b0be-df25ebeb65af?api-version=2018-03-01-preview
+  response:
+    body: {string: '{}'}
+    headers:
+      api-supported-versions: [2018-03-01-preview]
+      cache-control: [no-cache]
+      content-length: ['2']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 19:30:48 GMT']
+      expires: ['-1']
+      location: ['https://management.azure.com/providers/Microsoft.Subscription/subscriptionOperations/0de11890-0810-429d-b0be-df25ebeb65af?api-version=2018-03-01-preview']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-powered-by: [ASP.NET]
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
+          azure-mgmt-subscription/0.2.0 Azure-SDK-For-Python]
+    method: GET
+    uri: https://management.azure.com/providers/Microsoft.Subscription/subscriptionOperations/0de11890-0810-429d-b0be-df25ebeb65af?api-version=2018-03-01-preview
+  response:
+    body: {string: '{"subscriptionLink":"/subscriptions/00000000-0000-0000-0000-000000000000"}'}
+    headers:
+      api-supported-versions: [2018-03-01-preview]
+      cache-control: [no-cache]
+      content-length: ['74']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 13 Jan 2019 19:30:54 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

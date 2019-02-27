@@ -1,0 +1,14 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "deployment-name": {
+        "value": "${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "network-security-groups": {
+        "value": "${ENV:ENVIRONMENT-TYPE.network.network-security-groups}"
+    },
+    "application-security-groups": {
+        "value": "${ENV:ENVIRONMENT-TYPE.network.application-security-groups}"
+    }
+}

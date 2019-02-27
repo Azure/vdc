@@ -1,0 +1,29 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${shared-services.deployment-name}"
+    },
+    "shared-services-udr-name": {
+        "value": "${shared-services.network.user-defined-routes[0].name}"
+    },
+    "shared-services-routes": {
+        "value": "${shared-services.network.user-defined-routes[0].routes}"
+    },
+    "shared-services-subnet-address-prefix": {
+        "value": "${shared-services.network.subnets[0].address-prefix}"
+    },
+    "on-premises-allow-rdp-address-range": {
+        "value": "${on-premises.allow-rdp-address-range}"
+    },
+    "on-premises-primaryDC-IP": {
+        "value": "${on-premises.active-directory.primaryDC-IP}"
+    },
+    "vnet-prefix": {
+        "value": "${shared-services.network.address-prefix}"
+    },
+    "on-premises-address-range": {
+        "value": "${on-premises.network.address-prefix}"
+    },
+    "logs-retention-in-days": {
+        "value": 30
+    }
+}

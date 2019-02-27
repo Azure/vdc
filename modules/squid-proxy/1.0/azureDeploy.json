@@ -1,0 +1,420 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                 "description": "Deployment prefix. E.g. Organization-DeploymentType"
+             }
+        },
+        "oms-workspace-id": {
+            "type": "string",
+            "metadata": {
+                "description": "WorkspaceId or CustomerId value of OMS. This value is referenced in OMS VM Extension"
+            }
+        },
+        "oms-primary-shared-key": {
+            "type": "string",
+            "metadata": {
+                "description": "WorkspaceKey value of OMS. This value is referenced in OMS VM Extension"
+            }
+        },
+        "sas-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Shared Access Signature Key used to download custom scripts"
+            }
+        },
+        "output-params-storage-account-name":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "nva-address-start": {
+            "type": "string",
+            "metadata": {
+                 "description": "IP address used as initial Active Directory Domain Services IP"
+             }
+        },
+        "vnet-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared services Virtual Network name"
+            }
+        },
+        "vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared services Virtual Network resource group name"
+            }
+        },
+        "nva-jb-asg-id": {
+            "type": "string",
+            "metadata": {
+                "description": "ASG associated to the Virtual Appliance (Jumpbox Nic)"
+            }
+        },
+        "nva-dmz-asg-id": {
+            "type": "string",
+            "metadata": {
+                "description": "ASG associated to the Virtual Appliance (DMZ Nic)"
+            }
+        },
+        "shared-services-udr-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the shared services UDR"
+            }
+        },
+        "dmz-subnet-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Edge subnet name"
+            }
+        },
+        "extension-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the extension deployment."
+            }
+        },        
+        "admin-username": {
+            "type": "string",
+            "metadata": {
+                "description": "The username used to establish jumpbox VMs."
+            }
+        },
+        "admin-password": {
+            "type": "string",
+            "metadata": {
+                "description": "The password given to the admin user."
+            }
+        },
+        "virtualMachine-count": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Number of NVA VMs to be created."
+            }
+        },
+        "virtualMachine-size": {
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2",
+            "metadata": {
+                "description": "Size of the NVA VMs."
+            }
+        },
+        "os-type": {
+            "type": "string",
+            "defaultValue": "Windows",
+            "allowedValues": [
+                "Windows",
+                "Linux"
+            ],
+            "metadata": {
+                "description": "OS platform of the NVA VM image."
+            }
+        },
+        "os-image": {
+            "type": "object",
+            "metadata": {
+                "description": "OS image used for the NVA VMs."
+            }
+        },
+        "shared-services-routes": {
+            "type": "array",
+            "metadata": {
+                 "description": "Specifies the routes associated to Shared Services. All traffic is routed through the NVA."
+             }
+        }
+    },
+    "variables": {
+        "resource-prefix": "[concat(parameters('deployment-prefix'), '-', parameters('extension-name'))]",
+        "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
+        "virtualNetwork-id": "[resourceId(parameters('vnet-resourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnet-name'))]",
+        "public-subnet-ID": "[concat(variables('virtualNetwork-id'), '/subnets/', parameters('dmz-subnet-name'))]",
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+        "diagnostic-storageAccount-prefix": "[concat(variables('resource-prefix'), 'diag')]",
+        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]",
+        "install-squid-using-sas-token-and-enable-routing-script-url": "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/squid/install-squid-using-sas-token-and-enable-routing.sh?', parameters('sas-key'))]",
+        "install-squid-script-url": "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/squid/install-squid-centos.sh?', parameters('sas-key'))]",
+        "single-quote": "'",
+        "encryption-extension-name": "AzureDiskEncryption",
+        "encryption-operation": "EnableEncryption",
+        "key-encryptionAlgorithm": "RSA-OAEP",
+        "networkWatcher-extension-name": "NetworkWatcher",
+        "availabilitySet-name": "[concat(variables('resource-prefix'), '-nva-as')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('availabilitySet-name')]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 5,
+                "managed": true
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('diagnostic-storageAccount-name')]",
+            "apiVersion": "2017-06-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "tags": {
+                "displayName": "Management Diagnostic Storage Account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-09-01",
+            "location": "[resourceGroup().location]",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1')]",
+            "tags": {
+                "displayName": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1')]"
+            },
+            "copy": {
+                "name": "nic1Loop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "properties": {
+                "enableIPForwarding":true,
+                "enableAcceleratedNetworking":true,
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[vdc.nextIP(parameters('nva-address-start'), copyIndex())]",
+                            "subnet": {
+                                "id": "[variables('public-subnet-id')]"
+                            },
+                            "applicationSecurityGroups": [
+                                {
+                                    "id": "[parameters('nva-dmz-asg-id')]"
+                                },
+                                {
+                                    "id": "[parameters('nva-jb-asg-id')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
+            "tags": {
+                "displayName": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]"
+            },
+            "copy": {
+                "name": "vmLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]",
+                "[concat('Microsoft.Network/networkInterfaces/', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts',variables('diagnostic-storageAccount-name'))]"
+            ],
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
+                    "adminUsername": "[parameters('admin-username')]",
+                    "adminPassword": "[parameters('admin-password')]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachine-size')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('os-image').publisher]",
+                        "offer": "[parameters('os-image').offer]",
+                        "sku": "[parameters('os-image').sku]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[replace(toLower(substring(concat(variables('virtualMachine-name-prefix'), copyindex(1), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 40)), '-', '')]",
+                        "osType": "[parameters('os-type')]",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1'))]",
+                            "properties":{
+                                "primary": true
+                            }
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "OMSExtension",
+                    "apiVersion": "2015-06-15",
+                    "condition": "[bool('false')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]"
+                    ],
+                    "properties": {
+                      "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                      "type": "MicrosoftMonitoringAgent",
+                      "typeHandlerVersion": "1.0",
+                      "autoUpgradeMinorVersion": true,
+                      "settings": {
+                        "workspaceId": "[parameters('oms-workspace-id')]"
+                      },
+                      "protectedSettings": {
+                        "workspaceKey": "[parameters('oms-primary-shared-key')]"
+                      }
+                    }
+                },
+                {
+                    "name": "install-squid-enable-routing",
+                    "type": "extensions",
+                    "location": "[resourceGroup().location]",
+                    "apiVersion": "2017-03-30",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "OMSExtension"
+                    ],
+                    "tags": {
+                      "displayName": "install-squid-enable-routing"
+                    },
+                    "properties": {
+                      "publisher": "Microsoft.Azure.Extensions",
+                      "type": "CustomScript",
+                      "typeHandlerVersion": "2.0",
+                      "autoUpgradeMinorVersion": true,
+                      "protectedSettings": {
+                        "commandToExecute": "[concat('bash install-squid-using-sas-token-and-enable-routing.sh ', variables('single-quote'), variables('install-squid-script-url'), variables('single-quote'))]",
+                        "fileUris": [
+                            "[variables('install-squid-using-sas-token-and-enable-routing-script-url')]"
+                        ]  
+                      }
+                    }
+                },
+                {
+                    "type": "extensions",
+                    "name": "[variables('networkWatcher-extension-name')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'install-squid-enable-routing')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.NetworkWatcher",
+                        "type": "NetworkWatcherAgentLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "nestedDeployUDR",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('vnet-resourceGroup')]",
+            "dependsOn": [
+                "vmLoop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/routeTables",
+                            "apiVersion": "2017-03-01",
+                            "location": "[resourceGroup().location]",
+                            "name": "[parameters('shared-services-udr-name')]",
+                            "tags": {
+                                "displayName": "[parameters('shared-services-udr-name')]"
+                            },
+                            "properties": {
+                                "routes": "[parameters('shared-services-routes')]"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        }
+    ],
+    "functions":[
+        {
+            "namespace": "vdc",
+            "members": {
+                "nextIP": {
+                    "parameters": [
+                        {
+                            "name": "ip",
+                            "type": "string"
+                        },
+                        {
+                            "name": "operand",
+                            "type": "int"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(split(parameters('ip'), '.')[0], '.' ,split(parameters('ip'), '.')[1], '.' ,split(parameters('ip'), '.')[2], '.', add(int(split(parameters('ip'), '.')[3]), parameters('operand')))]"
+                    }
+                },
+                "splitIP": {
+                    "parameters": [
+                        {
+                            "name": "initialIP",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "array",
+                        "value": "[split(parameters('initialIP'), '.')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

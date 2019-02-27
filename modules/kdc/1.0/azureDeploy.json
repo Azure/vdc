@@ -1,0 +1,647 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                 "description": ""
+             }
+        },
+        "output-params-storage-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account Key. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "output-params-storage-account-name":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "oms-id":{  
+            "type":"string",
+            "metadata":{  
+              "description": "ResourceId of the OMS workspace used for diagnostic log integration."
+            }
+        },
+        "vnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Identifier of the Shared services virtual network."
+            }
+        },
+        "vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group name of the Shared services virtual network."
+            }
+        },
+        "default-subnet-name": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+                "description": "Name of the private subnet inside the workload virtual network."
+            }
+        },
+        "default-subnet-address-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "kdc-asg-name": {
+            "type": "string",
+            "metadata": {
+                "description": "ASG associated to KDC"
+            }
+        },
+        "extension-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the extension deployment."
+            }
+        },
+        "admin-username": {
+            "type": "string",
+            "metadata": {
+                "description": "The username used to establish management VMs."
+            }
+        },
+        "admin-password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password given to the admin user."
+            }
+        },
+        "domain-name": {
+            "type": "string",
+            "metadata": {
+                "description": "AD Domain name"
+            }
+        },
+        "domain-admin-password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Domain user that has privileges to join a VM into a Domain"
+            }
+        },
+        "virtualMachine-size": {
+            "type": "string",
+            "defaultValue": "Standard_DS1_v2",
+            "metadata": {
+                "description": "Size of the management VMs."
+            }
+        },
+        "virtualMachine-count": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of management VMs to be created."
+            }
+        },
+        "os-image": {
+            "type": "object",
+            "metadata": {
+                "description": "OS image used for the management VMs."
+            }
+        },
+        "os-type": {
+            "type": "string",
+            "defaultValue": "Linux",
+            "allowedValues": [
+                "Windows",
+                "Linux"
+            ],
+            "metadata": {
+                "description": "OS platform of the NVA VM image."
+            }
+        },
+        "discovery-custom-domain": {
+            "type": "string",
+            "metadata": {
+                "description": "Custom domain used in the cluster creation"
+            }
+        },
+        "adds-vm1-hostname": {
+            "type": "string",
+            "metadata": {
+                "description": "ADDS hostname, this value is used to setup KDC"
+            }
+        },
+        "adds-vm2-hostname": {
+            "type": "string",
+            "metadata": {
+                "description": "ADDS hostname, this value is used to setup KDC"
+            }
+        },
+        "adds-resourceGroup": {
+            "type": "string"
+        },
+        "adds-subscriptionId": {
+            "type": "string"
+        },
+        "adds-vm1-resource-name": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "resource-prefix": "[concat(parameters('deployment-prefix'), '-', parameters('extension-name'))]",
+        "availabilitySet-name": "[concat(parameters('extension-name'), '-as')]",
+        "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
+        "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('default-subnet-name'))]",
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+        "diagnostic-storageAccount-prefix": "[concat(variables('resource-prefix'), 'diag')]",
+        "diagnostic-storageAccount-name": "[replace(toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) ), '-', '')]",
+        "networkWatcher-extension-name": "NetworkWatcher",
+        "osDisk-createOption": "FromImage",
+        "kdc-asg-id": "[resourceId(parameters('vnet-resourceGroup'),'Microsoft.Network/applicationSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('kdc-asg-name'), '-asg'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('diagnostic-storageAccount-name')]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "tags": {
+                "displayName": "Management Diagnostic Storage Account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('availabilitySet-name')]",
+            "tags": {
+                "displayName": "[variables('availabilitySet-name')]"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 5,
+                "managed": true
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1')]",
+            "apiVersion": "2017-09-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            },
+                            "applicationSecurityGroups": [
+                                {
+                                    "id": "[variables('kdc-asg-id')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]"
+            },
+            "copy": {
+                "name": "vmLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "dependsOn": [
+                "nicLoop",
+                "[resourceId('Microsoft.Storage/storageAccounts',variables('diagnostic-storageAccount-name'))]"
+            ],
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachine-size')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('extension-name'), '-vm',copyindex(1))]",
+                    "adminUsername": "[parameters('admin-username')]",
+                    "adminPassword": "[parameters('admin-password')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('os-image').publisher]",
+                        "offer": "[parameters('os-image').offer]",
+                        "sku": "[parameters('os-image').sku]",
+                        "version": "[parameters('os-image').version]"
+                    },
+                    "osDisk": {
+                        "name": "[replace(toLower(substring(concat(variables('virtualMachine-name-prefix'), copyindex(1), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 40)), '-', '')]",                        
+                        "osType": "[parameters('os-type')]",                        
+                        "caching": "ReadWrite",
+                        "createOption": "[variables('osDisk-createOption')]"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[variables('networkWatcher-extension-name')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'setupKDC')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.NetworkWatcher",
+                        "type": "NetworkWatcherAgentLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true
+                    }
+                },
+                {
+                    "type": "extensions",
+                    "name": "setupKDC",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]"                       
+                    ],
+                    "apiVersion": "2017-03-30",
+                    "properties": {
+                        "publisher": "Microsoft.Azure.Extensions",
+                        "type": "CustomScript",
+                        "typeHandlerVersion": "2.0",
+                        "autoUpgradeMinorVersion": true,
+                        "protectedSettings": {
+                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                            "commandToExecute": "[concat('bash install-kdc.sh ', concat(parameters('extension-name'), '-vm',copyindex(1)),' ', toUpper(parameters('discovery-custom-domain')))]",
+                            "fileUris": [
+                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/centos/install-kdc.sh')]"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat('createARecord', copyIndex(1))]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('adds-resourceGroup')]",
+            "subscriptionId": "[parameters('adds-subscriptionId')]",
+            "copy": {
+                "name": "createARecordLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "dependsOn": [
+                "vmLoop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[parameters('adds-vm1-resource-name')]",
+                            "location": "[resourceGroup().location]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "PSOneWayTrustSetup",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId(parameters('adds-subscriptionId'), parameters('adds-resourceGroup'), 'Microsoft.Compute/virtualMachines', parameters('adds-vm1-resource-name'))]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Compute",
+                                        "type": "CustomScriptExtension",
+                                        "typeHandlerVersion": "1.8",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "fileUris": [
+                                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/windows/add-Arecord-to-dns.ps1')]"
+                                            ]
+                                        },
+                                        "protectedSettings": { 
+                                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./windows/add-Arecord-to-dns.ps1 -HostName ', concat(parameters('extension-name'), '-vm',copyindex(1)), ' -IPAddress ', reference(resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1'))).ipConfigurations[0].properties.privateIpAddress, ' -DnsZone ', parameters('discovery-custom-domain'))]"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "vm1SetupKDCMaster",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "createARecordLoop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(variables('virtualMachine-name-prefix'), '1')]",
+                            "location": "[resourceGroup().location]",                            
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "setupKDC",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), '1'))]"
+                                    ],
+                                    "apiVersion": "2017-03-30",
+                                    "properties": {
+                                        "publisher": "Microsoft.Azure.Extensions",
+                                        "type": "CustomScript",
+                                        "typeHandlerVersion": "2.0",
+                                        "autoUpgradeMinorVersion": true,
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                                            "commandToExecute": "[concat('bash kdc-master-setup.sh ', toUpper(parameters('domain-name')), ' ', toUpper(parameters('discovery-custom-domain')), ' ', concat(parameters('extension-name'), '-vm1'), ' ',concat(parameters('extension-name'), '-vm2'), ' ', parameters('adds-vm1-hostname'), ' ', parameters('adds-vm2-hostname'), ' ', parameters('domain-admin-password'), ' ', parameters('output-params-storage-key'), ' ', concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net'))]",
+                                            "fileUris": [
+                                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/centos/kdc-master-setup.sh')]"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "configureOneWayTrust",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('adds-resourceGroup')]",
+            "subscriptionId": "[parameters('adds-subscriptionId')]",
+            "dependsOn": [
+                "vm1SetupKDCMaster"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[parameters('adds-vm1-resource-name')]",
+                            "location": "[resourceGroup().location]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "PSOneWayTrustSetup",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId(parameters('adds-subscriptionId'), parameters('adds-resourceGroup'), 'Microsoft.Compute/virtualMachines', parameters('adds-vm1-resource-name'))]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Compute",
+                                        "type": "CustomScriptExtension",
+                                        "typeHandlerVersion": "1.8",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "fileUris": [
+                                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/windows/one-way-trust-dc.ps1')]"
+                                            ]
+                                        },
+                                        "protectedSettings": { 
+                                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./windows/one-way-trust-dc.ps1 -NewDnsZone ', toUpper(parameters('discovery-custom-domain')), ' -Domain ', toUpper(parameters('domain-name')), ' -KdcMasterHostname ', concat(parameters('extension-name'), '-vm1'), ' -KdcSlaveHostname ',concat(parameters('extension-name'), '-vm2'), ' -KerberosDbPassword ', parameters('domain-admin-password'))]"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "vm2SetupKDCSlave",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "configureOneWayTrust"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(variables('virtualMachine-name-prefix'), '2')]",
+                            "location": "[resourceGroup().location]",                            
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "setupKDC",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), '2'))]"
+                                    ],
+                                    "apiVersion": "2017-03-30",
+                                    "properties": {
+                                        "publisher": "Microsoft.Azure.Extensions",
+                                        "type": "CustomScript",
+                                        "typeHandlerVersion": "2.0",
+                                        "autoUpgradeMinorVersion": true,
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                                            "commandToExecute": "[concat('bash kdc-slave-setup.sh ', concat(parameters('extension-name'), '-vm2'), ' ', parameters('output-params-storage-key'), ' ', concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net'))]",
+                                            "fileUris": [
+                                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/centos/kdc-slave-setup.sh')]"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "kerberosPropagateDb",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "vm2SetupKDCSlave"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(variables('virtualMachine-name-prefix'), '1')]",
+                            "location": "[resourceGroup().location]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "setupKDC",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), '1'))]"
+                                    ],
+                                    "apiVersion": "2017-03-30",
+                                    "properties": {
+                                        "publisher": "Microsoft.Azure.Extensions",
+                                        "type": "CustomScript",
+                                        "typeHandlerVersion": "2.0",
+                                        "autoUpgradeMinorVersion": true,
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                                            "commandToExecute": "[concat('bash kdc-master-propagate-db.sh ', toUpper(parameters('discovery-custom-domain')), ' ', concat(parameters('extension-name'), '-vm2'))]",
+                                            "fileUris": [
+                                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/centos/kdc-master-propagate-db.sh')]"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "[concat('rebootVms', copyIndex(1))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "rebootVmsLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "dependsOn": [
+                "kerberosPropagateDb"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(variables('virtualMachine-name-prefix'), copyIndex(1))]",
+                            "location": "[resourceGroup().location]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "setupKDC",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyIndex(1)))]"
+                                    ],
+                                    "apiVersion": "2017-03-30",
+                                    "properties": {
+                                        "publisher": "Microsoft.Azure.Extensions",
+                                        "type": "CustomScript",
+                                        "typeHandlerVersion": "2.0",
+                                        "autoUpgradeMinorVersion": true,
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                                            "commandToExecute": "bash restart-vm.sh",
+                                            "fileUris": [
+                                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/centos/restart-vm.sh')]"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

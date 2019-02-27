@@ -1,0 +1,55 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "iscsi-ip": {
+        "value": "${workload.vm-configuration.iscsi-ip}"
+    },
+    "extension-name": {
+        "value": "iscsi"
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "virtualMachine-size": {
+        "value": "Standard_DS2_v2"
+    },
+    "os-type": {
+        "value": "${workload.vm-configuration.iscsi-os-type}"
+    },
+    "iqn1": {
+        "value": "${workload.vm-configuration.iscsi-iqn1}"
+    },
+    "iqn1-client1": {
+        "value": "${workload.vm-configuration.iscsi-iqn1-client1}"
+    },
+    "iqn1-client2": {
+        "value": "${workload.vm-configuration.iscsi-iqn1-client2}"
+    },
+    "iqn2": {
+        "value": "${workload.vm-configuration.iscsi-iqn2}"
+    },
+    "iqn2-client1": {
+        "value": "${workload.vm-configuration.iscsi-iqn2-client1}"
+    },
+    "iqn2-client2": {
+        "value": "${workload.vm-configuration.iscsi-iqn2-client2}"
+    },
+    "iqn3": {
+        "value": "${workload.vm-configuration.iscsi-iqn3}"
+    },
+    "iqn3-client1": {
+        "value": "${workload.vm-configuration.iscsi-iqn3-client1}"
+    },
+    "iqn3-client2": {
+        "value": "${workload.vm-configuration.iscsi-iqn3-client2}"
+    }
+}

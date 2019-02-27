@@ -1,0 +1,46 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "extension-name": {
+        "value": "opsman"
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "domain-name": {
+        "value": "${shared-services.active-directory.domain-name}"
+    },
+    "virtualMachine-size": {
+        "value": "Standard_DS2_v2"
+    },
+    "pcf-opsman-static-ip": {
+        "value": "${workload.dns.a-records[0].ipaddress}"
+    },
+    "pcf-opsman-subnet-name": {
+        "value": "${workload.network.subnets[2].name}"
+    },
+    "pcf-opsman-vhd": {
+        "value": "${workload.vm-configuration.opsman-vhd}"
+    },
+    "adds-resourceGroup": {
+        "value": "${shared-services.adds.resource-group-name}"
+    },
+    "adds-subscriptionId": {
+        "value": "${shared-services.subscription-id}"
+    },
+    "adds-vm1-resource-name": {
+        "value": "${shared-services.adds.adds-vm1-resource-name}"
+    },
+    "a-records": {
+        "value": "${workload.dns.a-records}"
+    }
+}

@@ -1,0 +1,616 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                 "description": ""
+             }
+        },
+        "organization-name": {
+            "type": "string",
+            "metadata": {
+                 "description": ""
+             }
+        },
+        "output-params-storage-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account Key. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "output-params-storage-account-name":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "oms-id":{  
+            "type":"string",
+            "metadata":{  
+              "description": "ResourceId of the OMS workspace used for diagnostic log integration."
+            }
+        },
+        "vnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Identifier of the virtual network."
+            }
+        },
+        "vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group name of the virtual network."
+            }
+        },
+        "shared-services-shared-services-nsg-name": {
+            "type": "string",
+            "metadata": {
+                 "description": "Specifies the Shared services gateway name"
+             }
+         },
+        "shared-services-vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared services Virtual Network resource group name"
+            }
+        },
+        "shared-services-subscription-id": {
+            "type": "string",
+            "metadata": {
+                 "description": "Shared services Subscription Id"
+             }
+        },
+        "shared-services-dc-asg-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared services Domain Controller ASG Name"
+            }
+        },
+        "shared-services-deployment-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared services deployment name"
+            }
+        },
+        "default-subnet-name": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+                "description": "Name of the private subnet inside the workload virtual network."
+            }
+        },
+        "default-subnet-address-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "web-asg-name": {
+            "type": "string",
+            "metadata": {
+                "description": "ASG associated to Web Nic"
+            }
+        },
+        "extension-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the extension deployment."
+            }
+        },
+        "username": {
+            "type": "string",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "admin-username": {
+            "type": "string",
+            "metadata": {
+                "description": "The username used to establish management VMs."
+            }
+        },
+        "admin-password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password given to the admin user."
+            }
+        },
+        "domain-name": {
+            "type": "string",
+            "metadata": {
+                "description": "AD Domain name"
+            }
+        },
+        "domain-admin-user": {
+            "type": "string",
+            "metadata": {
+                "description": "Domain user that has privileges to join a VM into a Domain"
+            }
+        },
+        "domain-admin-password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Domain user that has privileges to join a VM into a Domain"
+            }
+        },
+        "virtualMachine-size": {
+            "type": "string",
+            "defaultValue": "Standard_DS1_v2",
+            "metadata": {
+                "description": "Size of the management VMs."
+            }
+        },
+        "virtualMachine-count": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Number of management VMs to be created."
+            }
+        },
+        "os-image": {
+            "type": "object",
+            "metadata": {
+                "description": "OS image used for the management VMs."
+            }
+        },
+        "os-type": {
+            "type": "string",
+            "metadata": {
+                "description": "OS Type"
+            }
+        },
+        "smartsense": {
+            "defaultValue": "false",
+            "allowedValues": [
+                "true",
+                "false"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "By Opting-In, you read and agree to the SmartSense terms."
+            }
+        },
+        "sshKey": {
+            "type": "string",
+            "metadata": {
+                "description": "SSH key for cloudbreak."
+            }
+        },
+        "mysql-properties": {
+            "type": "object",
+            "metadata": {
+                "description": "MySQL Server and database information"
+            }
+        },
+        "postgres-properties": {
+            "type": "object",
+            "metadata": {
+                "description": "PostgreSQL Server and database information"
+            }
+        },
+        "discovery-custom-domain": {
+            "type": "string",
+            "metadata": {
+                "description": "Custom domain used in the cluster creation"
+            }
+        },
+        "azure-firewall-private-ip-address": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Firewall IP that controls egress traffic"
+            }
+        }
+    },
+    "variables": {
+        "resource-prefix": "[concat(parameters('deployment-prefix'))]",
+        "mysql-server-name": "[tolower(parameters('mysql-properties').name)]",
+        "postgres-server-name": "[tolower(parameters('postgres-properties').name)]",
+        "availabilitySet-name": "[concat(parameters('extension-name'), '-as')]",
+        "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
+        "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('default-subnet-name'))]",
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+        "diagnostic-storageAccount-prefix": "[concat(variables('resource-prefix'), 'diag')]",
+        "diagnostic-storageAccount-name": "[replace(toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) ), '-', '')]",
+        "networkWatcher-extension-name": "NetworkWatcher",
+        "osDisk-createOption": "FromImage",
+        "shared-svcs-nsg-id": "[resourceId(parameters('shared-services-subscription-id'), parameters('shared-services-vnet-resourceGroup'), 'Microsoft.Network/networkSecurityGroups', parameters('shared-services-shared-services-nsg-name'))]",
+        "single-quote": "'",
+        "web-asg-id": "[resourceId(parameters('vnet-resourceGroup'),'Microsoft.Network/applicationSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('web-asg-name'), '-asg'))]",
+        "cloudbreak-nsg": [
+            {
+                "name": "allow-cloudbreak-access",
+                "properties": {
+                    "access": "Allow",
+                    "destinationPortRange": "*",
+                    "destinationApplicationSecurityGroups": [
+                        {
+                            "id": "[resourceId(parameters('shared-services-subscription-id'), parameters('shared-services-vnet-resourceGroup'), 'Microsoft.Network/applicationSecurityGroups', concat(parameters('organization-name'), '-', parameters('shared-services-deployment-name'), '-', parameters('shared-services-dc-asg-name'), '-asg'))]",
+                            "location": "[resourceGroup().location]"
+                        }
+                    ],
+                    "direction": "Inbound",
+                    "priority": 500,
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourceAddressPrefix": "[parameters('default-subnet-address-prefix')]"
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-12-01",
+            "type": "Microsoft.DBforPostgreSQL/servers",
+            "kind": "",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('postgres-server-name')]",
+            "properties": {
+              "version": "[parameters('postgres-properties').version]",
+              "administratorLogin": "[parameters('postgres-properties').username]",
+              "administratorLoginPassword": "[parameters('admin-password')]",
+              "storageProfile": {
+                "storageMB": "[parameters('postgres-properties').sku.size]",
+                "backupRetentionDays": "[parameters('postgres-properties').backupRetention]",
+                "geoRedundantBackup": "[parameters('postgres-properties').geoRedundantBackup]"
+              },
+              "sslEnforcement": "Disabled"
+            },
+            "sku": {
+              "name": "[parameters('postgres-properties').sku.name]",
+              "tier": "[parameters('postgres-properties').sku.tier]",
+              "capacity": "[parameters('postgres-properties').sku.capacityDTU]",
+              "size": "[parameters('postgres-properties').sku.size]",
+              "family": "[parameters('postgres-properties').sku.family]"
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/servers/virtualNetworkRules",            
+            "name": "[concat(variables('postgres-server-name'), '/', parameters('postgres-properties')['virtualNetwork-rules'][copyIndex()].name)]",
+            "apiVersion": "2017-12-01",
+            "condition": "[greater(length(parameters('postgres-properties')['virtualNetwork-rules']), 0)]",
+            "dependsOn": [
+                "[concat('Microsoft.DBforPostgreSQL/servers/', variables('postgres-server-name'))]"
+            ],
+            "copy": {
+                "name": "postgresSvcEndpointRules",
+                "count": "[length(parameters('postgres-properties')['virtualNetwork-rules'])]"
+            },
+            "properties": {
+                "virtualNetworkSubnetId": "[concat(parameters('vnet-id'), '/subnets/', parameters('postgres-properties')['virtualNetwork-rules'][copyIndex()]['subnet-name'])]"
+            }
+        },
+        {
+            "type": "Microsoft.DBforPostgreSQL/servers/databases",
+            "name": "[concat(variables('postgres-server-name'), '/', parameters('postgres-properties')['databases'][copyIndex()].name)]",
+            "apiVersion": "2017-12-01",
+            "condition": "[greater(length(parameters('postgres-properties')['databases']), 0)]",
+            "properties": {
+                "charset": "[parameters('postgres-properties')['databases'][copyIndex()].charset]",
+                "collation": "[parameters('postgres-properties')['databases'][copyIndex()].collation]"
+            },
+            "copy": {
+                "name": "postgresDbLoop",
+                "count": "[length(parameters('postgres-properties')['databases'])]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.DBforPostgreSQL/servers/', variables('postgres-server-name'))]"
+            ]
+        },
+        {
+            "apiVersion": "2017-12-01-preview",
+            "type": "Microsoft.DBforMySQL/servers",
+            "kind": "",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('mysql-server-name')]",
+            "properties": {
+                "version": "[parameters('mysql-properties').version]",
+                "administratorLogin": "[parameters('mysql-properties').username]",
+                "administratorLoginPassword": "[parameters('admin-password')]",
+                "storageProfile": {
+                    "storageMB": "[parameters('mysql-properties').sku.size]",
+                    "backupRetentionDays": "[parameters('mysql-properties').backupRetention]",
+                    "geoRedundantBackup": "[parameters('mysql-properties').geoRedundantBackup]"
+                },
+                "sslEnforcement": "Disabled"
+            },
+            "sku": {
+                "name": "[parameters('mysql-properties').sku.name]",
+                "tier": "[parameters('mysql-properties').sku.tier]",
+                "capacity": "[parameters('mysql-properties').sku.capacity]",
+                "size": "[parameters('mysql-properties').sku.size]",
+                "family": "[parameters('mysql-properties').sku.family]"
+            }
+        },
+        {
+            "type": "Microsoft.DBforMySQL/servers/virtualNetworkRules",            
+            "name": "[concat(variables('mysql-server-name'), '/', parameters('mysql-properties')['virtualNetwork-rules'][copyIndex()].name)]",
+            "apiVersion": "2017-12-01-preview",
+            "condition": "[greater(length(parameters('mysql-properties')['virtualNetwork-rules']), 0)]",
+            "dependsOn": [
+                "[concat('Microsoft.DBforMySQL/servers/', variables('mysql-server-name'))]"
+            ],
+            "copy": {
+                "name": "mysqlSvcEndpointRules",
+                "count": "[length(parameters('mysql-properties')['virtualNetwork-rules'])]"
+            },
+            "properties": {
+                "virtualNetworkSubnetId": "[concat(parameters('vnet-id'), '/subnets/', parameters('mysql-properties')['virtualNetwork-rules'][copyIndex()]['subnet-name'])]"
+            }
+        },
+        {
+            "type": "Microsoft.DBforMySQL/servers/databases",
+            "name": "[concat(variables('mysql-server-name'), '/', parameters('mysql-properties')['databases'][copyIndex()].name)]",
+            "apiVersion": "2017-12-01-preview",
+            "condition": "[greater(length(parameters('mysql-properties')['databases']), 0)]",
+            "properties": {
+                "charset": "[parameters('mysql-properties')['databases'][copyIndex()].charset]",
+                "collation": "[parameters('mysql-properties')['databases'][copyIndex()].collation]"
+            },
+            "copy": {
+                "name": "mysqlDbLoop",
+                "count": "[length(parameters('mysql-properties')['databases'])]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.DBforMySQL/servers/', variables('mysql-server-name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('diagnostic-storageAccount-name')]",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "tags": {
+                "displayName": "Management Diagnostic Storage Account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2016-04-30-preview",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('availabilitySet-name')]",
+            "tags": {
+                "displayName": "[variables('availabilitySet-name')]"
+            },
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 5,
+                "managed": true
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1')]",
+            "apiVersion": "2017-09-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnet-id')]"
+                            },
+                            "applicationSecurityGroups": [
+                                {
+                                    "id": "[variables('web-asg-id')]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "nestedDeploySharedSvcsNSG",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('shared-services-vnet-resourceGroup')]",
+            "subscriptionId": "[parameters('shared-services-subscription-id')]",
+            "dependsOn": [
+                "nicLoop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-10-01",
+                            "type": "Microsoft.Network/networkSecurityGroups",
+                            "name": "[parameters('shared-services-shared-services-nsg-name')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "securityRules": "[concat(reference(variables('shared-svcs-nsg-id'), '2017-10-01').securityRules, variables('cloudbreak-nsg'))]"
+                            }
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]"
+            },
+            "copy": {
+                "name": "vmLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts',variables('diagnostic-storageAccount-name'))]",
+                "nestedDeploySharedSvcsNSG",
+                "nicLoop"
+            ],
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('extension-name'), '-vm',copyindex(1))]",
+                    "adminUsername": "[parameters('admin-username')]",
+                    "adminPassword": "[parameters('admin-password')]",
+                    "customData": "[base64(concat('#!/bin/bash\n','\necho \"export PUBLIC_IP=',reference(resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1'))).ipConfigurations[0].properties.privateIpAddress,'\" >> /tmp/.cbdprofile','\necho \"export CB_TRAEFIK_HOST_ADDRESS=',reference(resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1'))).ipConfigurations[0].properties.privateIpAddress,'\" >> /tmp/.cbdprofile','\necho \"export CBD_VERSION=2.7.1\" >> /tmp/.cbdprofile','\necho \"export CB_HOST_DISCOVERY_CUSTOM_DOMAIN=', parameters('discovery-custom-domain'),'\" >> /tmp/.cbdprofile','\necho \"export AZURE_SUBSCRIPTION_ID=',subscription().subscriptionId,'\" >> /tmp/.cbdprofile','\necho \"export AZURE_TENANT_ID=',subscription().tenantId,'\" >> /tmp/.cbdprofile','\necho \"export UAA_DEFAULT_USER_EMAIL=',parameters('username'),'\" >> /tmp/.cbdprofile','\necho $',variables('single-quote'), 'export UAA_DEFAULT_USER_PW=$\\',variables('single-quote'),parameters('admin-password'),'\\', variables('single-quote'),variables('single-quote'), '>> /tmp/.cbdprofile','\necho \"export CB_SMARTSENSE_CONFIGURE=',parameters('smartsense'),'\" >> /tmp/.cbdprofile','\necho \"export OS_USER=',parameters('admin-username'),'\" >> /tmp/.cbdprofile', '\necho \"export ULU_DEFAULT_SSH_KEY=',variables('single-quote'),parameters('sshKey'),variables('single-quote'),'\" >> /tmp/.cbdprofile', '\necho \"export SUBNET_CIDR=',parameters('default-subnet-address-prefix'),'\" >> /tmp/.cbdprofile', '\necho \"export UAA_DEFAULT_SECRET=',base64(resourceGroup().id),'\" >> /tmp/.cbdprofile'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachine-size')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('os-image').publisher]",
+                        "offer": "[parameters('os-image').offer]",
+                        "sku": "[parameters('os-image').sku]",
+                        "version": "[parameters('os-image').version]"
+                    },
+                    "osDisk": {
+                        "name": "[replace(toLower(substring(concat(parameters('extension-name'), copyindex(1), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]",                        
+                        "osType": "[parameters('os-type')]",
+                        "caching": "ReadWrite",
+                        "createOption": "[variables('osDisk-createOption')]"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic1'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[variables('networkWatcher-extension-name')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'installcustomscript')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.NetworkWatcher",
+                        "type": "NetworkWatcherAgentLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true
+                    }
+                },
+                {
+                    "type": "extensions",
+                    "name": "installcustomscript",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]"                       
+                    ],
+                    "apiVersion": "2017-03-30",
+                    "properties": {
+                        "publisher": "Microsoft.Azure.Extensions",
+                        "type": "CustomScript",
+                        "typeHandlerVersion": "2.0",
+                        "autoUpgradeMinorVersion": true,
+                        "protectedSettings": {
+                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                            "commandToExecute": "[concat('bash join-ad-domain.sh ', concat(parameters('extension-name'), '-vm',copyindex(1)),' ', toUpper(parameters('domain-name')),' ', parameters('domain-admin-user'),' ', variables('single-quote'), parameters('domain-admin-password'), variables('single-quote'))]",
+                            "fileUris": [
+                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/centos/join-ad-domain.sh')]"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "[concat('vm', copyindex(1), 'CbdNestedDeployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "condition": false,
+            "dependsOn": [
+                "vmLoop"
+            ],
+            "copy": {
+                "name": "customScriptCbdLoop",
+                "count": "[parameters('virtualMachine-count')]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
+                            "location": "[resourceGroup().location]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "installcustomscript",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]"
+                                    ],
+                                    "apiVersion": "2017-03-30",
+                                    "properties": {
+                                        "publisher": "Microsoft.Azure.Extensions",
+                                        "type": "CustomScript",
+                                        "typeHandlerVersion": "2.0",
+                                        "autoUpgradeMinorVersion": true,
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                                            "commandToExecute": "bash install-cbd.sh",
+                                            "fileUris": [
+                                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/hadoop/install-cbd.sh')]"
+                                            ]  
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

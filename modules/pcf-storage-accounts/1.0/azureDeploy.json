@@ -1,0 +1,169 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "storage-accounts": {
+            "type": "array",
+            "metadata": {
+                "description": ""
+            }
+        }
+    },
+    "variables": {
+        "image": "microsoft/azure-cli",
+        "cpuCores": "1.0",
+        "memoryInGb": "1.5",
+        "containerGroupName": "createtable-containerinstance",
+        "containerName": "createstemcelltable",
+        "uniqueString": "[uniqueString(subscription().id, concat(parameters('deployment-prefix'), 'strg'))]",
+        "director-storage-account-name": "[toLower(substring(replace(concat('p', parameters('storage-accounts')[1], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]",
+            "apiVersion": "2018-02-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "storageAccountLoop",
+                "count": "[length(parameters('storage-accounts'))]"
+            },
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "tags": {
+                "displayName": "pcf-storage-account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "name": "[concat('default/', 'bosh')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', 'backups')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', 'buildpacks')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', 'droplets')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', 'packages')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', 'resources')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', 'opsmanagerimage')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', 'tmp')]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "dependsOn": [
+                        "[toLower(substring(replace(concat('p', parameters('storage-accounts')[copyIndex()], variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "[variables('containerGroupName')]",
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2018-02-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "storageAccountLoop"
+            ],
+            "properties": {
+                "containers": [
+                    {
+                        "name": "[variables('containerName')]",
+                        "properties": {
+                            "image": "[variables('image')]",
+                            "command": [
+                                "az",
+                                "storage",
+                                "table",
+                                "create",
+                                "--name",
+                                "stemcell"
+                            ],
+                            "environmentVariables": [
+                                {
+                                    "name": "AZURE_STORAGE_KEY",
+                                    "value": "[listKeys(variables('director-storage-account-name'),'2017-10-01').keys[0].value]"
+                                },
+                                {
+                                    "name": "AZURE_STORAGE_ACCOUNT",
+                                    "value": "[variables('director-storage-account-name')]"
+                                }
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "cpu": "[variables('cpuCores')]",
+                                    "memoryInGb": "[variables('memoryInGb')]"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "restartPolicy": "OnFailure",
+                "osType": "Linux"
+            }
+        }
+    ],
+    "outputs": {}
+}

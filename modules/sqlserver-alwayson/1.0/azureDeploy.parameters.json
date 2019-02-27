@@ -1,0 +1,71 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "data-asg-name": {
+        "value": "${workload.network.application-security-groups[2].name}"
+    },
+    "extension-name": {
+        "value": "sqldb"
+    },
+    "os-image": {
+        "value": {
+            "offer": "SQL2017-WS2016",
+            "publisher": "MicrosoftSQLServer",
+            "sku": "Enterprise",
+            "version": "latest"
+        }
+    },
+    "os-type": {
+        "value": "Windows"
+    },
+    "virtualMachine-count": {
+        "value": 2
+    },
+    "virtualMachine-size": {
+        "value": "Standard_DS12_v2"
+    },
+    "domain-name": {
+        "value": "${shared-services.active-directory.domain-name}"
+    },
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
+    },
+    "domain-admin-user": {
+        "value": "${shared-services.active-directory.domain-admin-user}"
+    },
+    "domain-admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${shared-services.active-directory.domain-admin-user}"
+        }
+    },
+    "default-subnet-address-prefix": {
+        "value": "${workload.network.subnets[0].address-prefix}"
+    },
+    "cluster-name": {
+        "value": "${workload.vm-configuration.sql-server-cluster-name}"
+    },
+    "sql-server-start-ip-address": {
+        "value": "${workload.vm-configuration.sql-server-start-ip-address}"
+    },
+    "sql-server-cluster-ip-address": {
+        "value": "${workload.vm-configuration.sql-server-cluster-ip-address}"
+    },
+    "sql-server-ilb-ip-address": {
+        "value": "${workload.vm-configuration.sql-server-ilb-ip-address}"
+    }
+}

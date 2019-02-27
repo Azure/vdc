@@ -1,0 +1,51 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "extension-name": {
+        "value": "ascs"
+    },
+    "stack-type": {
+        "value": "ABAP"
+    },
+    "os-type": {
+        "value": "${workload.vm-configuration.ascs-os-type}"
+    },
+    "sap-system-count": {
+        "value": 2
+    },
+    "system-availability": {
+        "value": "HA"
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "authentication-type": {
+        "value": "password"
+    },
+    "sshKey": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-ssh-key-name}"
+        }
+    },
+    "ascs-instanceNumber": {
+        "value": 10
+    },
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
+    },
+    "business-asg-name": {
+        "value": "${workload.network.application-security-groups[1].name}"
+    }
+}

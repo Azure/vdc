@@ -1,0 +1,64 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "nfs-address-start": {
+        "value": "${workload.vm-configuration.nfs-address-start}"
+    },
+    "nfs-lb-ip": {
+        "value": "${workload.vm-configuration.nfs-lb-ip}"
+    },
+    "iscsi-ip": {
+        "value": "${workload.vm-configuration.iscsi-ip}"
+    },
+    "extension-name": {
+        "value": "sap-iscsi"
+    },
+    "admin-username": {
+        "value": "${workload.vm-configuration.local-admin-user}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${workload.subscription-id}/resourceGroups/${general.organization-name}-${workload.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${workload.deployment-name}-kv"
+            },
+            "secretName": "${workload.vm-configuration.local-admin-user}"
+        }
+    },
+    "virtualMachine-size": {
+        "value": "Standard_D3_v2"
+    },
+    "virtualMachine-count": {
+        "value": 2
+    },
+    "os-type": {
+        "value": "SLES for SAP 12 SP3"
+    },
+    "data-disk-size": {
+        "value": 1023
+    },
+    "hana-sid": {
+        "value": "${workload.vm-configuration.hana-sid}"
+    },
+    "subscription-email": {
+        "value": "${workload.vm-configuration.subscription-email}"
+    },
+    "subscription-id": {
+        "value": "${workload.subscription-id}"
+    },
+    "iqn2": {
+        "value": "${workload.vm-configuration.iscsi-iqn2}"
+    },
+    "iqn2-client1": {
+        "value": "${workload.vm-configuration.iscsi-iqn2-client1}"
+    },
+    "iqn2-client2": {
+        "value": "${workload.vm-configuration.iscsi-iqn2-client2}"
+    },
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
+    },
+    "business-asg-name": {
+        "value": "${workload.network.application-security-groups[1].name}"
+    }
+}

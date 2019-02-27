@@ -1,0 +1,106 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "on-premises-gateway-name": {
+            "type": "string",
+            "metadata": {
+                 "description": "Specifies the On-premises gateway name"
+             }
+         },
+         "on-premises-subscription-id": {
+            "type": "string",
+            "metadata": {
+                 "description": "On-premises subscription id, this value is used to create a VPN connection between the Shared services and on-premises"
+             }
+        },
+        "on-premises-vnet-rg": {
+            "type": "string",
+            "metadata": {
+                 "description": "On-premises resource group that contains the Virtual Network, this value is used to create a VPN connection between the Shared services and on-premises"
+             }
+        },
+        "vpn-shared-key": {
+            "type": "string",
+            "metadata": {
+                 "description": "Specifies a VPN shared key. The same value has to be specified in On-premises and Azure"
+             }
+        },
+        "shared-services-gateway-id": {
+            "type": "string",
+            "metadata": {
+                 "description": "Shared services Gateway Id"
+             }
+        },
+        "vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared services Virtual Network resource group name"
+            }
+        },
+        "subscription-id": {
+            "type": "string",
+            "metadata": {
+                 "description": "Subscription where to provision the Virtual Network Gateway"
+             }
+        },
+        "enable-bgp": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Value to specify if BGP is enabled or not"
+            }
+        },
+        "deployment-name": {
+            "type": "string",
+            "metadata": {
+                 "description": "Shared services deployment name"
+             }
+        }
+    },
+    "variables": {
+        "on-premises-gateway-resource-id": "[resourceId(parameters('on-premises-subscription-id'), parameters('on-premises-vnet-rg') ,'Microsoft.Network/virtualNetworkGateways', parameters('on-premises-gateway-name'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "nestedDeployVGWConnection",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('vnet-resourceGroup')]",
+            "subscriptionId": "[parameters('subscription-id')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "[concat(parameters('deployment-name'), '-to-on-premises')]",
+                            "type": "Microsoft.Network/connections",
+                            "apiVersion": "2017-10-01",
+                            "location": "[resourceGroup().location]",
+                            "tags": {
+                                "displayName": "[concat(parameters('deployment-name'), '-to-on-premises')]"
+                            },
+                            "properties":{
+                                "virtualNetworkGateway1":{
+                                    "id": "[parameters('shared-services-gateway-id')]"
+                                },
+                                "virtualNetworkGateway2":{
+                                    "id": "[variables('on-premises-gateway-resource-id')]"
+                                },
+                                "enableBgp": "[parameters('enable-bgp')]",
+                                "connectionType": "VNet2VNet",
+                                "routingWeight": 3,                                
+                                "sharedKey": "[parameters('vpn-shared-key')]"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

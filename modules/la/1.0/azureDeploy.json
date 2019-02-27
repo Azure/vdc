@@ -1,0 +1,91 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "service-tier": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Standalone",
+                "PerNode"
+            ],
+            "metadata": {
+                "description": "Service Tier: Free, Standalone, or PerNode"
+            }
+        },
+        "data-retention": {
+            "type": "int",
+            "defaultValue": 30,
+            "minValue": 7,
+            "maxValue": 730,
+            "metadata": {
+                "description": "Number of days data will be retained for."
+            }
+        },
+        "location": {
+            "type": "string",
+            "allowedValues": [
+                "Australia Southeast",
+                "Canada Central",
+                "Central India",
+                "East US",
+                "Japan East",
+                "Southeast Asia",
+                "UK South",
+                "West Europe",
+                "West US 2"
+            ],
+            "metadata": {
+                "description": "Region used when establishing the workspace."
+            }
+        }
+    },
+    "variables": {
+        "oms-workspace-name": "[concat(parameters('deployment-prefix'), '-la')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-03-15-preview",
+            "name": "[variables('oms-workspace-name')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                
+            },
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "properties": {
+                "sku": {
+                    "Name": "[parameters('service-tier')]"
+                },
+                "retention": "[parameters('data-retention')]"
+            }
+        }
+    ],
+    "outputs": {
+        "oms-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('oms-workspace-name'))]"
+        },
+        "oms-workspace-resourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        },
+        "oms-workspace-name": {
+            "type": "string",
+            "value": "[variables('oms-workspace-name')]"
+        },
+        "oms-workspace-id": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('oms-workspace-name')), '2015-03-20').customerId]"
+        },
+        "oms-primary-shared-key": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('oms-workspace-name')), '2015-03-20').primarySharedKey]"
+        }
+    }
+}

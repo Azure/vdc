@@ -1,0 +1,653 @@
+{
+    "general": {
+        "organization-name": "org",
+        "tenant-id": "00000000-0000-0000-0000-000000000000",
+        "deployment-user-id": "00000000-0000-0000-0000-000000000000",
+        "vdc-storage-account-name": "storage",
+        "vdc-storage-account-rg": "vdc-storage-rg",
+        "on-premises": {
+            "deployment-name": "onprem",
+            "subscription-id": "00000000-0000-0000-0000-000000000000",
+            "region": "Central US",
+            "active-directory": {
+                "AD-sitename": "Cloud-Site",
+                "domain-admin-user": "contoso",
+                "domain-name": "contoso.com"
+            }
+        },
+        "shared-services": {
+            "deployment-name": "ssvcs",
+            "subscription-id": "00000000-0000-0000-0000-000000000000",
+            "region": "Central US",
+            "vm-configuration": {
+                "local-admin-user": "admin-user",
+                "enable-encryption": false,
+                "encryption-keys-for": []
+            },
+            "keyvault": {
+                "secrets": [
+                    {
+                        "secretName": "${general.shared-services.vm-configuration.local-admin-user}",
+                        "secretValue": ""
+                    },
+                    {
+                        "secretName": "${general.on-premises.active-directory.domain-admin-user}",
+                        "secretValue": ""
+                    },
+                    {
+                        "secretName": "self-certificate-base64",
+                        "secretValue": ""
+                    },
+                    {
+                        "secretName": "self-certificate-password",
+                        "secretValue": ""
+                    }
+                ]
+            },
+            "log-analytics": {
+                "region": "West US 2"
+            }
+        }
+    },
+    "orchestration": {
+        "modules-to-deploy": [
+            "la",
+            "nsg",
+            "shared-services-net",
+            "vgw",
+            "vgw-connection",
+            "onprem-vgw-connection",
+            "azure-fw",
+            "kv",
+            "jb",
+            "adds"
+        ],
+        "module-validation-dependencies": [
+            "kv"
+        ],
+        "module-configuration": {
+            "import-modules": "file(modules)",
+            "custom-scripts": "file(scripts)",
+            "modules": [
+                {
+                    "module": "la",
+                    "source": {
+                        "version": "1.0",
+                        "template-path": "file(modules/la/1.0)",
+                        "parameters-path": "file(modules/la/1.0)",
+                        "policy-path": "file(modules/la/1.0)"
+                    },
+                    "dependencies": []
+                },
+                {
+                    "module": "shared-services-net",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "nsg"
+                    ]
+                },
+                {
+                    "module": "nsg",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-net-rg",
+                    "source": {
+                        "version": "latest"
+                    },
+                    "dependencies": [
+                        "la"
+                    ]
+                },
+                {
+                    "module": "vgw",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "shared-services-net"
+                    ]
+                },
+                {
+                    "module": "vgw-connection",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "shared-services-net",
+                        "vgw"
+                    ]
+                },
+                {
+                    "module": "onprem-vgw-connection",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "shared-services-net"
+                    ]
+                },
+                {
+                    "module": "azure-fw",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "shared-services-net",
+                        "la"
+                    ]
+                },
+                {
+                    "module": "kv",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-kv-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la"
+                    ]
+                },
+                {
+                    "module": "adds",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "kv",
+                        "shared-services-net",
+                        "la"
+                    ]
+                },
+                {
+                    "module": "jb",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "kv",
+                        "shared-services-net",
+                        "la"
+                    ]
+                },
+                {
+                    "module": "ubuntu-nva",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "kv",
+                        "shared-services-net"
+                    ]
+                }
+            ]
+        }
+    },
+    "on-premises": {
+        "subscription-id": "${general.on-premises.subscription-id}",
+        "deployment-name": "${general.on-premises.deployment-name}",
+        "region": "${general.on-premises.region}",
+        "network": {
+            "address-prefix": "192.168.1.0/28",
+            "resource-group-name": "${general.organization-name}-${on-premises.deployment-name}-net-rg",
+            "virtual-gateway": {
+                "gateway-name": "${general.organization-name}-${on-premises.deployment-name}-gw"
+            }
+        },
+        "active-directory": {
+            "AD-sitename": "${general.on-premises.active-directory.AD-sitename}",
+            "domain-admin-user": "${general.on-premises.active-directory.domain-admin-user}",
+            "domain-name": "${general.on-premises.active-directory.domain-name}",
+            "primaryDC-IP": "192.168.1.4"
+        },
+        "allow-rdp-address-range": "192.168.1.4"
+    },
+    "shared-services": {
+        "subscription-id": "${general.shared-services.subscription-id}",
+        "deployment-name": "${general.shared-services.deployment-name}",
+        "region": "${general.shared-services.region}",
+        "adds": {
+            "vm-ip-address-start": "10.4.0.46"
+        },
+        "vm-configuration": {
+            "local-admin-user": "${general.shared-services.vm-configuration.local-admin-user}",
+            "enable-encryption": "${general.shared-services.vm-configuration.enable-encryption}",
+            "encryption-keys-for": "${general.shared-services.vm-configuration.encryption-keys-for}"
+        },
+        "log-analytics": {
+            "region": "${general.shared-services.log-analytics.region}"
+        },
+        "keyvault": "${general.shared-services.keyvault}",
+        "network": {
+            "enable-ddos-protection": false,
+            "address-prefix": "10.4.0.0/23",
+            "network-virtual-appliance": {
+                "egress-ip": "${shared-services.network.network-virtual-appliance.azure-firewall.egress.ip}",
+                "azure-firewall": {
+                    "egress": {
+                        "ip": "10.4.1.4"
+                    }
+                },
+                "custom-ubuntu": {
+                    "egress": {
+                        "ip": "10.4.0.20",
+                        "vm-ip-address-start": "10.4.0.5"
+                    }
+                }
+            },
+            "virtual-gateway": {
+                "gateway-type": "vpn",
+                "gateway-sku": "VpnGw1",
+                "vpn-type": "RouteBased"
+            },
+            "application-security-groups": [
+                {
+                    "name": "dc"
+                },
+                {
+                    "name": "jb"
+                }
+            ],
+            "network-security-groups": [
+                {
+                    "name": "sharedsvcs",
+                    "rules": [
+                        {
+                            "name": "allow-tcp-between-adds",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRange": "",
+                                "destinationPortRanges": [
+                                    "389",
+                                    "42",
+                                    "88",
+                                    "636",
+                                    "3268",
+                                    "3269",
+                                    "445",
+                                    "25",
+                                    "135",
+                                    "5722",
+                                    "464",
+                                    "9389",
+                                    "139",
+                                    "53",
+                                    "49152-65535"
+                                ],
+                                "direction": "Inbound",
+                                "priority": 100,
+                                "protocol": "Tcp",
+                                "sourceAddressPrefix": "",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "allow-udp-between-adds",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRange": "",
+                                "destinationPortRanges": [
+                                    "389",
+                                    "88",
+                                    "445",
+                                    "123",
+                                    "464",
+                                    "138",
+                                    "137",
+                                    "53",
+                                    "49152-65535"
+                                ],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ],
+                                "direction": "Inbound",
+                                "priority": 110,
+                                "protocol": "Udp",
+                                "sourceAddressPrefix": "",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "allow-tcp-ad",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRange": "",
+                                "destinationPortRanges": [
+                                    "389",
+                                    "42",
+                                    "88",
+                                    "636",
+                                    "3268",
+                                    "3269",
+                                    "445",
+                                    "25",
+                                    "135",
+                                    "5722",
+                                    "464",
+                                    "9389",
+                                    "139",
+                                    "53",
+                                    "49152-65535"
+                                ],
+                                "direction": "Inbound",
+                                "priority": 120,
+                                "protocol": "Tcp",
+                                "sourceAddressPrefix": "${on-premises.active-directory.primaryDC-IP}",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-udp-ad",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRange": "",
+                                "destinationPortRanges": [
+                                    "389",
+                                    "88",
+                                    "445",
+                                    "123",
+                                    "464",
+                                    "138",
+                                    "137",
+                                    "53",
+                                    "49152-65535"
+                                ],
+                                "direction": "Inbound",
+                                "priority": 130,
+                                "protocol": "Udp",
+                                "sourceAddressPrefix": "${on-premises.active-directory.primaryDC-IP}",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-rdp-into-dc",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRange": "3389",
+                                "destinationPortRanges": [],
+                                "direction": "Inbound",
+                                "priority": 140,
+                                "protocol": "TCP",
+                                "sourceAddressPrefix": "",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[1].name}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "allow-rdp-ssh-into-jb",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRanges": [
+                                    "3389",
+                                    "22"
+                                ],
+                                "destinationPortRange": "",
+                                "direction": "Inbound",
+                                "priority": 150,
+                                "protocol": "TCP",
+                                "sourceAddressPrefix": "${on-premises.network.address-prefix}",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[1].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-tcp-vnet-adds",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRanges": [
+                                    "389",
+                                    "42",
+                                    "88",
+                                    "636",
+                                    "3268",
+                                    "3269",
+                                    "445",
+                                    "25",
+                                    "135",
+                                    "5722",
+                                    "464",
+                                    "9389",
+                                    "139",
+                                    "53",
+                                    "49152-65535"
+                                ],
+                                "destinationPortRange": "",
+                                "direction": "Inbound",
+                                "priority": 160,
+                                "protocol": "TCP",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-udp-vnet-adds",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRanges": [
+                                    "389",
+                                    "88",
+                                    "445",
+                                    "123",
+                                    "464",
+                                    "138",
+                                    "137",
+                                    "53",
+                                    "49152-65535"
+                                ],
+                                "destinationPortRange": "",
+                                "direction": "Inbound",
+                                "priority": 170,
+                                "protocol": "UDP",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[0].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "deny-vnet",
+                            "properties": {
+                                "access": "Deny",
+                                "destinationAddressPrefix": "VirtualNetwork",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "*",
+                                "destinationPortRanges": [],
+                                "direction": "Inbound",
+                                "priority": 4096,
+                                "protocol": "*",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-vnet",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefix": "*",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "*",
+                                "destinationPortRanges": [],
+                                "direction": "Outbound",
+                                "priority": 100,
+                                "protocol": "*",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "dmz",
+                    "rules": [
+                        {
+                            "name": "allow-vnet",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefix": "*",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "*",
+                                "destinationPortRanges": [],
+                                "direction": "Inbound",
+                                "priority": 100,
+                                "protocol": "*",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        }
+                    ]
+                }
+            ],
+            "user-defined-routes": [
+                {
+                    "name": "sharedsvcs",
+                    "routes": [
+                        {
+                            "name": "default",
+                            "properties": {
+                                "addressPrefix": "0.0.0.0/0",
+                                "nextHopIpAddress": "${shared-services.network.network-virtual-appliance.egress-ip}",
+                                "nextHopType": "VirtualAppliance"
+                            }
+                        },
+                        {
+                            "name": "to-on-premises",
+                            "properties": {
+                                "addressPrefix": "${on-premises.network.address-prefix}",
+                                "nextHopType": "VirtualNetworkGateway"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "subnets": [
+                {
+                    "name": "sharedsvcs",
+                    "address-prefix": "10.4.0.32/27",
+                    "network-security-group": "${shared-services.network.network-security-groups[0].name}",
+                    "user-defined-route": "${shared-services.network.user-defined-routes[0].name}",
+                    "service-endpoints": []
+                },
+                {
+                    "name": "dmz",
+                    "address-prefix": "10.4.0.0/27",
+                    "network-security-group": "${shared-services.network.network-security-groups[1].name}",
+                    "user-defined-route": "",
+                    "service-endpoints": []
+                },
+                {
+                    "name": "AppGateway",
+                    "address-prefix": "10.4.0.64/27",
+                    "network-security-group": "",
+                    "user-defined-route": "",
+                    "service-endpoints": []
+                },
+                {
+                    "name": "AzureFirewallSubnet",
+                    "address-prefix": "10.4.1.0/25",
+                    "network-security-group": "",
+                    "user-defined-route": "",
+                    "service-endpoints": []
+                },
+                {
+                    "name": "GatewaySubnet",
+                    "address-prefix": "10.4.0.128/27",
+                    "network-security-group": "",
+                    "user-defined-route": "",
+                    "service-endpoints": []
+                }
+            ],
+            "dns-servers": [
+                "${shared-services.adds.vm-ip-address-start}"
+            ]
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "policies":[  
+    {  
+        "name":"SharedServicesFwPermittedResourceTypes",
+        "description":"Policy to prevent the creation of unauthorized resource types resource group.",
+        "rules":{  
+            "if":{
+                "not":{
+                    "field":"type",
+                    "in":[
+                            "Microsoft.Compute/availabilitySets",
+                            "Microsoft.Network/publicIPAddresses",
+                            "Microsoft.Network/loadBalancers",
+                            "Microsoft.Network/routeTables",
+                            "Microsoft.Storage/storageAccounts",
+                            "Microsoft.Network/networkInterfaces",
+                            "Microsoft.Compute/virtualMachines",
+                            "Microsoft.Compute/disks",
+                            "Microsoft.Compute/virtualMachines/extensions"
+                        ]
+                }
+            },
+            "then":{
+                "effect":"audit"
+            }
+        }
+    }
+]}

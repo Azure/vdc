@@ -1,0 +1,73 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${shared-services.deployment-name}"
+    },
+    "admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${shared-services.vm-configuration.local-admin-user}"
+        }
+    },
+    "admin-username": {
+        "value": "${shared-services.vm-configuration.local-admin-user}"
+    },
+    "extension-name": {
+        "value": "adds"
+    },
+    "os-image": {
+        "value": {
+            "offer": "WindowsServer",
+            "publisher": "MicrosoftWindowsServer",
+            "sku": "2016-Datacenter"
+        }
+    },
+    "os-type": {
+        "value": "Windows"
+    },
+    "virtualMachine-count": {
+        "value": 2
+    },
+    "virtualMachine-size": {
+        "value": "Standard_DS2_v2"
+    },
+    "adds-address-start": {
+        "value": "${shared-services.adds.vm-ip-address-start}"
+    },
+    "domain-name": {
+        "value": "${on-premises.active-directory.domain-name}"
+    },
+    "on-premises-primaryDC-IP": {
+        "value": "${on-premises.active-directory.primaryDC-IP}"
+    },
+    "on-premises-AD-sitename": {
+        "value": "${on-premises.active-directory.AD-sitename}"
+    },
+    "dc-drive-letter": {
+        "value": "F"
+    },
+    "shared-services-subnet-name": {
+        "value": "${shared-services.network.subnets[0].name}"
+    },
+    "domain-admin-user": {
+        "value": "${on-premises.active-directory.domain-admin-user}"
+    },
+    "domain-admin-password": {
+        "reference": {
+            "keyVault": {
+                "id": "/subscriptions/${shared-services.subscription-id}/resourceGroups/${general.organization-name}-${shared-services.deployment-name}-kv-rg/providers/Microsoft.KeyVault/vaults/${general.organization-name}-${shared-services.deployment-name}-kv"
+            },
+            "secretName": "${on-premises.active-directory.domain-admin-user}"
+        }
+    },
+    "enable-encryption": {
+        "value": "${shared-services.vm-configuration.enable-encryption}"
+    },
+    "dc-asg-name": {
+        "value": "${shared-services.network.application-security-groups[0].name}"
+    },
+    "vnet-dns-servers": {
+        "value": "${shared-services.network.dns-servers}"
+    }
+}

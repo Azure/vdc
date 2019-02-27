@@ -1,0 +1,642 @@
+{
+    "general": {
+        "organization-name": "org",
+        "tenant-id": "00000000-0000-0000-0000-000000000000",
+        "deployment-user-id": "00000000-0000-0000-0000-000000000000",
+        "vdc-storage-account-name": "storage",
+        "vdc-storage-account-rg": "vdc-storage-rg",
+        "on-premises": {
+            "network": {
+                "address-prefix": "192.168.1.0/28"
+            },
+            "active-directory": {
+                "primaryDC-IP": "192.168.1.4"
+            },
+            "allow-rdp-address-range": "192.168.1.4"
+        },
+        "shared-services": {
+            "subscription-id": "00000000-0000-0000-0000-000000000000",
+            "deployment-name": "ssvcs",
+            "adds": {
+                "vm-ip-address-start": "10.4.0.46"
+            },
+            "active-directory": {
+                "discovery-custom-domain": "contosocloud.com",
+                "domain-admin-user": "contoso",
+                "domain-name": "contoso.com"
+            },
+            "network": {
+                "network-virtual-appliance": {
+                    "egress-ip": "10.4.1.4",
+                    "custom-ubuntu": {
+                        "egress": {
+                            "ip": "10.4.0.20",
+                            "vm-ip-address-start": "10.4.0.5"
+                        }
+                    }
+                }
+            }
+        },
+        "workload": {
+            "subscription-id": "00000000-0000-0000-0000-000000000000",
+            "deployment-name": "paas",
+            "region": "Central US",
+            "azure-sql-configuration": {
+                "admin-user": "sql-admin-user"
+            },
+            "keyvault": {
+                "secrets": [
+                    {
+                        "secretName": "${general.workload.azure-sql-configuration.admin-user}",
+                        "secretValue": ""
+                    }
+                ]
+            },
+            "log-analytics": {
+                "region": "West US 2"
+            },
+            "network": {
+                "enable-ddos-protection": false
+            }
+        }
+    },
+    "orchestration": {
+        "modules-to-deploy": [
+            "la",
+            "nsg",
+            "workload-net",
+            "kv",
+            "sqldb",
+            "ase"
+        ],
+        "module-validation-dependencies": [
+            "kv"
+        ],
+        "module-configuration": {
+            "import-modules": "file(modules)",
+            "custom-scripts": "file(scripts)",
+            "modules": [
+                {
+                    "module": "workload-net",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "nsg"
+                    ]
+                },
+                {
+                    "module": "nsg",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la"
+                    ]
+                },
+                {
+                    "module": "kv",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-kv-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la"
+                    ]
+                },
+                {
+                    "module": "sqldb",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "workload-net"
+                    ]
+                },
+                {
+                    "module": "ase",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "workload-net"
+                    ]
+                }
+            ]
+        }
+    },
+    "on-premises": {
+        "network": {
+            "address-prefix": "${general.on-premises.network.address-prefix}"
+        },
+        "active-directory": {
+            "primaryDC-IP": "${general.on-premises.active-directory.primaryDC-IP}"
+        },
+        "allow-rdp-address-range": "${general.on-premises.allow-rdp-address-range}"
+    },
+    "shared-services": {
+        "subscription-id": "${general.shared-services.subscription-id}",
+        "deployment-name": "${general.shared-services.deployment-name}",
+        "adds": {
+            "vm-ip-address-start": "${general.shared-services.adds.vm-ip-address-start}"
+        },
+        "active-directory": {
+            "domain-admin-user": "${general.shared-services.active-directory.domain-admin-user}",
+            "domain-name": "${general.shared-services.active-directory.domain-name}"
+        },
+        "network": {
+            "resource-group-name": "${general.organization-name}-${general.shared-services.deployment-name}-net-rg",
+            "name": "${general.organization-name}-${general.shared-services.deployment-name}-vnet",
+            "address-prefix": "10.4.0.32/27",
+            "network-virtual-appliance": {
+                "egress-ip": "${general.shared-services.network.network-virtual-appliance.egress-ip}",
+                "azure-firewall": {
+                    "name": "${general.organization-name}-${general.shared-services.deployment-name}-az-fw"
+                },
+                "custom-ubuntu": {
+                    "egress": {
+                        "ip": "${general.shared-services.network.network-virtual-appliance.custom-ubuntu.egress.ip}",
+                        "vm-ip-address-start": "${general.shared-services.network.network-virtual-appliance.custom-ubuntu.egress.vm-ip-address-start}"
+                    }
+                }
+            },
+            "virtual-gateway": {
+                "gateway-name": "${general.organization-name}-${general.shared-services.deployment-name}-gw",
+                "gateway-udr-name": "${general.organization-name}-${general.shared-services.deployment-name}-gw-udr"
+            },
+            "subnet": {
+                "app-gateway-subnet-name": "AppGateway",
+                "shared-services-subnet-address-prefix": "10.4.0.32/27"
+            },
+            "application-gateway": {
+                "name": "${general.organization-name}-${general.shared-services.deployment-name}-app-gw"
+            }
+        },
+        "keyvault": {
+            "resource-group-name": "${general.organization-name}-${general.shared-services.deployment-name}-kv-rg",
+            "name": "${general.organization-name}-${general.shared-services.deployment-name}-kv"
+        }
+    },
+    "workload": {
+        "subscription-id": "${general.workload.subscription-id}",
+        "deployment-name": "${general.workload.deployment-name}",
+        "region": "${general.workload.region}",
+        "azure-sql-configuration": {
+            "admin-user": "${general.workload.azure-sql-configuration.admin-user}"
+        },
+        "keyvault": "${general.workload.keyvault}",
+        "log-analytics": {
+            "region": "${general.workload.log-analytics.region}"
+        },
+        "network": {
+            "enable-ddos-protection": "${general.workload.network.enable-ddos-protection}",
+            "address-prefix": "10.4.4.0/23",
+            "application-security-groups": [],
+            "network-security-groups": [
+                {
+                    "name": "default",
+                    "rules": [
+                        {
+                            "name": "allow-management",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "454-455",
+                                "destinationPortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "description": "Used to manage ASE",
+                                "priority": 100,
+                                "direction": "Inbound",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "AppServiceManagement",
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-http",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "80",
+                                "destinationPortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "description": "Allow HTTP",
+                                "priority": 120,
+                                "direction": "Inbound",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-https",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "443",
+                                "destinationPortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "description": "Allow HTTPS",
+                                "priority": 130,
+                                "direction": "Inbound",
+                                "protocol": "*",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-ftp",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "21",
+                                "destinationPortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "description": "Allow FTP over port 21",
+                                "priority": 140,
+                                "direction": "Inbound",
+                                "protocol": "*",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-ftps",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "990",
+                                "destinationPortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "description": "Allow FTPS",
+                                "priority": 150,
+                                "direction": "Inbound",
+                                "protocol": "*",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-ftp-data",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "10001-10020",
+                                "destinationPortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "description": "allow-ftp-data",
+                                "priority": 160,
+                                "direction": "Inbound",
+                                "protocol": "*",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-remote-debugging",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "*",
+                                "destinationPortRange": "4016-4022",
+                                "destinationPortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "description": "Visual Studio remote debugging",
+                                "priority": 170,
+                                "direction": "Inbound",
+                                "protocol": "*",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        }
+                    ]
+                }
+            ],
+            "user-defined-routes": [
+                {
+                    "name": "default",
+                    "routes": [
+                        {
+                            "name": "to-mgmt-1",
+                            "properties": {
+                                "addressPrefix": "70.37.57.58/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-2",
+                            "properties": {
+                                "addressPrefix": "157.55.208.185/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-3",
+                            "properties": {
+                                "addressPrefix": "52.174.22.21/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-4",
+                            "properties": {
+                                "addressPrefix": "13.94.149.179/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-5",
+                            "properties": {
+                                "addressPrefix": "13.94.143.126/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-6",
+                            "properties": {
+                                "addressPrefix": "13.94.141.115/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-7",
+                            "properties": {
+                                "addressPrefix": "52.178.195.197/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-8",
+                            "properties": {
+                                "addressPrefix": "52.178.190.65/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-9",
+                            "properties": {
+                                "addressPrefix": "52.178.184.149/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-10",
+                            "properties": {
+                                "addressPrefix": "52.178.177.147/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-11",
+                            "properties": {
+                                "addressPrefix": "13.75.127.117/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-12",
+                            "properties": {
+                                "addressPrefix": "40.83.125.161/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-13",
+                            "properties": {
+                                "addressPrefix": "40.83.121.56/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-14",
+                            "properties": {
+                                "addressPrefix": "40.83.120.64/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-15",
+                            "properties": {
+                                "addressPrefix": "52.187.56.50/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-16",
+                            "properties": {
+                                "addressPrefix": "52.187.63.37/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-17",
+                            "properties": {
+                                "addressPrefix": "52.187.59.251/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-18",
+                            "properties": {
+                                "addressPrefix": "52.187.63.19/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-19",
+                            "properties": {
+                                "addressPrefix": "52.165.158.140/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-20",
+                            "properties": {
+                                "addressPrefix": "52.165.152.214/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-21",
+                            "properties": {
+                                "addressPrefix": "52.165.154.193/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-22",
+                            "properties": {
+                                "addressPrefix": "52.165.153.122/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-23",
+                            "properties": {
+                                "addressPrefix": "104.44.129.255/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-24",
+                            "properties": {
+                                "addressPrefix": "104.44.134.255/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-25",
+                            "properties": {
+                                "addressPrefix": "104.44.129.243/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-26",
+                            "properties": {
+                                "addressPrefix": "104.44.129.141/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-27",
+                            "properties": {
+                                "addressPrefix": "23.102.188.65/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-28",
+                            "properties": {
+                                "addressPrefix": "191.236.154.88/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-29",
+                            "properties": {
+                                "addressPrefix": "13.64.115.203/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-30",
+                            "properties": {
+                                "addressPrefix": "65.52.193.203/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-31",
+                            "properties": {
+                                "addressPrefix": "70.37.89.222/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-32",
+                            "properties": {
+                                "addressPrefix": "52.224.105.172/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-33",
+                            "properties": {
+                                "addressPrefix": "23.102.135.246/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-34",
+                            "properties": {
+                                "addressPrefix": "52.225.177.153/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-35",
+                            "properties": {
+                                "addressPrefix": "65.52.172.237/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-36",
+                            "properties": {
+                                "addressPrefix": "52.151.25.45/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "to-mgmt-37",
+                            "properties": {
+                                "addressPrefix": "40.124.47.188/32",
+                                "nextHopType": "Internet"
+                            }
+                        },
+                        {
+                            "name": "default",
+                            "properties": {
+                                "addressPrefix": "0.0.0.0/0",
+                                "nextHopIpAddress": "${shared-services.network.network-virtual-appliance.egress-ip}",
+                                "nextHopType": "VirtualAppliance"
+                            }
+                        },
+                        {
+                            "name": "to-on-premises",
+                            "properties": {
+                                "addressPrefix": "${on-premises.network.address-prefix}",
+                                "nextHopType": "VirtualNetworkGateway"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "subnets": [
+                {
+                    "name": "default",
+                    "address-prefix": "10.4.4.0/24",
+                    "network-security-group": "${workload.network.network-security-groups[0].name}",
+                    "user-defined-route": "${workload.network.user-defined-routes[0].name}",
+                    "service-endpoints": [
+                        {
+                            "service": "Microsoft.EventHub"
+                        },
+                        {
+                            "service": "Microsoft.Sql"
+                        },
+                        {
+                            "service": "Microsoft.Storage"
+                        }
+                    ]
+                }
+            ],
+            "dns-servers": [
+                "${shared-services.adds.vm-ip-address-start}"
+            ]
+        }
+    }
+}

@@ -1,0 +1,7 @@
+.git
+env.*
+env/
+modules/
+archetypes/
+tests/
+roles/
