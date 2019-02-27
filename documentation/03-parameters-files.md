@@ -9,12 +9,12 @@ Configuration files are found in the following locations:
 
 | **Sample Deployment**          | **Configuration file location**    |
 |-----------------------------|-----------------------------|
-|Simulated on-premises |[archetypes/on-premises/config.test.json](../archetypes/on-premises/config.test.json)|
-| shared-services |[archetypes/shared-services/config.test.json](../archetypes/shared-services/config.test.json)|
-| paas |[archetypes/paas/config.test.json](../archetypes/paas/config.test.json)|
-| iaas |[archetypes/iaas/config.test.json](../archetypes/iaas/config.test.json)|
-| cloudbreak |[archetypes/cloudbreak/config.test.json](../archetypes/cloudbreak/config.test.json)|
-| sap-hana |[archetypes/sap-hana/config.test.json](../archetypes/sap-hana/config.test.json)|
+|Simulated on-premises |[archetypes/on-premises/archetype.test.json](../archetypes/on-premises/archetype.test.json)|
+| shared-services |[archetypes/shared-services/archetype.test.json](../archetypes/shared-services/archetype.test.json)|
+| paas |[archetypes/paas/archetype.test.json](../archetypes/paas/archetype.test.json)|
+| iaas |[archetypes/iaas/archetype.test.json](../archetypes/iaas/archetype.test.json)|
+| cloudbreak |[archetypes/cloudbreak/archetype.test.json](../archetypes/cloudbreak/archetype.test.json)|
+| sap-hana |[archetypes/sap-hana/archetype.test.json](../archetypes/sap-hana/archetype.test.json)|
 
 
 The settings in these files are broken into sections. The deployment parameters
@@ -173,7 +173,7 @@ These parameters are defined in the shared-services configuration file (/archety
 
 ## Shared workload deployment parameters
 
-These parameters are used in all workload deployment parameters file. See sample [PaaS workload deployment for an example](../archetypes/paas/config.test.json).
+These parameters are used in all workload deployment parameters file. See sample [PaaS workload deployment for an example](../archetypes/paas/archetype.test.json).
 
 ### On-premises settings (Workload parameters file)
 
@@ -229,7 +229,7 @@ Some workload examples use specific parameters that are not common to all worklo
 
 ### iaas deployment parameters (workload section)
 
-These parameters are specific to the [iaas example](../archetypes/iaas/parameters/config.test.json) workload deployment.
+These parameters are specific to the [iaas example](../archetypes/iaas/parameters/archetype.test.json) workload deployment.
 
 | **Parameter name**            | **Type**               | **Description**                                                                                                                                                                                                                                                                                                                                     |
 |-------------------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -243,7 +243,7 @@ These parameters are specific to the [iaas example](../archetypes/iaas/parameter
 
 ### sap-hana deployment parameters (workload section)
 
-These parameters are specific to the [sap-hana](../archetypes/sap-hana/config.test.json) workload deployment.
+These parameters are specific to the [sap-hana](../archetypes/sap-hana/archetype.test.json) workload deployment.
 
 | **Parameter name**            | **Type**               | **Description**                                                                                                                                                                                                                                                                                                                                     |
 |-------------------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
