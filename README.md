@@ -1,6 +1,8 @@
 Azure Virtual Datacenter Automation Toolkit Deployment Guide
 ============
 
+[![Build Status](https://travis-ci.org/Azure/vdc.svg?branch=master)](https://travis-ci.org/Azure/vdc)
+
 This guide walks you through the deployment of a Microsoft Azure Virtual
 Datacenter (VDC) using a set of templates and scripts collectively referred to
 as the Azure Virtual Datacenter Automation Toolkit. You can use the Azure VDC
