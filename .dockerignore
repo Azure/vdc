@@ -1,4 +1,10 @@
 .git
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache
+.mypy_cache
+.cache
 env.*
 env/
 modules/
