@@ -718,7 +718,14 @@ class ModuleVersionTests(unittest.TestCase):
         self._local_file_finder.is_directory.assert_called_with(
             absolute_path)
         self.assertEqual(excinfo.expected, ValueError)
-        self.assertEqual(
+
+        if self._is_windows_os:
+            self.assertEqual(
+            str(excinfo.exception), 
+            'File not found, path searched: {}\\azureDeploy.json'.format(
+                absolute_path))
+        else:
+            self.assertEqual(
             str(excinfo.exception), 
             'File not found, path searched: {}/azureDeploy.json'.format(
                 absolute_path))
@@ -1302,10 +1309,17 @@ class ModuleVersionTests(unittest.TestCase):
         self._local_file_finder.is_directory.assert_called_with(
             absolute_path)
         self.assertEqual(excinfo.expected, ValueError)
-        self.assertEqual(
-            str(excinfo.exception), 
-            'File not found, path searched: {}/azureDeploy.parameters.json'.format(
-                absolute_path))
+
+        if self._is_windows_os:
+            self.assertEqual(
+                str(excinfo.exception), 
+                'File not found, path searched: {}\\azureDeploy.parameters.json'.format(
+                    absolute_path))
+        else:
+            self.assertEqual(
+                str(excinfo.exception), 
+                'File not found, path searched: {}/azureDeploy.parameters.json'.format(
+                    absolute_path))
 
     def test_get_policy_file_using_local_main_path_with_function_including_module_and_version_is_none(self):
         
@@ -1887,7 +1901,16 @@ class ModuleVersionTests(unittest.TestCase):
         self._local_file_finder.is_directory.assert_called_with(
             absolute_path)
         self.assertEqual(excinfo.expected, ValueError)
-        self.assertEqual(
+
+        if self._is_windows_os:
+            self.assertEqual(
+            str(excinfo.exception), 
+            'File not found, path searched: {}\\arm.policies.json'.format(
+                absolute_path))
+        else:
+            self.assertEqual(
             str(excinfo.exception), 
             'File not found, path searched: {}/arm.policies.json'.format(
                 absolute_path))
+
+        

@@ -1,9 +1,14 @@
+from orchestration.models.script_type import ScriptType
 class ResourceModule(object):
     def __init__(
         self,
         module = None):
 
         self._module = ''
+        self._type: ScriptType = None
+        self._command = ''
+        self._output_file = ''
+        self._property_path = ''
         self._resource_group_name = ''
         self._same_resource_group = False
         self._create_resource_group = True
@@ -11,9 +16,25 @@ class ResourceModule(object):
         self._dependencies = list()
         
         if module is not None and type(module) is dict:
+            
             if 'module' in module:
                 self._module = module['module']
-            
+
+            if 'type' in module and\
+                len(module['type']) > 0:
+                self._type = ScriptType[module['type'].upper()]
+
+            if 'command' in module:
+                self._command = module['command']
+
+            if 'output-file' in module:
+                from orchestration.common import helper
+                self._output_file = \
+                    helper.retrieve_path(module['output-file'])
+
+            if 'property-path' in module:
+                self._property_path = module['property-path']
+
             if 'resource-group-name' in module:
                 self._resource_group_name = module['resource-group-name']
             

@@ -260,6 +260,7 @@ class ResourceDeploymentTests(unittest.TestCase):
                 self._parameter_initializer._vdc_storage_account_resource_group,
                 self._parameter_initializer._validate_deployment,
                 self._parameter_initializer._deploy_all_modules,
+                self._parameter_initializer._deployment_configuration_path,
                 self._parameter_initializer._module_deployment_order,
                 self._parameter_initializer._resource_group,
                 self._parameter_initializer._single_module,

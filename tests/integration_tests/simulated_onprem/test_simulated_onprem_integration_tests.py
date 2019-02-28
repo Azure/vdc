@@ -37,8 +37,8 @@ class SimulatedOnpremIntegrationTests(BaseIntegrationTestCase):
     def test_a_on_premises_nsg_creation(self):
 
         self.set_resource_to_deploy('nsg', args)
+        self.upload_scripts(args, False)
         self.create_vdc_storage(args, True)
-        self.upload_scripts(args, True)
         
         successful: bool = self.execute_deployment_test(
             args,
@@ -82,8 +82,6 @@ class SimulatedOnpremIntegrationTests(BaseIntegrationTestCase):
             self._environment_type)
 
         self.assertEqual(successful, True)
-
-    
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

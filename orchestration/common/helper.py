@@ -647,3 +647,53 @@ def findAll_regex(
     regex_pattern: str,
     text: str) -> list:
     return re.findall(regex_pattern, text)
+
+def save_json_file(
+    output: dict, 
+    path: str):
+    
+    with open(path, 'w+') as f:
+        f.write(json.dumps(output))
+
+def modify_json_file(
+    prop_value: object,
+    prop_key: str,
+    path: str):
+
+    with open(path, 'r') as template_file_fd:
+        local_file: dict = json.load(template_file_fd)
+    
+    # i.e. shared-services.network.subnets
+    parent_keys = prop_key.split('.')
+
+    # Position on first index
+    parent = local_file[parent_keys[0]]
+    for parent_key in range(1, len(parent_keys) - 1):
+        _key = parent_keys[parent_key]
+        parent = parent[_key]
+
+    last_parent_key = parent_keys[len(parent_keys) - 1]
+    parent[last_parent_key] = prop_value
+    
+    with open(path, "w+") as jsonFile:
+        json.dump(local_file, jsonFile, indent=4)
+
+def modify_json_object(
+    prop_value: object,
+    prop_key: str,
+    json_object: dict):
+    
+    # i.e. shared-services.network.subnets
+    parent_keys = prop_key.split('.')
+    
+    # Position on first index
+    parent = json_object[parent_keys[0]]
+   
+    for parent_key in range(1, len(parent_keys) - 1):
+        _key = parent_keys[parent_key]
+        parent = parent[_key]
+       
+    last_parent_key = parent_keys[len(parent_keys) - 1]
+    parent[last_parent_key] = prop_value
+
+    return json_object

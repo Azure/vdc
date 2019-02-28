@@ -37,6 +37,7 @@ class ResourceDeployment(object):
         vdc_storage_account_resource_group: str,
         validate_deployment: bool,
         deploy_all_modules: bool,
+        deployment_configuration_path: str,
         module_deployment_order: list,
         resource_group: str,
         single_module: str,
@@ -80,6 +81,8 @@ class ResourceDeployment(object):
         :type validate_deployment: bool
         :param deploy_all_modules: Indicates whether or not all modules are being deployed
         :type deploy_all_modules: bool
+        :param deployment_configuration_path: Archetype path containing deployment configuration information
+        :type deployment_configuration_path: str
         :param module_deployment_order: List containing modules to be deployed
         :type module_deployment_order: list
         :param resource_group: If passed, all resources will be deployed in this resource group
@@ -141,6 +144,7 @@ class ResourceDeployment(object):
         self._vdc_storage_account_resource_group = vdc_storage_account_resource_group
         self._validation_mode_on = validate_deployment
         self._deploy_all_modules = deploy_all_modules
+        self._deployment_configuration_path = deployment_configuration_path
         self._module_deployment_order = module_deployment_order
         self._resource_group = resource_group
         self._single_module = single_module
@@ -282,16 +286,20 @@ class ResourceDeployment(object):
         :type resource_group_to_deploy: str
         :raises: :class:`Exception`
         """
+        
         self._logger\
             .info('***** provisioning {} module *****'.format(
                 module_to_deploy.upper()))
+        
         if all_resource_groups_provisioned is None:
             all_resource_groups_provisioned = list()
-        # Find the module and check if there are dependencies, 
-        # if yes, execute the dependency provisioning first
+        
         module_found = self.find_module(
              all_modules,
              module_to_deploy)
+        
+        # If there are dependencies execute the 
+        # dependency provisioning first
         if  self._deploy_module_dependencies and \
             module_found is not None and \
             len(module_found._dependencies) > 0:
@@ -323,29 +331,60 @@ class ResourceDeployment(object):
                 
                 all_resource_groups_provisioned = \
                     all_resource_groups_provisioned + resource_groups_provisioned
-        
-        resource_group_to_deploy = \
-         self._get_resource_group_name(
-             all_modules,
-             module_to_deploy,
-             resource_group_to_deploy)
-        
-        self._logger\
-            .info(
-                'Module: {} to be provisioned using resource group: {}'.format(
-                    module_to_deploy, 
-                    resource_group_to_deploy))
-        
-        # Now, let's deploy the module (after a recursive loop or from single module - if no dependencies were found)        
-        self._deploy_initial(
-            all_modules,
-            module_to_deploy,
-            resource_group_to_deploy)
 
-        if resource_group_to_deploy not in all_resource_groups_provisioned:
-            all_resource_groups_provisioned.append(
-                resource_group_to_deploy)
+        from orchestration.integration.custom_scripts.script_execution import CustomScriptExecution
         
+        # If module is of type Bash or Powershell,
+        # execute custom script
+        if  module_found is not None and\
+            module_found._type != '' and\
+            module_found._type is not None:
+            
+            self._logger\
+                .info('***** provisioning {} custom script *****'.format(
+                    module_found._module.upper()))
+
+            script_execution = CustomScriptExecution()
+            result = script_execution.execute(
+                script_type=module_found._type,
+                command=module_found._command,
+                output_file_path=module_found._output_file,
+                property_path=module_found._property_path,
+                file_path_to_update=self._deployment_configuration_path)
+            
+            if module_found._property_path is not None and\
+               len(module_found._property_path) > 0:
+                self._json_parameters = \
+                    helper.modify_json_object(
+                        prop_value=result,
+                        prop_key=module_found._property_path,
+                        json_object=self._json_parameters)
+
+            all_resource_groups_provisioned.append(
+                    module_found._module)
+        else:
+            resource_group_to_deploy = \
+            self._get_resource_group_name(
+                all_modules,
+                module_to_deploy,
+                resource_group_to_deploy)
+            
+            self._logger\
+                .info(
+                    'Module: {} to be provisioned using resource group: {}'.format(
+                        module_to_deploy, 
+                        resource_group_to_deploy))
+            
+            # Now, let's deploy the module (after a recursive loop or from single module - if no dependencies were found)        
+            self._deploy_initial(
+                all_modules,
+                module_to_deploy,
+                resource_group_to_deploy)
+
+            if resource_group_to_deploy not in all_resource_groups_provisioned:
+                all_resource_groups_provisioned.append(
+                    resource_group_to_deploy)
+            
         return all_resource_groups_provisioned
 
     def _deploy_initial(
@@ -819,8 +858,6 @@ class ResourceDeployment(object):
         :type all_modules: list
         :param module_name: Resource name used to construct the parameters file path        
         :type module_name: str
-        :param template_file_contents: Template file deserialized
-        :type template_file_contents: str
         
         :return: deployment parameters
         :rtype: dict
@@ -848,6 +885,18 @@ class ResourceDeployment(object):
             content_name = ''
             
             for module_dependency in dependencies: 
+                
+                module_found = \
+                    self.find_module(
+                        all_modules=all_modules,
+                        module_to_find=module_dependency)
+
+                # If type is not none, it means that the module
+                # is a custom script module. 
+                # For deployment modules type is None 
+                if module_found is not None and\
+                    module_found._type is not None:
+                    continue
                 
                 content_name = self.create_output_content_name(
                     module= module_dependency)

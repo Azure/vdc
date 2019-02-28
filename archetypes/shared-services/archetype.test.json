@@ -47,6 +47,10 @@
             "log-analytics": {
                 "region": "West US 2"
             }
+        },
+        "custom-script": {
+            "bash-result": "",
+            "pwsh-result": ""
         }
     },
     "orchestration": {
@@ -78,6 +82,31 @@
                         "policy-path": "file(modules/la/1.0)"
                     },
                     "dependencies": []
+                },
+                {
+                    "module": "custom-script-0",
+                    "type": "bash",
+                    "command": "chmod +x scripts/linux/sample-output.sh"
+                },
+                {
+                    "module": "custom-script-1",
+                    "type": "bash",
+                    "command": "scripts/linux/sample-output.sh",
+                    "output-file": "file(result-bash.json)",
+                    "property-path": "general.custom-script.bash-result",
+                    "dependencies": [
+                        "custom-script-0"
+                    ]
+                },
+                {
+                    "module": "custom-script-2",
+                    "type": "powershell",
+                    "command": "scripts/windows/sample-output.ps1 -TestString 'Hello World'",
+                    "output-file": "file(result-pwsh.json)",
+                    "property-path": "general.custom-script.pwsh-result",
+                    "dependencies": [
+                        "custom-script-1"
+                    ]
                 },
                 {
                     "module": "shared-services-net",

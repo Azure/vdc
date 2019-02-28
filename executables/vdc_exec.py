@@ -77,6 +77,7 @@ def create_deployment(parsed_args):
                 parameter_initializer._vdc_storage_account_resource_group,
                 parameter_initializer._validate_deployment,
                 parameter_initializer._deploy_all_modules,
+                parameter_initializer._deployment_configuration_path,
                 parameter_initializer._module_deployment_order,
                 parameter_initializer._resource_group,
                 parameter_initializer._single_module,

@@ -39,6 +39,7 @@ class ParameterInitializer(object):
         self._service_principals = list()
         self._deploy_all_modules = True
         self._deploy_module_dependencies = False
+        self._deployment_configuration_path = deployment_configuration_path
         self._upload_scripts = False
         self._service_principals = None
         self._module_dependencies = None

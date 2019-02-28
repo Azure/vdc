@@ -37,7 +37,7 @@ class SAPIntegrationTests(BaseIntegrationTestCase):
     def test_a_workload_log_analytics_creation(self):
 
         self.set_resource_to_deploy('la', args)
-        self.upload_scripts(args, True)
+        self.upload_scripts(args, False)
         self.create_vdc_storage(args, True)
         successful: bool = self.execute_deployment_test(
             args,
