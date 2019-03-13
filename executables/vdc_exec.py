@@ -166,6 +166,7 @@ def validate_deployment(parsed_args):
                 parameter_initializer._validate_deployment,
                 parameter_initializer._delete_validation_modules,
                 parameter_initializer._deploy_all_modules,
+                parameter_initializer._deployment_configuration_path,
                 parameter_initializer._module_deployment_order,
                 'vdc-validation-test-rg', # Let's fix the validation resource group name
                 parameter_initializer._single_module,

@@ -38,6 +38,7 @@ class ResourceValidation(implements(BusinessInterface)):
         validate_deployment: bool,
         delete_validation_modules: bool,
         deploy_all_modules: bool,
+        deployment_configuration_path: str,
         module_deployment_order: list,
         resource_group: str,
         single_module: str,
@@ -82,6 +83,8 @@ class ResourceValidation(implements(BusinessInterface)):
         :type delete_validation_modules: bool
         :param deploy_all_modules: Indicates whether or not all modules are being deployed
         :type deploy_all_modules: bool
+        :param deployment_configuration_path: Archetype path containing deployment configuration information
+        :type deployment_configuration_path: str
         :param module_deployment_order: List containing modules to be deployed
         :type module_deployment_order: list
         :param resource_group: If passed, all resources will be deployed in this resource group
@@ -142,6 +145,7 @@ class ResourceValidation(implements(BusinessInterface)):
         self._vdc_storage_account_resource_group = vdc_storage_account_resource_group
         self._validation_mode_on = validate_deployment
         self._deploy_all_modules = deploy_all_modules
+        self._deployment_configuration_path = deployment_configuration_path
         self._module_deployment_order = module_deployment_order
         self._resource_group = resource_group
         self._single_module = single_module
@@ -516,6 +520,7 @@ class ResourceValidation(implements(BusinessInterface)):
                     self._vdc_storage_account_resource_group,
                     validate_deployment,
                     deploy_all_modules,
+                    self._deployment_configuration_path,
                     self._module_deployment_order,
                     None,
                     single_module,
