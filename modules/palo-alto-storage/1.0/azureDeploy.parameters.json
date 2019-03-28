@@ -1,0 +1,13 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${shared-services.deployment-name}"
+    },
+    "file-shares": {
+        "value": [
+            "config",
+            "software",
+            "license",
+            "content"
+        ]
+    }
+}

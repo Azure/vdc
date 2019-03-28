@@ -1,0 +1,302 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "file-shares": {
+            "type": "array",
+            "metadata": {
+                "description": "List of all file shares to create"
+            }
+        },
+        "sas-key":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Shared Access Signature Key used to download custom scripts"
+            }
+        },
+        "output-params-storage-account-name":{  
+            "type":"string",
+            "metadata":{  
+                "description":"Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        }
+    },
+    "variables": {
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id, parameters('deployment-prefix'))]",
+        "api-version": "2018-02-01",
+        "palo-alto-storage-name": "[toLower(substring(replace(concat('pastorage', variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23))]",
+        "image": "microsoft/azure-cli",
+        "cpuCores": "1.0",
+        "memoryInGb": "1.5",
+        "FScontainerGroupName": "createfs-aci",
+        "DircontainerIngressGroupName": "dirIngress-aci",
+        "DircontainerEgressGroupName": "dirEgress-aci",
+        "containerName": "createfileshare",
+        "share-name": "fwpaloalto"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('palo-alto-storage-name')]",
+            "apiVersion": "[variables('api-version')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "tags": {
+                "displayName": "Palo Alto Storage Account"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file":{
+                            "enabled": true
+                        }
+                    }
+                }
+            },
+            "resources": []
+        },
+        {
+            "name": "[variables('FScontainerGroupName')]",
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2018-02-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('palo-alto-storage-name')]"
+            ],
+            "properties": {
+                "containers": [
+                    {
+                        "name": "[concat(variables('containerName'), '-share')]",
+                        "properties": {
+                            "image": "[variables('image')]",
+                            "command": [
+                                "az",
+                                "storage",
+                                "share",
+                                "create",
+                                "--name",
+                                "[variables('share-name')]"
+                            ],
+                            "environmentVariables": [
+                                {
+                                    "name": "AZURE_STORAGE_KEY",
+                                    "value": "[listKeys(variables('palo-alto-storage-name'),'2017-10-01').keys[0].value]"
+                                },
+                                {
+                                    "name": "AZURE_STORAGE_ACCOUNT",
+                                    "value": "[variables('palo-alto-storage-name')]"
+                                }
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "cpu": "[variables('cpuCores')]",
+                                    "memoryInGb": "[variables('memoryInGb')]"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "[concat(variables('containerName'), '-ingress')]",
+                        "properties": {
+                            "image": "[variables('image')]",
+                            "command": [
+                                "az",
+                                "storage",
+                                "directory",
+                                "create",
+                                "--name",
+                                "ingress",
+                                "--share-name",
+                                "[variables('share-name')]"
+                            ],
+                            "environmentVariables": [
+                                {
+                                    "name": "AZURE_STORAGE_KEY",
+                                    "value": "[listKeys(variables('palo-alto-storage-name'),'2017-10-01').keys[0].value]"
+                                },
+                                {
+                                    "name": "AZURE_STORAGE_ACCOUNT",
+                                    "value": "[variables('palo-alto-storage-name')]"
+                                }
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "cpu": "[variables('cpuCores')]",
+                                    "memoryInGb": "[variables('memoryInGb')]"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "[concat(variables('containerName'), '-egress')]",
+                        "properties": {
+                            "image": "[variables('image')]",
+                            "command": [
+                                "az",
+                                "storage",
+                                "directory",
+                                "create",
+                                "--name",
+                                "egress",
+                                "--share-name",
+                                "[variables('share-name')]"
+                            ],
+                            "environmentVariables": [
+                                {
+                                    "name": "AZURE_STORAGE_KEY",
+                                    "value": "[listKeys(variables('palo-alto-storage-name'),'2017-10-01').keys[0].value]"
+                                },
+                                {
+                                    "name": "AZURE_STORAGE_ACCOUNT",
+                                    "value": "[variables('palo-alto-storage-name')]"
+                                }
+                            ],
+                            "resources": {
+                                "requests": {
+                                    "cpu": "[variables('cpuCores')]",
+                                    "memoryInGb": "[variables('memoryInGb')]"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "restartPolicy": "OnFailure",
+                "osType": "Linux"
+            }
+        },
+        {
+            "name": "[variables('DircontainerIngressGroupName')]",
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2018-02-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('FScontainerGroupName')]"
+            ],
+            "properties": {
+                "restartPolicy": "OnFailure",
+                "osType": "Linux",
+                "copy": [
+                    {
+                        "name": "containers",
+                        "count": "[length(parameters('file-shares'))]",
+                        "input": {
+                            "name": "[concat(variables('containerName'), padLeft(copyIndex('containers', 1), 2, '0'))]",                        
+                            "properties": {
+                                "image": "[variables('image')]",
+                                "command": [
+                                    "az",
+                                    "storage",
+                                    "directory",
+                                    "create",
+                                    "--name",
+                                    "[parameters('file-shares')[copyIndex('containers')]]",
+                                    "--share-name",
+                                    "[concat(variables('share-name'), '/ingress')]"
+                                ],
+                                "environmentVariables": [
+                                    {
+                                        "name": "AZURE_STORAGE_KEY",
+                                        "value": "[listKeys(variables('palo-alto-storage-name'),'2017-10-01').keys[0].value]"
+                                    },
+                                    {
+                                        "name": "AZURE_STORAGE_ACCOUNT",
+                                        "value": "[variables('palo-alto-storage-name')]"
+                                    }
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "cpu": "[variables('cpuCores')]",
+                                        "memoryInGb": "[variables('memoryInGb')]"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('DircontainerEgressGroupName')]",
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "apiVersion": "2018-02-01-preview",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('FScontainerGroupName')]"
+            ],            
+            "properties": {
+                "restartPolicy": "OnFailure",
+                "osType": "Linux",
+                "copy": [
+                    {
+                        "name": "containers",
+                        "count": "[length(parameters('file-shares'))]",
+                        "input": {
+                            "name": "[concat(variables('containerName'), padLeft(copyIndex('containers', 1), 2, '0'))]",
+                            "properties": {
+                                "image": "[variables('image')]",
+                                "command": [
+                                    "az",
+                                    "storage",
+                                    "directory",
+                                    "create",
+                                    "--name",
+                                    "[parameters('file-shares')[copyIndex('containers')]]",
+                                    "--share-name",
+                                    "[concat(variables('share-name'), '/egress')]"
+                                ],
+                                "environmentVariables": [
+                                    {
+                                        "name": "AZURE_STORAGE_KEY",
+                                        "value": "[listKeys(variables('palo-alto-storage-name'),'2017-10-01').keys[0].value]"
+                                    },
+                                    {
+                                        "name": "AZURE_STORAGE_ACCOUNT",
+                                        "value": "[variables('palo-alto-storage-name')]"
+                                    }
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "cpu": "[variables('cpuCores')]",
+                                        "memoryInGb": "[variables('memoryInGb')]"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]                
+            }
+        }
+    ],
+    "outputs": {
+        "bootstrap-storage-account": {
+            "type": "string",
+            "value": "[variables('palo-alto-storage-name')]"
+        },
+        "bootstrap-storage-account-access-key": {
+            "type": "string",
+            "value": "[listKeys(variables('palo-alto-storage-name'),'2017-10-01').keys[0].value]"
+        },
+        "palo-alto-storage-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('palo-alto-storage-name'))]"
+        },
+        "bootstrap-storage-share-name": {
+            "type": "string",
+            "value": "[variables('share-name')]"
+        }
+    }
+}

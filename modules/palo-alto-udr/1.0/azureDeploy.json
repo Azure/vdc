@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                 "description": "Deployment prefix. E.g. Organization-DeploymentType"
+             }
+        },
+        "shared-services-udr-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the shared services UDR"
+            }
+        },
+        "shared-services-routes":{
+            "type": "array",
+            "metadata": {
+                 "description": "Specifies the shared services UDR"
+             }
+        }
+    },
+    "variables": {
+        "shared-services-udr-name": "[concat(parameters('deployment-prefix'), '-', parameters('shared-services-udr-name'), '-udr')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('shared-services-udr-name')]",
+            "tags": {
+                "displayName": "[variables('shared-services-udr-name')]"
+            },
+            "properties": {
+                "routes": "[parameters('shared-services-routes')]",
+                "disableBgpRoutePropagation": true
+            }
+        }
+    ],
+    "outputs": {}
+}

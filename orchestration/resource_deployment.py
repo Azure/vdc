@@ -496,16 +496,25 @@ class ResourceDeployment(object):
         # If we are not running integration tests, then let's
         # create unique deployment names
         if not self._from_integration_test:
+            
+            current_milliseconds = \
+                helper.get_current_time_milli()
+
+            milliseconds_length = \
+                len(str(current_milliseconds))
+
+            # Max length is 60 chars
+            deployment_name_max_length = \
+                60 - milliseconds_length
+
+            if len(deployment_name) > deployment_name_max_length:
+                # We do -1 to accomodate the hyphen character
+                deployment_name = \
+                    deployment_name[:deployment_name_max_length - 1]
+
             deployment_name = '{}-{}'.format(
                 deployment_name,
-                helper.get_current_time_milli())
-
-            if len(deployment_name) > 60:
-                deployment_name = \
-                    helper\
-                        .create_unique_string(
-                            original_value=deployment_name,
-                            max_length=60)
+                current_milliseconds)
             
         # Execute the deployment
         deployment_result = \

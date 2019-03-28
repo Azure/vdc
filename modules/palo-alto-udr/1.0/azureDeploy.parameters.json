@@ -1,0 +1,11 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${shared-services.deployment-name}"
+    },
+    "shared-services-udr-name": {
+        "value": "${shared-services.network.user-defined-routes[0].name}"
+    },
+    "shared-services-routes": {
+        "value": "${shared-services.network.user-defined-routes[0].routes}"
+    }
+}

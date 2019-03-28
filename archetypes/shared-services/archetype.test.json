@@ -46,7 +46,8 @@
             },
             "log-analytics": {
                 "region": "West US 2"
-            }
+            },
+            "paloalto-storage-resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-paloalto-storage-rg"
         },
         "custom-script": {
             "bash-result": "",
@@ -61,8 +62,14 @@
             "vgw",
             "vgw-connection",
             "onprem-vgw-connection",
-            "azure-fw",
             "kv",
+            "palo-alto-storage",
+            "custom-script-palo-alto-bootstrap-0",
+            "custom-script-palo-alto-bootstrap-1",
+            "palo-alto-egress-nva",
+            "custom-script-palo-alto-bootstrap-2",
+            "palo-alto-udr",
+            "palo-alto-ingress-nva",
             "jb",
             "adds"
         ],
@@ -82,31 +89,6 @@
                         "policy-path": "file(modules/la/1.0)"
                     },
                     "dependencies": []
-                },
-                {
-                    "module": "custom-script-0",
-                    "type": "bash",
-                    "command": "chmod +x scripts/linux/sample-output.sh"
-                },
-                {
-                    "module": "custom-script-1",
-                    "type": "bash",
-                    "command": "scripts/linux/sample-output.sh",
-                    "output-file": "file(result-bash.json)",
-                    "property-path": "general.custom-script.bash-result",
-                    "dependencies": [
-                        "custom-script-0"
-                    ]
-                },
-                {
-                    "module": "custom-script-2",
-                    "type": "powershell",
-                    "command": "scripts/windows/sample-output.ps1 -TestString 'Hello World'",
-                    "output-file": "file(result-pwsh.json)",
-                    "property-path": "general.custom-script.pwsh-result",
-                    "dependencies": [
-                        "custom-script-1"
-                    ]
                 },
                 {
                     "module": "shared-services-net",
@@ -168,6 +150,71 @@
                     "dependencies": [
                         "shared-services-net",
                         "la"
+                    ]
+                },
+                {
+                    "module": "custom-script-palo-alto-bootstrap-0",
+                    "type": "bash",
+                    "command": "chmod +x scripts/palo-alto/create-bootstrap.sh",
+                    "dependencies": []              
+                },
+                {
+                    "module": "custom-script-palo-alto-bootstrap-1",
+                    "type": "bash",
+                    "command": "scripts/palo-alto/create-bootstrap.sh '${shared-services.paloalto-storage-resource-group-name}' ${general.shared-services.subscription-id} 'fwpaloalto/ingress/config' 'scripts/palo-alto/ingress/bootstrap.xml' 'fwpaloalto/egress/config' 'scripts/palo-alto/egress/bootstrap.xml' 'scripts/palo-alto/init-cfg.txt'",
+                    "dependencies": [
+                        "custom-script-palo-alto-bootstrap-0"
+                    ]
+                },
+                {
+                    "module": "palo-alto-storage",
+                    "resource-group-name": "${shared-services.paloalto-storage-resource-group-name}",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "custom-script-palo-alto-bootstrap-1"
+                    ]
+                },
+                {
+                    "module": "palo-alto-ingress-nva",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-paloalto-ingress-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "kv",
+                        "shared-services-net",
+                        "palo-alto-storage"
+                    ]
+                },
+                {
+                    "module": "custom-script-palo-alto-bootstrap-2",
+                    "type": "bash",
+                    "command": "sleep 120",
+                    "dependencies": []
+                },
+                {
+                    "module": "palo-alto-egress-nva",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-paloalto-egress-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "kv",
+                        "shared-services-net",
+                        "palo-alto-storage"
+                    ]
+                },
+                {
+                    "module": "palo-alto-udr",
+                    "resource-group-name": "${general.organization-name}-${shared-services.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "palo-alto-egress-nva",
+                        "custom-script-palo-alto-bootstrap-2"
                     ]
                 },
                 {
@@ -249,16 +296,33 @@
         "log-analytics": {
             "region": "${general.shared-services.log-analytics.region}"
         },
+        "paloalto-storage-resource-group-name": "${general.shared-services.paloalto-storage-resource-group-name}",
         "keyvault": "${general.shared-services.keyvault}",
         "network": {
             "enable-ddos-protection": false,
             "address-prefix": "10.4.0.0/23",
             "network-virtual-appliance": {
-                "egress-ip": "${shared-services.network.network-virtual-appliance.azure-firewall.egress.ip}",
+                "egress-ip": "${shared-services.network.network-virtual-appliance.palo-alto.egress.ip}",
                 "azure-firewall": {
                     "egress": {
                         "ip": "10.4.1.4"
                     }
+                },
+                "palo-alto": {
+                    "ingress": {
+                        "vm-ip-address-start": "10.4.0.60"
+                    },
+                    "egress": {
+                        "ip": "10.4.0.101",
+                        "vm-ip-address-start": "10.4.0.41"
+                    },
+                    "image": {
+                        "offer": "vmseries1",
+                        "publisher": "paloaltonetworks",
+                        "sku": "bundle2",
+                        "version": "latest"
+                    },
+                    "enable-bootstrap": true
                 },
                 "custom-ubuntu": {
                     "egress": {
@@ -278,6 +342,15 @@
                 },
                 {
                     "name": "jb"
+                },
+                {
+                    "name": "mgmt"
+                },
+                {
+                    "name": "trust"
+                },
+                {
+                    "name": "untrust"
                 }
             ],
             "network-security-groups": [
@@ -554,6 +627,35 @@
                             }
                         },
                         {
+                            "name": "allow-http-and-ssh-into-palo-alto",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationAddressPrefix": "",
+                                "destinationPortRanges": [
+                                    "443",
+                                    "22"
+                                ],
+                                "destinationPortRange": "",
+                                "direction": "Inbound",
+                                "priority": 180,
+                                "protocol": "TCP",
+                                "sourceAddressPrefix": "",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[2].name}"
+                                    }
+                                ],
+                                "sourceApplicationSecurityGroups": [
+                                    {
+                                        "name": "${shared-services.network.application-security-groups[1].name}"
+                                    }
+                                ]
+                            }
+                        },
+                        {
                             "name": "deny-vnet",
                             "properties": {
                                 "access": "Deny",
@@ -573,6 +675,83 @@
                         },
                         {
                             "name": "allow-vnet",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefix": "*",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "*",
+                                "destinationPortRanges": [],
+                                "direction": "Outbound",
+                                "priority": 100,
+                                "protocol": "*",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "trust",
+                    "rules": [
+                        {
+                            "name": "allow-vnet-inbound",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefix": "VirtualNetwork",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "*",
+                                "destinationPortRanges": [],
+                                "direction": "Inbound",
+                                "priority": 100,
+                                "protocol": "*",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-loadbalancer",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefix": "VirtualNetwork",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "*",
+                                "destinationPortRanges": [],
+                                "direction": "Inbound",
+                                "priority": 110,
+                                "protocol": "*",
+                                "sourceAddressPrefix": "AzureLoadBalancer",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-internet",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefix": "*",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "*",
+                                "destinationPortRanges": [],
+                                "direction": "Inbound",
+                                "priority": 120,
+                                "protocol": "*",
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "name": "allow-vnet-outbound",
                             "properties": {
                                 "access": "Allow",
                                 "destinationAddressPrefix": "*",
@@ -646,9 +825,16 @@
                     "service-endpoints": []
                 },
                 {
+                    "name": "trust",
+                    "address-prefix": "10.4.0.96/28",
+                    "network-security-group": "${shared-services.network.network-security-groups[1].name}",
+                    "user-defined-route": "",
+                    "service-endpoints": []
+                },
+                {
                     "name": "dmz",
                     "address-prefix": "10.4.0.0/27",
-                    "network-security-group": "${shared-services.network.network-security-groups[1].name}",
+                    "network-security-group": "${shared-services.network.network-security-groups[2].name}",
                     "user-defined-route": "",
                     "service-endpoints": []
                 },

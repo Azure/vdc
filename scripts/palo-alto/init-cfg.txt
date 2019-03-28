@@ -1,0 +1,9 @@
+type=dhcp-client
+ip-address=
+default-gateway=
+netmask=
+ipv6-address=
+ipv6-default-gateway=
+hostname=pa-fw
+dns-primary=8.8.8.8
+dns-secondary=8.8.4.4
