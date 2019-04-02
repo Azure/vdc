@@ -1,0 +1,157 @@
+= Common parameters
+
+These groups of parameters are commonly used all many archetypes.
+
+== General parameters
+
+[cols="a,,a", options="header"]
+|===
+| Parameter name | Type | Description 
+
+| `organization-name`
+| String
+| Shorthand name of your organization. This is used as a naming prefix when creating
+resource groups and resources. It should not contain spaces but may contain dashes and underscores.
+
+| `tenant-id`
+| Azure AD Tenant ID (GUID)
+| ID of the Azure Active Directory tenant associated with the Azure subscription you’re deploying resources to.
+
+| `deployment-user-id`
+| Azure AD User ID (GUID)
+| ID of the user account deploying the shared services Key Vault. This user is set as the default service principal for the environment’s vault.
+
+| `vdc-storage-account-name`
+| String
+| Storage account where deployment output are stored and link:scripts[../../scripts] are uploaded. All storage accounts used by the toolkit within a subscription are created within the `vdc-storage-rg` resource group.
+
+| `vdc-storage-account-rg`
+| String
+| Resource group containing storage accounts used by the toolkit.
+
+| `module-deployment-order`
+| String[Array]
+| This is a list of the modules you can provision in the archetype. Each item corresponds to
+folder names in both the link:../../modules[modules] folder where corresponding Resource Manager templates and parameters files reside. A module must be included in this list to be used by the toolkit scripts. If attempting to deploy all of the modules, the toolkit scripts attempt to process modules in the order they appear in this list.
+
+| `validation-dependencies`
+| String[Array]
+| This is a list of the modules that are deployed when _validating_ an archetype. Some dependencies, such as a Key Vault, need to exist in a subscription to validate other components of a deployment. If modules in this list that have dependencies defined in a shared services or workload `module-dependencies` parameter, then those dependencies will also be deployed as is done in standard deployments. See the link:../use/deployment-validation.adoc[deployment validation] topic for more information on this parameter is used.
+|===
+
+== Network parameters
+
+The `network` parameters object is used in many archetype configurations files to define virtual network settings for a deployment. Note that all parameters in this section are required. If a setting is unused, leave it as blank rather than omit the parameter. It’s recommended that when creating a new network component, such as a subnet definition, to copy an existing definition and modify it rather than creating a new definition manually. This is to ensure you’ve correctly included all the required parameters.
+
+[cols="a,,a", options="header"]
+|===
+| Parameter name | Type | Description 
+
+| `address-prefix`
+| CIDR range
+| A CIDR range definition for the virtual network. This range must not overlap with the on-premises network or any workload network ranges.
+
+| `application-security-groups`
+| Object[Array]
+| An array of objects representing Application Security Group (ASG) definitions. Each object contains a name parameter for an ASG.
+
+| `network-security-groups`
+| Object[Array]
+| An array of Network Security Group (NSG) definitions, each definition contains two parameters:
+
+- `name` [String]: name for the NSG rule.
+- `rules` [Object]: collection of NSG rule definitions.
+
+| `network-security-groups/rules` 
+| Object[Array]
+| An array of NSG rules definition. Each definition contains the following parameters:
+
+- `name` [String] - Name of the rule.
+- `properties` [Object] - The rules property object contains the following parameters:
+
+    * `access` - Allow/Deny
+    * `destinationAddressPrefixes` - Array of assigned destination CIDR ranges
+    * `destinationAddressPrefix` - Single assigned destination CIDR range
+    * `destinationPortRange` - Range of destination port ranges (for example: 22-43)
+    * `destinationPortRanges` - Array of individual destination ports
+    * `direction` - Inbound/Outbound
+    * `priority` - priority relative to other rules
+    * `protocol` - TCP/UDR
+    * `sourceAddressPrefix` - assigned source CIDR range
+    * `sourcePortRange` - Range of source port ranges (for example: 22-43)
+    * `sourcePortRanges` - Array of individual source ports
+    * `destinationApplicationSecurityGroups` - Array of ASGs that apply to the destination
+    * `sourceApplicationSecurityGroups` - Array of ASGs that apply to the source 
+
+| `user-defined-routes`
+| Object[Array]
+| An array of User Defined Route (NSG) definitions, each definition contains two parameters:
+
+- name [String]: name for the UDR collection.
+- routes [Object]: collection of UDR definitions.
+
+| `user-defined-routes/routes`
+| Object[Array]
+| An array of UDR definitions. Each definition contains the following parameters:
+
+- `name` [String] - Name of the route.
+- `properties` [Object] - The route property object contains the following parameters:
+
+    * `addressPrefix` [CIDR range] - IP addresses that the route applies to.
+    * `nextHopIpAddress` [IPV4 address] - IP address to route traffic to.
+    * `nextHopType` [String] - One of the https://docs.microsoft.com/azure/network-watcher/network-watcher-next-hop-overview[allowed next hop types]. 
+
+| `subnets`
+| Object[Array]
+| An array of subnet definitions for the virtual network. Each definition contains the
+following parameters:
+
+- `name` [String] - Subnet name
+- `address-prefix` [CIDR range] - IP address range definition for the subnet.
+- `network-security-group` [String] - Name of NSG to attach to the subnet.
+- `user-defined-route` [String] - Name of UDR collection to attach to the subnet.
+- `service-endpoints` [Array] - List of https://docs.microsoft.com/azure/virtual-network/virtual-network-service-endpoints-overview[service endpoints] to attach to the subnet. 
+
+| `dns-servers`
+| IPV4 Address[Array]
+| An array of one or more DNS entries that the virtual network will use for name resolution.
+
+|===
+
+== Module dependency parameters
+
+The `module-dependencies` parameters object is used in many archetype configurations files to define the path to the module files, the version of the module being used, and dependencies for that module. Module dependency parameters are required unless otherwise specified.
+
+[cols="a,,a", options="header"]
+|===
+| Parameter name | Type | Description 
+
+| `import-module`
+| String
+| Optional path value specifying where resource modules folders are located. 
+
+If specified, the toolkit will look for the module files in a subfolder (that matches the module's name) of this path. Supports absolute file paths or relative paths [using the `file()` function]. Relative paths should be based off of the root toolkit folder.
+
+If this parameter is not specified, and paths are not specified in the module dependency definition, then the toolkit will look for module folders under the root toolkit folder unless.
+
+| `modules`
+| Object[Array]
+| The modules array contains a list of module dependency definitions. Each definition contains the following properties describing a module:
+
+- `module` [String] - Deployment module name. Should correspond to the name listed in the parameter file’s `module-deployment-order` array and the folder name where the module source files are located.
+- `same-resource-group` [Boolean] - If set to true, this setting forces dependent resources to deploy in the same resource group as the resource (optional).
+- `create-resource-group` [Boolean] - If set to false, this setting deploys the resource in the same resource group as its dependency (optional).
+- `resource-group-name` [String] Allows you to override the default resource group name used in a deployment (optional).
+- `source` [Object] - Information about the source files that make up the module. Contains the following properties:
+
+    * `version` [String] - version of the module code used for the deployment. Should match the version folder where source files are located.
+    * `template-path` [String] - Path specifying location of the Resource Manager template file used by the module. Overrides the `import-module` parameter if used and offers the same pathing options (optional).
+    * `parameters-path` [String] - Path specifying location of the Resource Manager parameters file used by the module. Overrides the `import-module` parameter if used and offers the same pathing options (optional).
+    * `policy-path` [String] - Path specifying location of the Resource Manager policy file used by the module. Overrides the `import-module` parameter if used and offers the same pathing options (optional).
+    * `dependencies` [Array] - list of modules this module is dependent on.
+
+|===
+
+== Next steps
+
+Learn about link:common-workload-config.adoc[parameters that are common across `workload` archetypes].

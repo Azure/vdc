@@ -1,0 +1,91 @@
+= Simulated on-premises deployment parameters
+
+These parameters are used to deploy the simulated on-premises environment. They are located in the `general` section of the `archetype.json` configuration file.
+
+== Simulated on-premises settings
+
+These are located under `general.on-premises`.
+
+[options="header",cols="a,,a"]
+|===
+| Parameter name | Type | Description
+
+| `subscription-id`
+| Subscription ID (GUID)
+| ID of the subscription that simulated on-premises resources are deployed to.
+
+| `deployment-name`
+| String
+| Shorthand name of the simulated on-premises deployment. Used as a secondary naming prefix when provisioning resources. This value should not contain spaces but may contain dashes and underscores.
+
+| `region`
+| String
+| The Azure region where simulated on-premises resources are deployed (for example, `West US` or `France South`).
+
+View the https://azure.microsoft.com/regions/[full list of regions].
+
+| `gateway-type`
+| String
+| Specifies the type of connection with the shared-services network; either `vpn` or `expressroute`.
+
+| `gateway-sku`
+| String
+| Specifies the Gateway SKU used. Allowable values:
+
+- `Basic`
+- `VpnGw1`
+- `VpnGw2`
+- `VpnGw3`
+
+See https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-about-vpn-gateway-settings#gwsku[Gateway SKU] for more details.
+
+| `vpn-type`
+| String 
+| Specifies the https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-connect-multiple-policybased-rm-ps#about-policy-based-and-route-based-vpn-gateways[type of VPN gateway] used to connect with the shared-services network; either `RouteBased` or `PolicyBased`.
+
+| `primaryDC-IP`
+| IPV4 address
+| IP address of on-premises domain controller.
+
+| `network`
+| link:../archetypes/common-parameters.adoc#network-parameters[Network object]
+| Configuration parameters for the simulated on-premises virtual network.
+
+| `domain-name`
+| String
+| Domain name used by the on-premises network.
+
+| `cloud-zone`
+| String
+| Name of cloud DNS zone to be used for name services addressing the VDC resources
+
+| `AD-sitename`
+| String
+| Site name used to register VDC hosted Active Directory Domain Services (ADDS) servers with the on-premises domain.
+
+| `domain-admin-user` 
+| String
+| Domain user with rights to add trust relationship between on-premises domain and VDC hosted domain controllers.
+
+| `module-dependencies`
+| link:../archetypes/common-parameters.adoc#module-dependency-parameters[Module Dependencies object]
+| This object defines the locations, dependencies, and behavior of resource modules used for a deployment. |
+
+|===
+
+== Shared services settings
+
+These are located under `general.shared-services`.
+
+[options="header",cols="a,,"]
+|===
+| Parameter name | Type | Description 
+
+| `subscription-id`
+| Subscription ID (GUID)
+| ID of the subscription that shared-services resources are deployed to.
+
+| `deployment-name`
+| String
+| Name of the shared-services deployment.
+|===

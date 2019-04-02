@@ -1,0 +1,63 @@
+= Creating a new archetype
+
+We recommend that you start a new archetype by copying one of the existing sample archetypes that most closely matches your desired new archetype. We also recommend that you place this copy in a uniquely named folder. For instance, if you want to create a custom workload archetype based on virtual machines, copy the `archetypes/iaas` to something like `my-archetypes/custom-workload-name`.
+
+You can then modify this config file by adding or removing new modules and updating parameter settings uniquely for your deployment. Once your modifications are complete, update the path argument when running the `vdc.py` script to point to the new archetype config file location to run your new deployment.
+
+At a high level, an archetype is:
+
+- a list of modules to deployment in a particular order
+- a global configuration shared across the modules
+- a definition of the dependencies between the modules
+
+You should familiarize yourself with link:../use/configuration-files.adoc[archetype configuration] and link:../use/common-parameters.adoc[common parameters] before proceeding..
+
+=== Defining modules and dependencies
+
+Modules need to be defined in the archetype configuration file before they can be used in a deployment. This is done in the `module-dependencies` object. This object is defined in detail as part of the link:../use/common-parameters.adoc#module-dependency-parameters[parameters documentation], but, in summary, consists of an optional `import-module` value and an array of module definitions.
+
+==== `import-module`
+
+The `import-module` parameter sets the default location for all modules in the deployment. If not specified, the scripts will default to using the toolkit's root folder. Custom paths can also be set in the module definition for individual module files. Path definitions support absolute or relative paths using the `file()` function.
+
+==== Module definition
+
+When adding a new module to an archetype, you must at a minimum provide the module's name and version. Dependencies between deployment modules are also set as part of the module definition in the archetype.
+
+To demonstrate, we can create a definition for our example Hadoop module referencing in link:creating-new-modules.adoc[Creating new modules]. It is currently version 1.0 and needs to pull in values from the workload's `net` deployment module output. To add this definition, you will add the following to the `archetypes/custom-workload-name/archetype.json` file's `module-dependencies` object:
+
+```json
+{
+        "module": "hadoop",
+        "source": {
+            "version": "v1"
+        },
+        "dependencies": [
+            "net",
+        ]
+    }
+```
+
+This definition tells the toolkit to pull in the output values from the `net` deployment and integrate them with the `hadoop` deployment module's parameters file. The `net` output values you want to reference in the `hadoop` module need to be defined in the `hadoop` deployment template as parameters.
+
+=== Adding the module into the deployment resource array
+
+To use a module in an archetype, you need to add it to the `module-deployment-order` array stored in the archetype configuration file. Once added, the toolkit recognizes the module name as a valid option when running deployments.
+
+The workload `module-deployment-order` array with a `hadoop-cloudbreak` deployment added looks like this:
+
+```json
+"module-deployment-order":[
+    "nsg",
+    "workload-net",
+    "la",
+    "workload-kv",
+    "cloudbreak"
+]
+```
+
+NOTE: It is recommend to link:../use/deployment-validation.adoc[validate your archetypes].
+
+== Next steps
+
+Learn about using the link:integration-testing.adoc[integration tests] to accelerate developing new archetypes and modules.

@@ -1,0 +1,531 @@
+= Archetype: SAP HANA deployment
+:toc:
+:toc-placement: auto
+:toclevels: 2
+
+This example archetype workload is a https://docs.microsoft.com/azure/virtual-machines/workloads/sap/get-started[SAP HANA application]. In support of this application the following workload resources will be deployed to the workload:
+
+- Virtualized iSCSI arrays
+- NFS servers to provide access to the iSCSI arrays
+- SAP HANA servers
+- SAP ASCS servers for enqueue capabilities
+- A NetWeaver instance.
+
+== Create your archetype configuration file
+
+The toolkit provides an example configuration file for the shared services environment. You will need to create a new version of this file before running your deployment.
+
+1. Navigate to the toolkit's link:../../../archetypes/sap-hana[archetypes/sap-hana] folder.
+1. Make a copy of the `archetype.test.json` and name the copy `archetype.json`.
+1. Edit `archetype.json` providing the subscription, organization, networking, and other configuration information that you want to use for your deployment. You will need to use some of the same values when creating the configuration for the shared services environment.
+
+If your copy of the toolkit is associated with the git repository, the link:../../../.gitignore[.gitignore] file is set to prevent your deployment `archetype.json` file from being pushed to your code repository.
+
+== Deploy workload infrastructure
+
+All workload environments require a common set of operations, key vault, and virtual network resources before they can connect to the hub network and host workloads. The following steps will deploy these required resources.
+
+=== Step 1: Deploy operations and monitoring resources
+
+*Required role: SysOps*
+
+This step provisions the operations and monitoring resources for the workload environment.
+
+Start the `la` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m la
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m la
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m la
+
+This deployment creates the `{org}-{deployment-name}-la-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `{org}-{deployment-name}-la`
+| Log Analytics
+| Log Analytics instance for monitoring the workload's network.
+|===
+
+=== Step 2: Deploy Key Vault
+
+*Required role: SecOps*
+
+The next step is deploying the kv module, which creates a Key Vault resource and stores secrets defined in the `archetype.json` as well as creating encryption keys (used in Azure Disk Encryption extension), that other resources will use in subsequent deployment steps.
+
+These values are stored as secrets in the vault. To modify the default values for these passwords edit the link:../../../modules/kv/1.0/azureDeploy.parameters.json[Key Vault (kv) module parameters file] and update the secrets-object parameter.
+
+Start the `kv` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m kv
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m kv
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m kv
+
+This deployment creates the `{org}-{deployment-name}-kv-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `{org}-{deployment-name}-kv` 
+| Key Vault
+| Key Vault instance for the workload. One certificate deployed by default.
+
+| `{org}{deployment-name}kvdiag` (with any dashes removed)
+| Storage account
+| Location of Key Vault audit logs.
+|===
+
+=== Step 3: Deploy the virtual network
+
+*Required role: NetOps*
+
+This step involves two resource deployments in the following order:
+
+- The `nsg` module creates the network security groups (NSGs) and Azure security groups (ASGs) that secure the workload's virtual network. By default, the example workload net deployment creates a set of NSGs and ASGs compatible with an n-tier application, consisting of web, business, and data tiers. 
+- The `workload-net` module creates the workload's virtual network, along with setting up the default subnet and User Defined Routes (UDRs) used to route traffic to the shared services network. This deployment also creates the VNet peering that connects the shared services and workload networks.
+
+Start the `nsg` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m nsg
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m nsg
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m nsg
+
+Then start the `workload-net` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m workload-net
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m workload-net
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m workload-net
+
+These deployment creates the `{org}-{deployment-name}-net-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,a"]
+|===
+| Resource | Type | Description
+
+|`{org}-{deployment-name}-business-asg`
+| Application security group
+| ASG for business-tier resources.
+
+| `{org}-{deployment-name}-data-asg`
+| Application security group
+| ASG for data-tier resources.
+
+| `{org}-{deployment-name}-web-asg`
+| Application security group
+| ASG for web-tier resources.
+
+| `{org}-{deployment-name}-vnet`
+| Virtual network
+| The primary workload's virtual network with a single default subnet.
+
+| `{org}-{deployment-name}-{defaultsubnetname}-nsg`
+| Network security group
+| Network security group attached to the default subnet.
+
+| `{org}-{deployment-name}-udr`
+| Route table
+| User Defined Routes for routing traffic to and from the shared services network.
+
+| `{org}{deployment-name}diag{random-characters}` (with any dashes removed)
+| Storage account 
+| Storage location for virtual network diagnostic data.
+|===
+
+== Deploy workload resources
+
+Once the workload operations, Key Vault, and virtual network resources are provisioned, your team can begin deploying actual workload resources. This will create an iSCSI virtual storage array, an NFS storage server, an SAP HANA server, an ASCS messaging server, and an SAP NetWeaver application server.
+
+A local user account will be created for all of these machines. The user name is defined in the `local-admin-user` parameter of the archetype configuration file. The password for this user is generated and stored in the workload Key Vault as part of the `kv` deployment.
+
+=== Deploy iSCSI resources
+
+The first module used for this workload will deploy a single iSCSI virtual storage array and related resources.
+
+Start the `iscsi` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m iscsi
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m iscsi
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m iscsi
+
+These deployment creates the `{org}-{deployment-name}-iscsi-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `{deployment name}diag{random-characters}` (dashes removed)
+| Storage account
+| Storage account used for diagnostic logs related to the iSCSI VMs.
+
+| `{org}-{deployment-name}-iscsi-vm1`
+| Virtual machine
+| Virtual iSCSI VM.
+
+| `{org}-{deployment-name}-iscsi-vm1-nic`
+| Network interface
+| Virtual network interface for iSCSI VM.
+
+| `{org}{deployment-name}iscsivm1osdsk{random-characters}` (with dashes removed)
+| Disk
+| Virtual OS disk for iSCSI VM.
+|===
+
+=== Deploy NFS resources
+
+The next deployment module creates a pair of NFS servers with an associated load balancer providing access to the iSCSI virtual array.
+
+Start the `nfs` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m nsf
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m nsf
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m nsf
+
+These deployment creates the `{org}-{deployment-name}-nsf-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `{org}-{deployment-name}-sap-iscsi-lb`
+| Load balancer
+| Load balancer used for NFS servers.
+
+| `{org}-{deployment-name}-sap-iscsi-vm1`
+| Virtual machine
+| Primary NFS server.
+
+| `{org}-{deployment-name}-sap-iscsi-vm1-nic`
+| Network interface
+| Virtual network interface for primary NFS server.
+
+| `{org}{deployment-name}sapiscsivm1osdsk{random-characters}` (with dashes removed)
+| Disk
+| Virtual OS disk for primary NFS server.
+
+| `{org}{deployment-name}sapiscsidiag{random-characters}` (with dashes removed)
+| Storage account
+| Storage account used to store diagnostic logs related to the NFS servers.
+
+| `{org}-{deployment-name}-sap-iscsi-vm2`
+| Virtual machine
+| Secondary NFS server.
+
+| `{org}-{deployment-name}-sap-iscsi-vm2-nic`
+| Network interface
+| Virtual network interface for secondary NFS server.
+
+| `{org}{deployment-name}sapiscsivm2osdsk{random-characters}` (with dashes removed)
+| Disk
+| Virtual OS disk for secondary NFS server.
+|===
+
+=== Deploy SAP HANA resources
+
+After successfully deploying NFS servers, use the `hana` module to create a pair of SAP HANA servers with accompanying data, backup, and log drives.
+
+Start the `hana` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m hana
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m hana
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m hana
+
+These deployment creates the `{org}-{deployment-name}-hana-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `hanavm1backup{random-characters}`
+| Disk
+| Virtual disk for primary SAP HANA server backups.
+
+| `hanavm1data1{random-characters}`
+| Disk
+| First virtual disk attached to primary SAP HANA server for data volumes.
+
+| `hanavm1data2{random-characters}`
+| Disk
+| Second virtual disk attached to primary SAP HANA server for data volumes.
+
+| `hanavm1data3{random-characters}`
+| Disk
+| Third virtual disk attached to primary SAP HANA server for data volumes.
+
+| `hanavm1log1{random-characters}`
+| Disk
+| First virtual disk attached to primary SAP HANA server for log volumes.
+
+| `hanavm1log2{random-characters}`
+| Disk
+| Second virtual disk attached to primary SAP HANA server for log volumes.
+
+| `hanavm1sap{random-characters}`
+| Disk
+| Virtual disk used for the primary SAP HANA server’s system volume.
+
+| `hanavm1shared{random-characters}`
+| Disk
+| Virtual disk used for the primary SAP HANA server’s shared volume.
+
+| `hanavm2backup{random-characters}`
+| Disk
+| Virtual disk for primary SAP HANA server backups.
+
+| `hanavm2data1{random-characters}`
+| Disk
+| First virtual disk attached to primary SAP HANA server for data volumes.
+
+| `hanavm2data2{random-characters}`
+| Disk
+| Second virtual disk attached to primary SAP HANA server for data volumes.
+
+| `hanavm2data3{random-characters}`
+| Disk
+| Third virtual disk attached to primary SAP HANA server for data volumes.
+
+| `hanavm2log1{random-characters}`
+| Disk
+| First virtual disk attached to primary SAP HANA server for log volumes.
+
+| `hanavm2log2{random-characters}`
+| Disk
+| Second virtual disk attached to primary SAP HANA server for log volumes.
+
+| `hanavm2sap{random-characters}`
+| Disk
+| Virtual disk used for the primary SAP HANA server’s system volume.
+
+| `hanavm2shared{random-characters}`
+| Disk
+| Virtual disk used for the primary SAP HANA server’s shared volume.
+
+| `{org}-{deployment-name}-hana-as`
+| Availability set
+| Availability set associated with SAP HANA VMs.
+
+| `{org}-{deployment-name}-hana-lb`
+| Load balancer
+| Load balancer used to distribute traffic between SAP HANA servers.
+
+| `{org}-{deployment-name}-hana-vm1`
+| Virtual machine
+| Primary SAP HANA server VM.
+
+| `{org}-{deployment-name}-hana-vm1-nic`
+| Network interface
+| Virtual network interface for primary SAP HANA server.
+
+| `{org}{deployment-name}hanavm1osdsk{random-characters}` (with dashes removed)
+| Disk
+| Virtual OS disk for primary SAP HANA server.
+
+| `{org}{deployment-name}hanadiag{random-characters}` (with dashes removed)
+|Storage account |Storage account used to store diagnostic
+logs related to the SAP HANA servers.
+
+| `{org}-{deployment-name}-hana-vm2`
+| Virtual machine
+| Secondary SAP HANA server VM.
+
+| `{org}-{deployment-name}-hana-vm2-nic`
+| Network interface
+| Virtual network interface for secondary SAP HANA server.
+
+| `{org}{deployment-name}hanavm2osdsk{random-characters}` (with dashes removed)
+| Disk
+| Virtual OS disk for secondary SAP HANA server.
+|===
+
+=== Deploy ASCS resources
+
+The `ascs` module creates a pair of SAP ASCS servers to provide enqueue capabilities for your SAP HANA deployment.
+
+Start the `ascs` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m ascs
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m ascs
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m ascs
+
+These deployment creates the `{org}-{deployment-name}-ascs-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `{org}{deployment-name}diag{random-characters}` (with dashes removed)
+| Storage account
+| Storage account used to store diagnostic logs related to the ASCS servers.
+
+| `{org}-{deployment-name}-sap-as`
+| Availability set
+| Availability set associated with ASCS VMs.
+
+| `{org}-{deployment-name}-sap-ascs-lb`
+| Load balancer
+| Load balancer used to distribute traffic between ASCS servers.
+
+| `{org}-{deployment-name}-sap-ascs-vm1`
+| Virtual machine
+| Primary ASCS server VM.
+
+| `{org}-{deployment-name}-sap-ascs-vm1_disk2_{random-characters}`
+| Disk
+| Virtual data disk for primary ASCS server.
+
+| `{org}-{deployment-name}-sap-ascs-vm1_disk3_{random-characters}`
+| Disk
+| Virtual data disk for primary ASCS server.
+
+| `{org}-{deployment-name}-sap-ascs-vm1-nic`
+| Network interface
+| Virtual network interface for primary ASCS server.
+
+| `{org}-{deployment-name}-sap-ascs-vm1-pip`
+| Public IP address
+| Public IP address used by the providing external access to the primary ASCS server [*see note].
+
+| `{org}{deployment-name}sapascsvm1osdsk{random-characters}` (with dashes removed)
+| Disk
+| Virtual OS disk for primary ASCS server.
+
+| `{org}-{deployment-name}-sap-ascs-vm2`
+| Virtual machine
+| Secondary ASCS server VM.
+
+| `{org}-{deployment-name}-sap-ascs-vm2_disk2_{random-characters}`
+| Disk
+| Virtual data disk for secondary ASCS server.
+
+| `{org}-{deployment-name}-sap-ascs-vm2_disk3_{random-characters} `
+| Disk
+| Virtual data disk for secondary ASCS server.
+
+| `{org}-{deployment-name}-sap-ascs-vm2-nic`
+| Network interface
+| Virtual network interface for secondary ASCS server.
+
+| `{org}-{deployment-name}-sap-ascs-vm2-pip`
+| Public IP address
+| Public IP address used by the providing external access to the secondary ASCS server [*see note].
+
+| `{org}{deployment-name}sapascsvm2osdsk{random-characters}`(with dashes removed)
+| Disk
+| Virtual OS disk for secondary ASCS server.
+|===
+
+NOTE: This deployment creates Public IP Addresses, however these will not be accessible to the public internet unless the SecOps teams modifies the workload NSG to allow it.
+
+=== Deploy NetWeaver resources
+
+The final deployment for this workload creates an SAP NetWeaver instance used in conjunction with the previously deployed SAP HANA servers.
+
+Start the `netweaver` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create workload -path archetypes/sap-hana/archetype.json -m netweaver
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create workload -path archetypes/sap-hana/archetype.json -m netweaver
+
+.Windows
+[source,cmd]
+py vdc.py create workload -path archetypes/sap-hana/archetype.json -m netweaver
+
+These deployment creates the `{org}-{deployment-name}-netweaver-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `nwdiag{random-characters}`
+| Storage account
+| Storage account used to store diagnostic logs related to the NetWeaver VM.
+
+| `{org}-{deployment-name}-sap-as`
+| Availability set
+| Availability set associated with NetWeaver VM.
+
+| `{org}-{deployment-name}-sap-nw-vm1`
+| Virtual machine
+| NetWeaver virtual machine.
+
+| `{org}-{deployment-name}-sap-nw-vm1-nic`
+| Network interface
+| Virtual network interface for NetWeaver VM.
+
+| `{org}{deployment-name}sapnwvm1osdsk{random-characters}` (with dashes removed)
+| Disk
+| Virtual OS disk for NetWeaver VM.
+|===
+
+== Next steps
+
+Review the link:parameters.adoc[parameter settings] for this archetype.

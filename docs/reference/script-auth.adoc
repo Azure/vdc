@@ -1,0 +1,19 @@
+= Authenticating with Azure
+
+✏ link:readme.md[>> View scripts]
+
+Before invoking any of the scripts, you will need to authenticate with Azure.
+
+Open a terminal/command line and navigate to the root of the folder of the toolkit. 
+
+Sign into the Azure CLI:
+
+`az login`
+
+This prompts you to log in using the Azure web interface. 
+
+If your account is associated with more than one subscription, you'll then need to set the default subscription you want to target after you login:
+
+`az account set --subscription {subscription GUID}`
+
+You are now ready to invoke link:readme.md[the scripts].

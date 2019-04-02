@@ -1,0 +1,9 @@
+= File formatting in the documentation
+
+Many of the files in the toolkit's documentation use the https://asciidoctor.org/docs/what-is-asciidoc/[AsciiDoc format]. This format was chosen over markdown because it is easier to manage certain structures such as tables and notes. Currently, the documentation is a mixture of markdown and AsciiDoc since we only converted files that required the new format.
+
+Useful links for authoring in AsciiDoc:
+
+- https://powerman.name/doc/asciidoc[Powerman's AsciiDoc cheatsheet]
+- https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[AsciiDoc Syntax Quick Reference]
+- https://asciidoctor.org/docs/asciidoc-writers-guide/[AsciiDoc Writer's Guide]

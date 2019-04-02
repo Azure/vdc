@@ -6,38 +6,61 @@ _Enabling developer agility and operational consistency without compromising sec
 
 Microsoft Azure Virtual Datacenter (VDC) is an approach for designing a foundational cloud architecture for enterprises. It provides a vision for enterprise IT in the cloud and a strategy for implementing it. For more information about the approach, visit [Azure Virtual Datacenter](https://aka.ms/vdc).
 
+The VDC approach is composed of three main components:
+- A set of reference architectures
+- An engagement model that guides customers on choosing the right reference architectures
+- An automation toolkit that follows the engagement model to provide a DevOps approach on deploying different reference architectures
+
 ## Automation Toolkit
 
 This repository contains the _Azure Virtual Datacenter Automation Toolkit_. The toolkit is set of deployment artifacts, Azure Resource Manager templates and scripts, and an orchestration engine. It allows you to deploy an example shared services infrastructure environment and example workload environments capable of hosting different applications. It also allows you to deploy a simulated on-premises environment, hosted in Azure, for testing purposes.
 
-## Contents
-- [Prerequisites](documentation/01-prerequisites.md)
-- [How VDC automation works](documentation/02-how-vdc-automation-works.md)
-- [Parameters files](documentation/03-parameters-files.md)
-- [Creating subscription roles](documentation/04-creating-subscription-roles.md)
-- [Launching the main automation script](documentation/05-launching-the-main-automation-script.md)
-- [Deploying the simulated on-premises environment](documentation/06-deploying-the-simulated-on-premises-environment.md)
-- [Deploying the sample VDC shared services and central IT infrastructure](documentation/07-deploying-the-sample-vdc-shared-service.md)
-- [Deploying workloads](documentation/08-deploying-spokes.md)
-    - [Workload example 1: PaaS N-tier architecture](documentation/08-deploying-workloads-example1-paas-n-tier-architecture.md)
-    - [Workload example 2: IaaS N-tier architecture](documentation/08-deploying-workloads-example2-iaas-n-tier-architecture.md)
-    - [Workload example 3: Hadoop deployment](documentation/08-deploying-workloads-example3-hadoop-deployment.md)
-    - [Workload example 4: SAP HANA deployment](documentation/08-deploying-workloads-example4-sap-hana-deployment.md)
-- [Post-deployment subscription policy updates](documentation/09-post-deployment-subscription-policy-updates.md)
-- [Extending the Azure VDC Automation Toolkit](documentation/10-extending-the-azure-vdc-automation-toolkit.md)
-- [Deployment validation](documentation/11-deployment-validation.md)
-- [Integration testing](documentation/12-integration-testing.md)
+## Documentation
 
-# Contributing
+- [Understanding the concepts](docs/understand/readme.md)
+  - [Prerequisite Azure knowledge](docs/understand/azure.md) - Resources for understanding the Azure services that the toolkit utilizes.
+  - [Understanding the Automation Toolkit](docs/understand/toolkit.md) - Explains the important concepts in the toolkit.
+  - [Understanding environment types](docs/understand/environment-types.md) - Describes the built-in environment types that the toolkit can deploy.
+  - [Common workflow](docs/understand/workflow.md) - Covers the typical usage pattern for the tools in the toolkit.
+  - [Roles and permissions](docs/understand/roles.md) - Lists the custom roles that are provided by default in the toolkit.
+  - [Modules](docs/understand/modules.adoc) - Explains the modules included in the toolkit.
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+- [Setting up the toolkit](docs/setup/readme.md)
+  - [Run the Docker image](docs/setup/setup-docker.md) (Recommended) - How to setup the toolkit using Docker.
+  - [Run on your local machine](docs/setup/setup-local.md) - How to setup the toolkit natively.
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+- [Usage patterns for the toolkit](docs/use/readme.md)
+  - [Your first deployment](docs/use/your-first-deployment.md) - Quick start tutorial for deploying the _simulated on-premises archetype_.
+  - [General considerations](docs/use/general-considerations.md) - Items to evaluate before deploying any archetype.
+  - [Creating archetype configuration files](docs/use/configuration-files.adoc) - How to prepare an `archetype.json` file.
+    - [Common parameters](docs/use/common-parameters.adoc) - Parameters used in all archetype configuration files.
+    - [Common workload parameters](docs/use/common-workload-config.adoc) - Parameters used by workload archetype configuration files.
+  - [Archetype deployment considerations](docs/use/archetype-deployment-considerations.md) - Items to evaluate that are specific to _shared-services_ and _workload_ environments.
+  - [Validating deployments](docs/use/deployment-validation.adoc) - How to validate an archetype configuration.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+- [Extending the toolkit](docs/extend/readme.md)
+  - [Creating new modules](docs/extend/creating-new-modules.adoc) - How to create a new module.
+  - [Creating new archetypes](docs/extend/creating-new-archetypes.adoc) - How to create a new archetype.
+  - [Using the integration tests](docs/extend/integration-testing.adoc) - How to run and add new integration tests.
+
+- [Script Reference](docs/reference/readme.md)
+  - [policy-assignment.py](docs/reference/script-policy-assignment.adoc) Update subscription policy post-deployment
+  - [role-creation.py](docs/reference/script-role-creation.adoc) Create subscription roles
+  - [subscription.py](docs/reference/script-subscription.adoc) Create management groups and subscriptions
+  - [vdc.py](docs/reference/script-vdc.adoc) Deploy archetypes and modules
+
+- [Archetypes](docs/archetypes/readme.md)
+  - [Simulated on-premises environment](docs/archetypes/on-premises/overview.adoc)
+  - [Shared services](docs/archetypes/shared-services/overview.adoc)
+  - [IaaS N-tier architecture](docs/archetypes/ntier-iaas/overview.adoc)
+  - [App Service Environment + SQL Database](docs/archetypes/paas/overview.adoc)
+  - [SAP HANA](docs/archetypes/sap-hana/overview.adoc)
+  - [Cloudbreak](docs/archetypes/cloudbreak/overview.adoc)
+
+## Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

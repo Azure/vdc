@@ -1,0 +1,181 @@
+= Understanding modules
+
+Modules are the building blocks of the Azure Virtual Datacenter Automation Toolkit. For example, one module deploys a Key Vault instance, another module deploys a virtual network, and a third module creates a workload specific virtual machine. An archetype is composed from a set of modules, and these modules are listed and configured in the archetype's configuration file.
+
+Module versioning is supported using a version subfolder structure inside the main module folder. The toolkit uses a #.# format, such as "1.0". However, the version is a string value, so it can be any alphanumeric value.
+
+A module consists of a Resource Manager template (`azureDeploy.json`) used to deploy resources, a parameter file associated with the deployment file (`azureDeploy.parameters.json`), and an optional policies file (`arm.policies.json`) that can apply Azure Policy rules as part of the deployment. These files are standard Azure Resource Manager template files that have been modified to make use of the link:../archetypes/configuration-files.adoc#referencing-other-parameters[toolkit's custom parameter format].
+
+When the toolkit's deployment scripts are run these module files are used to create a Resource Manager deployment. Custom parameters are populated in these templates using values set in the archetype configuration file before being submitted to the Azure Resource Manager API for deployment. For example, a virtual network IP range defined in the archetype configuration file will be inserted into a module's individual resource parameters file where appropriate before submitting that deployment to Azure Resource Manager.
+
+== Sample deployment modules
+
+The toolkit includes deployment modules to support each of the sample deployments. These modules are stored in the `modules` folder. You must have the permissions defined by associated link:roles.md[sample role] in order to deploy the module.
+
+=== Shared services deployment modules
+
+The following resource deployments modules support archetypes that utilized the link:../archetypes/shared-services/overview.adoc[shared services deployments]:
+
+[options="header",cols="a,,"]
+|===
+| Resource | Role | Description
+
+| `la`
+| SysOps
+| Operations and monitoring resources.
+
+| `kv`
+| SecOps
+| Central Key Vault deployment and key provisioning.
+
+| `nsg`
+| NetOps
+| Shared services virtual network NSG and ASG configuration.
+
+| `shared-services-net`
+| NetOps
+| Shared services virtual network creation.
+
+| `vgw`
+| NetOps
+| Virtual gateway creation.
+
+| `jb`
+| SysOps
+| Bastion hosts for remote management (jump boxes).
+
+| `adds`
+| NetOps
+| Shared services domain and DNS servers.
+
+| `app-gateway`
+| SecOps
+| Azure Application Gateway used as a central firewall for incoming traffic.
+
+| `azure-fw`
+| SecOps
+| Azure Firewall creation.
+|===
+
+=== Workload deployment modules
+
+The following  modules support workload deployments:
+
+[options="header",cols="a,,"]
+|===
+| Resource | Role | Description
+
+| `la`
+| SysOps
+| Operations and monitoring resources. (used in all workload deployments)
+
+| `nsg`
+| NetOps
+| Workload virtual network NSG and ASG configuration. (used in all workload deployments)
+
+| `workload-net`
+| NetOps
+| Workload virtual network creation. (used in all workload deployments)
+
+| `kv`
+| SecOps
+| Workload Key Vault deployment. (used in all workload deployments)
+
+| `app-gateway`
+| NetOps
+| Example deployment of an Application Gateway to the Shared Services (used by iaas sample). **Note:** This module deploys the resource in the Shared Services subscription, therefore a NetOps role must have the appropriate deployment permissions on both subscriptions: Shared services and Workload subscription.
+
+| `vmapp-lb`
+| DevOps
+| Example infrastructure as a service (IaaS) workload deployment using dual Windows Server machines with load balancer and availability set. (used by the iaas sample)
+
+| `sqlserver-alwayson`
+| DevOps
+| Example IaaS workload deployment using dual Windows Server machines running SQL Server with load balancer and availability set. (used by the iaas sample)
+
+| `sqldb`
+| DevOps
+| Example platform as a service (PaaS) workload deployment using Azure SQL Database. (used by the paas sample)
+
+| `ase`
+| DevOps
+| Example PaaS workload using an App Services Environment deployment. (used by the paas sample)
+
+| `cb`
+| DevOps
+| Example Hadoop workload. (used by the cloudbreak sample)  
+
+| `kdc`
+| DevOps
+| Example Kerberos domain controller deployment. (used by the cloudbreak sample)
+
+| `iscsi`
+| DevOps
+| Example virtual iSCSI array deployment. (used by the sap-hana sample)
+
+| `nfs`
+| DevOps
+| Example NFS servers. (used by the sap-hana sample)
+
+| `hana`
+| DevOps
+| Example SAP HANA deployment. (used by the sap-hana sample)
+
+| `ascs`
+| DevOps
+| Example SAP ASCS server deployment. (used by the sap-hana sample)
+
+| `netweaver`
+| DevOps
+| Example SAP NetWeaver deployment. (used by the sap-hana sample)
+|===
+
+=== Simulated on-premises modules
+
+The following modules support deploying a simulated on-premises environment:
+
+[options="header",cols="a,"]
+|===
+| Resource | Description
+
+| `nsg`
+| Simulated on-premises virtual network NSG and ASG configuration.
+| `net`
+| Simulated on-premises virtual network.
+| `ad`
+| Simulated on-premises active directory servers.
+| `vgw`
+| Virtual gateway used to connect the simulated on-premises network with the shared services network.
+|===
+
+== Resource dependencies and deployment output
+
+Modules may depend on other resources provisioned earlier in the overall deployment process. For instance, the virtual machines in the `adds` deployment module can't be created without first creating the required on-premises connected virtual network.
+
+Modules may need to know the names and settings of resources created by deployments they depend on. To provide this information, the toolkit uses the output generated by Azure Resource Manager from each resource deployment.
+
+To share this output between resource deployments, the automation script creates a shared Azure Storage location in your subscription. Deployment output is written to the location, and subsequent resource deployments can load this output and integrate these settings with its own deployment parameters.
+
+By default, the first time the automation script is run, a new resource group named `vdc-storage-rg` is created in the target subscription. All deployments use this resource group when creating storage accounts for saving deployment output. Storage account names can be specified using the `vdc-storage-account-name` parameter in the archetype configuration file.
+
+Note that workload deployments may rely on output generated during the shared services deployment, so you must use the same storage account used by their associated shared services to access that output.
+
+== Virtual machine configuration scripts
+
+Certain resources, particularly virtual machines that require configuration after creation, may need additional scripts or other files included as part of their Resource Manager deployment. These files are stored in the link:../../scripts[`scripts`] folder. They need to be uploaded to the same storage account as the deployment output before submitting the deployment to Resource Manager.
+
+By default, resource deployments _do not upload_ these scripts. For modules that require these scripts, use the `--upload-scripts` argument when launching the automation script to upload these scripts to the correct location. Every time this upload process is performed, the entire contents of the `scripts` folder is copied to storage, overwriting any previous versions.
+
+See the link:reference/script-vdc.adoc[reference documentation for the automation script] for more details.
+
+== Deployment validation and integration testing
+
+The toolkit also includes tools that allow you test updates to your deployment templates and parameter files without the need to actually deploy all of your resources to Azure:
+
+- link:../use/deployment-validation.adoc[Deployment validation] checks that your deployment templates and parameter files are valid for use with Resource Manager before running a deployment or confirming a previously run deployment has succeeded.
+
+- link:../extend/integration-testing.adoc[Integration testing] allows you to record the results of a successful deployment and use that recording to quickly confirm any updates you've made are valid before checking these changes into source control.
+
+== Next steps
+
+Learn how to link:../setup/readme.md[setup the toolkit].

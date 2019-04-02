@@ -1,0 +1,204 @@
+= Integration testing
+
+The toolkit includes an integration testing feature that allows you to test your deployments against simulated HTTP responses from the Azure platform. This enables you to quickly verify that your deployment templates and parameter files work as expected.
+
+This integration testing feature is built using the https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests[Azure SDK for Python’s test functionality]. This functionality allows you to
+make a baseline recording of responses from the Azure platform using a known good version of your deployment. These recordings can then be played back during simulated deployments to quickly test your latest code.
+
+== Prerequisites
+
+Before using the toolkit’s integration testing functionality, you will need to make sure several types of files are in place and properly configured.
+
+=== Toolkit setup
+
+Be sure that you have followed the link:../setup/readme.md[setup instructions] appropriate to your environment.
+
+=== Test deployment parameters files
+
+Each of the sample deployments contains a top level `archetype.test.json` test file that is used during integration testing. This file contains placeholders for a number of important fields used during deployments such subscription IDs and user names. It is used as the basis for the actual `archetype.json` you will have created to use in your deployments.
+
+For integration testing to work, the existing test files should only be modified to include new parameter fields you may have added to the toolkit’s default archetype configuration that you may have modified.
+
+Test archetype configuration files are expected to be checked into your source control. They should _never contain sensitive information_ such as real subscriptions, tenant, or user accounts. Instead, they should continue to use placeholder values consistent with existing values.
+
+=== Integration testing configuration files
+
+The integration testing functionality also depends on two files that are not included in the toolkit code repository:
+
+* `tools/devtools_testutils/testsettings_local.cfg`
+* `tools/devtools_testutils/vdc_settings_real.py`
+
+Both need to exist in the toolkit’s `tools/devtools_testutils` folder. These files are listed in the toolkit’s `.gitignore` file to prevent their inclusion in your repository by default, so you will need to create and configure these files before running any tests.
+
+==== `testsettings_local.cfg`
+
+The `testsettings_local.cfg` file consists of a single `live-mode` parameter which tells the testing functionality if it should be running in playback mode (offline testing mode) or recording mode (where an actual deployment is used to record data for offline testing). If this file is absent this `live-mode` value will default to false.
+
+The content of this file should be a single line:
+
+[source,yaml]
+----
+live-mode: false
+----
+
+==== `vdc_settings_real.py`
+
+The file `tools/devtools_testutils/fake_settings.py`, which is included in the toolkit, contains the placeholder values used by for tests running in playback mode. The `vdc_settings_real.py` file contains the actual subscription, AAD tenant, and credentials you will use when in recording mode. If you do not create this real file, you will only be able to run offline tests using pre-recorded data.
+
+To set up this file create a blank `vdc_settings_real.py` in the `devtools_testutils` folder, then copy the contents of `fake_settings.py` into it. Next you will need to update the real file by modifying the following variables:
+
+[cols=",,",options="header"]
+|===
+| Variable name | Description | Placeholder value
+| `ONPREM_SUBSCRIPTION_ID`
+| Subscription ID of your simulated on-premises environment.
+| 00000000-0000-0000-0000-000000000000
+
+| `SHARED_SERVICES_SUBSCRIPTION_ID`
+| Subscription ID of your shared services deployment.
+| 00000000-0000-0000-0000-000000000000
+
+| `WORKLOAD_SUBSCRIPTION_ID`
+| Subscription ID of your workload deployment.
+| 00000000-0000-0000-0000-000000000000
+
+| `AD_DOMAIN`
+| Domain used by for your AD tenant.
+| myaddomain.onmicrosoft.com
+
+| `TENANT_ID`
+| ID of your Azure AD Tenant.
+| 00000000-0000-0000-0000-000000000000
+
+| `CLIENT_OID`
+| Object ID of the Azure AD user that will be assigned as the key vault service principle during your deployments.
+| 00000000-0000-0000-0000-000000000000
+|===
+
+In addition to these values you will need to update the real file’s `get_credentials` function to replace the fake basic authentication token using either the `ServicePrincipalCredentials` or `UserPassCredentials`. Both methods are included but commented out in the fake version of the file.
+
+For more information on how to set up these credentials see the https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests#getting-azure-credentials[Getting Azure Credentials] section of the Azure SDK for Python documentation.
+
+== Sample tests
+
+Each test should have a sub-folder in the link:../../tests/integration_tests[`tests/integration_tests`] folder. Each of these test sub-folders contains a `test_all_resources.py` file which specifies what resources should be included as part of the test. Each test sub-folder also contain a `recordings` folder that contains the pre-recorded HTTP response data used for offline testing.
+
+The toolkit includes pre-configured tests and recorded data for each of the sample deployments:
+
+[cols="a,a",options="header"]
+|===
+| Test folder | Sample deployment
+| link:../../tests/integration_tests/simulated_onprem[`tests/integration_tests/simulated_onprem`]
+| link:../archetypes/on-premises/overview.adoc[Simulated on-premises environment]
+
+| link:../../tests/integration_tests/shared_services[`tests/integration_tests/shared_services`]
+| link:../archetypes/shared-services/overview.adoc[Sample shared services and central IT infrastructure]
+
+| link:../../tests/integration_tests/paas_workload[`tests/integration_tests/paas_workload`]
+| link:../archetypes/paas/overview.adoc[ASE+SQL Database (PaaS) architecture]
+
+| link:../../tests/integration_tests/ntier_iaas_workload[`tests/integration_tests/ntier_iaas_workload`]
+| link:../archetypes/ntier-iaas/overview.adoc[IaaS N-tier architecture]
+
+| link:../../tests/integration_tests/cloudbreak-workload[`tests/integration_tests/cloudbreak-workload`]
+| link:../archetypes/cloudbreak/overview.adoc[Hadoop deployment]
+
+| link:../../tests/integration_tests/sap_workload[`tests/integration_tests/sap_workload`]
+| link:../archetypes/sap-hana/overview.adoc[SAP HANA deployment]
+|===
+
+== Running tests in offline mode
+
+Before running offline (playback mode) tests, make sure your `testsettings_local.cfg` file has the `live-mode` parameter set to `false`.
+
+Integration tests use the https://docs.pytest.org/en/latest/[pytest] test runner Python module. Start a test by navigating to the toolkit root folder in a terminal or command-line interface and running the following command:
+
+.Docker
+[source,bash]
+python -m pytest tests/integration_tests/{deployment-test-folder}/{test-file-name}.py
+
+.Linux/OSX
+[source,bash]
+python3 -m pytest tests/integration_tests/{deployment-test-folder}/{test-file-name}.py
+
+.Windows
+[source,cmd]
+py -m pytest tests/integration_tests/{deployment-test-folder}/{test-file-name}.py
+
+An offline test should take less than 30 seconds to complete.
+
+== Recording test output
+
+Running a test in online (recording mode) will deploy all resources defined in the relevant `test_all_resources.py` file. This deployment process will use the subscription, tenant, and user information stored in your `vdc_settings_real.py`. Other settings will be pulled from the `archetype.test.json` file.
+
+The test will record all HTTP traffic to and from the Azure Resource Manager APIs during this deployment and update the data in `recordings` folder for later use in offline testing. Make sure your online deployment completely succeeds before checking in recording files to your code repository.
+
+To set the integration testing to online mode, update your `testsettings_local.cfg` file’s `live-mode` parameter to `false`. Then start the deployment by navigating to the toolkit root folder in a terminal or command-line interface and running the following command (same command used for offline mode):
+
+Docker
+[source,bash]
+python -m pytest tests/integration_tests/{deployment-test-folder}/{test-file-name}.py
+
+.Linux/OSX
+[source,bash]
+python3 -m pytest tests/integration_tests/{deployment-test-folder}/{test-file-name}.py
+
+.Windows
+[source,cmd]
+py -m pytest tests/integration_tests/{deployment-test-folder}/{test-file-name}.py
+
+Online mode will take a long time as it will provision all of the resources for a deployment.
+
+== Customizing integration tests
+
+Using the existing sample tests as a base you should be able to easily create your own custom tests for new archetypes.
+
+=== Create a new test
+
+To create a test for a new deployment, create a new folder in `tests/integration_tests/`. Copy one of the existing `test_all_resources.py` files into this new folder.
+
+This file’s `setUp` function has a `_workload_configuration_path` variable (alternatively `_shared_services_configuration_path` or `_on_premises_configuration_path` depending on the link:../understand/environment-types.adoc[environment type]) that will need to point to the root folder of your archetype. This is the same path used when running the `vdc.py` script). You will also need to configure the `_environment_type` variables.
+
+[source,python]
+----
+    def setUp(self):
+        super(AllResourcesUsing, self).setUp()
+        parameters_file = ''
+
+        if self.is_live:
+            parameters_file = 'archetype.json'
+        else:
+            parameters_file = 'archetype.test.json'
+        
+        self._workload_path = join(
+                Path(__file__).parents[3],
+                'archetypes',
+                '{new deployment folder name}',
+                parameters_file)
+        self._environment_type = 'workload'
+----
+
+=== Adding a module to a test
+
+Inside the `test_all_resources.py` file, including a module in a test is done by adding a function that will in turn call the `_execute_deployment_test` function of the `VDCBaseTestCase` for the module when the test is executed.
+
+Each deployment test should always include these functions for the `ops`, `kv`, `nsg`, and `net` modules. Additional modules should be added using this standardized format:
+
+[source,python]
+----
+    def test_x_workload_{module name}_creation(self):
+
+        self.set_resource_to_deploy('{module name}', args)
+        self.upload_scripts(args, False)
+        self.create_vdc_storage(args, False)
+        successful: bool = self.execute_deployment_test(
+            args,
+            self._workload_path,
+            self._environment_type)
+
+        self.assertEqual(successful, True)
+----
+
+== Next steps
+
+Be sure to reach out to us with feedback. Open an https://github.com/Azure/vdc/issues[issue on the GitHub] repository with any questions.
