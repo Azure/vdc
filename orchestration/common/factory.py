@@ -54,7 +54,7 @@ class ObjectFactory(object):
                         ResourceManagementClient,
                         **kwargs))
         elif integration_type == IntegrationType.POLICY_CLIENT_SDK:
-            from azure.mgmt.resource.policy import PolicyClient
+            from azure.mgmt.resource.policy.v2018_05_01 import PolicyClient
             from orchestration.integration.sdk.policy_client import PolicyClientSdk
             
             return PolicyClientSdk(
@@ -161,25 +161,47 @@ class ObjectFactory(object):
                 'secret' in kwargs and \
                 kwargs['secret'] is not None:
 
+                # Secrets passed, let's authenticate the SDK using the values passed.
                 credentials = \
                 ServicePrincipalCredentials(
                     client_id=kwargs['client_id'], 
                     secret=kwargs['secret'], 
                     tenant=kwargs['tenant_id'])
                 
-                if 'subscription_id' in kwargs:
+                if 'subscription_id' in kwargs and \
+                     'api_version' in kwargs:
+                    client = client_class(
+                        credentials,
+                        subscription_id=kwargs['subscription_id'],
+                        api_version=kwargs['api_version'])
+                elif 'subscription_id' in kwargs:
                     client = client_class(
                         credentials, 
                         kwargs['subscription_id'])
+                elif 'api_version' in kwargs:
+                    client = client_class(
+                        credentials,
+                        api_version=kwargs['api_version'])
                 else:
                     client = client_class(credentials)
             else:
                 from azure.common.client_factory import get_client_from_cli_profile
                 # No credentials passed, let's attempt to get the credentials from az login
-                if 'subscription_id' in kwargs:
+
+                if 'subscription_id' in kwargs and \
+                     'api_version' in kwargs:
+                    client = get_client_from_cli_profile(
+                        credentials,
+                        subscription_id=kwargs['subscription_id'],
+                        api_version=kwargs['api_version'])
+                elif 'subscription_id' in kwargs:
                     client = get_client_from_cli_profile(
                         client_class,
                         subscription_id=kwargs['subscription_id'])
+                elif 'api_version' in kwargs:
+                   client = get_client_from_cli_profile(
+                        credentials,
+                        api_version=kwargs['api_version'])
                 else:
                     client = get_client_from_cli_profile(
                         client_class)

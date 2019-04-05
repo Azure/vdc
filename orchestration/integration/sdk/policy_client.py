@@ -1,8 +1,9 @@
-from azure.mgmt.resource.policy.models import (
+from azure.mgmt.resource.policy.v2018_05_01.models import (
     PolicyDefinition, 
-    PolicyAssignment
+    PolicyAssignment,
+    Identity
 )
-from azure.mgmt.resource.policy import PolicyClient
+from azure.mgmt.resource.policy.v2018_05_01 import PolicyClient
 import sys
 import logging
 import json
@@ -85,6 +86,17 @@ class PolicyClientSdk(object):
                     policy_assignment_parameters\
                         .display_name = \
                             policy['name']
+
+                    if 'identity' in policy and \
+                        'location' in policy:
+
+                        identity = Identity()
+                        identity.type = "SystemAssigned"
+                        policy_assignment_parameters\
+                            .identity = identity
+
+                        policy_assignment_parameters\
+                            .location = policy['location']
                 else:
                     policy_definition_id = \
                         policy['policyDefinitionId']

@@ -1,4 +1,4 @@
-FROM microsoft/azure-cli:2.0.54
+FROM microsoft/azure-cli
 WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt && \

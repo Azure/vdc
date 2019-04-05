@@ -274,7 +274,8 @@ class ParameterInitializer(object):
                 client_id=self._client_id, 
                 secret=self._secret, 
                 tenant_id=self._tenant_id,
-                subscription_id=self._subscription_id)
+                subscription_id=self._subscription_id,
+                api_version='2018-05-01')
 
         self._management_lock_integration_service = \
             object_factory.integration_factory(

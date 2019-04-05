@@ -1,66 +1,72 @@
 {
-    "policies":
-    [  
-        {  
-            "name":"permittedRegions",
-            "description":"Policy to restrict resource creation to only certain regions",
-            "rules":{    
-                "if":{
-                    "not":{
-                        "field":"location",
-                        "in":["eastus", "westus", "westus2", "centralus", "westcentralus", "westeurope"]
+    "policies": [
+        {
+            "name": "permittedRegions",
+            "description": "Policy to restrict resource creation to only certain regions",
+            "rules": {
+                "if": {
+                    "not": {
+                        "field": "location",
+                        "in": [
+                            "eastus",
+                            "westus",
+                            "westus2",
+                            "centralus",
+                            "westcentralus",
+                            "westeurope"
+                        ]
                     }
                 },
-                "then":{
-                    "effect":"audit"
+                "then": {
+                    "effect": "audit"
                 }
             }
         },
-        {  
-            "name":"enforceStandardTags",
-            "description":"Policy to enforce standard tags",
-            "rules":{    
+        {
+            "name": "enforceStandardTags",
+            "description": "Policy to enforce standard tags",
+            "rules": {
                 "if": {
-                        "anyOf": [
-                            {
-                                "field": "tags.environment",
-                                "exists": false
-                            },
-                            {
-                                "field": "tags.appCode",
-                                "exists": false
-                            },
-                            {
-                                "field": "tags.managedBy",
-                                "exists": false
-                            },
-                            {
-                                "field": "tags.source",
-                                "exists": false
-                            },
-                            {
-                                "field": "tags.dataClassification",
-                                "exists": false
-                            },
-                            {
-                                "field": "tags.supportTier",
-                                "exists": false
-                            },
-                            {
-                                "field": "tags.costCenter",
-                                "exists": false
-                            }
-                        ]
-                    },
+                    "anyOf": [
+                        {
+                            "field": "tags.environment",
+                            "exists": false
+                        },
+                        {
+                            "field": "tags.appCode",
+                            "exists": false
+                        },
+                        {
+                            "field": "tags.managedBy",
+                            "exists": false
+                        },
+                        {
+                            "field": "tags.source",
+                            "exists": false
+                        },
+                        {
+                            "field": "tags.dataClassification",
+                            "exists": false
+                        },
+                        {
+                            "field": "tags.supportTier",
+                            "exists": false
+                        },
+                        {
+                            "field": "tags.costCenter",
+                            "exists": false
+                        }
+                    ]
+                },
                 "then": {
                     "effect": "audit"
-                }            
+                }
             }
         },
         {
-            "name":"enforceAllowedVMImages",
-            "description":"Policy to enforce the use of specific VM Images",
-            "parameters":{
+            "name": "enforceAllowedVMImages",
+            "description": "Policy to enforce the use of specific VM Images",
+            "parameters": {
                 "imageIds": {
                     "type": "array",
                     "metadata": {
@@ -69,7 +75,7 @@
                     }
                 }
             },
-            "rules":{
+            "rules": {
                 "if": {
                     "allOf": [
                         {
@@ -90,9 +96,9 @@
             }
         },
         {
-            "name":"auditNSGUnassigned",
-            "description":"Policy that audits all NSGs that are not assigned to a NIC or Subnet",
-            "rules":{
+            "name": "auditNSGUnassigned",
+            "description": "Policy that audits all NSGs that are not assigned to a NIC or Subnet",
+            "rules": {
                 "if": {
                     "allOf": [
                         {
@@ -101,18 +107,18 @@
                         },
                         {
                             "allOf": [
-                            {
-                                "not": {
-                                "field": "Microsoft.Network/networkSecurityGroups/subnets[*].id",
-                                "exists": true
+                                {
+                                    "not": {
+                                        "field": "Microsoft.Network/networkSecurityGroups/subnets[*].id",
+                                        "exists": true
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "field": "Microsoft.Network/networkSecurityGroups/networkInterfaces[*].id",
+                                        "exists": true
+                                    }
                                 }
-                            },
-                            {
-                                "not": {
-                                "field": "Microsoft.Network/networkSecurityGroups/networkInterfaces[*].id",
-                                "exists": true
-                                }
-                            }
                             ]
                         }
                     ]
@@ -123,32 +129,32 @@
             }
         },
         {
-            "name":"enforceStorageEncryption",
-            "description":"Policy to restrict storage account creation to only those applying encryption",
-            "rules":{    
-                "if":{
-                    "allOf":[
+            "name": "enforceStorageEncryption",
+            "description": "Policy to restrict storage account creation to only those applying encryption",
+            "rules": {
+                "if": {
+                    "allOf": [
                         {
-                            "field":"type",
-                            "equals":"Microsoft.Storage/storageAccounts"
+                            "field": "type",
+                            "equals": "Microsoft.Storage/storageAccounts"
                         },
                         {
-                            "not":{
-                                "field":"Microsoft.Storage/storageAccounts/enableBlobEncryption",
-                                "equals":"true"
+                            "not": {
+                                "field": "Microsoft.Storage/storageAccounts/enableBlobEncryption",
+                                "equals": "true"
                             }
                         }
                     ]
                 },
-                "then":{
-                    "effect":"audit"
+                "then": {
+                    "effect": "audit"
                 }
             }
         },
         {
-            "name":"enforceStorageHttpsAccess",
-            "description":"Policy to enforce Https Access",
-            "rules":{
+            "name": "enforceStorageHttpsAccess",
+            "description": "Policy to enforce Https Access",
+            "rules": {
                 "if": {
                     "allOf": [
                         {
@@ -167,21 +173,21 @@
             }
         },
         {
-            "name":"enforceStorageServiceEndpoint",
-            "description":"Policy to enforce Storage Account service endpoint",
-            "rules":{
+            "name": "enforceStorageServiceEndpoint",
+            "description": "Policy to enforce Storage Account service endpoint",
+            "rules": {
                 "if": {
                     "allOf": [
-                    {
-                        "field": "type",
-                        "equals": "Microsoft.Storage/storageAccounts"
-                    },
-                    {
-                        "not": {
-                        "field": "Microsoft.Storage/storageAccounts/networkAcls.virtualNetworkRules[*].id",
-                        "exists": true
+                        {
+                            "field": "type",
+                            "equals": "Microsoft.Storage/storageAccounts"
+                        },
+                        {
+                            "not": {
+                                "field": "Microsoft.Storage/storageAccounts/networkAcls.virtualNetworkRules[*].id",
+                                "exists": true
+                            }
                         }
-                    }
                     ]
                 },
                 "then": {

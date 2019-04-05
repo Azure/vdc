@@ -45,7 +45,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"permittedRegions","policyType":"Custom","description":"Policy
         to restrict resource creation to only certain regions","metadata":{"category":"VDC"},"policyRule":{"if":{"not":{"field":"location","in":["eastus","westus","westus2","centralus","westcentralus","westeurope"]}},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions","type":"Microsoft.Authorization/policyDefinitions","name":"permittedRegions"}'}
@@ -74,7 +74,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/permittedRegions?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/permittedRegions?api-version=2018-05-01
   response:
     body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"permittedRegions","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/permittedRegions","type":"Microsoft.Authorization/policyAssignments","name":"permittedRegions"}'}
     headers:
@@ -106,7 +106,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"enforceStandardTags","policyType":"Custom","description":"Policy
         to enforce standard tags","metadata":{"category":"VDC"},"policyRule":{"if":{"anyOf":[{"field":"tags.environment","exists":false},{"field":"tags.appCode","exists":false},{"field":"tags.managedBy","exists":false},{"field":"tags.source","exists":false},{"field":"tags.dataClassification","exists":false},{"field":"tags.supportTier","exists":false},{"field":"tags.costCenter","exists":false}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStandardTags"}'}
@@ -135,7 +135,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStandardTags?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStandardTags?api-version=2018-05-01
   response:
     body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStandardTags","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStandardTags","type":"Microsoft.Authorization/policyAssignments","name":"enforceStandardTags"}'}
     headers:
@@ -167,7 +167,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceAllowedVMImages?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceAllowedVMImages?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"enforceAllowedVMImages","policyType":"Custom","description":"Policy
         to enforce the use of specific VM Images","metadata":{"category":"VDC"},"parameters":{"imageIds":{"type":"Array","metadata":{"description":"The
@@ -201,7 +201,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"auditNSGUnassigned","policyType":"Custom","description":"Policy
         that audits all NSGs that are not assigned to a NIC or Subnet","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Network/networkSecurityGroups"},{"allOf":[{"not":{"field":"Microsoft.Network/networkSecurityGroups/subnets[*].id","exists":true}},{"not":{"field":"Microsoft.Network/networkSecurityGroups/networkInterfaces[*].id","exists":true}}]}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned","type":"Microsoft.Authorization/policyDefinitions","name":"auditNSGUnassigned"}'}
@@ -230,7 +230,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/auditNSGUnassigned?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/auditNSGUnassigned?api-version=2018-05-01
   response:
     body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"auditNSGUnassigned","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/auditNSGUnassigned","type":"Microsoft.Authorization/policyAssignments","name":"auditNSGUnassigned"}'}
     headers:
@@ -261,7 +261,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"enforceStorageEncryption","policyType":"Custom","description":"Policy
         to restrict storage account creation to only those applying encryption","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"not":{"field":"Microsoft.Storage/storageAccounts/enableBlobEncryption","equals":"true"}}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStorageEncryption"}'}
@@ -290,7 +290,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageEncryption?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageEncryption?api-version=2018-05-01
   response:
     body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStorageEncryption","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageEncryption","type":"Microsoft.Authorization/policyAssignments","name":"enforceStorageEncryption"}'}
     headers:
@@ -320,7 +320,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"enforceStorageHttpsAccess","policyType":"Custom","description":"Policy
         to enforce Https Access","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"field":"Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly","equals":"false"}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStorageHttpsAccess"}'}
@@ -349,7 +349,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageHttpsAccess?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageHttpsAccess?api-version=2018-05-01
   response:
     body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStorageHttpsAccess","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageHttpsAccess","type":"Microsoft.Authorization/policyAssignments","name":"enforceStorageHttpsAccess"}'}
     headers:
@@ -379,7 +379,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"enforceStorageServiceEndpoint","policyType":"Custom","description":"Policy
         to enforce Storage Account service endpoint","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"not":{"field":"Microsoft.Storage/storageAccounts/networkAcls.virtualNetworkRules[*].id","exists":true}}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStorageServiceEndpoint"}'}
@@ -408,7 +408,7 @@ interactions:
           policyclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageServiceEndpoint?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageServiceEndpoint?api-version=2018-05-01
   response:
     body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStorageServiceEndpoint","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageServiceEndpoint","type":"Microsoft.Authorization/policyAssignments","name":"enforceStorageServiceEndpoint"}'}
     headers:
@@ -521,7 +521,7 @@ interactions:
           msrest_azure/0.6.0 policyclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/workloadNetPermittedResourceTypes?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/workloadNetPermittedResourceTypes?api-version=2018-05-01
   response:
     body: {string: '{"properties":{"displayName":"workloadNetPermittedResourceTypes","policyType":"Custom","description":"Policy
         to prevent the creation of unauthorized resource types within the resource
@@ -551,7 +551,7 @@ interactions:
           msrest_azure/0.6.0 policyclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-iaas-net-rg/providers/Microsoft.Authorization/policyAssignments/workloadNetPermittedResourceTypes?api-version=2018-03-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-iaas-net-rg/providers/Microsoft.Authorization/policyAssignments/workloadNetPermittedResourceTypes?api-version=2018-05-01
   response:
     body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"workloadNetPermittedResourceTypes","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/workloadNetPermittedResourceTypes","scope":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-iaas-net-rg"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-iaas-net-rg/providers/Microsoft.Authorization/policyAssignments/workloadNetPermittedResourceTypes","type":"Microsoft.Authorization/policyAssignments","name":"workloadNetPermittedResourceTypes"}'}
     headers:
