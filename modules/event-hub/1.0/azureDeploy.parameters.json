@@ -1,0 +1,26 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "location": {
+        "value": "${ENV:ENVIRONMENT-TYPE.region}"
+    },
+    "event-hub-name": {
+        "value": "${ENV:ENVIRONMENT-TYPE.event-hub.name}"
+    },
+    "namespace-name": {
+        "value": "${ENV:ENVIRONMENT-TYPE.event-hub.namespace}"
+    },
+    "eventhub-sku": {
+        "value": "${ENV:ENVIRONMENT-TYPE.event-hub.sku}"
+    },
+    "sku-capacity": {
+        "value": 1
+    },
+    "consumer-group-name": {
+        "value": "${ENV:ENVIRONMENT-TYPE.event-hub.name}-consumer"
+    },
+    "authorizationrules-root-manage-shared-access-key-name": {
+        "value": "RootManageSharedAccessKey"
+    }
+}

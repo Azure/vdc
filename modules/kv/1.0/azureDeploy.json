@@ -2,206 +2,213 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "deployment-prefix": {
-        "type": "string",
-        "metadata": {
-             "description": "Deployment prefix. E.g. Organization-DeploymentType"
-         }
-      },
-      "access-policies":{  
-        "type":"array",
-        "metadata":{  
-          "description":"Access policies object"
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "access-policies": {
+            "type": "array",
+            "metadata": {
+                "description": "Access policies object"
+            }
+        },
+        "logs-retention-in-days": {
+            "type": "int",
+            "defaultValue": 0,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "description": "Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely."
+            }
+        },
+        "enable-vault-for-deployment": {
+            "type": "bool",
+            "defaultValue": true,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies if the vault is enabled for deployment by script or compute"
+            }
+        },
+        "enable-vault-for-templateDeployment": {
+            "type": "bool",
+            "defaultValue": true,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies if the vault is enabled for a template deployment"
+            }
+        },
+        "enable-vault-for-diskEncryption": {
+            "type": "bool",
+            "defaultValue": true,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies if the azure platform has access to the vault for enabling disk encryption scenarios."
+            }
+        },
+        "vault-sku": {
+            "type": "string",
+            "defaultValue": "Premium",
+            "allowedValues": [
+                "Premium"
+            ],
+            "metadata": {
+                "description": "Specifies the SKU for the vault"
+            }
+        },
+        "oms-workspace-resourceGroup": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Name of the Resource Group housing the OMS workspace."
+            }
+        },
+        "oms-workspace-name": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Name of the OMS workspace used for diagnostic log integration."
+            }
+        },
+        "secrets-object": {
+            "type": "secureObject",
+            "defaultValue": "{}",
+            "metadata": {
+                "description": "all secrets {\"secretName\":\"\",\"secretValue\":\"\"} wrapped in a secure object"
+            }
         }
-      },
-      "logs-retention-in-days":{  
-          "type":"int",
-          "defaultValue":0,
-          "minValue":0,
-          "maxValue":365,
-          "metadata":{  
-            "description":"Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely."
-          }
-      },
-      "enable-vault-for-deployment":{  
-        "type":"bool",
-        "defaultValue":true,
-        "allowedValues":[  
-          true,
-          false
-        ],
-        "metadata":{  
-          "description":"Specifies if the vault is enabled for deployment by script or compute"
-        }
-      },
-      "enable-vault-for-templateDeployment":{  
-        "type":"bool",
-        "defaultValue":true,
-        "allowedValues":[  
-          true,
-          false
-        ],
-        "metadata":{  
-          "description":"Specifies if the vault is enabled for a template deployment"
-        }
-      },
-      "enable-vault-for-diskEncryption":{  
-        "type":"bool",
-        "defaultValue":true,
-        "allowedValues":[  
-          true,
-          false
-        ],
-        "metadata":{  
-          "description":"Specifies if the azure platform has access to the vault for enabling disk encryption scenarios."
-        }
-      },
-      "vault-sku":{  
-        "type":"string",
-        "defaultValue":"Premium",
-        "allowedValues":[  
-          "Premium"
-        ],
-        "metadata":{  
-          "description":"Specifies the SKU for the vault"
-        }
-      },
-      "oms-workspace-resourceGroup":{  
-        "type":"string",
-        "minLength":1,
-        "metadata":{  
-          "description":"Name of the Resource Group housing the OMS workspace."
-        }
-      },
-      "oms-workspace-name":{  
-        "type":"string",
-        "minLength":1,
-        "metadata":{  
-          "description":"Name of the OMS workspace used for diagnostic log integration."
-        }
-      },
-      "secrets-object": {
-        "type": "secureObject",
-        "defaultValue": "{}",
-        "metadata": {
-          "description": "all secrets {\"secretName\":\"\",\"secretValue\":\"\"} wrapped in a secure object"
-        }
-      }
     },
-    "variables":{  
+    "variables": {
         "key-vault-name": "[concat(parameters('deployment-prefix'), '-kv')]",
-        "uniqueString":"[uniqueString(subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix":"[concat(replace(parameters('deployment-prefix'), '-', ''), 'kvdiag')]",
-        "diagnostic-storageAccount-name":"[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]"
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
+        "diagnostic-storageAccount-prefix": "[concat(replace(parameters('deployment-prefix'), '-', ''), 'kvdiag')]",
+        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]"
     },
     "resources": [
-        {  
-            "type":"Microsoft.Storage/storageAccounts",
-            "name":"[variables('diagnostic-storageAccount-name')]",
-            "apiVersion":"2017-06-01",
-            "location":"[resourceGroup().location]",
-            "sku":{  
-                "name":"Standard_LRS"
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('diagnostic-storageAccount-name')]",
+            "apiVersion": "2017-06-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
             },
-            "kind":"Storage",
-            "tags":{  
-                "displayName":"Key Vault Diagnostic Storage Account')"
+            "kind": "Storage",
+            "tags": {
+                "displayName": "Key Vault Diagnostic Storage Account')"
             },
             "properties": {
                 "encryption": {
-                  "keySource":"Microsoft.Storage",
-                  "services": {
-                      "blob": {
-                        "enabled":true
-                      }
-                  }
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    }
                 }
             }
         },
-        {  
-            "type":"Microsoft.KeyVault/vaults",
-            "name":"[variables('key-vault-name')]",
-            "apiVersion":"2016-10-01",
-            "location":"[resourceGroup().location]",
-            "tags":{  
-              "displayName":"[variables('key-vault-name')]"
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('key-vault-name')]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[variables('key-vault-name')]"
             },
-            "properties":{  
-              "enabledForDeployment":"[parameters('enable-vault-for-deployment')]",
-              "enabledForTemplateDeployment":"[parameters('enable-vault-for-templateDeployment')]",
-              "enabledForDiskEncryption":"[parameters('enable-vault-for-diskEncryption')]",
-              "tenantId":"[subscription().tenantId]",
-              "accessPolicies":"[parameters('access-policies')]",
-              "sku":{  
-                "name":"[parameters('vault-sku')]",
-                "family":"A"
-              }          
+            "properties": {
+                "enabledForDeployment": "[parameters('enable-vault-for-deployment')]",
+                "enabledForTemplateDeployment": "[parameters('enable-vault-for-templateDeployment')]",
+                "enabledForDiskEncryption": "[parameters('enable-vault-for-diskEncryption')]",
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": "[parameters('access-policies')]",
+                "sku": {
+                    "name": "[parameters('vault-sku')]",
+                    "family": "A"
+                },
+                "networkAcls": {
+                    "value": {
+                        "defaultAction": "Allow",
+                        "bypass": "AzureServices"
+                    }
+                }
             },
-            "resources":[  
-                {  
-                  "type":"Microsoft.KeyVault/vaults/providers/diagnosticsettings",
-                  "name":"[concat(variables('key-vault-name'), '/Microsoft.Insights/service')]",
-                  "apiVersion":"2016-09-01",
-                  "location":"[resourceGroup().location]",
-                  "dependsOn":[  
-                    "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]",
-                    "[concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]"
-                  ],
-                  "properties":{  
-                    "storageAccountId":"[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]",
-                    "workspaceId":"[resourceId(parameters('oms-workspace-resourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('oms-workspace-name'))]",
-                    "logs":[  
-                      {  
-                        "category":"AuditEvent",
-                        "enabled":true,
-                        "retentionPolicy":{  
-                          "enabled":true,
-                          "days":"[parameters('logs-retention-in-days')]"
-                        }
-                      }
-                    ]
-                  }
+            "resources": [
+                {
+                    "type": "Microsoft.KeyVault/vaults/providers/diagnosticsettings",
+                    "name": "[concat(variables('key-vault-name'), '/Microsoft.Insights/service')]",
+                    "apiVersion": "2016-09-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]",
+                        "[concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]"
+                    ],
+                    "properties": {
+                        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]",
+                        "workspaceId": "[resourceId(parameters('oms-workspace-resourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('oms-workspace-name'))]",
+                        "logs": [
+                            {
+                                "category": "AuditEvent",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": true,
+                                    "days": "[parameters('logs-retention-in-days')]"
+                                }
+                            }
+                        ]
+                    }
                 }
             ]
         },
-        {  
-          "type":"Microsoft.KeyVault/vaults/providers/locks",
-          "apiVersion":"2016-09-01",
-          "name":"[concat(variables('key-vault-name'), '/Microsoft.Authorization/keyVaultDoNotDelete')]",
-          "dependsOn":[  
-            "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]"
-          ],
-          "comments":"Resource lock on key vault",
-          "properties":{  
-            "level":"CannotDelete"
-          }
-        },
-        {  
-          "type":"Microsoft.Storage/storageAccounts/providers/locks",
-          "apiVersion":"2016-09-01",
-          "name":"[concat(variables('diagnostic-storageAccount-name'), '/Microsoft.Authorization/storageDoNotDelete')]",
-          "dependsOn":[  
-            "[concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]"
-          ],
-          "comments":"Resource lock on key vault diagnostic storage account",
-          "properties":{  
-            "level":"CannotDelete"
-          }
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/locks",
+            "apiVersion": "2016-09-01",
+            "name": "[concat(variables('key-vault-name'), '/Microsoft.Authorization/keyVaultDoNotDelete')]",
+            "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]"
+            ],
+            "comments": "Resource lock on key vault",
+            "properties": {
+                "level": "CannotDelete"
+            }
         },
         {
-          "type": "Microsoft.KeyVault/vaults/secrets",
-          "name": "[concat(variables('key-vault-name'), '/', parameters('secrets-object').secrets[copyIndex()].secretName)]",
-          "apiVersion": "2015-06-01",
-          "properties": {
-            "value": "[parameters('secrets-object').secrets[copyIndex()].secretValue]"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]"
-          ],
-          "copy": {
-            "name": "secretsCopy",
-            "count": "[length(parameters('secrets-object').secrets)]"
-          }
+            "type": "Microsoft.Storage/storageAccounts/providers/locks",
+            "apiVersion": "2016-09-01",
+            "name": "[concat(variables('diagnostic-storageAccount-name'), '/Microsoft.Authorization/storageDoNotDelete')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]"
+            ],
+            "comments": "Resource lock on key vault diagnostic storage account",
+            "properties": {
+                "level": "CannotDelete"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[if(equals(length(parameters('secrets-object').secrets), 0), concat(variables('key-vault-name'), '/', 'dummy'), concat(variables('key-vault-name'), '/', parameters('secrets-object').secrets[copyIndex()].secretName))]",
+            "apiVersion": "2015-06-01",
+            "condition": "[if(equals(length(parameters('secrets-object').secrets), 0), bool('false'), bool('true'))]",
+            "copy": {
+                "count": "[if(equals(length(parameters('secrets-object').secrets), 0), 1, length(parameters('secrets-object').secrets))]",
+                "name": "secretsCopy"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]"
+            ],
+            "properties": {
+                "value": "[if(equals(length(parameters('secrets-object').secrets), 0), 'dummy', parameters('secrets-object').secrets[copyIndex()].secretValue)]"
+            }
         }
     ],
     "outputs": {
@@ -210,16 +217,16 @@
             "value": "[resourceId('Microsoft.KeyVault/vaults', variables('key-vault-name'))]"
         },
         "kv-name": {
-          "type": "string",
-          "value": "[variables('key-vault-name')]"
+            "type": "string",
+            "value": "[variables('key-vault-name')]"
         },
-        "kv-resourceGroup":{
-          "type": "string",
-          "value": "[resourceGroup().name]"
+        "kv-resourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
         },
         "kv-uri": {
-          "type": "string",
-          "value": "[reference(concat('Microsoft.KeyVault/vaults/', variables('key-vault-name')), '2016-10-01').vaultUri]"
+            "type": "string",
+            "value": "[reference(concat('Microsoft.KeyVault/vaults/', variables('key-vault-name')), '2016-10-01').vaultUri]"
         }
     }
 }

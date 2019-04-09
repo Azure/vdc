@@ -1,0 +1,376 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "shared-services-deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix for Shared Services. E.g. Organization-DeploymentType"
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of AKS resource."
+            }
+        },
+        "dns-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
+            }
+        },
+        "os-disk-size-gb": {
+            "defaultValue": 0,
+            "minValue": 0,
+            "maxValue": 1023,
+            "type": "int",
+            "metadata": {
+                "description": "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+            }
+        },
+        "agent-count": {
+            "defaultValue": 3,
+            "minValue": 1,
+            "maxValue": 50,
+            "type": "int",
+            "metadata": {
+                "description": "The number of agent nodes for the cluster."
+            }
+        },
+        "agent-vm-size": {
+            "defaultValue": "Standard_D2_v2",
+            "type": "string",
+            "metadata": {
+                "description": "The size of the Virtual Machine."
+            }
+        },
+        "service-principal-client-id": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Client ID (used by cloudprovider)."
+            }
+        },
+        "service-principal-client-secret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Service Principal Client Secret."
+            }
+        },
+        "os-type": {
+            "defaultValue": "Linux",
+            "allowedValues": [
+                "Linux"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "The type of operating system."
+            }
+        },
+        "kubernetes-version": {
+            "defaultValue": "1.7.7",
+            "type": "string",
+            "metadata": {
+                "description": "The version of Kubernetes."
+            }
+        },
+        "network-plugin": {
+            "allowedValues": [
+                "azure",
+                "kubenet"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Network plugin used for building Kubernetes network."
+            }
+        },
+        "enable-rbac": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Boolean flag to turn on and off of RBAC."
+            }
+        },
+        "vnet-subnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID of virtual network subnet used for nodes and/or pods IP assignment."
+            }
+        },
+        "service-cidr": {
+            "type": "string",
+            "metadata": {
+                "description": "A CIDR notation IP range from which to assign service cluster IPs."
+            }
+        },
+        "dns-service-ip": {
+            "type": "string",
+            "metadata": {
+                "description": "Containers DNS server IP address."
+            }
+        },
+        "docker-bridge-cidr": {
+            "type": "string",
+            "metadata": {
+                "description": "A CIDR notation IP for Docker bridge."
+            }
+        },
+        "oms-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID containing the insights"
+            }
+        },
+        "diagnostic-event-hub-name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Event Hub Name for the diagnostics events"
+            }
+        },
+        "diagnostics-event-hub-auth-rule-id": {
+            "type": "string",
+            "metadata": {
+              "description": "Resource ID of the event hub authorization rule for the Event Hubs namespace in which the event hub should be created or streamed to."
+            }
+        },
+        "oms-storage-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account for the diagnostics events"
+            }
+        },
+        "rbac-server-appid": {
+            "type": "string",
+            "metadata": {
+                "description": "RBAC server app id"
+            }
+        },
+        "rbac-server-secret": {
+            "type": "string",
+            "metadata": {
+                "description": "RBAC server app secret"
+            }
+        },
+        "rbac-client-appid": {
+            "type": "string",
+            "metadata": {
+                "description": "RBAC client app id"
+            }
+        },
+        "rbac-tenant": {
+            "type": "string",
+            "metadata": {
+                "description": "RBAC tenant"
+            }
+        },
+        "azure-firewall-application-rule-collection": {
+            "type": "array",
+            "metadata": {
+                "description": "Array containing AKS specific Azure Firewall application rule collections"
+            }
+        },
+        "azure-firewall-network-rule-collection": {
+            "type": "array",
+            "metadata": {
+                "description": "Array containing AKS specific Azure Firewall network rule collections"
+            }
+        },
+        "subscription-id": {
+            "type": "string",
+            "metadata": {
+                "description": "AKS Cluster deployment Subcription Id"
+            }
+        }
+    },
+    "variables": {
+        "auth-rule-resource-id": "[parameters('diagnostics-event-hub-auth-rule-id')]",
+        "aks-cluster-name": "[concat(parameters('deployment-prefix'), '-k8s')]",
+        "emptyContent": {},
+        "omsAgentConfig": {
+            "omsagent": {
+                "enabled": true,
+                "config": {
+                    "logAnalyticsWorkspaceResourceID": "[parameters('oms-id')]"
+                }
+            }
+        },
+        "azure-fw-resource-group": "[concat(parameters('shared-services-deployment-prefix'), '-net-rg')]",
+        "azure-fw-name": "[concat(parameters('shared-services-deployment-prefix'), '-az-fw')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "nestedDeployCreateAzureApplicationRules",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[concat(parameters('shared-services-deployment-prefix'),'-net-rg')]",
+            "subscriptionId": "[parameters('subscription-id')]",
+            "dependsOn": [],
+            "properties": {
+              "mode": "Incremental",
+              "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {},
+                "variables": {},
+                "resources": [
+                  {
+                    "type": "Microsoft.Network/azureFirewalls",
+                    "apiVersion": "2018-08-01",
+                    "location": "[resourceGroup().location]",
+                    "name": "[variables('azure-fw-name')]",
+                    "properties": {
+                        "ipConfigurations": "[reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').ipConfigurations]",
+                        "natRuleCollections": "[reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').natRuleCollections]",
+                        "applicationRuleCollections": "[concat(reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').applicationRuleCollections, parameters('azure-firewall-application-rule-collection'))]",
+                        "networkRuleCollections": "[concat(reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').networkRuleCollections, parameters('azure-firewall-network-rule-collection'))]"
+                    }
+                  }
+                ]
+              }
+            }
+        },
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "name": "[variables('aks-cluster-name')]",
+            "apiVersion": "2018-03-31",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "[concat(variables('aks-cluster-name'))]"
+              },
+            "properties": {
+                "kubernetesVersion": "[parameters('kubernetes-version')]",
+                "enableRBAC": "[parameters('enable-rbac')]",
+                "dnsPrefix": "[parameters('dns-prefix')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "osDiskSizeGB": "[parameters('os-disk-size-gb')]",
+                        "count": "[parameters('agent-count')]",
+                        "vmSize": "[parameters('agent-vm-size')]",
+                        "osType": "[parameters('os-type')]",
+                        "storageProfile": "ManagedDisks",
+                        "vnetSubnetID": "[parameters('vnet-subnet-id')]"
+                    }
+                ],
+                "servicePrincipalProfile": {
+                    "clientId": "[parameters('service-principal-client-id')]",
+                    "Secret": "[parameters('service-principal-client-secret')]"
+                },
+                "networkProfile": {
+                    "networkPlugin": "[parameters('network-plugin')]",
+                    "serviceCidr": "[parameters('service-cidr')]",
+                    "dnsServiceIP": "[parameters('dns-service-ip')]",
+                    "dockerBridgeCidr": "[parameters('docker-bridge-cidr')]"
+                },
+                "aadProfile": {
+                    "clientAppID": "[parameters('rbac-client-appid')]",
+                    "serverAppID": "[parameters('rbac-server-appid')]",
+                    "serverAppSecret": "[parameters('rbac-server-secret')]",
+                    "tenantID": "[parameters('rbac-tenant')]"
+                },
+                "addonProfiles": "[if( empty(parameters('oms-id')) , variables('emptyContent'), variables('omsAgentConfig'))]"
+                
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.ContainerService/managedClusters/providers/diagnosticSettings",
+                    "name": "[concat(variables('aks-cluster-name'), '/Microsoft.Insights/service')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ContainerService/managedClusters', variables('aks-cluster-name'))]"
+                    ],
+                    "apiVersion": "2017-05-01-preview",
+                    "properties": {
+                        "workspaceId": "[parameters('oms-id')]",
+                        "storageAccountId": "[parameters('oms-storage-id')]",
+                        "eventHubName": "[parameters('diagnostic-event-hub-name')]",
+                        "eventHubAuthorizationRuleId": "[parameters('diagnostics-event-hub-auth-rule-id')]",
+                        "logs": [
+                            {
+                                "category": "kube-apiserver",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-controller-manager",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "cluster-autoscaler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-scheduler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-audit",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "PT1M",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "dependsOn": [
+                "nestedDeployCreateAzureApplicationRules"
+            ]
+        }
+    ],
+    "outputs": {
+        "resource-group-id": {
+            "type": "string",
+            "value": "[concat('/subscriptions/', parameters('subscription-id'), '/resourceGroups/', reference(concat('Microsoft.ContainerService/managedClusters/', variables('aks-cluster-name'))).nodeResourceGroup)]"
+        },
+        "resource-group-name": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', variables('aks-cluster-name'))).nodeResourceGroup]"
+        },
+        "controlPlaneFQDN": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', variables('aks-cluster-name'))).fqdn]"
+        },
+        "NamespaceConnectionString": {
+            "type": "string",
+            "value": "[listkeys(variables('auth-rule-resource-id'), '2017-04-01').primaryConnectionString]"
+        },
+        "SharedAccessPolicyPrimaryKey": {
+            "type": "string",
+            "value": "[listkeys(variables('auth-rule-resource-id'), '2017-04-01').primaryKey]"
+        }
+    }
+}

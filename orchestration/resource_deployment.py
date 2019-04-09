@@ -524,7 +524,8 @@ class ResourceDeployment(object):
                     template=template_file,
                     parameters=parameters_file,
                     resource_group_name=resource_group_to_deploy,
-                    deployment_name=deployment_name)
+                    deployment_name=deployment_name,
+                    location=self._location)
 
         # Save output paramaters to Azure storage so that dependent modules can read it
         self._logger.info('***** module deployment completed successfully *****')

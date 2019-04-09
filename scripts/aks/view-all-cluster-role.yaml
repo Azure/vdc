@@ -1,0 +1,28 @@
+#
+# Add get list watch to support read only view in dashboard and via cli.
+# Extends the default view role to inlcude infrastructure resources
+# Note: this could also be added to specific roles
+#
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: view-all
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+rules:
+# add nodes and persitent volumes
+- apiGroups: [""]
+  resources: ["nodes","persistentvolumes"]
+  verbs: ["get", "list", "watch"]
+# secrets are list/watch only
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["list", "watch"]
+# storage classes ...  
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["get", "list", "watch"]
+# roles and cluster roles 
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["clusterroles","roles","rolebindings"]
+  verbs: ["get","list", "watch"]

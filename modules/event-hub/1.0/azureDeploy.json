@@ -1,0 +1,145 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "location": {
+            "type": "string",
+            "allowedValues": [
+                "Australia Southeast",
+                "Canada Central",
+                "Central India",
+                "East US",
+                "Japan East",
+                "Southeast Asia",
+                "UK South",
+                "West Europe",
+                "West US 2"
+            ],
+            "metadata": {
+                "description": "Region used when establishing the workspace."
+            }
+        },
+        "event-hub-name": {
+            "type": "string",
+            "metadata": {
+              "description": "Optional. Name of the event hub within the namespace to which logs are streamed. Without this, an event hub is created for each log category."
+            }
+        },
+        "namespace-name": {
+            "type": "string",
+            "metadata": {
+              "description": "Name of EventHub namespace"
+            }
+        },
+        "eventhub-sku": {
+            "type": "string",
+            "allowedValues": ["Basic", "Standard"],
+            "defaultValue": "Standard",
+            "metadata": {
+              "description": "The messaging tier for service Bus namespace"
+            }
+        },
+        "sku-capacity": {
+            "type": "int",
+            "allowedValues": [1, 2, 4],
+            "defaultValue": 1,
+            "metadata": {
+              "description": "MessagingUnits for premium namespace"
+            }
+        },
+        "consumer-group-name": {
+            "type": "string",
+            "metadata": {
+              "description": "Name of Consumer Group"
+            }
+        },
+        "authorizationrules-root-manage-shared-access-key-name": {
+            "defaultValue": "RootManageSharedAccessKey",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "k8s-workspace-name": "[concat(parameters('deployment-prefix'), '-diagnostics-la')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-04-01",
+            "name": "[parameters('namespace-name')]",
+            "type": "Microsoft.EventHub/namespaces",
+            "location": "[parameters('location')]",
+            "sku": {
+              "name": "[parameters('eventhub-sku')]",
+              "tier": "[parameters('eventhub-sku')]",
+              "capacity": "[parameters('sku-capacity')]"
+            },
+            "tags": {
+              "tag1": "value1",
+              "tag2": "value2"
+            },
+            "properties": {},
+            "resources": [
+              {
+                "apiVersion": "2017-04-01",
+                "name": "[parameters('event-hub-name')]",
+                "type": "eventhubs",
+                "dependsOn": [
+                  "[concat('Microsoft.EventHub/namespaces/', parameters('namespace-name'))]"
+                ],
+                "properties": {},
+                "resources": [
+                  {
+                    "apiVersion": "2017-04-01",
+                    "name": "[parameters('consumer-group-name')]",
+                    "type": "consumergroups",
+                    "dependsOn": ["[parameters('event-hub-name')]"],
+                    "properties": {
+                      "userMetadata": "User Metadata"
+                    }
+                  }
+                ]
+              }
+            ]
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+            "name": "[concat(parameters('namespace-name'), '/', parameters('authorizationrules-root-manage-shared-access-key-name'))]",
+            "apiVersion": "2017-04-01",
+            "location": "[parameters('location')]",
+            "scale": null,
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespace-name'))]"
+            ]
+        }
+    ],
+    "outputs": {
+        "diagnostics-event-hub-name": {
+            "type": "string",
+            "value": "[parameters('event-hub-name')]"
+        },
+        "diagnostics-event-hub-auth-rule-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.EventHub/namespaces/AuthorizationRules', parameters('namespace-name'), parameters('authorizationrules-root-manage-shared-access-key-name'))]"
+        },
+        "diagnostics-resource-group-id": {
+            "type": "string",
+            "value": "[resourceGroup().id]"
+        },
+        "diagnostics-resource-group-name": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        }
+    }
+}

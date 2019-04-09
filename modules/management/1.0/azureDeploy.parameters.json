@@ -1,0 +1,17 @@
+{
+    "subscription-id": {
+        "value": "${workload.subscription-id}"
+    },
+    "deployment-prefix": {
+        "value": "${general.organization-name}-standalone"
+    },
+    "os-disk-size-gb": {
+        "value": 30
+    },
+    "jumpbox-vm-size": {
+        "value": "Standard_DS2_v2"
+    },
+    "os-type": {
+        "value": "${workload.kubernetes.os-type}"
+    }
+}

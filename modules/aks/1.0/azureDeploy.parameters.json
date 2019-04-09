@@ -1,0 +1,77 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "shared-services-deployment-prefix": {
+        "value": "${general.organization-name}-${shared-services.deployment-name}"
+    },
+    "resource-group-id": {
+        "value": "[resourceGroup().id]"
+    },
+    "location": {
+        "value": "${workload.region}"
+    },
+    "dns-prefix": {
+        "value": "${workload.dns-prefix}"
+    },
+    "os-disk-size-gb": {
+        "value": "${workload.kubernetes.os-disk-size-gb}"
+    },
+    "agent-count": {
+        "value": "${workload.kubernetes.agent-count}"
+    },
+    "agent-vm-size": {
+        "value": "${workload.kubernetes.agent-vm-size}"
+    },
+    "service-principal-client-id": {
+        "value": "${workload.kubernetes.service-principal-client-id}"
+    },
+    "service-principal-client-secret": {
+        "value": "${workload.kubernetes.service-principal-client-secret}"
+    },
+    "os-type": {
+        "value": "${workload.kubernetes.os-type}"
+    },
+    "kubernetes-version": {
+        "value": "${workload.kubernetes.kubernetes-version}"
+    },
+    "network-plugin": {
+        "value": "${workload.kubernetes.network-plugin}"
+    },
+    "rbac-server-appid": {
+        "value":"${workload.kubernetes.rbac-server-appid}"
+    },
+    "rbac-server-secret": {
+        "value":"${workload.kubernetes.rbac-server-secret}"
+    },
+    "rbac-client-appid": {
+        "value":"${workload.kubernetes.rbac-client-appid}"
+    },
+    "rbac-tenant": {
+        "value":"${workload.kubernetes.rbac-tenant}"
+    },	    
+    "enable-rbac": {
+        "value": "${workload.kubernetes.enable-rbac}"
+    },
+    "vnet-subnet-id": {
+        "value": "/subscriptions/${general.workload.subscription-id}/resourceGroups/${workload.resource-group-prefix}-net-rg/providers/Microsoft.Network/virtualNetworks/${workload.resource-group-prefix}-vnet/subnets/default"
+    },
+    "service-cidr": {
+        "value": "${workload.kubernetes.service-cidr}"
+    },
+    "dns-service-ip": {
+        "value": "${workload.kubernetes.dns-service-ip}"
+    },
+    "docker-bridge-cidr": {
+        "value": "${workload.kubernetes.docker-bridge-cidr}"
+    },
+    "azure-firewall-application-rule-collection": {
+        "value": "${workload.network.azure-firewall-application-rule-collection}"
+    },
+    "azure-firewall-network-rule-collection": {
+        "value": "${workload.network.azure-firewall-network-rule-collection}"
+    },
+    "subscription-id": {
+        "value": "${workload.subscription-id}"
+    }
+}

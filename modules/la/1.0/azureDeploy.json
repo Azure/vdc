@@ -47,9 +47,48 @@
         }
     },
     "variables": {
-        "oms-workspace-name": "[concat(parameters('deployment-prefix'), '-la')]"
+        "oms-workspace-name": "[concat(parameters('deployment-prefix'), '-la')]",
+        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id, 'diag-la')]",
+        "diagnostic-storageAccount-prefix": "[concat(replace(parameters('deployment-prefix'), '-', ''), 'diag')]",
+        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]"
     },
     "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-07-01",
+            "name": "[variables('diagnostic-storageAccount-name')]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "isHnsEnabled": false,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "enabled": true
+                        },
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Cool"
+            },
+            "dependsOn": []
+        },
         {
             "apiVersion": "2017-03-15-preview",
             "name": "[variables('oms-workspace-name')]",
@@ -86,6 +125,11 @@
         "oms-primary-shared-key": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('oms-workspace-name')), '2015-03-20').primarySharedKey]"
+        },
+        "oms-storage-id": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]"
+        
         }
     }
 }

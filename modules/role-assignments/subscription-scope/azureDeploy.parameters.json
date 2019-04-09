@@ -1,0 +1,5 @@
+{
+    "role-assignments": {
+        "value": "${ENV:ENVIRONMENT-TYPE.subscription-rbac-assignments}"
+    }
+}
