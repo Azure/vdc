@@ -69,7 +69,7 @@ class LocalFileFinder(implements(FileFinderInterface)):
         elif not Path(path).exists():
             return None
         else:
-            with open(path, 'r') as template_file_fd:
+            with open(path, 'r', encoding='utf-8') as template_file_fd:
                 local_file = json.load(template_file_fd)
 
         return local_file
