@@ -40,6 +40,9 @@
             "keyvault": {
                 "secrets": []
             },
+            "log-analytics": {
+                "region": "West US 2"
+            },
             "kubernetes": {
                 "kubernetes-version": "1.12.6",
                 "os-type": "Linux",
@@ -165,7 +168,7 @@
             "modules": [
                 {
                     "module": "la",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-la-rg",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
                     "source": {
                         "version": "1.0"
                     },
@@ -173,7 +176,7 @@
                 },
                 {
                     "module": "event-hub",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-la-rg",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
                     "source": {
                         "version": "1.0"
                     },
@@ -603,7 +606,7 @@
             "sku": "${general.workload.acr.sku}"
         },
         "log-analytics": {
-            "region": "${general.workload.region}"
+            "region": "${general.workload.log-analytics.region}"
         },
         "event-hub": {
             "namespace": "${general.organization-name}eventhubnamespace",
@@ -611,7 +614,7 @@
             "sku": "${general.workload.diagnostics.event-hub.sku}"
         },
         "diagnostics": {
-            "resource-group-name": "${workload.resource-group-prefix}-aks-la-rg",
+            "resource-group-name": "${workload.resource-group-prefix}-aks-diagnostics-rg",
             "storage": {
                 "name": "${general.organization-name}diagnosticsstorage"
             },
