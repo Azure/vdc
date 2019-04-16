@@ -283,7 +283,44 @@ python3 vdc.py create shared-services -path archetypes/shared-services/archetype
 [source,cmd]
 py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m onprem-vgw-connection
 
-== Step 5: Deploy management jump boxes
+== Step 5: Deploy Azure Firewall
+
+*Required role: SecOps*
+
+In addition to NVAs that control and secure traffic between the on-premises and the other networks, the toolkit uses Azure Firewall to provide restricted access to the Internet from all environments deployed by the toolkit.
+
+image:_media/shared-services-step7-azurefw.png[Azure Firewall]
+
+Start the `azure-fw` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m azure-fw
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m azure-fw
+
+.Windows
+[source,cmd]
+py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m azure-fw
+
+This module also deploys resources into the `{org}-{deployment-name}-net-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,a"]
+|===
+| Resource | Type | Description
+
+| `{org}-{deployment-name}-az-fw`
+| Firewall
+| Azure Firewall instance used for any required access to the Internet.
+
+| `{org}-{deployment-name}-az-fw-pip`
+| Public IP address
+| Public IP address used by the firewall.
+|===
+
+== Step 6: Deploy management jump boxes
 
 *Required role: SysOps*
 
@@ -354,7 +391,7 @@ This deployment creates the `{org}-{deployment-name}-jb-rg` resource group that 
 | Virtual OS disk used by the Windows jump box virtual machine.
 |===
 
-== Step 6: Deploy ADDS servers
+== Step 7: Deploy ADDS servers
 
 *Required role: NetOps*
 
@@ -431,43 +468,6 @@ This deployment creates the `{org}-{deployment-name}-ad-rg` resource group that 
 | `{org}-{deployment-name}-adds-vm2-nic`
 | Network interface
 | Virtual network interface for secondary ADDS server.
-|===
-
-== Step 7: Deploy Azure Firewall
-
-*Required role: SecOps*
-
-In addition to NVAs that control and secure traffic between the on-premises and the other networks, the toolkit uses Azure Firewall to provide restricted access to the Internet from all environments deployed by the toolkit.
-
-image:_media/shared-services-step7-azurefw.png[Azure Firewall]
-
-Start the `azure-fw` deployment by running the following command in the terminal or command-line interface:
-
-.Docker
-[source,bash]
-python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m azure-fw
-
-.Linux/OSX
-[source,bash]
-python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m azure-fw
-
-.Windows
-[source,cmd]
-py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m azure-fw
-
-This module also deploys resources into the `{org}-{deployment-name}-net-rg` resource group that hosts the resources described in the following table.
-
-[options="header",cols="a,,a"]
-|===
-| Resource | Type | Description
-
-| `{org}-{deployment-name}-az-fw`
-| Firewall
-| Azure Firewall instance used for any required access to the Internet.
-
-| `{org}-{deployment-name}-az-fw-pip`
-| Public IP address
-| Public IP address used by the firewall.
 |===
 
 == Next steps
