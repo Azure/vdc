@@ -5,10 +5,10 @@ The toolkit assumes you will be connecting your shared services to an on-premise
 [options="header",cols=","]
 |===
 | Connection method | Description
-| [Azure VPN gateway][]
+| https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-about-vpngateways[Azure VPN gateway]
 | VPN gateways create a site-to-site connection that passes encrypted traffic over the public Internet. This method requires a https://docs.microsoft.com/azure/vpn-gateway/vpn-gateway-about-vpn-devices[supported VPN device] hosted in your on-premises data center that the Azure VPN gateway deployed in the shared services environment can connect to.
 
-| [ExpressRoute][]
+| https://docs.microsoft.com/azure/expressroute/[ExpressRoute]
 | ExpressRoute uses a dedicated, private connection facilitated by a connectivity provider. For security and performance purposes, most organizations prefer ExpressRoute connections. Since these can take several weeks to provision, VPN gateways can be used as a bootstrap connection until an ExpressRoute connection is available. If you plan to use an ExpressRoute with a toolkit deployment, it must already exist. It cannot be provisioned as part of a toolkit deployment like a VPN gateway can.
 
 See https://docs.microsoft.com/azure/expressroute/expressroute-howto-circuit-portal-resource-manager[Create and modify an ExpressRoute circuit] for details on establishing an ExpressRoute.
