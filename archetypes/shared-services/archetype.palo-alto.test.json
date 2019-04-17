@@ -63,7 +63,13 @@
             "vgw-connection",
             "onprem-vgw-connection",
             "kv",
-            "azure-fw",
+            "palo-alto-storage",
+            "custom-script-palo-alto-bootstrap-0",
+            "custom-script-palo-alto-bootstrap-1",
+            "palo-alto-egress-nva",
+            "custom-script-palo-alto-bootstrap-2",
+            "palo-alto-udr",
+            "palo-alto-ingress-nva",
             "jb",
             "adds"
         ],
@@ -296,7 +302,7 @@
             "enable-ddos-protection": false,
             "address-prefix": "10.4.0.0/23",
             "network-virtual-appliance": {
-                "egress-ip": "${shared-services.network.network-virtual-appliance.azure-firewall.egress.ip}",
+                "egress-ip": "${shared-services.network.network-virtual-appliance.palo-alto.egress.ip}",
                 "azure-firewall": {
                     "egress": {
                         "ip": "10.4.1.4"
