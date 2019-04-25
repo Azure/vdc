@@ -199,7 +199,17 @@
                                         "*.trafficmanager.net",
                                         "*.azureedge.net",
                                         "*.microsoft.com",
-                                        "*.core.windows.net"
+                                        "*.core.windows.net",
+                                        "*.windows.com",
+                                        "*.opinsights.azure.com",
+                                        "*.azure-automation.net",
+                                        "*.visualstudio.com",
+                                        "*.bing.com",
+                                        "*.ubuntu.com",
+                                        "api.snapcraft.io",
+                                        "api.rubygems.org",
+                                        "*.powershellgallery.com",
+                                        "powershellgallery.com"
                                     ]
                                 }
                             ]
