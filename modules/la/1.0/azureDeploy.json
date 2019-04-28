@@ -39,6 +39,7 @@
                 "Southeast Asia",
                 "UK South",
                 "West Europe",
+                "North Europe",
                 "West US 2"
             ],
             "metadata": {
@@ -94,7 +95,7 @@
             "name": "[variables('oms-workspace-name')]",
             "location": "[parameters('location')]",
             "tags": {
-                
+
             },
             "type": "Microsoft.OperationalInsights/workspaces",
             "properties": {
@@ -129,7 +130,7 @@
         "oms-storage-id": {
             "type": "string",
             "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]"
-        
+
         }
     }
 }
