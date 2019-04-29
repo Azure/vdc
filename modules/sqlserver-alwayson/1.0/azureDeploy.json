@@ -148,12 +148,6 @@
             "metadata": {
                 "description": "SQL Server Internal Load Balancer IP Address"
             }
-        },
-        "sql-server-cluster-ip-address": {
-            "type": "string",
-            "metadata": {
-                "description": "SQL Server Cluster IP Address, SQL Server AlwaysOn uses two IP addresses"
-            }
         }
     },
     "variables": {
@@ -630,7 +624,7 @@
                                                     "DomainName": "[parameters('domain-name')]",
                                                     "ClusterName": "[parameters('cluster-name')]",
                                                     "ClusterOwnerNode": "[concat(parameters('extension-name'), '-vm1')]",
-                                                    "ClusterIP": "[parameters('sql-server-cluster-ip-address')]",
+                                                    "ClusterIP": "[parameters('sql-server-ilb-ip-address')]",
                                                     "witnessStorageBlobEndPoint": "[concat('https://', variables('cloud-witness-storageAccount-name'), '.blob.core.windows.net')]",
                                                     "witnessStorageAccountKey": "[listkeys(variables('cloud-witness-storageAccount-id'), '2016-12-01').keys[0].value]"
                                                 }
@@ -752,7 +746,7 @@
                                                     "DomainName": "[parameters('domain-name')]",
                                                     "ClusterName": "[parameters('cluster-name')]",
                                                     "ClusterOwnerNode": "[concat(parameters('extension-name'), '-vm1')]",
-                                                    "ClusterIP": "[parameters('sql-server-cluster-ip-address')]",
+                                                    "ClusterIP": "[parameters('sql-server-ilb-ip-address')]",
                                                     "witnessStorageBlobEndPoint": "[concat('https://', variables('cloud-witness-storageAccount-name'), '.blob.core.windows.net')]",
                                                     "witnessStorageAccountKey": "[listkeys(variables('cloud-witness-storageAccount-id'), '2016-12-01').keys[0].value]"
                                                 }
@@ -822,7 +816,7 @@
                                                     "DomainName": "[parameters('domain-name')]",
                                                     "ClusterName": "[parameters('cluster-name')]",
                                                     "ClusterOwnerNode": "[concat(parameters('extension-name'), '-vm1')]",
-                                                    "ClusterIP": "[parameters('sql-server-cluster-ip-address')]",
+                                                    "ClusterIP": "[parameters('sql-server-ilb-ip-address')]",
                                                     "witnessStorageBlobEndPoint": "[concat('https://', variables('cloud-witness-storageAccount-name'), '.blob.core.windows.net')]",
                                                     "witnessStorageAccountKey": "[listkeys(variables('cloud-witness-storageAccount-id'), '2016-12-01').keys[0].value]"
                                                 }
