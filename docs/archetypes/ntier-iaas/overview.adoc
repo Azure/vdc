@@ -17,6 +17,16 @@ If your copy of the toolkit is associated with the git repository, the link:../.
 
 == Run the deployment
 
+[NOTE] 
+====
+This deployment creates an App Gateway in Shared Services Network, since App Gateway deployment creates HTTP and HTTPS listeners, there is a *_pre-requirement_* to populate Certificates in Shared Services' Key Vault. 
+Make sure that all secrets from `keyvault.secrets` found here link:../../archetypes/shared-services/parameters.adoc#shared-services-settings[archetypes/shared-services/parameters.adoc] are populated.
+
+App Gateway deployment retrieves Certificate information from Shared Services Key Vault.
+
+In case you need to populate Certificate information, update your Shared Services `archetypes.json` file, fill in all the secrets located in `general.shared-services.keyvault.secrets` and run Shared Services - Key Vault module deployment only.
+====
+
 All workload environments require a common set of operations, key vault, and virtual network resources before they can connect to the hub network and host workloads. The following steps will deploy these required resources.
 
 image:_media/workload-iaas-empty.png[Before deploying the workload]

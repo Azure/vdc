@@ -24,9 +24,5 @@ These parameters are specific to the link:../../../archetypes/ntier-iaas/archety
 
 | `sql-server-ilb-ip-address`
 | IPV4 Address
-| IP address of the SQL Server load balancer.
-
-| `sql-server-cluster-ip-address`
-| IPV4 Address
-| IP address for used by clients to connect to the SQL Server failover cluster.
+| IP address of the SQL Server load balancer and used by clients to connect to the SQL Server failover cluster.
 |===

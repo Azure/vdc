@@ -144,6 +144,22 @@ Note that to prevent conflicts when Key Vault stores this user information as a 
 
 Note that to prevent conflicts when Key Vault stores this user information as a secret, `domain-admin-user` must be different than `local-admin-user`.
 
+| `keyvault.secrets` > "${general.shared-services.vm-configuration.local-admin-user}"
+| String
+| Contains `local-admin-user` password information  
+
+| `keyvault.secrets` > "${general.on-premises.active-directory.domain-admin-user}"
+| String
+| Contains `domain-admin-user` password information  
+
+| `keyvault.secrets` > "self-certificate-base64"
+| String
+| Contains SSL certificate as Base64, this information is used in an App Gateway deployment
+
+| `keyvault.secrets` > "self-certificate-password"
+| String
+| Contains SSL certificate password, this information is used in an App Gateway deployment
+
 | `adds-address-start`
 | IPV4 address 
 | IP address for the first ADDS server deployed to the shared services subnet. Additional servers use an IP address incremented from this starting address.

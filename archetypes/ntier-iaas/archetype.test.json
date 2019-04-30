@@ -253,8 +253,7 @@
             "vmapp-lb-ip-address": "10.4.2.8",
             "sql-server-cluster-name": "AOCluster",
             "sql-server-start-ip-address": "10.4.2.20",
-            "sql-server-ilb-ip-address": "10.4.2.22",
-            "sql-server-cluster-ip-address": "10.4.2.20"
+            "sql-server-ilb-ip-address": "10.4.2.22"
         },
         "log-analytics": {
             "region": "${general.workload.log-analytics.region}"

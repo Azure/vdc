@@ -36,7 +36,7 @@
         "value": {
             "offer": "UbuntuServer",
             "publisher": "Canonical",
-            "sku": "14.04.5-LTS",
+            "sku": "16.04-LTS",
             "version": "latest"
         }
     },
