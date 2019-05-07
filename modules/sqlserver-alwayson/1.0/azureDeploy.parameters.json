@@ -34,7 +34,7 @@
         "value": 2
     },
     "virtualMachine-size": {
-        "value": "Standard_DS12_v2"
+        "value": "Standard_DS14_v2"
     },
     "domain-name": {
         "value": "${shared-services.active-directory.domain-name}"

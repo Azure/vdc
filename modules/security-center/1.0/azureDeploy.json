@@ -1,0 +1,98 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "la-resourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Log Analytics workspace resource identifier"
+            }
+        },
+        "auto-provisioning": {
+            "type": "string",
+            "allowedValues": [
+                "On",
+                "Off"
+            ],
+            "defaultValue": "On",
+            "metadata": {
+                "description": "Turn automatic deployment by ASC of the MMA (OMS VM extension) on or off"
+            }
+        }
+    },
+    "variables": {
+        "pricing": "Standard"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2017-08-01-preview",
+            "name": "default",
+            "properties": {
+                "pricingTier": "[variables('pricing')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "SqlServers",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/default')]"
+            ],
+            "properties": {
+                "pricingTier": "[variables('pricing')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "AppServices",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/SqlServers')]"
+            ],
+            "properties": {
+                "pricingTier": "[variables('pricing')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "VirtualMachines",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/AppServices')]"
+            ],
+            "properties": {
+                "pricingTier": "[variables('pricing')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/pricings",
+            "apiVersion": "2018-06-01",
+            "name": "StorageAccounts",
+            "dependsOn": [
+                "[concat('Microsoft.Security/pricings/VirtualMachines')]"
+            ],
+            "properties": {
+                "pricingTier": "[variables('pricing')]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/workspaceSettings",
+            "apiVersion": "2017-08-01-preview",
+            "name": "default",
+            "properties": {
+                "workspaceId": "[parameters('la-resourceId')]",
+                "scope": "[subscription().id]"
+            }
+        },
+        {
+            "type": "Microsoft.Security/autoProvisioningSettings",
+            "name": "default",
+            "apiVersion": "2017-08-01-preview",
+            "properties": {
+                "autoProvision": "[parameters('auto-provisioning')]"
+            }
+        }
+    ],
+    "outputs": {}
+}

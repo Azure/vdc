@@ -5,19 +5,25 @@
         "deployment-prefix": {
             "type": "string",
             "metadata": {
-                 "description": ""
-             }
-        },
-        "sas-key":{  
-            "type":"string",
-            "metadata":{  
-                "description":""
+                "description": ""
             }
         },
-        "output-params-storage-account-name":{  
-            "type":"string",
-            "metadata":{  
-                "description":""
+        "sas-key": {
+            "type": "securestring",
+            "metadata": {
+                "description": ""
+            }
+        },
+        "output-params-storage-account-name": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "output-params-storage-key": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Default storage account Key. Storage account that contains output parameters and common scripts"
             }
         },
         "vnet-id": {
@@ -71,22 +77,34 @@
                 "description": "Number of management VMs to be created."
             }
         },
-        "oms-workspace-id": {
+        "la-workspace-id": {
             "type": "string",
             "metadata": {
                 "description": "WorkspaceId or CustomerId value of OMS. This value is referenced in OMS VM Extension"
             }
         },
-        "oms-primary-shared-key": {
-            "type": "string",
+        "la-primary-shared-key": {
+            "type": "securestring",
             "metadata": {
                 "description": "WorkspaceKey value of OMS. This value is referenced in OMS VM Extension"
             }
         },
-        "kv-uri":{  
-            "type":"string",
-            "metadata":{  
-                "description":"Region used when establishing the workspace."
+        "storageAccount-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account used to store diagnostic information"
+            }
+        },
+        "storageAccount-sasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Diagnostic Storage Account SAS token"
+            }
+        },
+        "kv-uri": {
+            "type": "string",
+            "metadata": {
+                "description": "Region used when establishing the workspace."
             }
         },
         "kv-id": {
@@ -95,40 +113,39 @@
                 "description": "KeyVault resource id. Eg: /subscriptions/subscriptionid/resourceGroups/contosorg/providers/Microsoft.KeyVault/vaults/contosovault"
             }
         },
-        "aad-principal-id":{  
-            "type":"string",
-            "defaultValue": "",
-            "metadata":{  
-                "description":"Region used when establishing the workspace."
-            }
-        },
-        "aad-certificate-thumb":{  
-            "type":"string",
-            "defaultValue": "",
-            "metadata":{  
-                "description":"Region used when establishing the workspace."
-            }
-        },
-        "aad-certificate-url":{  
-            "type":"string",
-            "defaultValue": "",
-            "metadata":{  
-                "description":"Region used when establishing the workspace."
-            }
-        },
-        "vmapp-key": {
+        "aad-principal-id": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                 "description": ""
-             }
+                "description": "Region used when establishing the workspace."
+            }
+        },
+        "aad-certificate-thumb": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Region used when establishing the workspace."
+            }
+        },
+        "aad-certificate-url": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Region used when establishing the workspace."
+            }
+        },
+        "vmapp-key": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": ""
+            }
         },
         "os-type": {
             "type": "string",
             "defaultValue": "Windows",
             "allowedValues": [
-                "Windows",
-                "Linux"
+                "Windows"
             ],
             "metadata": {
                 "description": "OS platform of the management VM image."
@@ -167,34 +184,14 @@
         "vmapp-start-ip-address": {
             "type": "string",
             "metadata": {
-                 "description": "Specifies the start IP of the VM"
-             }
-         },
+                "description": "Specifies the start IP of the VM"
+            }
+        },
         "enable-encryption": {
             "type": "string",
             "metadata": {
                 "description": "Indicates whether or not to encrypt the VM disks"
             }
-        },
-        "encryption-secrets": {
-            "type": "array",
-            "defaultValue": [
-                {
-                    "sourceVault": {
-                        "id": "[parameters('kv-id')]"
-                    },
-                    "vaultCertificates": [
-                        {
-                            "certificateUrl": "[parameters('aad-certificate-url')]",
-                            "certificateStore": "My"
-                        }
-                    ]
-                }
-            ]
-        },
-        "empty-array": {
-            "type": "array",
-            "defaultValue": []
         }
     },
     "variables": {
@@ -204,22 +201,46 @@
         "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
         "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('default-subnet-name'))]",
         "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix": "[concat(parameters('extension-name'), 'diag')]",
-        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]",
         "antimalware-extension-name": "IaaSAntimalware",
         "diagnostics-extension-name": "IaaSDiagnostics",
         "networkWatcher-extension-name": "NetworkWatcher",
         "encryption-extension-name": "AzureDiskEncryption",
+        "MMA-extension-name": "OMSExtension",
+        "dsc-join-to-domain-extension-name": "DSCSetupIISAndJoinDomain",
         "encryption-operation": "EnableEncryption",
         "key-encryptionAlgorithm": "RSA-OAEP",
-        "diagnostic-storageAccount-id": "[resourceId('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]",
-        "wad-logs": "<WadCfg> <DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\" xmlns=\"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration\"> <DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter=\"Error\"/> <WindowsEventLog scheduledTransferPeriod=\"PT1M\" > <DataSource name=\"Application!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"Security!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"System!*[System[(Level = 1 or Level = 2)]]\" /></WindowsEventLog>",
-        "wad-perf-counters1": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Processor(_Total)\\% Processor Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU utilization\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor(_Total)\\% Privileged Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU privileged time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor(_Total)\\% User Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU user time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor Information(_Total)\\Processor Frequency\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"CPU frequency\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\System\\Processes\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Processes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Process(_Total)\\Thread Count\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Threads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Process(_Total)\\Handle Count\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Handles\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\% Committed Bytes In Use\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Memory usage\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\Available Bytes\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\Committed Bytes\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory committed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\Commit Limit\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory commit limit\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\% Disk Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk active time\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
-        "wad-perf-counters2": "<PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\% Disk Read Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk active read time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\% Disk Write Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk active write time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Transfers/sec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk operations\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Reads/sec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk read operations\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Writes/sec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk write operations\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Bytes/sec\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk speed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Read Bytes/sec\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk read speed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Write Bytes/sec\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk write speed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\LogicalDisk(_Total)\\% Free Space\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk free space (percentage)\" locale=\"en-us\"/></PerformanceCounterConfiguration></PerformanceCounters>",
-        "wad-cfgx-start": "[concat(variables('wad-logs'), variables('wad-perf-counters1'), variables('wad-perf-counters2'), '<Metrics resourceId=\"')]",
-        "wad-metrics-resource-id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name , '/providers/', 'Microsoft.Compute/virtualMachines/')]",
-        "wad-cfgx-end": "\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>",
-        "asg-id": "[resourceId(parameters('vnet-resourceGroup'), 'Microsoft.Network/applicationSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('asg-name'), '-asg'))]"
+        "asg-id": "[resourceId(parameters('vnet-resourceGroup'), 'Microsoft.Network/applicationSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('asg-name'), '-asg'))]",
+        "encryption-secrets": [
+            {
+                "sourceVault": {
+                    "id": "[parameters('kv-id')]"
+                },
+                "vaultCertificates": [
+                    {
+                        "certificateUrl": "[parameters('aad-certificate-url')]",
+                        "certificateStore": "My"
+                    }
+                ]
+            }
+        ],
+        "empty-array": [],
+        "tag-patching": "3rdSat7pm",
+        "windows-password-policies-extension-name": "PwdPolicies",
+        "windows-dependency-extension-name": "DependencyAgent",
+        "windows-dependency-extension-publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+        "windows-dependency-extension-type": "DependencyAgentWindows",
+        "windows-dependency-extension-handler-version": "9.6",
+        "max-password-age": 70,
+        "min-password-age": 1,
+        "min-password-length": 14,
+        "pwd-history-count": 24,
+        "pwd-min-length-config-name": "MinimumPasswordLength",
+        "pwd-min-age-config-name": "MinimumPasswordAge",
+        "pwd-not-last-24-config-name": "EnforcePasswordHistory",
+        "pwd-without-reversible-encryption-config-name": "StorePasswordsUsingReversibleEncryption",
+        "pwd-max-age-config-name": "MaximumPasswordAge",
+        "pwd-complexity-config-name": "PasswordMustMeetComplexityRequirements",
+        "web-server-with-tls-1.1-config-name": "AuditSecureProtocol"
     },
     "resources": [
         {
@@ -266,41 +287,22 @@
             }
         },
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "tags": {
-                "displayName": "Management Diagnostic Storage Account"
-            },
-            "properties": {
-                "encryption": {
-                    "keySource": "Microsoft.Storage",
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        }
-                    }
-                }
-            }
-        },
-        {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
+            "tags": {
+                "layer": "Application",
+                "computerName": "[concat(parameters('extension-name'), '-vm',copyindex(1))]",
+                "UpdateManagement": "[variables('tag-patching')]"
+            },
             "copy": {
                 "name": "vmLoop",
                 "count": "[parameters('virtualMachine-count')]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts',variables('diagnostic-storageAccount-name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), copyindex(1), '-nic'))]"
             ],
             "properties": {
                 "availabilitySet": {
@@ -310,7 +312,7 @@
                     "computerName": "[concat(parameters('extension-name'), '-vm',copyindex(1))]",
                     "adminUsername": "[parameters('admin-username')]",
                     "adminPassword": "[parameters('admin-password')]",
-                    "secrets": "[if(equals(parameters('enable-encryption'), 'false'), parameters('empty-array'), parameters('encryption-secrets'))]"
+                    "secrets": "[if(equals(parameters('enable-encryption'), 'false'), variables('empty-array'), variables('encryption-secrets'))]"
                 },
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachine-size')]"
@@ -323,7 +325,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[replace(toLower(substring(concat(variables('virtualMachine-name-prefix'), copyindex(1), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 40)), '-', '')]",                        
+                        "name": "[replace(toLower(substring(concat(variables('virtualMachine-name-prefix'), copyindex(1), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 40)), '-', '')]",
                         "osType": "[parameters('os-type')]",
                         "createOption": "FromImage"
                     }
@@ -338,41 +340,40 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                        "storageUri": "[concat('https://', parameters('storageAccount-name'), '.blob.core.windows.net/')]"
                     }
                 }
             },
             "resources": [
                 {
                     "type": "extensions",
-                    "name": "OMSExtension",
+                    "name": "[variables('MMA-extension-name')]",
                     "apiVersion": "2015-06-15",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]"
                     ],
                     "properties": {
-                      "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                      "type": "MicrosoftMonitoringAgent",
-                      "typeHandlerVersion": "1.0",
-                      "autoUpgradeMinorVersion": true,
-                      "settings": {
-                        "workspaceId": "[parameters('oms-workspace-id')]"
-                      },
-                      "protectedSettings": {
-                        "workspaceKey": "[parameters('oms-primary-shared-key')]"
-                      }
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[parameters('la-workspace-id')]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[parameters('la-primary-shared-key')]"
+                        }
                     }
                 },
                 {
                     "type": "extensions",
-                    "name": "DSCSetupIISAndJoinDomain",
+                    "name": "[variables('dsc-join-to-domain-extension-name')]",
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
-                        "OMSExtension"
-                    
+                        "[variables('MMA-extension-name')]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Powershell",
@@ -390,7 +391,7 @@
                                 "ServerName": "[concat(parameters('extension-name'), '-vm',copyindex(1))]"
                             }
                         },
-                        "protectedSettings": { 
+                        "protectedSettings": {
                             "configurationUrlSasToken": "[variables('configuration-url-sasToken')]",
                             "configurationArguments": {
                                 "AdminCreds": {
@@ -408,7 +409,7 @@
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'DSCSetupIISAndJoinDomain')]"
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), variables('dsc-join-to-domain-extension-name'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.Security",
@@ -434,7 +435,7 @@
                     "apiVersion": "2017-03-30",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'DSCSetupIISAndJoinDomain')]"
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), variables('dsc-join-to-domain-extension-name'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.Diagnostics",
@@ -442,12 +443,280 @@
                         "typeHandlerVersion": "1.5",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "xmlCfg": "[base64(concat(variables('wad-cfgx-start'), variables('wad-metrics-resource-id'), variables('virtualMachine-name-prefix'), copyindex(1), variables('wad-cfgx-end')))]",
-                            "storageAccount": "[variables('diagnostic-storageAccount-name')]"
+                            "StorageAccount": "[parameters('storageAccount-name')]",
+                            "StorageType": "Blob",
+                            "WadCfg": {
+                                "DiagnosticMonitorConfiguration": {
+                                    "overallQuotaInMB": 5120,
+                                    "Metrics": {
+                                        "resourceId": "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                                        "MetricAggregation": [
+                                            {
+                                                "scheduledTransferPeriod": "PT1H"
+                                            },
+                                            {
+                                                "scheduledTransferPeriod": "PT1M"
+                                            }
+                                        ]
+                                    },
+                                    "DiagnosticInfrastructureLogs": {
+                                        "scheduledTransferLogLevelFilter": "Error"
+                                    },
+                                    "PerformanceCounters": {
+                                        "scheduledTransferPeriod": "PT1M",
+                                        "PerformanceCounterConfiguration": [
+                                            {
+                                                "counterSpecifier": "\\Processor Information(_Total)\\% Processor Time",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Processor Information(_Total)\\% Privileged Time",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Processor Information(_Total)\\% User Time",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Processor Information(_Total)\\Processor Frequency",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\System\\Processes",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Process(_Total)\\Thread Count",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Process(_Total)\\Handle Count",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\System\\System Up Time",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\System\\Context Switches/sec",
+                                                "unit": "CountPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\System\\Processor Queue Length",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\% Committed Bytes In Use",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\Available Bytes",
+                                                "unit": "Bytes",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\Committed Bytes",
+                                                "unit": "Bytes",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\Cache Bytes",
+                                                "unit": "Bytes",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\Pool Paged Bytes",
+                                                "unit": "Bytes",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\Pool Nonpaged Bytes",
+                                                "unit": "Bytes",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\Pages/sec",
+                                                "unit": "CountPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Memory\\Page Faults/sec",
+                                                "unit": "CountPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Process(_Total)\\Working Set",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Process(_Total)\\Working Set - Private",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\% Disk Time",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\% Disk Read Time",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\% Disk Write Time",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\% Idle Time",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Disk Bytes/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Disk Read Bytes/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Disk Write Bytes/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Disk Transfers/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Disk Reads/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Disk Writes/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Avg. Disk sec/Transfer",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Avg. Disk sec/Read",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Avg. Disk sec/Write",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Avg. Disk Queue Length",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Avg. Disk Read Queue Length",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Avg. Disk Write Queue Length",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\% Free Space",
+                                                "unit": "Percent",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\LogicalDisk(_Total)\\Free Megabytes",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Bytes Total/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Bytes Sent/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Bytes Received/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Packets/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Packets Sent/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Packets Received/sec",
+                                                "unit": "BytesPerSecond",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Packets Outbound Errors",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            },
+                                            {
+                                                "counterSpecifier": "\\Network Interface(*)\\Packets Received Errors",
+                                                "unit": "Count",
+                                                "sampleRate": "PT60S"
+                                            }
+                                        ]
+                                    },
+                                    "WindowsEventLog": {
+                                        "scheduledTransferPeriod": "PT1M",
+                                        "DataSource": [
+                                            {
+                                                "name": "Application!*[System[(Level = 1 or Level = 2 or Level = 3)]]"
+                                            },
+                                            {
+                                                "name": "Security!*[System[band(Keywords,4503599627370496)]]"
+                                            },
+                                            {
+                                                "name": "System!*[System[(Level = 1 or Level = 2 or Level = 3)]]"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
                         },
                         "protectedSettings": {
-                            "storageAccountName": "[variables('diagnostic-storageAccount-name')]",
-                            "storageAccountKey": "[listkeys(variables('diagnostic-storageAccount-id'), '2016-12-01').keys[0])",
+                            "storageAccountName": "[parameters('storageAccount-name')]",
+                            "storageAccountSasToken": "[parameters('storageAccount-sasToken')]",
                             "storageAccountEndPoint": "https://core.windows.net"
                         }
                     }
@@ -459,7 +728,7 @@
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'DSCSetupIISAndJoinDomain')]"
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), variables('dsc-join-to-domain-extension-name'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.NetworkWatcher",
@@ -470,13 +739,188 @@
                 },
                 {
                     "type": "extensions",
+                    "name": "[variables('windows-password-policies-extension-name')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.8",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "[concat('https://', parameters('output-params-storage-account-name'), '.blob.core.windows.net/scripts/windows/enable-local-policy-settings.ps1')]"
+                            ]
+                        },
+                        "protectedSettings": {
+                            "storageAccountName": "[parameters('output-params-storage-account-name')]",
+                            "storageAccountKey": "[parameters('output-params-storage-key')]",
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./windows/enable-local-policy-settings.ps1 -MaxPwdAge ', variables('max-password-age'), ' -MinPwdAge ', variables('min-password-age'), ' -MinPwdLength ', variables('min-password-length'), ' -PwdHistoryCount ', variables('pwd-history-count'))]"
+                        }
+                    }
+                },
+                {
+                    "type": "extensions",
+                    "name": "[variables('windows-dependency-extension-name')]",
+                    "apiVersion": "2018-06-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-password-policies-extension-name')]"
+                    ],
+                    "properties": {
+                        "publisher": "[variables('windows-dependency-extension-publisher')]",
+                        "type": "[variables('windows-dependency-extension-type')]",
+                        "typeHandlerVersion": "[variables('windows-dependency-extension-handler-version')]",
+                        "autoUpgradeMinorVersion": true
+                    }
+                },
+                {
+                    "apiVersion": "2018-06-30-preview",
+                    "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                    "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwd-min-length-config-name'))]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "guestConfiguration": {
+                            "name": "[variables('pwd-min-length-config-name')]",
+                            "version": "1.*"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2018-06-30-preview",
+                    "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                    "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwd-min-age-config-name'))]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "guestConfiguration": {
+                            "name": "[variables('pwd-min-age-config-name')]",
+                            "version": "1.*"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2018-06-30-preview",
+                    "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                    "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwd-not-last-24-config-name'))]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "guestConfiguration": {
+                            "name": "[variables('pwd-not-last-24-config-name')]",
+                            "version": "1.*"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2018-06-30-preview",
+                    "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                    "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwd-without-reversible-encryption-config-name'))]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "guestConfiguration": {
+                            "name": "[variables('pwd-without-reversible-encryption-config-name')]",
+                            "version": "1.*"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2018-06-30-preview",
+                    "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                    "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('web-server-with-tls-1.1-config-name'))]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "guestConfiguration": {
+                            "name": "[variables('web-server-with-tls-1.1-config-name')]",
+                            "version": "1.*"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2018-06-30-preview",
+                    "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                    "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwd-max-age-config-name'))]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "guestConfiguration": {
+                            "name": "[variables('pwd-max-age-config-name')]",
+                            "version": "1.*"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2018-06-30-preview",
+                    "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+                    "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwd-complexity-config-name'))]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "guestConfiguration": {
+                            "name": "[variables('pwd-complexity-config-name')]",
+                            "version": "1.*"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2015-05-01-preview",
+                    "name": "AzurePolicyforWindows",
+                    "type": "extensions",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
+                        "[variables('windows-dependency-extension-name')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.GuestConfiguration",
+                        "type": "ConfigurationforWindows",
+                        "typeHandlerVersion": "1.1",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {},
+                        "protectedSettings": {}
+                    }
+                },
+                {
+                    "type": "extensions",
                     "name": "[variables('encryption-extension-name')]",
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "condition": "[equals(parameters('enable-encryption'), 'true')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualMachine-name-prefix'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'DSCSetupIISAndJoinDomain')]"
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), variables('antimalware-extension-name'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), variables('diagnostics-extension-name'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), variables('networkWatcher-extension-name'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), variables('dsc-join-to-domain-extension-name'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(variables('virtualMachine-name-prefix'), copyindex(1)), 'AzurePolicyforWindows')]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.Security",
@@ -572,7 +1016,7 @@
                             "type": "Microsoft.Compute/virtualMachines",
                             "name": "[concat(variables('virtualMachine-name-prefix'), copyindex(1))]",
                             "location": "[resourceGroup().location]",
-                            "resources":[
+                            "resources": [
                                 {
                                     "type": "extensions",
                                     "name": "DSCSetupIISAndJoinDomain",
@@ -593,7 +1037,7 @@
                                                 "function": "IISASPNET"
                                             }
                                         },
-                                        "protectedSettings": { 
+                                        "protectedSettings": {
                                             "configurationUrlSasToken": "[variables('configuration-url-sasToken')]"
                                         }
                                     }
@@ -606,8 +1050,7 @@
             }
         }
     ],
-
-    "functions":[
+    "functions": [
         {
             "namespace": "vdc",
             "members": {
@@ -639,7 +1082,7 @@
                         "value": "[split(parameters('initialIP'), '.')]"
                     }
                 },
-                "removeAddressRange":{
+                "removeAddressRange": {
                     "parameters": [
                         {
                             "name": "ip",

@@ -40,7 +40,7 @@
         },
         "enable-ddos-protection": {
             "type": "bool",
-            "defaultValue": true,
+            "defaultValue": false,
             "metadata": {
                 "description": "Determines whether or not DDoS Protection is enabled in the VNET"
             }
@@ -65,24 +65,6 @@
         },
         "shared-services-vnet-name": {
             "type": "string",
-            "metadata": {
-                "description": ""
-            }
-        },
-        "deploy-azure-firewall-networkRules-collection": {
-            "type": "bool",
-            "metadata": {
-                "description": ""
-            }
-        },
-        "azure-firewall-networkRules-collection": {
-            "type": "array",
-            "metadata": {
-                "description": ""
-            }
-        },
-        "shared-services-gateway-udr": {
-            "type": "array",
             "metadata": {
                 "description": ""
             }

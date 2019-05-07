@@ -1,0 +1,543 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:52:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:52:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:52:33 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/la/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"la-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},
+        "la-workspace-resourceGroup": { "value": "cntso-ssvcs-diagnostics-rg"}, "la-workspace-name":
+        { "value": "cntso-ssvcs-la"}, "la-workspace-id": { "value": "d4856489-3d3d-4a90-939d-3d00f85d2cca"},
+        "la-primary-shared-key": { "value": "GZflgFjoJgtzBIMryWzsx6c9zIpTZddkO9dfyADchEPEo9vCbVc59K2Ak2KZK4jLia05vTfiaLiaEYM6IjsDkw=="}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '555'
+      content-range:
+      - bytes 0-554/555
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 03:52:32 GMT
+      etag:
+      - '"0x8D6CF7AC54B0169"'
+      last-modified:
+      - Fri, 03 May 2019 03:52:32 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - VSRHCa/+VUVqQZ3n66L9fQ==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:39:06 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:52:33 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/diagnostic-storage-account/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"storageAccount-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},
+        "storageAccount-name": { "value": "cntsowus2shrdsvcs01diag"}, "storageAccount-sasToken":
+        { "value": "sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},
+        "storageAccount-accessKey": { "value": "tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '590'
+      content-range:
+      - bytes 0-589/590
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 03:52:33 GMT
+      etag:
+      - '"0x8D6CF7AB158698E"'
+      last-modified:
+      - Fri, 03 May 2019 03:51:58 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - UzcGkQ4IgSSQOnpmSwhZwg==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:38:01 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: HEAD
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg?api-version=2018-05-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:52:33 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      14276 is larger than 10KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '12216'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-","name":"cntso-shared-services-ssvcs-deployment-automation-","properties":{"templateHash":"14894781221095805588","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"location":{"type":"String","value":"West
+        US 2"},"month":{"type":"String","value":"05"},"year":{"type":"String","value":"2019"},"um-timezone":{"type":"String","value":"America/Chicago"},"la-workspace-resourceGroup":{"type":"String","value":"cntso-ssvcs-diagnostics-rg"},"la-workspace-name":{"type":"String","value":"cntso-ssvcs-la"},"storageAccount-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},"la-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},"logs-retention-in-days":{"type":"Int","value":365},"um-startdate":{"type":"String","value":"2019/03/29
+        7:00 PM"},"la-workspace-id":{"type":"String","value":"d4856489-3d3d-4a90-939d-3d00f85d2cca"},"la-primary-shared-key":{"type":"String","value":"GZflgFjoJgtzBIMryWzsx6c9zIpTZddkO9dfyADchEPEo9vCbVc59K2Ak2KZK4jLia05vTfiaLiaEYM6IjsDkw=="},"storageAccount-name":{"type":"String","value":"cntsowus2shrdsvcs01diag"},"storageAccount-sasToken":{"type":"String","value":"sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},"storageAccount-accessKey":{"type":"String","value":"tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A52%3A32Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=%2BY6hZ5E7bAxYbrIGjQ/y3I1GEaB9lZ75ja/AZGo32zU%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-05-03T03:52:35.2486933Z","duration":"PT0.1109644S","correlationId":"64721d2c-e41f-45a9-bdce-8e448c24eed3","providers":[{"namespace":"Microsoft.Automation","resourceTypes":[{"resourceType":"automationAccounts","locations":["westus2"]},{"resourceType":"automationAccounts/providers/diagnosticsettings","locations":["westus2"]}]},{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/providers/Microsoft.Insights/diagnosticsettings/service","resourceType":"Microsoft.Automation/automationAccounts/providers/diagnosticsettings","resourceName":"cntso-ssvcs-automation-account/Microsoft.Insights/service"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentLinkService","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentLinkService"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSun7pm"}]}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-/operationStatuses/08586447513303399492?api-version=2018-05-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '23687'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:52:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1194'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-/operationStatuses/08586447513303399492?api-version=2018-05-01
+  response:
+    body:
+      string: '{"status":"Running"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '20'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:53:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-/operationStatuses/08586447513303399492?api-version=2018-05-01
+  response:
+    body:
+      string: '{"status":"Running"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '20'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:53:34 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-/operationStatuses/08586447513303399492?api-version=2018-05-01
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:54:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-automation-","name":"cntso-shared-services-ssvcs-deployment-automation-","properties":{"templateHash":"14894781221095805588","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"location":{"type":"String","value":"West
+        US 2"},"month":{"type":"String","value":"05"},"year":{"type":"String","value":"2019"},"um-timezone":{"type":"String","value":"America/Chicago"},"la-workspace-resourceGroup":{"type":"String","value":"cntso-ssvcs-diagnostics-rg"},"la-workspace-name":{"type":"String","value":"cntso-ssvcs-la"},"storageAccount-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},"la-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},"logs-retention-in-days":{"type":"Int","value":365},"um-startdate":{"type":"String","value":"2019/03/29
+        7:00 PM"},"la-workspace-id":{"type":"String","value":"d4856489-3d3d-4a90-939d-3d00f85d2cca"},"la-primary-shared-key":{"type":"String","value":"GZflgFjoJgtzBIMryWzsx6c9zIpTZddkO9dfyADchEPEo9vCbVc59K2Ak2KZK4jLia05vTfiaLiaEYM6IjsDkw=="},"storageAccount-name":{"type":"String","value":"cntsowus2shrdsvcs01diag"},"storageAccount-sasToken":{"type":"String","value":"sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},"storageAccount-accessKey":{"type":"String","value":"tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A52%3A32Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=%2BY6hZ5E7bAxYbrIGjQ/y3I1GEaB9lZ75ja/AZGo32zU%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-05-03T03:53:36.3786306Z","duration":"PT1M1.2409017S","correlationId":"64721d2c-e41f-45a9-bdce-8e448c24eed3","providers":[{"namespace":"Microsoft.Automation","resourceTypes":[{"resourceType":"automationAccounts","locations":["westus2"]},{"resourceType":"automationAccounts/providers/diagnosticsettings","locations":["westus2"]}]},{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/providers/Microsoft.Insights/diagnosticsettings/service","resourceType":"Microsoft.Automation/automationAccounts/providers/diagnosticsettings","resourceName":"cntso-ssvcs-automation-account/Microsoft.Insights/service"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentLinkService","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentLinkService"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSat7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux2ndSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux3rdSun7pm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account","resourceType":"Microsoft.Automation/automationAccounts","resourceName":"cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSat7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win2ndSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win3rdSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Win4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Win4thSun7pm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/nestedDeploymentUM-Linux4thSun7pm","resourceType":"Microsoft.Resources/deployments","resourceName":"nestedDeploymentUM-Linux4thSun7pm"}],"outputs":{"automation-account-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account"}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/providers/Microsoft.Insights/diagnosticsettings/service"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/linux-um-vdc2-hub-2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/linux-um-vdc2-hub-2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/linux-um-vdc2-hub-3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/linux-um-vdc2-hub-3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/linux-um-vdc2-hub-4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/linux-um-vdc2-hub-4thSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/windows-um-vdc2-hub-2ndSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/windows-um-vdc2-hub-2ndSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/windows-um-vdc2-hub-3rdSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/windows-um-vdc2-hub-3rdSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/windows-um-vdc2-hub-4thSat7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account/softwareUpdateConfigurations/windows-um-vdc2-hub-4thSun7pm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la/linkedServices/Automation"}]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '27800'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:54:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:54:06 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:54:05 GMT
+      etag:
+      - '"0x8D6C9C2C8DFA212"'
+      last-modified:
+      - Thu, 25 Apr 2019 21:12:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''b\''b\\\''{"automation-account-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Automation/automationAccounts/cntso-ssvcs-automation-account"}}\\\''\'''''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '243'
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 03 May 2019 03:54:06 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/automation-account/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - py2c42xYEYaKApe2gjzgMw==
+      date:
+      - Fri, 03 May 2019 03:54:05 GMT
+      etag:
+      - '"0x8D6CF7AFD5E3546"'
+      last-modified:
+      - Fri, 03 May 2019 03:54:06 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+version: 1

@@ -1,0 +1,461 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:54:39 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:54:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:54:40 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/la/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"la-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},
+        "la-workspace-resourceGroup": { "value": "cntso-ssvcs-diagnostics-rg"}, "la-workspace-name":
+        { "value": "cntso-ssvcs-la"}, "la-workspace-id": { "value": "d4856489-3d3d-4a90-939d-3d00f85d2cca"},
+        "la-primary-shared-key": { "value": "GZflgFjoJgtzBIMryWzsx6c9zIpTZddkO9dfyADchEPEo9vCbVc59K2Ak2KZK4jLia05vTfiaLiaEYM6IjsDkw=="}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '555'
+      content-range:
+      - bytes 0-554/555
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 03:54:40 GMT
+      etag:
+      - '"0x8D6CF7AC54B0169"'
+      last-modified:
+      - Fri, 03 May 2019 03:52:32 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - VSRHCa/+VUVqQZ3n66L9fQ==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:39:06 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:54:40 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/diagnostic-storage-account/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"storageAccount-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},
+        "storageAccount-name": { "value": "cntsowus2shrdsvcs01diag"}, "storageAccount-sasToken":
+        { "value": "sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},
+        "storageAccount-accessKey": { "value": "tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '590'
+      content-range:
+      - bytes 0-589/590
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 03:54:39 GMT
+      etag:
+      - '"0x8D6CF7AB158698E"'
+      last-modified:
+      - Fri, 03 May 2019 03:51:58 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - UzcGkQ4IgSSQOnpmSwhZwg==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:38:01 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: HEAD
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg?api-version=2018-05-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:54:40 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      21402 is larger than 10KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '17632'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-nsg?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-nsg","name":"cntso-shared-services-ssvcs-deployment-nsg","properties":{"templateHash":"9933220388726294261","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"storageAccount-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},"network-security-groups":{"type":"Array","value":[{"name":"sharedsvcs","rules":[{"name":"allow-tcp-between-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","42","88","636","3268","3269","445","25","135","5722","464","9389","139","53","49152-65535"],"direction":"Inbound","priority":100,"protocol":"Tcp","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[{"name":"dc"}]}},{"name":"allow-udp-between-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","88","445","123","464","138","137","53","49152-65535"],"destinationApplicationSecurityGroups":[{"name":"dc"}],"direction":"Inbound","priority":110,"protocol":"Udp","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"sourceApplicationSecurityGroups":[{"name":"dc"}]}},{"name":"allow-tcp-ad","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","42","88","636","3268","3269","445","25","135","5722","464","9389","139","53","49152-65535"],"direction":"Inbound","priority":120,"protocol":"Tcp","sourceAddressPrefix":"192.168.1.4","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-udp-ad","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","88","445","123","464","138","137","53","49152-65535"],"direction":"Inbound","priority":130,"protocol":"Udp","sourceAddressPrefix":"192.168.1.4","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-rdp-into-dc","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"3389","destinationPortRanges":[],"direction":"Inbound","priority":140,"protocol":"TCP","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[{"name":"jb"}]}},{"name":"allow-rdp-ssh-into-jb","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["3389","22"],"destinationPortRange":"","direction":"Inbound","priority":150,"protocol":"TCP","sourceAddressPrefix":"192.168.1.0/28","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"jb"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-tcp-vnet-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["389","42","88","636","3268","3269","445","25","135","5722","464","9389","139","53","49152-65535"],"destinationPortRange":"","direction":"Inbound","priority":160,"protocol":"TCP","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-udp-vnet-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["389","88","445","123","464","138","137","53","49152-65535"],"destinationPortRange":"","direction":"Inbound","priority":170,"protocol":"UDP","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-http-and-ssh-into-palo-alto","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["443","22"],"destinationPortRange":"","direction":"Inbound","priority":180,"protocol":"TCP","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"mgmt"}],"sourceApplicationSecurityGroups":[{"name":"jb"}]}},{"name":"deny-vnet","properties":{"access":"Deny","destinationAddressPrefix":"VirtualNetwork","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":4096,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-vnet","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Outbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}}]},{"name":"trust","rules":[{"name":"allow-vnet-inbound","properties":{"access":"Allow","destinationAddressPrefix":"VirtualNetwork","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-loadbalancer","properties":{"access":"Allow","destinationAddressPrefix":"VirtualNetwork","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":110,"protocol":"*","sourceAddressPrefix":"AzureLoadBalancer","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-internet","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":120,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-vnet-outbound","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Outbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}}]},{"name":"dmz","rules":[{"name":"allow-vnet","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}}]}]},"application-security-groups":{"type":"Array","value":[{"name":"dc"},{"name":"jb"},{"name":"mgmt"},{"name":"trust"},{"name":"untrust"}]},"la-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},"logs-retention-in-days":{"type":"Int","value":365},"deployment-name":{"type":"String","value":"ssvcs"},"la-workspace-resourceGroup":{"type":"String","value":"cntso-ssvcs-diagnostics-rg"},"la-workspace-name":{"type":"String","value":"cntso-ssvcs-la"},"la-workspace-id":{"type":"String","value":"d4856489-3d3d-4a90-939d-3d00f85d2cca"},"la-primary-shared-key":{"type":"String","value":"GZflgFjoJgtzBIMryWzsx6c9zIpTZddkO9dfyADchEPEo9vCbVc59K2Ak2KZK4jLia05vTfiaLiaEYM6IjsDkw=="},"storageAccount-name":{"type":"String","value":"cntsowus2shrdsvcs01diag"},"storageAccount-sasToken":{"type":"String","value":"sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},"storageAccount-accessKey":{"type":"String","value":"tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A54%3A39Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=BYq6eydPdMyEfd0H/Mwf6PiwHK/4T4d/oZNLsYEoSRk%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-05-03T03:54:43.4710931Z","duration":"PT0.7290577S","correlationId":"05d65225-ee71-48c1-82c5-377fc8b2ab19","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"applicationSecurityGroups","locations":["westus2"]},{"resourceType":"networkSecurityGroups","locations":["westus2"]},{"resourceType":"networkSecurityGroups/providers/diagnosticSettings","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-dc-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-dc-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-jb-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-jb-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-mgmt-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-mgmt-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-trust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-trust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-untrust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-untrust-asg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-sharedsvcs-nsg"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-sharedsvcs-nsg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg/providers/Microsoft.Insights/diagnosticSettings/service","resourceType":"Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings","resourceName":"cntso-ssvcs-sharedsvcs-nsg/Microsoft.Insights/service"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-dc-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-dc-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-jb-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-jb-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-mgmt-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-mgmt-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-trust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-trust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-untrust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-untrust-asg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-trust-nsg"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-trust-nsg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg/providers/Microsoft.Insights/diagnosticSettings/service","resourceType":"Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings","resourceName":"cntso-ssvcs-trust-nsg/Microsoft.Insights/service"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-dc-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-dc-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-jb-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-jb-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-mgmt-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-mgmt-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-trust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-trust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-untrust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-untrust-asg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-dmz-nsg"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-dmz-nsg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg/providers/Microsoft.Insights/diagnosticSettings/service","resourceType":"Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings","resourceName":"cntso-ssvcs-dmz-nsg/Microsoft.Insights/service"}]}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-nsg/operationStatuses/08586447512027356454?api-version=2018-05-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '17384'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:54:42 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-nsg/operationStatuses/08586447512027356454?api-version=2018-05-01
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:55:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-nsg?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-nsg","name":"cntso-shared-services-ssvcs-deployment-nsg","properties":{"templateHash":"9933220388726294261","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"storageAccount-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},"network-security-groups":{"type":"Array","value":[{"name":"sharedsvcs","rules":[{"name":"allow-tcp-between-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","42","88","636","3268","3269","445","25","135","5722","464","9389","139","53","49152-65535"],"direction":"Inbound","priority":100,"protocol":"Tcp","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[{"name":"dc"}]}},{"name":"allow-udp-between-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","88","445","123","464","138","137","53","49152-65535"],"destinationApplicationSecurityGroups":[{"name":"dc"}],"direction":"Inbound","priority":110,"protocol":"Udp","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"sourceApplicationSecurityGroups":[{"name":"dc"}]}},{"name":"allow-tcp-ad","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","42","88","636","3268","3269","445","25","135","5722","464","9389","139","53","49152-65535"],"direction":"Inbound","priority":120,"protocol":"Tcp","sourceAddressPrefix":"192.168.1.4","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-udp-ad","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"","destinationPortRanges":["389","88","445","123","464","138","137","53","49152-65535"],"direction":"Inbound","priority":130,"protocol":"Udp","sourceAddressPrefix":"192.168.1.4","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-rdp-into-dc","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRange":"3389","destinationPortRanges":[],"direction":"Inbound","priority":140,"protocol":"TCP","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[{"name":"jb"}]}},{"name":"allow-rdp-ssh-into-jb","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["3389","22"],"destinationPortRange":"","direction":"Inbound","priority":150,"protocol":"TCP","sourceAddressPrefix":"192.168.1.0/28","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"jb"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-tcp-vnet-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["389","42","88","636","3268","3269","445","25","135","5722","464","9389","139","53","49152-65535"],"destinationPortRange":"","direction":"Inbound","priority":160,"protocol":"TCP","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-udp-vnet-adds","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["389","88","445","123","464","138","137","53","49152-65535"],"destinationPortRange":"","direction":"Inbound","priority":170,"protocol":"UDP","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"dc"}],"sourceApplicationSecurityGroups":[]}},{"name":"allow-http-and-ssh-into-palo-alto","properties":{"access":"Allow","destinationAddressPrefixes":[],"destinationAddressPrefix":"","destinationPortRanges":["443","22"],"destinationPortRange":"","direction":"Inbound","priority":180,"protocol":"TCP","sourceAddressPrefix":"","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[{"name":"mgmt"}],"sourceApplicationSecurityGroups":[{"name":"jb"}]}},{"name":"deny-vnet","properties":{"access":"Deny","destinationAddressPrefix":"VirtualNetwork","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":4096,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-vnet","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Outbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}}]},{"name":"trust","rules":[{"name":"allow-vnet-inbound","properties":{"access":"Allow","destinationAddressPrefix":"VirtualNetwork","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-loadbalancer","properties":{"access":"Allow","destinationAddressPrefix":"VirtualNetwork","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":110,"protocol":"*","sourceAddressPrefix":"AzureLoadBalancer","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-internet","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":120,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}},{"name":"allow-vnet-outbound","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Outbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}}]},{"name":"dmz","rules":[{"name":"allow-vnet","properties":{"access":"Allow","destinationAddressPrefix":"*","destinationAddressPrefixes":[],"destinationPortRange":"*","destinationPortRanges":[],"direction":"Inbound","priority":100,"protocol":"*","sourceAddressPrefix":"VirtualNetwork","sourcePortRange":"*","sourcePortRanges":[],"destinationApplicationSecurityGroups":[],"sourceApplicationSecurityGroups":[]}}]}]},"application-security-groups":{"type":"Array","value":[{"name":"dc"},{"name":"jb"},{"name":"mgmt"},{"name":"trust"},{"name":"untrust"}]},"la-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},"logs-retention-in-days":{"type":"Int","value":365},"deployment-name":{"type":"String","value":"ssvcs"},"la-workspace-resourceGroup":{"type":"String","value":"cntso-ssvcs-diagnostics-rg"},"la-workspace-name":{"type":"String","value":"cntso-ssvcs-la"},"la-workspace-id":{"type":"String","value":"d4856489-3d3d-4a90-939d-3d00f85d2cca"},"la-primary-shared-key":{"type":"String","value":"GZflgFjoJgtzBIMryWzsx6c9zIpTZddkO9dfyADchEPEo9vCbVc59K2Ak2KZK4jLia05vTfiaLiaEYM6IjsDkw=="},"storageAccount-name":{"type":"String","value":"cntsowus2shrdsvcs01diag"},"storageAccount-sasToken":{"type":"String","value":"sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},"storageAccount-accessKey":{"type":"String","value":"tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A54%3A39Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=BYq6eydPdMyEfd0H/Mwf6PiwHK/4T4d/oZNLsYEoSRk%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-05-03T03:54:48.7361376Z","duration":"PT5.9941022S","correlationId":"05d65225-ee71-48c1-82c5-377fc8b2ab19","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"applicationSecurityGroups","locations":["westus2"]},{"resourceType":"networkSecurityGroups","locations":["westus2"]},{"resourceType":"networkSecurityGroups/providers/diagnosticSettings","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-dc-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-dc-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-jb-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-jb-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-mgmt-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-mgmt-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-trust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-trust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-untrust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-untrust-asg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-sharedsvcs-nsg"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-sharedsvcs-nsg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg/providers/Microsoft.Insights/diagnosticSettings/service","resourceType":"Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings","resourceName":"cntso-ssvcs-sharedsvcs-nsg/Microsoft.Insights/service"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-dc-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-dc-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-jb-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-jb-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-mgmt-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-mgmt-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-trust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-trust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-untrust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-untrust-asg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-trust-nsg"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-trust-nsg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg/providers/Microsoft.Insights/diagnosticSettings/service","resourceType":"Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings","resourceName":"cntso-ssvcs-trust-nsg/Microsoft.Insights/service"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-dc-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-dc-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-jb-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-jb-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-mgmt-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-mgmt-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-trust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-trust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-untrust-asg","resourceType":"Microsoft.Network/applicationSecurityGroups","resourceName":"cntso-ssvcs-untrust-asg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-dmz-nsg"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg","resourceType":"Microsoft.Network/networkSecurityGroups","resourceName":"cntso-ssvcs-dmz-nsg"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg/providers/Microsoft.Insights/diagnosticSettings/service","resourceType":"Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings","resourceName":"cntso-ssvcs-dmz-nsg/Microsoft.Insights/service"}],"outputs":{},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-dc-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-jb-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-mgmt-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-trust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/applicationSecurityGroups/cntso-ssvcs-untrust-asg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-dmz-nsg/providers/Microsoft.Insights/diagnosticSettings/service"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-sharedsvcs-nsg/providers/Microsoft.Insights/diagnosticSettings/service"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/networkSecurityGroups/cntso-ssvcs-trust-nsg/providers/Microsoft.Insights/diagnosticSettings/service"}]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '19664'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:55:13 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:55:13 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:55:13 GMT
+      etag:
+      - '"0x8D6C9C2C8DFA212"'
+      last-modified:
+      - Thu, 25 Apr 2019 21:12:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 03 May 2019 03:55:14 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/nsg/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - mZFLkyvTelC5g8XnyQrpOw==
+      date:
+      - Fri, 03 May 2019 03:55:13 GMT
+      etag:
+      - '"0x8D6CF7B25C30C1F"'
+      last-modified:
+      - Fri, 03 May 2019 03:55:14 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+version: 1

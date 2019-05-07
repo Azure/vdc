@@ -22,8 +22,5 @@
     },
     "on-premises-address-range": {
         "value": "${on-premises.network.address-prefix}"
-    },
-    "logs-retention-in-days": {
-        "value": 30
     }
 }

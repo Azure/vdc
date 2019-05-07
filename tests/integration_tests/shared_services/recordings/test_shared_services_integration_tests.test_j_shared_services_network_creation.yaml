@@ -1,0 +1,462 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:58:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:58:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:59:00 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/shared-services-net/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"vnet-id": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},
+        "vnet-name": { "value": "cntso-ssvcs-vnet"}, "vnet-resourceGroup": { "value":
+        "cntso-ssvcs-net-rg"}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '314'
+      content-range:
+      - bytes 0-313/314
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 03:59:00 GMT
+      etag:
+      - '"0x8D6CF7B3A133AA8"'
+      last-modified:
+      - Fri, 03 May 2019 03:55:48 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - uuncXP3nwK/2kckRf2nBzg==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:42:15 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: HEAD
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg?api-version=2018-05-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:58:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: 'b''b\''b\\\''b\\\\\\\''b\\\\\\\\\\\\\\\''b\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''{"properties":
+      {"template": {"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0", "parameters": {"local-gateway-name": {"type": "string",
+      "metadata": {"description": "Specifies the local Virtual Network Gateway name"}},
+      "local-subscription-id": {"type": "string", "metadata": {"description": "Local
+      subscription id, this value is used to create a VPN connection between a local
+      and remote Virtual Network Gateway"}}, "local-vnet-resourceGroup": {"type":
+      "string", "metadata": {"description": "Local resource group that contains the
+      Virtual Network, this value is used to create a local and remote Virtual Network
+      Gateway"}}, "vpn-shared-key": {"type": "string", "metadata": {"description":
+      "Specifies a VPN shared key. The same value has to be specified on both Virtual
+      Network Gateways"}}, "local-gateway-location": {"type": "string", "metadata":
+      {"description": "Specifies the remote Virtual Network Gateway location"}}, "remote-gateway-name":
+      {"type": "string", "metadata": {"description": "Specifies the remote Virtual
+      Network Gateway"}}, "remote-vnet-resourceGroup": {"type": "string", "metadata":
+      {"description": "Remote Virtual Network resource group name"}}, "remote-subscription-id":
+      {"type": "string", "metadata": {"description": "Remote Subscription Id"}}, "enable-bgp":
+      {"type": "bool", "defaultValue": false, "metadata": {"description": "Value to
+      specify if BGP is enabled or not"}}, "remote-connection-name": {"type": "string",
+      "metadata": {"description": "Remote connection name"}}, "vnet-id": {"defaultValue":
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet",
+      "type": "string"}, "vnet-name": {"defaultValue": "cntso-ssvcs-vnet", "type":
+      "string"}, "vnet-resourceGroup": {"defaultValue": "cntso-ssvcs-net-rg", "type":
+      "string"}, "sas-key": {"defaultValue": "se=2019-05-03T20%3A58%3A59Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=dKNXxNbTtlScI3FcmmHzYhz2EQ33eIQ3s4rlt1qoPXU%3D",
+      "type": "string"}, "output-params-storage-key": {"defaultValue": "0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==",
+      "type": "string"}, "output-params-storage-account-name": {"defaultValue": "storage",
+      "type": "string"}}, "variables": {"local-gateway-resource-id": "[resourceId(parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-subscription-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''),
+      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-vnet-resourceGroup\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')
+      ,\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''Microsoft.Network/virtualNetworkGateways\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
+      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-gateway-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]",
+      "remote-gateway-resource-id": "[resourceId(parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''remote-subscription-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''),
+      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''remote-vnet-resourceGroup\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')
+      ,\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''Microsoft.Network/virtualNetworkGateways\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
+      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''remote-gateway-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]"},
+      "resources": [{"apiVersion": "2017-05-10", "name": "nestedDeployVGWConnection",
+      "type": "Microsoft.Resources/deployments", "resourceGroup": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-vnet-resourceGroup\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
+      "subscriptionId": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-subscription-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
+      "properties": {"mode": "Incremental", "template": {"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0", "parameters": {}, "variables": {}, "resources":
+      [{"name": "[concat(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-to-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
+      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''remote-connection-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]",
+      "type": "Microsoft.Network/connections", "apiVersion": "2017-10-01", "location":
+      "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-gateway-location\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
+      "tags": {"connectionName": "[concat(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-to-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
+      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''remote-connection-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]"},
+      "properties": {"virtualNetworkGateway1": {"id": "[variables(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''local-gateway-resource-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]"},
+      "virtualNetworkGateway2": {"id": "[variables(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''remote-gateway-resource-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]"},
+      "enableBgp": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''enable-bgp\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
+      "connectionType": "VNet2VNet", "routingWeight": 3, "sharedKey": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''vpn-shared-key\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]"}}]}}}],
+      "outputs": {}}, "parameters": {"local-subscription-id": {"value": "00000000-0000-0000-0000-000000000000"},
+      "local-vnet-resourceGroup": {"value": "cntso-onprem-net-rg"}, "local-gateway-name":
+      {"value": "cntso-onprem-gw"}, "local-gateway-location": {"value": "West US 2"},
+      "vpn-shared-key": {"value": "asodgfhjkaw4tu0w9vuijv0qu3409tu"}, "remote-subscription-id":
+      {"value": "00000000-0000-0000-0000-000000000000"}, "remote-gateway-name": {"value":
+      "cntso-ssvcs-gw"}, "remote-vnet-resourceGroup": {"value": "cntso-ssvcs-net-rg"},
+      "remote-connection-name": {"value": "ssvcs"}, "enable-bgp": {"value": false},
+      "vnet-id": {"value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},
+      "vnet-name": {"value": "cntso-ssvcs-vnet"}, "vnet-resourceGroup": {"value":
+      "cntso-ssvcs-net-rg"}, "sas-key": {"value": "se=2019-05-03T20%3A58%3A59Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=dKNXxNbTtlScI3FcmmHzYhz2EQ33eIQ3s4rlt1qoPXU%3D"},
+      "output-params-storage-key": {"value": "0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},
+      "output-params-storage-account-name": {"value": "storage"}}, "mode": "Incremental"}}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''\\\\\\\\\\\\\\\''\\\\\\\''\\\''\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '5190'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-","name":"cntso-shared-services-ssvcs-deployment-onprem-vgw-","properties":{"templateHash":"16179028145948439045","parameters":{"local-gateway-name":{"type":"String","value":"cntso-onprem-gw"},"local-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"local-vnet-resourceGroup":{"type":"String","value":"cntso-onprem-net-rg"},"vpn-shared-key":{"type":"String","value":"asodgfhjkaw4tu0w9vuijv0qu3409tu"},"local-gateway-location":{"type":"String","value":"West
+        US 2"},"remote-gateway-name":{"type":"String","value":"cntso-ssvcs-gw"},"remote-vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"remote-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"enable-bgp":{"type":"Bool","value":false},"remote-connection-name":{"type":"String","value":"ssvcs"},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},"vnet-name":{"type":"String","value":"cntso-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A58%3A59Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=dKNXxNbTtlScI3FcmmHzYhz2EQ33eIQ3s4rlt1qoPXU%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-05-03T03:59:02.2413289Z","duration":"PT0.101006S","correlationId":"d6238wrklda-3a1d-4356-97c9-b774f7af5963","providers":[{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[]}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-/operationStatuses/08586447509433373140?api-version=2018-05-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '2133'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:59:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-/operationStatuses/08586447509433373140?api-version=2018-05-01
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:59:32 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-","name":"cntso-shared-services-ssvcs-deployment-onprem-vgw-","properties":{"templateHash":"16179028145948439045","parameters":{"local-gateway-name":{"type":"String","value":"cntso-onprem-gw"},"local-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"local-vnet-resourceGroup":{"type":"String","value":"cntso-onprem-net-rg"},"vpn-shared-key":{"type":"String","value":"asodgfhjkaw4tu0w9vuijv0qu3409tu"},"local-gateway-location":{"type":"String","value":"West
+        US 2"},"remote-gateway-name":{"type":"String","value":"cntso-ssvcs-gw"},"remote-vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"remote-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"enable-bgp":{"type":"Bool","value":false},"remote-connection-name":{"type":"String","value":"ssvcs"},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},"vnet-name":{"type":"String","value":"cntso-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A58%3A59Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=dKNXxNbTtlScI3FcmmHzYhz2EQ33eIQ3s4rlt1qoPXU%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-05-03T03:59:21.5388368Z","duration":"PT19.3985139S","correlationId":"d6238wrklda-3a1d-4356-97c9-b774f7af5963","providers":[{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[],"outputs":{},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-onprem-net-rg/providers/Microsoft.Network/connections/local-to-ssvcs"}]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '2337'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:59:31 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:59:32 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:59:32 GMT
+      etag:
+      - '"0x8D6C9C2C8DFA212"'
+      last-modified:
+      - Thu, 25 Apr 2019 21:12:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 03 May 2019 03:59:32 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/onprem-vgw-connection/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - mZFLkyvTelC5g8XnyQrpOw==
+      date:
+      - Fri, 03 May 2019 03:59:32 GMT
+      etag:
+      - '"0x8D6CF7BBFFCDF19"'
+      last-modified:
+      - Fri, 03 May 2019 03:59:32 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+version: 1

@@ -8,14 +8,14 @@
                  "description": ""
              }
         },
-        "sas-key":{  
-            "type":"string",
-            "metadata":{  
-                "description":""
+        "storageAccount-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account used to store diagnostic information"
             }
         },
         "output-params-storage-key":{  
-            "type":"string",
+            "type":"securestring",
             "metadata":{  
                 "description":"Default storage account Key. Storage account that contains output parameters and common scripts"
             }
@@ -236,15 +236,9 @@
     "variables": {
         "availabilitySet-name": "[concat(parameters('deployment-prefix'), '-as')]",
         "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('default-subnet-name'))]",
-        "configuration-url-sasToken": "[concat('?', parameters('sas-key'))]",
         "resource-prefix": "[concat(parameters('deployment-prefix'), '-', parameters('extension-name'))]",
-        "hana-lb-name": "[concat(variables('resource-prefix'), '-lb')]",
         "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
-        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix": "[concat(parameters('extension-name'), 'diag')]",
-        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]",
         "networkWatcher-extension-name": "NetworkWatcher",
-        "ipDot": ".",
         "images": {
             "Windows Server 2016 Datacenter": {
                 "sku": "2016-Datacenter",
@@ -289,29 +283,6 @@
         "business-asg-id": "[resourceId(parameters('vnet-resourceGroup'), 'Microsoft.Network/applicationSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('business-asg-name'), '-asg'))]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "apiVersion": "2017-10-01",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "tags": {
-                "displayName": "Management Diagnostic Storage Account"
-            },
-            "properties": {
-                "encryption": {
-                    "keySource": "Microsoft.Storage",
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        }
-                    }
-                }
-            }
-        },
         {
             "type": "Microsoft.Compute/availabilitySets",
             "name": "[variables('availabilitySet-name')]",
@@ -407,7 +378,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                        "storageUri": "[concat('https://', parameters('storageAccount-name'), '.blob.core.windows.net/')]"
                     }
                 }
             },

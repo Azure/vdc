@@ -40,5 +40,8 @@
         "value": {
             "secrets": "${ENV:ENVIRONMENT-TYPE.keyvault.secrets}"
         }
+    },
+    "network-acls": {
+        "value": "${ENV:ENVIRONMENT-TYPE.keyvault.network-acls}"
     }
 }

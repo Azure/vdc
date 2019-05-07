@@ -17,7 +17,7 @@
         "value": "${shared-services.active-directory.domain-admin-user}@${shared-services.active-directory.domain-name}"
     },
     "extension-name": {
-        "value": "kdc"
+        "value": "kdc01"
     },
     "domain-name": {
         "value": "${shared-services.active-directory.domain-name}"
@@ -60,19 +60,19 @@
         "value": "${workload.network.application-security-groups[1].name}"
     },
     "adds-vm1-hostname": {
-        "value": "${shared-services.adds.adds-vm1-hostname}"
+        "value": "${shared-services.active-directory.adds-vm1-hostname}"
     },
     "adds-vm2-hostname": {
-        "value": "${shared-services.adds.adds-vm2-hostname}"
+        "value": "${shared-services.active-directory.adds-vm2-hostname}"
     },
     "adds-resourceGroup": {
-        "value": "${shared-services.adds.resource-group-name}"
+        "value": "${shared-services.active-directory.resource-group-name}"
     },
     "adds-subscriptionId": {
         "value": "${shared-services.subscription-id}"
     },
     "adds-vm1-resource-name": {
-        "value": "${shared-services.adds.adds-vm1-resource-name}"
+        "value": "${shared-services.active-directory.adds-vm1-resource-name}"
     },
     "discovery-custom-domain": {
         "value": "${shared-services.active-directory.discovery-custom-domain}"

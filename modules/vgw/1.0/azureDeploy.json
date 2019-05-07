@@ -5,32 +5,32 @@
         "deployment-prefix": {
             "type": "string",
             "metadata": {
-                 "description": "Deployment prefix. E.g. Organization-DeploymentType"
-             }
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
         },
         "subscription-id": {
             "type": "string",
             "metadata": {
-                 "description": "Subscription where to provision the Virtual Network Gateway"
-             }
+                "description": "Subscription where to provision the Virtual Network Gateway"
+            }
         },
         "gateway-type": {
             "type": "string",
             "metadata": {
-                 "description": "Specifies the gateway type. E.g. VPN, ExpressRoute"
-             }
+                "description": "Specifies the gateway type. E.g. VPN, ExpressRoute"
+            }
         },
         "gateway-sku": {
             "type": "string",
             "metadata": {
-              "description": "The Sku of the Gateway. This must be one of Basic, Standard or HighPerformance."
+                "description": "The Sku of the Gateway. This must be one of Basic, Standard or HighPerformance."
             }
         },
         "vpn-type": {
             "type": "string",
             "metadata": {
-                 "description": "Specifies the VPN type"
-             }
+                "description": "Specifies the VPN type"
+            }
         },
         "vnet-id": {
             "type": "string",
@@ -68,71 +68,51 @@
     },
     "resources": [
         {
-            "apiVersion": "2017-05-10",
-            "name": "nestedDeployVGW",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('vnet-resourceGroup')]",
-            "subscriptionId": "[parameters('subscription-id')]",
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('gateway-pip-name')]",
+            "location": "[resourceGroup().location]",
+            "tags": {},
             "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "apiVersion": "2015-06-15",
-                            "type": "Microsoft.Network/publicIPAddresses",
-                            "name": "[variables('gateway-pip-name')]",
-                            "location": "[resourceGroup().location]",
-                            "tags": {
-                                "displayName": "[variables('gateway-pip-name')]"
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        },
+        {
+            "name": "[variables('gateway-name')]",
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "[variables('gateway-name')]"
+            },
+            "dependsOn": [
+                "[variables('gateway-pip-resource-name')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('gateway-subnet-id')]"
                             },
-                            "properties": {
-                                "publicIPAllocationMethod": "Dynamic"
+                            "publicIPAddress": {
+                                "id": "[variables('gateway-pip-id')]"
                             }
                         },
-                        {
-                            "name": "[variables('gateway-name')]",
-                            "type": "Microsoft.Network/virtualNetworkGateways",
-                            "apiVersion": "2015-06-15",
-                            "location": "[resourceGroup().location]",
-                            "tags": {
-                                "displayName": "[variables('gateway-name')]"
-                            },
-                            "dependsOn": [
-                                "[variables('gateway-pip-resource-name')]"
-                            ],
-                            "properties":{
-                                "ipConfigurations":[
-                                    {
-                                        "properties":{
-                                            "privateIPAllocationMethod": "Dynamic",
-                                            "subnet":{
-                                                "id": "[variables('gateway-subnet-id')]"
-                                            },
-                                            "publicIPAddress":{
-                                                "id": "[variables('gateway-pip-id')]"
-                                            }
-                                        },
-                                        "name": "vNetGatewayConfig"
-                                    }
-                                ],
-                                "enableBgp": "[parameters('enable-bgp')]",
-                                "bgpSettings": {
-                                    "asn": "[parameters('asn')]"
-                                },
-                                "sku": {
-                                    "name": "[parameters('gateway-sku')]",
-                                    "tier": "[parameters('gateway-sku')]"
-                                },
-                                "gatewayType": "[parameters('gateway-type')]",
-                                "vpnType": "[parameters('vpn-type')]"
-                            }
-                        }
-                    ]
-                }
+                        "name": "vNetGatewayConfig"
+                    }
+                ],
+                "enableBgp": "[parameters('enable-bgp')]",
+                "bgpSettings": {
+                    "asn": "[parameters('asn')]"
+                },
+                "sku": {
+                    "name": "[parameters('gateway-sku')]",
+                    "tier": "[parameters('gateway-sku')]"
+                },
+                "gatewayType": "[parameters('gateway-type')]",
+                "vpnType": "[parameters('vpn-type')]"
             }
         }
     ],

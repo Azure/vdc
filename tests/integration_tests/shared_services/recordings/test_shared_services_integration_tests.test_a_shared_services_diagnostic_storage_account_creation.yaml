@@ -1,0 +1,420 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:51:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:51:25 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: HEAD
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg?api-version=2018-05-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:51:26 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: 'b''b\''{"properties": {"template": {"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0", "parameters": {"deployment-prefix": {"type": "string",
+      "metadata": {"description": "Deployment prefix. E.g. Organization-DeploymentType"}},
+      "lock-for-deletion": {"type": "bool", "defaultValue": true}, "vnet-id": {"type":
+      "string", "defaultValue": "", "metadata": {"description": "Shared services Virtual
+      Network resource identifier"}}, "enable-network-acls": {"type": "bool", "defaultValue":
+      false, "metadata": {"description": "Flag to enable network acls to whitelist
+      IPs and subnets"}}, "network-acls": {"type": "object", "defaultValue": {}},
+      "utcYear": {"type": "string", "defaultValue": "[utcNow(\\\''yyyy\\\'')]"}, "storage-account-name":
+      {"type": "string", "defaultValue": "", "metadata": {"description": "Name of
+      the storage account"}}, "storage-account-kind": {"type": "string", "defaultValue":
+      "StorageV2"}, "storage-account-sku": {"type": "string", "defaultValue": "Standard_LRS"},
+      "storage-account-access-tier": {"type": "string", "defaultValue": "Hot"}, "sas-key":
+      {"defaultValue": "se=2019-05-03T20%3A51%3A25Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=ZfIyp%2Bj4SkWMbJbDY0aVj3hvCa9jDS5YoqCTw0Z9%2Bmg%3D",
+      "type": "string"}, "output-params-storage-key": {"defaultValue": "0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==",
+      "type": "string"}, "output-params-storage-account-name": {"defaultValue": "storage",
+      "type": "string"}}, "variables": {"uniqueString": "[uniqueString(subscription().id,
+      concat(parameters(\\\''deployment-prefix\\\''), \\\''-la\\\''))]", "diagnostic-storageAccount-prefix":
+      "[concat(replace(parameters(\\\''deployment-prefix\\\''), \\\''-\\\'', \\\''\\\''),
+      \\\''diag\\\'')]", "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables(\\\''diagnostic-storageAccount-prefix\\\''),
+      variables(\\\''uniqueString\\\''), variables(\\\''uniqueString\\\'')), \\\''-\\\'',
+      \\\''\\\''), 0, 23) )]", "storage-account-name": "[if(empty(parameters(\\\''storage-account-name\\\'')),
+      variables(\\\''diagnostic-storageAccount-name\\\''), parameters(\\\''storage-account-name\\\''))]",
+      "accountSasProperties": {"signedServices": "bt", "signedPermission": "acuw",
+      "signedExpiry": "[concat(string(add(int(parameters(\\\''utcYear\\\'')), 100)),
+      \\\''-12-31T23:59:59Z\\\'')]", "signedResourceTypes": "co", "signedProtocol":
+      "https"}, "virtualNetwork-rules": {"copy": [{"name": "virtualNetworkRules",
+      "count": "[if(not(parameters(\\\''enable-network-acls\\\'')), 1, if(equals(length(parameters(\\\''network-acls\\\'').virtualNetworkRules),
+      0), 1, length(parameters(\\\''network-acls\\\'').virtualNetworkRules)))]", "input":
+      {"id": "[if(not(parameters(\\\''enable-network-acls\\\'')), json(\\\''null\\\''),
+      if(equals(length(parameters(\\\''network-acls\\\'').virtualNetworkRules), 0),
+      json(\\\''null\\\''), concat(parameters(\\\''vnet-id\\\''), \\\''/subnets/\\\'',
+      parameters(\\\''network-acls\\\'').virtualNetworkRules[copyIndex(\\\''virtualNetworkRules\\\'')].subnet)))]"}}]},
+      "networkAcls": {"bypass": "[if(not(parameters(\\\''enable-network-acls\\\'')),
+      \\\''AzureServices\\\'', parameters(\\\''network-acls\\\'').bypass)]", "defaultAction":
+      "[if(not(parameters(\\\''enable-network-acls\\\'')), \\\''Deny\\\'', parameters(\\\''network-acls\\\'').defaultAction)]",
+      "virtualNetworkRules": "[if(not(parameters(\\\''enable-network-acls\\\'')),
+      json(\\\''null\\\''), variables(\\\''virtualNetwork-rules\\\'').virtualNetworkRules)]",
+      "ipRules": "[if(not(parameters(\\\''enable-network-acls\\\'')), json(\\\''null\\\''),
+      if(equals(length(parameters(\\\''network-acls\\\'').ipRules), 0), json(\\\''null\\\''),
+      parameters(\\\''network-acls\\\'').ipRules))]"}}, "resources": [{"comments":
+      "----DIAGNOSTICS STORAGE ACCOUNT-----", "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables(\\\''storage-account-name\\\'')]", "apiVersion": "2018-11-01",
+      "location": "[resourceGroup().location]", "kind": "[parameters(\\\''storage-account-kind\\\'')]",
+      "sku": {"name": "[parameters(\\\''storage-account-sku\\\'')]"}, "tags": {"layer":
+      "management"}, "properties": {"encryption": {"keySource": "Microsoft.Storage",
+      "services": {"blob": {"enabled": true}, "file": "[if(or(equals(parameters(\\\''storage-account-kind\\\''),
+      \\\''StorageV2\\\''), equals(parameters(\\\''storage-account-kind\\\''), \\\''Storage\\\'')),
+      json(\\\''{\\\\"enabled\\\\": true}\\\''), json(\\\''null\\\''))]"}}, "accessTier":
+      "[parameters(\\\''storage-account-access-tier\\\'')]", "supportsHttpsTrafficOnly":
+      true, "networkAcls": "[if(empty(parameters(\\\''network-acls\\\'')), json(\\\''null\\\''),
+      variables(\\\''networkAcls\\\''))]"}}, {"type": "Microsoft.Storage/storageAccounts/providers/locks",
+      "apiVersion": "2016-09-01", "condition": "[parameters(\\\''lock-for-deletion\\\'')]",
+      "name": "[concat(variables(\\\''storage-account-name\\\''), \\\''/Microsoft.Authorization/storageDoNotDelete\\\'')]",
+      "dependsOn": ["[concat(\\\''Microsoft.Storage/storageAccounts/\\\'', variables(\\\''storage-account-name\\\''))]"],
+      "comments": "Resource lock on diagnostic storage account", "properties": {"level":
+      "CannotDelete"}}], "outputs": {"storageAccount-resourceId": {"type": "string",
+      "value": "[resourceId(\\\''Microsoft.Storage/storageAccounts\\\'', variables(\\\''storage-account-name\\\''))]"},
+      "storageAccount-name": {"type": "string", "value": "[variables(\\\''storage-account-name\\\'')]"},
+      "storageAccount-sasToken": {"type": "string", "value": "[listAccountSas(variables(\\\''storage-account-name\\\''),
+      \\\''2018-07-01\\\'', variables(\\\''accountSasProperties\\\'')).accountSasToken]"},
+      "storageAccount-accessKey": {"type": "string", "value": "[listKeys(variables(\\\''storage-account-name\\\''),\\\''2015-06-15\\\'').key1]"}}},
+      "parameters": {"deployment-prefix": {"value": "cntso-ssvcs"}, "network-acls":
+      {"value": {"bypass": "AzureServices", "defaultAction": "Deny", "virtualNetworkRules":
+      [{"subnet": "sharedsvcs"}, {"subnet": "trust"}, {"subnet": "dmz"}], "ipRules":
+      []}}, "enable-network-acls": {"value": false}, "sas-key": {"value": "se=2019-05-03T20%3A51%3A25Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=ZfIyp%2Bj4SkWMbJbDY0aVj3hvCa9jDS5YoqCTw0Z9%2Bmg%3D"},
+      "output-params-storage-key": {"value": "0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},
+      "output-params-storage-account-name": {"value": "storage"}}, "mode": "Incremental"}}\'''''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '5961'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-diagnostic-?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-diagnostic-","name":"cntso-shared-services-ssvcs-deployment-diagnostic-","properties":{"templateHash":"12047325727704814707","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"lock-for-deletion":{"type":"Bool","value":true},"vnet-id":{"type":"String","value":""},"enable-network-acls":{"type":"Bool","value":false},"network-acls":{"type":"Object","value":{"bypass":"AzureServices","defaultAction":"Deny","virtualNetworkRules":[{"subnet":"sharedsvcs"},{"subnet":"trust"},{"subnet":"dmz"}],"ipRules":[]}},"utcYear":{"type":"String","value":"2019"},"storage-account-name":{"type":"String","value":""},"storage-account-kind":{"type":"String","value":"StorageV2"},"storage-account-sku":{"type":"String","value":"Standard_LRS"},"storage-account-access-tier":{"type":"String","value":"Hot"},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A51%3A25Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=ZfIyp%2Bj4SkWMbJbDY0aVj3hvCa9jDS5YoqCTw0Z9%2Bmg%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-05-03T03:51:28.0969271Z","duration":"PT0.0725589S","correlationId":"9c2089cd-db06-466f-a495-52d7c17154dc","providers":[{"namespace":"Microsoft.Storage","resourceTypes":[{"resourceType":"storageAccounts","locations":["westus2"]},{"resourceType":"storageAccounts/providers/locks","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"cntsowus2shrdsvcs01diag"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag/providers/Microsoft.Authorization/locks/storageDoNotDelete","resourceType":"Microsoft.Storage/storageAccounts/providers/locks","resourceName":"cntsowus2shrdsvcs01diag/Microsoft.Authorization/storageDoNotDelete"}]}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-diagnostic-/operationStatuses/08586447513974532688?api-version=2018-05-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '2484'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:51:27 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1195'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-diagnostic-/operationStatuses/08586447513974532688?api-version=2018-05-01
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:51:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-diagnostic-?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-diagnostic-","name":"cntso-shared-services-ssvcs-deployment-diagnostic-","properties":{"templateHash":"12047325727704814707","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"lock-for-deletion":{"type":"Bool","value":true},"vnet-id":{"type":"String","value":""},"enable-network-acls":{"type":"Bool","value":false},"network-acls":{"type":"Object","value":{"bypass":"AzureServices","defaultAction":"Deny","virtualNetworkRules":[{"subnet":"sharedsvcs"},{"subnet":"trust"},{"subnet":"dmz"}],"ipRules":[]}},"utcYear":{"type":"String","value":"2019"},"storage-account-name":{"type":"String","value":""},"storage-account-kind":{"type":"String","value":"StorageV2"},"storage-account-sku":{"type":"String","value":"Standard_LRS"},"storage-account-access-tier":{"type":"String","value":"Hot"},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A51%3A25Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=ZfIyp%2Bj4SkWMbJbDY0aVj3hvCa9jDS5YoqCTw0Z9%2Bmg%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-05-03T03:51:48.7755894Z","duration":"PT20.7512212S","correlationId":"9c2089cd-db06-466f-a495-52d7c17154dc","providers":[{"namespace":"Microsoft.Storage","resourceTypes":[{"resourceType":"storageAccounts","locations":["westus2"]},{"resourceType":"storageAccounts/providers/locks","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"cntsowus2shrdsvcs01diag"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag/providers/Microsoft.Authorization/locks/storageDoNotDelete","resourceType":"Microsoft.Storage/storageAccounts/providers/locks","resourceName":"cntsowus2shrdsvcs01diag/Microsoft.Authorization/storageDoNotDelete"}],"outputs":{"storageAccount-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},"storageAccount-name":{"type":"String","value":"cntsowus2shrdsvcs01diag"},"storageAccount-sasToken":{"type":"String","value":"sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},"storageAccount-accessKey":{"type":"String","value":"tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag/providers/Microsoft.Authorization/locks/storageDoNotDelete"}]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '3577'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:51:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:51:58 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:51:58 GMT
+      etag:
+      - '"0x8D6C9C2C8DFA212"'
+      last-modified:
+      - Thu, 25 Apr 2019 21:12:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''b\''b\\\''{"storageAccount-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},
+      "storageAccount-name": { "value": "cntsowus2shrdsvcs01diag"}, "storageAccount-sasToken":
+      { "value": "sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},
+      "storageAccount-accessKey": { "value": "tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="}}\\\''\'''''
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '590'
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 03 May 2019 03:51:58 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/diagnostic-storage-account/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - UzcGkQ4IgSSQOnpmSwhZwg==
+      date:
+      - Fri, 03 May 2019 03:51:58 GMT
+      etag:
+      - '"0x8D6CF7AB158698E"'
+      last-modified:
+      - Fri, 03 May 2019 03:51:58 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+version: 1

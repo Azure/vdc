@@ -46,6 +46,10 @@ class ResourceModule(object):
 
             if 'source' in module:
                 self._source = ResourceSource(module['source'])
+            else:
+                # Let's create a default source object
+                self._source = ResourceSource().create_default()
+                    
 
             if 'dependencies' in module:
                 self._dependencies = module['dependencies']
@@ -63,14 +67,15 @@ class ResourceModule(object):
 class ResourceSource(object):
     def __init__(
         self,
-        source: dict):
+        source: dict = None):
 
         self._version = None
         self._template_path = None
         self._parameters_path = None
         self._policy_path = None
 
-        if source is not None:
+        if source is not None and\
+           type(source) is dict:
             if 'version' in source:
                 self._version = source['version']
             
@@ -82,4 +87,10 @@ class ResourceSource(object):
 
             if 'policy-path' in source:
                 self._policy_path = source['policy-path']
-        
+    
+    def create_default(
+        self):
+
+        return ResourceSource(dict({
+                    'version': 'latest'
+                }))

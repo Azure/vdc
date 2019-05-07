@@ -1,0 +1,32 @@
+{
+    "local-subscription-id": {
+        "value": "${on-premises.subscription-id}"
+    },
+    "local-vnet-resourceGroup": {
+        "value": "${on-premises.network.resource-group-name}"
+    },
+    "local-gateway-name": {
+        "value": "${on-premises.network.virtual-gateway.gateway-name}"
+    },
+    "local-gateway-location": {
+        "value": "${on-premises.region}"
+    },
+    "vpn-shared-key": {
+        "value": "asodgfhjkaw4tu0w9vuijv0qu3409tu"
+    },
+    "remote-subscription-id":{
+        "value": "${shared-services.subscription-id}"
+    },
+    "remote-gateway-name":{
+        "value": "${general.shared-services.network.virtual-gateway.gateway-name}"
+    },
+    "remote-vnet-resourceGroup":{
+        "value": "${general.shared-services.network.network-resource-group-name}"
+    },
+    "remote-connection-name":{
+        "value": "${shared-services.deployment-name}"
+    },
+    "enable-bgp": {
+        "value": false
+    }
+}

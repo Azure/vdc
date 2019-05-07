@@ -17,32 +17,49 @@
         "shared-services": {
             "subscription-id": "00000000-0000-0000-0000-000000000000",
             "deployment-name": "ssvcs",
-            "adds": {
-                "vm-ip-address-start": "10.4.0.46"
-            },
             "active-directory": {
+                "vm-ip-address-start": "10.4.0.46",
                 "discovery-custom-domain": "contosocloud.com",
                 "domain-admin-user": "contoso",
                 "domain-name": "contoso.com"
             },
             "network": {
+                "resource-group-name": "${general.organization-name}-${general.shared-services.deployment-name}-net-rg",
+                "name": "${general.organization-name}-${general.shared-services.deployment-name}-vnet",
+                "address-prefix": "10.4.0.32/27",
                 "network-virtual-appliance": {
                     "egress-ip": "10.4.1.4",
+                    "azure-firewall": {
+                        "name": "${general.organization-name}-${general.shared-services.deployment-name}-az-fw"
+                    },
                     "custom-ubuntu": {
                         "egress": {
                             "ip": "10.4.0.20",
                             "vm-ip-address-start": "10.4.0.5"
                         }
                     }
+                },
+                
+                "virtual-gateway": {
+                    "gateway-name": "${general.organization-name}-${general.shared-services.deployment-name}-gw",
+                    "gateway-udr-name": "${general.organization-name}-${general.shared-services.deployment-name}-gw-udr"
+                },
+                "subnet": {
+                    "shared-services-subnet-address-prefix": "10.4.0.32/27"
+                },
+                "application-gateway": {
+                    "name": "${general.organization-name}-${general.shared-services.deployment-name}-app-gw"
                 }
             }
         },
         "workload": {
-            "subscription-id": "00000000-0000-0000-0000-000000000000",
+            "subscription-id": "00000000-0000-0000-0000-000000000000",       
             "deployment-name": "paas",
-            "region": "Central US",
+            "region": "West US 2",
             "azure-sql-configuration": {
-                "admin-user": "sql-admin-user"
+                "admin-user": "sql-admin-user",
+                "aad-admin-objectId": "00000000-0000-0000-0000-000000000000",
+                "aad-admin-email": ""
             },
             "keyvault": {
                 "secrets": [
@@ -55,6 +72,9 @@
             "log-analytics": {
                 "region": "West US 2"
             },
+            "automation-account": {
+                "region": "West US 2"
+            },
             "network": {
                 "enable-ddos-protection": false
             }
@@ -62,9 +82,13 @@
     },
     "orchestration": {
         "modules-to-deploy": [
+            "diagnostic-storage-account",
             "la",
+            "automation-account",
+            "security-center",
             "nsg",
             "workload-net",
+            "enable-service-endpoint-on-diagnostic-storage-account",
             "kv",
             "sqldb",
             "ase"
@@ -77,6 +101,58 @@
             "custom-scripts": "file(scripts)",
             "modules": [
                 {
+                    "module": "diagnostic-storage-account",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
+                    "source": {
+                        "version": "1.0",
+                        "template-path": "file(modules/storage-account/1.0)",
+                        "parameters-path": "file(modules/storage-account/1.0)"
+                    },
+                    "dependencies": []
+                },
+                {
+                    "module": "la",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "diagnostic-storage-account"
+                    ]
+                },
+                {
+                    "module": "automation-account",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la",
+                        "diagnostic-storage-account"
+                    ]
+                },
+                {
+                    "module": "security-center",
+                    "create-resource-group": false,
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la"
+                    ]
+                },
+                {
+                    "module": "nsg",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la",
+                        "diagnostic-storage-account"
+                    ]
+                },
+                {
                     "module": "workload-net",
                     "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
                     "source": {
@@ -87,13 +163,16 @@
                     ]
                 },
                 {
-                    "module": "nsg",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
+                    "module": "enable-service-endpoint-on-diagnostic-storage-account",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
                     "source": {
-                        "version": "1.0"
+                        "version": "1.0",
+                        "template-path": "file(modules/storage-account/1.0)",
+                        "parameters-path": "file(modules/storage-account/1.0/azureDeploy.enable-serviceEndpoint.parameters.json)"
                     },
                     "dependencies": [
-                        "la"
+                        "workload-net",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -103,7 +182,9 @@
                         "version": "1.0"
                     },
                     "dependencies": [
-                        "la"
+                        "workload-net",
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -112,7 +193,9 @@
                         "version": "1.0"
                     },
                     "dependencies": [
-                        "workload-net"
+                        "workload-net",
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -139,21 +222,19 @@
     "shared-services": {
         "subscription-id": "${general.shared-services.subscription-id}",
         "deployment-name": "${general.shared-services.deployment-name}",
-        "adds": {
-            "vm-ip-address-start": "${general.shared-services.adds.vm-ip-address-start}"
-        },
         "active-directory": {
+            "vm-ip-address-start": "${general.shared-services.active-directory.vm-ip-address-start}",
             "domain-admin-user": "${general.shared-services.active-directory.domain-admin-user}",
             "domain-name": "${general.shared-services.active-directory.domain-name}"
         },
         "network": {
-            "resource-group-name": "${general.organization-name}-${general.shared-services.deployment-name}-net-rg",
-            "name": "${general.organization-name}-${general.shared-services.deployment-name}-vnet",
-            "address-prefix": "10.4.0.32/27",
+            "resource-group-name": "${general.shared-services.network.resource-group-name}",
+            "name": "${general.shared-services.network.name}",
+            "address-prefix": "${general.shared-services.network.address-prefix}",
             "network-virtual-appliance": {
                 "egress-ip": "${general.shared-services.network.network-virtual-appliance.egress-ip}",
                 "azure-firewall": {
-                    "name": "${general.organization-name}-${general.shared-services.deployment-name}-az-fw"
+                    "name": "${general.shared-services.network.network-virtual-appliance.azure-firewall.name}"
                 },
                 "custom-ubuntu": {
                     "egress": {
@@ -163,12 +244,12 @@
                 }
             },
             "virtual-gateway": {
-                "gateway-name": "${general.organization-name}-${general.shared-services.deployment-name}-gw",
-                "gateway-udr-name": "${general.organization-name}-${general.shared-services.deployment-name}-gw-udr"
+                "gateway-name": "${general.shared-services.network.virtual-gateway.gateway-name}",
+                "gateway-udr-name": "${general.shared-services.network.virtual-gateway.gateway-udr-name}"
             },
             "subnet": {
                 "app-gateway-subnet-name": "AppGateway",
-                "shared-services-subnet-address-prefix": "10.4.0.32/27"
+                "shared-services-subnet-address-prefix": "${general.shared-services.network.subnet.shared-services-subnet-address-prefix}"
             },
             "application-gateway": {
                 "name": "${general.organization-name}-${general.shared-services.deployment-name}-app-gw"
@@ -184,11 +265,40 @@
         "deployment-name": "${general.workload.deployment-name}",
         "region": "${general.workload.region}",
         "azure-sql-configuration": {
-            "admin-user": "${general.workload.azure-sql-configuration.admin-user}"
+            "admin-user": "${general.workload.azure-sql-configuration.admin-user}",
+            "aad-admin-objectId": "${general.workload.azure-sql-configuration.aad-admin-objectId}",
+            "aad-admin-email": "${general.workload.azure-sql-configuration.aad-admin-email}"
         },
-        "keyvault": "${general.workload.keyvault}",
         "log-analytics": {
             "region": "${general.workload.log-analytics.region}"
+        },
+        "automation-account": {
+            "region": "${general.workload.automation-account.region}"
+        },
+        "keyvault": {
+            "secrets": "${general.workload.keyvault.secrets}",
+            "network-acls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${workload.network.subnets[0].name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
+        "storage-account": {
+            "network-acls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${workload.network.subnets[0].name}"
+                    }
+                ],
+                "ipRules": []
+            }
         },
         "network": {
             "enable-ddos-protection": "${general.workload.network.enable-ddos-protection}",
@@ -629,13 +739,17 @@
                             "service": "Microsoft.Sql"
                         },
                         {
+                            "service": "Microsoft.KeyVault"
+                        },
+                        {
                             "service": "Microsoft.Storage"
                         }
                     ]
                 }
             ],
             "dns-servers": [
-                "${shared-services.adds.vm-ip-address-start}"
+                "${shared-services.active-directory.vm-ip-address-start}",
+                "next-ip(${shared-services.active-directory.vm-ip-address-start}, 1)"
             ]
         }
     }

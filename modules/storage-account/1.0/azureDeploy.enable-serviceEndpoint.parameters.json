@@ -1,0 +1,11 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "network-acls": {
+        "value": "${ENV:ENVIRONMENT-TYPE.storage-account.network-acls}"
+    },
+    "enable-network-acls": {
+        "value": true
+    }
+}

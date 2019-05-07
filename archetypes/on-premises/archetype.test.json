@@ -8,7 +8,7 @@
         "on-premises": {
             "subscription-id": "00000000-0000-0000-0000-000000000000",
             "deployment-name": "onprem",
-            "region": "Central US",
+            "region": "West US 2",
             "active-directory": {
                 "AD-sitename": "Cloud-Site",
                 "cloud-zone": "contosocloud.com",
@@ -26,7 +26,7 @@
         },
         "shared-services": {
             "subscription-id": "00000000-0000-0000-0000-000000000000",
-            "deployment-name": "cus-ss"
+            "deployment-name": "ssvcs"
         }
     },
     "orchestration": {

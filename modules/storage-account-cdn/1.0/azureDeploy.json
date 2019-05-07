@@ -1,0 +1,114 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "sku": {
+            "type": "object",
+            "metadata": {
+                "description": "CDN Profile SKU"
+            },
+            "defaultValue": {
+                "name": "Standard_Microsoft"
+            }
+        },
+        "profileProperties": {
+            "type": "object",
+            "metadata": {
+                "description": "CDN Properties"
+            }
+        }
+    },
+    "variables": {
+        "profile-name": "[concat(parameters('deployment-prefix'), '-cdn-profile')]",
+        "endpoint-name": "[concat(parameters('deployment-prefix'), '-cdn-profile')]",
+        "storageAccount-endpoint": "[concat(parameters('storageAccount-name'), '.blob.core.windows.net')]",
+        "endpointProperties": {
+            "value": {
+                "isHttpAllowed": true,
+                "isHttpsAllowed": true,
+                "originHostHeader": "[variables('storageAccount-endpoint')]",
+                "origins": [
+                    {
+                        "name": "[replace(variables('storageAccount-endpoint'), '.', '-')]",
+                        "properties": {
+                            "hostName": "[variables('storageAccount-endpoint')]",
+                            "httpPort": 80,
+                            "httpsPort": 443
+                        }
+                    }
+                ],
+                "isCompressionEnabled": true,
+                "contentTypesToCompress": [
+                    "application/eot",
+                    "application/font",
+                    "application/font-sfnt",
+                    "application/javascript",
+                    "application/json",
+                    "application/opentype",
+                    "application/otf",
+                    "application/pkcs7-mime",
+                    "application/truetype",
+                    "application/ttf",
+                    "application/vnd.ms-fontobject",
+                    "application/xhtml+xml",
+                    "application/xml",
+                    "application/xml+rss",
+                    "application/x-font-opentype",
+                    "application/x-font-truetype",
+                    "application/x-font-ttf",
+                    "application/x-httpd-cgi",
+                    "application/x-javascript",
+                    "application/x-mpegurl",
+                    "application/x-opentype",
+                    "application/x-otf",
+                    "application/x-perl",
+                    "application/x-ttf",
+                    "font/eot",
+                    "font/ttf",
+                    "font/otf",
+                    "font/opentype",
+                    "image/svg+xml",
+                    "text/css",
+                    "text/csv",
+                    "text/html",
+                    "text/javascript",
+                    "text/js",
+                    "text/plain",
+                    "text/richtext",
+                    "text/tab-separated-values",
+                    "text/xml",
+                    "text/x-script",
+                    "text/x-component",
+                    "text/x-java-source"
+                ]
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "microsoft.cdn/profiles",
+            "apiVersion": "2018-04-02",
+            "name": "[variables('profile-name')]",
+            "location": "[resourceGroup().location]",
+            "sku": "[parameters('sku')]",
+            "properties": "[parameters('profileProperties')]"
+        },
+        {
+            "type": "microsoft.cdn/profiles/endpoints",
+            "apiVersion": "2018-04-02",
+            "name": "[concat(variables('profile-name'),'/',variables('endpoint-name'))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Cdn/profiles/', variables('profile-name'))]"
+            ],
+            "properties": "[variables('endpointProperties')]"
+        }
+    ],
+    "outputs": {}
+}
