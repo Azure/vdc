@@ -413,6 +413,29 @@ class ResourceValidation(implements(BusinessInterface)):
             self._logger\
                 .info('parameters and deployment files successfully loaded')
 
+            deployment_name = '{}-deployment-{}'.format(
+                        self._deployment_prefix,
+                        module_to_deploy)
+
+            current_milliseconds = \
+                helper.get_current_time_milli()
+
+            milliseconds_length = \
+                len(str(current_milliseconds))
+
+            # Max length is 60 chars
+            deployment_name_max_length = \
+                60 - milliseconds_length
+
+            if len(deployment_name) > deployment_name_max_length:
+                # We do -1 to accomodate the hyphen character
+                deployment_name = \
+                    deployment_name[:deployment_name_max_length - 1]
+
+            deployment_name = '{}-{}'.format(
+                deployment_name,
+                current_milliseconds)
+
             # Execute the deployment
             self._resource_management_integration_service\
                 .validate_deployment(
@@ -420,9 +443,7 @@ class ResourceValidation(implements(BusinessInterface)):
                     template=template_file,
                     parameters=parameters_file,
                     resource_group_name=resource_group_to_deploy,
-                    deployment_name='{}-deployment-{}'.format(
-                        self._deployment_prefix,
-                        module_to_deploy))
+                    deployment_name=deployment_name)
 
             # Save output paramaters to Azure storage so that dependent modules can read it
             self._logger.info('***** module deployment validation completed successfully *****')

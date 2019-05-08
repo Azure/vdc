@@ -2,715 +2,475 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          azure-mgmt-storage/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
   response:
-    body: {string: '{"keys":[{"keyName":"key1","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA==","permissions":"FULL"},{"keyName":"key2","value":"i6qj7OB3AYeCFizUvPPi6d9uSvbMkEdVmGDVwhwTw9qmtFo597nyvohXgOMiDzYb8nMuu1ER9gumkA66Fi+tEw==","permissions":"FULL"}]}'}
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['288']
-      content-type: [application/json]
-      date: ['Thu, 07 Feb 2019 07:43:50 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: ['Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0
-          Microsoft-HTTPAPI/2.0']
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:55:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          azure-mgmt-storage/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: POST
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
   response:
-    body: {string: '{"keys":[{"keyName":"key1","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA==","permissions":"FULL"},{"keyName":"key2","value":"i6qj7OB3AYeCFizUvPPi6d9uSvbMkEdVmGDVwhwTw9qmtFo597nyvohXgOMiDzYb8nMuu1ER9gumkA66Fi+tEw==","permissions":"FULL"}]}'}
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['288']
-      content-type: [application/json]
-      date: ['Thu, 07 Feb 2019 07:43:51 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: ['Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0
-          Microsoft-HTTPAPI/2.0']
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 200, message: OK}
-- request:
-    body: '{"properties": {"displayName": "permittedRegions", "description": "Policy
-      to restrict resource creation to only certain regions", "policyRule": {"if":
-      {"not": {"field": "location", "in": ["eastus", "westus", "westus2", "centralus",
-      "westcentralus", "westeurope"]}}, "then": {"effect": "audit"}}, "metadata":
-      {"category": "VDC"}}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['329']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions?api-version=2018-05-01
-  response:
-    body: {string: '{"properties":{"displayName":"permittedRegions","policyType":"Custom","description":"Policy
-        to restrict resource creation to only certain regions","metadata":{"category":"VDC"},"policyRule":{"if":{"not":{"field":"location","in":["eastus","westus","westus2","centralus","westcentralus","westeurope"]}},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions","type":"Microsoft.Authorization/policyDefinitions","name":"permittedRegions"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['534']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:52 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-    status: {code: 201, message: Created}
-- request:
-    body: 'b''b\''{"properties": {"displayName": "permittedRegions", "policyDefinitionId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions"},
-      "name": "permittedRegions"}\'''''
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['225']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/permittedRegions?api-version=2018-05-01
-  response:
-    body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"permittedRegions","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/permittedRegions","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/permittedRegions","type":"Microsoft.Authorization/policyAssignments","name":"permittedRegions"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['494']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:53 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"properties": {"displayName": "enforceStandardTags", "description": "Policy
-      to enforce standard tags", "policyRule": {"if": {"anyOf": [{"field": "tags.environment",
-      "exists": false}, {"field": "tags.appCode", "exists": false}, {"field": "tags.managedBy",
-      "exists": false}, {"field": "tags.source", "exists": false}, {"field": "tags.dataClassification",
-      "exists": false}, {"field": "tags.supportTier", "exists": false}, {"field":
-      "tags.costCenter", "exists": false}]}, "then": {"effect": "audit"}}, "metadata":
-      {"category": "VDC"}}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['532']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags?api-version=2018-05-01
-  response:
-    body: {string: '{"properties":{"displayName":"enforceStandardTags","policyType":"Custom","description":"Policy
-        to enforce standard tags","metadata":{"category":"VDC"},"policyRule":{"if":{"anyOf":[{"field":"tags.environment","exists":false},{"field":"tags.appCode","exists":false},{"field":"tags.managedBy","exists":false},{"field":"tags.source","exists":false},{"field":"tags.dataClassification","exists":false},{"field":"tags.supportTier","exists":false},{"field":"tags.costCenter","exists":false}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStandardTags"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['724']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:53 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-    status: {code: 201, message: Created}
-- request:
-    body: 'b''b\''{"properties": {"displayName": "enforceStandardTags", "policyDefinitionId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags"},
-      "name": "enforceStandardTags"}\'''''
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['234']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStandardTags?api-version=2018-05-01
-  response:
-    body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStandardTags","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStandardTags","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStandardTags","type":"Microsoft.Authorization/policyAssignments","name":"enforceStandardTags"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['506']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:54 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"properties": {"displayName": "enforceAllowedVMImages", "description":
-      "Policy to enforce the use of specific VM Images", "policyRule": {"if": {"allOf":
-      [{"field": "type", "equals": "Microsoft.Compute/virtualMachines"}, {"not": {"field":
-      "Microsoft.Compute/imageId", "in": "[parameters(''imageIds'')]"}}]}, "then":
-      {"effect": "audit"}}, "metadata": {"category": "VDC"}, "parameters": {"imageIds":
-      {"type": "array", "metadata": {"description": "The list of allowed VM Images.",
-      "displayName": "Allowed VM Images"}}}}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['515']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceAllowedVMImages?api-version=2018-05-01
-  response:
-    body: {string: '{"properties":{"displayName":"enforceAllowedVMImages","policyType":"Custom","description":"Policy
-        to enforce the use of specific VM Images","metadata":{"category":"VDC"},"parameters":{"imageIds":{"type":"Array","metadata":{"description":"The
-        list of allowed VM Images.","displayName":"Allowed VM Images"}}},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Compute/virtualMachines"},{"not":{"field":"Microsoft.Compute/imageId","in":"[parameters(''imageIds'')]"}}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceAllowedVMImages","type":"Microsoft.Authorization/policyDefinitions","name":"enforceAllowedVMImages"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['723']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:54 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1197']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"properties": {"displayName": "auditNSGUnassigned", "description": "Policy
-      that audits all NSGs that are not assigned to a NIC or Subnet", "policyRule":
-      {"if": {"allOf": [{"field": "type", "equals": "Microsoft.Network/networkSecurityGroups"},
-      {"allOf": [{"not": {"field": "Microsoft.Network/networkSecurityGroups/subnets[*].id",
-      "exists": true}}, {"not": {"field": "Microsoft.Network/networkSecurityGroups/networkInterfaces[*].id",
-      "exists": true}}]}]}, "then": {"effect": "audit"}}, "metadata": {"category":
-      "VDC"}}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['518']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned?api-version=2018-05-01
-  response:
-    body: {string: '{"properties":{"displayName":"auditNSGUnassigned","policyType":"Custom","description":"Policy
-        that audits all NSGs that are not assigned to a NIC or Subnet","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Network/networkSecurityGroups"},{"allOf":[{"not":{"field":"Microsoft.Network/networkSecurityGroups/subnets[*].id","exists":true}},{"not":{"field":"Microsoft.Network/networkSecurityGroups/networkInterfaces[*].id","exists":true}}]}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned","type":"Microsoft.Authorization/policyDefinitions","name":"auditNSGUnassigned"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['721']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:55 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-    status: {code: 201, message: Created}
-- request:
-    body: 'b''b\''{"properties": {"displayName": "auditNSGUnassigned", "policyDefinitionId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned"},
-      "name": "auditNSGUnassigned"}\'''''
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['231']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/auditNSGUnassigned?api-version=2018-05-01
-  response:
-    body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"auditNSGUnassigned","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/auditNSGUnassigned","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/auditNSGUnassigned","type":"Microsoft.Authorization/policyAssignments","name":"auditNSGUnassigned"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['502']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:55 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"properties": {"displayName": "enforceStorageEncryption", "description":
-      "Policy to restrict storage account creation to only those applying encryption",
-      "policyRule": {"if": {"allOf": [{"field": "type", "equals": "Microsoft.Storage/storageAccounts"},
-      {"not": {"field": "Microsoft.Storage/storageAccounts/enableBlobEncryption",
-      "equals": "true"}}]}, "then": {"effect": "audit"}}, "metadata": {"category":
-      "VDC"}}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['414']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption?api-version=2018-05-01
-  response:
-    body: {string: '{"properties":{"displayName":"enforceStorageEncryption","policyType":"Custom","description":"Policy
-        to restrict storage account creation to only those applying encryption","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"not":{"field":"Microsoft.Storage/storageAccounts/enableBlobEncryption","equals":"true"}}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStorageEncryption"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['635']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:56 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-    status: {code: 201, message: Created}
-- request:
-    body: 'b''b\''{"properties": {"displayName": "enforceStorageEncryption", "policyDefinitionId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption"},
-      "name": "enforceStorageEncryption"}\'''''
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['249']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageEncryption?api-version=2018-05-01
-  response:
-    body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStorageEncryption","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageEncryption","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageEncryption","type":"Microsoft.Authorization/policyAssignments","name":"enforceStorageEncryption"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['526']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:57 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"properties": {"displayName": "enforceStorageHttpsAccess", "description":
-      "Policy to enforce Https Access", "policyRule": {"if": {"allOf": [{"field":
-      "type", "equals": "Microsoft.Storage/storageAccounts"}, {"field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
-      "equals": "false"}]}, "then": {"effect": "audit"}}, "metadata": {"category":
-      "VDC"}}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['364']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess?api-version=2018-05-01
-  response:
-    body: {string: '{"properties":{"displayName":"enforceStorageHttpsAccess","policyType":"Custom","description":"Policy
-        to enforce Https Access","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"field":"Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly","equals":"false"}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStorageHttpsAccess"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['588']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:57 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 201, message: Created}
-- request:
-    body: 'b''b\''{"properties": {"displayName": "enforceStorageHttpsAccess", "policyDefinitionId":
-      "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess"},
-      "name": "enforceStorageHttpsAccess"}\'''''
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['252']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageHttpsAccess?api-version=2018-05-01
-  response:
-    body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStorageHttpsAccess","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageHttpsAccess","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageHttpsAccess","type":"Microsoft.Authorization/policyAssignments","name":"enforceStorageHttpsAccess"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['530']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:59 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1198']
-    status: {code: 201, message: Created}
-- request:
-    body: '{"properties": {"displayName": "enforceStorageServiceEndpoint", "description":
-      "Policy to enforce Storage Account service endpoint", "policyRule": {"if": {"allOf":
-      [{"field": "type", "equals": "Microsoft.Storage/storageAccounts"}, {"not": {"field":
-      "Microsoft.Storage/storageAccounts/networkAcls.virtualNetworkRules[*].id", "exists":
-      true}}]}, "then": {"effect": "audit"}}, "metadata": {"category": "VDC"}}}'
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['407']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint?api-version=2018-05-01
-  response:
-    body: {string: '{"properties":{"displayName":"enforceStorageServiceEndpoint","policyType":"Custom","description":"Policy
-        to enforce Storage Account service endpoint","metadata":{"category":"VDC"},"policyRule":{"if":{"allOf":[{"field":"type","equals":"Microsoft.Storage/storageAccounts"},{"not":{"field":"Microsoft.Storage/storageAccounts/networkAcls.virtualNetworkRules[*].id","exists":true}}]},"then":{"effect":"audit"}}},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint","type":"Microsoft.Authorization/policyDefinitions","name":"enforceStorageServiceEndpoint"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['638']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:43:59 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 201, message: Created}
-- request:
-    body: 'b''b\''{"properties": {"displayName": "enforceStorageServiceEndpoint",
-      "policyDefinitionId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint"},
-      "name": "enforceStorageServiceEndpoint"}\'''''
-    headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['264']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          policyclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
-    method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageServiceEndpoint?api-version=2018-05-01
-  response:
-    body: {string: '{"sku":{"name":"A0","tier":"Free"},"properties":{"displayName":"enforceStorageServiceEndpoint","policyDefinitionId":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyDefinitions/enforceStorageServiceEndpoint","scope":"/subscriptions/00000000-0000-0000-0000-000000000000"},"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/policyAssignments/enforceStorageServiceEndpoint","type":"Microsoft.Authorization/policyAssignments","name":"enforceStorageServiceEndpoint"}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['546']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:44:00 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 201, message: Created}
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 03:55:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.6.5; Darwin 18.2.0)]
-      x-ms-date: ['Thu, 07 Feb 2019 07:43:59 GMT']
-      x-ms-range: [bytes=0-33554431]
-      x-ms-version: ['2018-03-28']
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:55:14 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
     method: GET
-    uri: https://storage.blob.core.windows.net/output/org-shared-services-ssvcs/parameters/shared-services-net/azureDeploy.parameters.output.json
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/nsg/azureDeploy.parameters.output.json
   response:
-    body: {string: '{"vnet-id": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/org-ssvcs-vnet"},
-        "vnet-name": { "value": "org-ssvcs-vnet"}, "vnet-resourceGroup": { "value":
-        "org-ssvcs-net-rg"}}'}
+    body:
+      string: '{}'
     headers:
-      accept-ranges: [bytes]
-      content-length: ['286']
-      content-range: [bytes 0-285/286]
-      content-type: [application/octet-stream]
-      date: ['Thu, 07 Feb 2019 07:44:01 GMT']
-      etag: ['"0x8D68CCF70DDD6BC"']
-      last-modified: ['Thu, 07 Feb 2019 07:39:49 GMT']
-      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      x-ms-blob-content-md5: [KMzWOl7QhCIrSbZKqeeLJw==]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-creation-time: ['Sat, 12 Jan 2019 04:50:57 GMT']
-      x-ms-lease-state: [available]
-      x-ms-lease-status: [unlocked]
-      x-ms-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 206, message: Partial Content}
+      accept-ranges:
+      - bytes
+      content-length:
+      - '2'
+      content-range:
+      - bytes 0-1/2
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 03:55:14 GMT
+      etag:
+      - '"0x8D6CF7B25C30C1F"'
+      last-modified:
+      - Fri, 03 May 2019 03:55:14 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - mZFLkyvTelC5g8XnyQrpOw==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:41:42 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-ssvcs-net-rg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg?api-version=2018-05-01
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Thu, 07 Feb 2019 07:44:04 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      x-content-type-options: [nosniff]
-    status: {code: 204, message: No Content}
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:55:14 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
 - request:
-    body: 'b''b\''b\\\''b\\\\\\\''b\\\\\\\\\\\\\\\''{"properties": {"template": {"$schema":
-      "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-      "contentVersion": "1.0.0.0", "parameters": {"on-premises-gateway-name": {"type":
-      "string", "metadata": {"description": "Specifies the On-premises gateway name"}},
-      "on-premises-subscription-id": {"type": "string", "metadata": {"description":
-      "On-premises subscription id, this value is used to create a VPN connection
-      between the Shared services and on-premises"}}, "on-premises-vnet-rg": {"type":
-      "string", "metadata": {"description": "On-premises resource group that contains
-      the Virtual Network, this value is used to create a VPN connection between the
-      Shared services and on-premises"}}, "on-premises-location": {"type": "string",
-      "metadata": {"description": "Location of On-premises resource group that contains
-      the Virtual Network Gateway, this value is used to create a VPN connection between
-      the Shared services and on-premises"}}, "vpn-shared-key": {"type": "string",
-      "metadata": {"description": "Specifies a VPN shared key. The same value has
-      to be specified in On-premises and Azure"}}, "shared-services-gateway-name":
-      {"type": "string", "metadata": {"description": "Specifies the Shared services
-      gateway name"}}, "shared-services-vnet-resourceGroup": {"type": "string", "metadata":
-      {"description": "Shared services Virtual Network resource group name"}}, "shared-services-subscription-id":
-      {"type": "string", "metadata": {"description": "Shared services Subscription
-      Id"}}, "enable-bgp": {"type": "bool", "defaultValue": false, "metadata": {"description":
-      "Value to specify if BGP is enabled or not"}}, "deployment-name": {"type": "string",
-      "metadata": {"description": "Shared services deployment name"}}, "vnet-id":
-      {"defaultValue": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/org-ssvcs-vnet",
-      "type": "string"}, "vnet-name": {"defaultValue": "org-ssvcs-vnet", "type": "string"},
-      "vnet-resourceGroup": {"defaultValue": "org-ssvcs-net-rg", "type": "string"},
-      "sas-key": {"defaultValue": "se=2019-02-07T23%3A43%3A50Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=eVjfYFcGS/1/DnoIhyqlUVdxPaued9omnYdarsa4EyU%3D",
-      "type": "string"}, "output-params-storage-key": {"defaultValue": "abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA==",
+    body: 'b''b\''{"properties": {"template": {"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+      "contentVersion": "1.0.0.0", "parameters": {"deployment-prefix": {"type": "string",
+      "metadata": {"description": "Deployment prefix. E.g. Organization-DeploymentType"}},
+      "vnet-address-prefix": {"type": "string", "metadata": {"description": ""}},
+      "subnets": {"type": "array", "metadata": {"description": ""}}, "user-defined-routes":
+      {"type": "array", "metadata": {"description": ""}}, "enable-ddos-protection":
+      {"type": "bool", "defaultValue": true, "metadata": {"description": "Determines
+      whether or not DDoS Protection is enabled in the VNET"}}, "on-premises-primaryDC-IP":
+      {"type": "string", "metadata": {"description": "On-premises domain IP"}}, "sas-key":
+      {"defaultValue": "se=2019-05-03T20%3A55%3A14Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=jRc8FcA1xd3X%2BMMcML2bpoGC8TGRH5bt1vzn5A0sqCo%3D",
+      "type": "string"}, "output-params-storage-key": {"defaultValue": "0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==",
       "type": "string"}, "output-params-storage-account-name": {"defaultValue": "storage",
-      "type": "string"}}, "variables": {"on-premises-gateway-resource-id": "[resourceId(parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-subscription-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''),
-      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-vnet-rg\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')
-      ,\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''Microsoft.Network/virtualNetworkGateways\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
-      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-gateway-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]",
-      "shared-services-gateway-resource-id": "[resourceId(parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''shared-services-subscription-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''),
-      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''shared-services-vnet-resourceGroup\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')
-      ,\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''Microsoft.Network/virtualNetworkGateways\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
-      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''shared-services-gateway-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]"},
-      "resources": [{"apiVersion": "2017-05-10", "name": "nestedDeployVGWConnection",
-      "type": "Microsoft.Resources/deployments", "resourceGroup": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-vnet-rg\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
-      "subscriptionId": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-subscription-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
-      "properties": {"mode": "Incremental", "template": {"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-      "contentVersion": "1.0.0.0", "parameters": {}, "variables": {}, "resources":
-      [{"name": "[concat(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-to-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
-      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''deployment-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]",
-      "type": "Microsoft.Network/connections", "apiVersion": "2017-10-01", "location":
-      "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-location\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
-      "tags": {"displayName": "[concat(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-to-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'',
-      parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''deployment-name\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''))]"},
-      "properties": {"virtualNetworkGateway1": {"id": "[variables(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''on-premises-gateway-resource-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]"},
-      "virtualNetworkGateway2": {"id": "[variables(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''shared-services-gateway-resource-id\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]"},
-      "enableBgp": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''enable-bgp\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]",
-      "connectionType": "VNet2VNet", "routingWeight": 3, "sharedKey": "[parameters(\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\''vpn-shared-key\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'')]"}}]}}}],
-      "outputs": {}}, "parameters": {"on-premises-subscription-id": {"value": "00000000-0000-0000-0000-000000000000"},
-      "on-premises-vnet-rg": {"value": "org-onprem-net-rg"}, "on-premises-gateway-name":
-      {"value": "org-onprem-gw"}, "vpn-shared-key": {"value": "asodgfhjkaw4tu0w9vuijv0qu3409tu"},
-      "shared-services-subscription-id": {"value": "00000000-0000-0000-0000-000000000000"},
-      "shared-services-gateway-name": {"value": "org-ssvcs-gw"}, "shared-services-vnet-resourceGroup":
-      {"value": "org-ssvcs-net-rg"}, "deployment-name": {"value": "ssvcs"}, "on-premises-location":
-      {"value": "Central US"}, "vnet-id": {"value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/org-ssvcs-vnet"},
-      "vnet-name": {"value": "org-ssvcs-vnet"}, "vnet-resourceGroup": {"value": "org-ssvcs-net-rg"},
-      "sas-key": {"value": "se=2019-02-07T23%3A43%3A50Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=eVjfYFcGS/1/DnoIhyqlUVdxPaued9omnYdarsa4EyU%3D"},
-      "output-params-storage-key": {"value": "abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},
-      "output-params-storage-account-name": {"value": "storage"}}, "mode": "Incremental"}}\\\\\\\\\\\\\\\''\\\\\\\''\\\''\'''''
+      "type": "string"}}, "variables": {"vnet-name": "[concat(parameters(\\\''deployment-prefix\\\''),
+      \\\''-vnet\\\'')]", "ddos-protection-plan-name": "[concat(parameters(\\\''deployment-prefix\\\''),
+      \\\''-ddos-plan\\\'')]", "ddos-protection-plan-id": {"id": "[resourceId(\\\''Microsoft.Network/ddosProtectionPlans\\\'',
+      variables(\\\''ddos-protection-plan-name\\\''))]"}}, "resources": [{"type":
+      "Microsoft.Network/routeTables", "apiVersion": "2017-10-01", "location": "[resourceGroup().location]",
+      "copy": {"count": "[length(parameters(\\\''user-defined-routes\\\''))]", "name":
+      "udrLoop"}, "name": "[concat(parameters(\\\''deployment-prefix\\\''), \\\''-\\\'',
+      parameters(\\\''user-defined-routes\\\'')[copyIndex()].name, \\\''-udr\\\'')]",
+      "tags": {"displayName": "[concat(parameters(\\\''deployment-prefix\\\''), \\\''-\\\'',
+      parameters(\\\''user-defined-routes\\\'')[copyIndex()].name, \\\''-udr\\\'')]"}},
+      {"type": "Microsoft.Network/ddosProtectionPlans", "apiVersion": "2018-02-01",
+      "name": "[variables(\\\''ddos-protection-plan-name\\\'')]", "condition": "[equals(parameters(\\\''enable-ddos-protection\\\''),
+      bool(\\\''true\\\''))]", "location": "[resourceGroup().location]", "tags": {"displayName":
+      "[variables(\\\''ddos-protection-plan-name\\\'')]"}, "properties": {}}, {"apiVersion":
+      "2018-02-01", "type": "Microsoft.Network/virtualNetworks", "name": "[variables(\\\''vnet-name\\\'')]",
+      "location": "[resourceGroup().location]", "tags": {"displayName": "[variables(\\\''vnet-name\\\'')]"},
+      "dependsOn": ["udrLoop"], "properties": {"addressSpace": {"addressPrefixes":
+      ["[parameters(\\\''vnet-address-prefix\\\'')]"]}, "ddosProtectionPlan": "[if(equals(parameters(\\\''enable-ddos-protection\\\''),
+      bool(\\\''false\\\'')), json(\\\''null\\\''), variables(\\\''ddos-protection-plan-id\\\''))]",
+      "dhcpOptions": {"dnsServers": ["[parameters(\\\''on-premises-primaryDC-IP\\\'')]"]},
+      "copy": [{"name": "subnets", "count": "[length(parameters(\\\''subnets\\\''))]",
+      "input": {"name": "[parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')].name]",
+      "properties": {"addressPrefix": "[parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')][\\\''address-prefix\\\'']]",
+      "networkSecurityGroup": "[if(equals(parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')][\\\''network-security-group\\\''],
+      \\\''\\\''), json(\\\''null\\\''), json(concat(\\\''{\\\\"id\\\\": \\\\"\\\'',
+      resourceId(\\\''Microsoft.Network/networkSecurityGroups\\\'', concat(parameters(\\\''deployment-prefix\\\''),
+      \\\''-\\\'', parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')][\\\''network-security-group\\\''],
+      \\\''-nsg\\\'')), \\\''\\\\"}\\\'')))]", "routeTable": "[if(equals(parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')][\\\''user-defined-route\\\''],
+      \\\''\\\''), json(\\\''null\\\''), json(concat(\\\''{\\\\"id\\\\": \\\\"\\\'',
+      resourceId(\\\''Microsoft.Network/routeTables\\\'', concat(parameters(\\\''deployment-prefix\\\''),
+      \\\''-\\\'', parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')][\\\''user-defined-route\\\''],
+      \\\''-udr\\\'')), \\\''\\\\"}\\\'')))]", "serviceEndpoints": "[if(equals(length(parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')][\\\''service-endpoints\\\'']),
+      0), json(\\\''null\\\''), parameters(\\\''subnets\\\'')[copyIndex(\\\''subnets\\\'')][\\\''service-endpoints\\\''])]"}}}]}}],
+      "outputs": {"vnet-id": {"type": "string", "value": "[resourceId(\\\''Microsoft.Network/virtualNetworks\\\'',
+      variables(\\\''vnet-name\\\''))]"}, "vnet-name": {"type": "string", "value":
+      "[variables(\\\''vnet-name\\\'')]"}, "vnet-resourceGroup": {"type": "string",
+      "value": "[resourceGroup().name]"}}}, "parameters": {"deployment-prefix": {"value":
+      "cntso-ssvcs"}, "vnet-address-prefix": {"value": "10.4.0.0/23"}, "subnets":
+      {"value": [{"name": "sharedsvcs", "address-prefix": "10.4.0.32/27", "network-security-group":
+      "sharedsvcs", "user-defined-route": "sharedsvcs", "service-endpoints": [{"service":
+      "Microsoft.EventHub"}, {"service": "Microsoft.Sql"}, {"service": "Microsoft.KeyVault"},
+      {"service": "Microsoft.Storage"}]}, {"name": "trust", "address-prefix": "10.4.0.96/28",
+      "network-security-group": "trust", "user-defined-route": "", "service-endpoints":
+      [{"service": "Microsoft.EventHub"}, {"service": "Microsoft.Sql"}, {"service":
+      "Microsoft.KeyVault"}, {"service": "Microsoft.Storage"}]}, {"name": "dmz", "address-prefix":
+      "10.4.0.0/27", "network-security-group": "dmz", "user-defined-route": "", "service-endpoints":
+      [{"service": "Microsoft.EventHub"}, {"service": "Microsoft.Sql"}, {"service":
+      "Microsoft.KeyVault"}, {"service": "Microsoft.Storage"}]}, {"name": "AppGateway",
+      "address-prefix": "10.4.0.64/27", "network-security-group": "", "user-defined-route":
+      "", "service-endpoints": []}, {"name": "AzureFirewallSubnet", "address-prefix":
+      "10.4.1.0/25", "network-security-group": "", "user-defined-route": "", "service-endpoints":
+      []}, {"name": "GatewaySubnet", "address-prefix": "10.4.0.128/27", "network-security-group":
+      "", "user-defined-route": "", "service-endpoints": []}]}, "user-defined-routes":
+      {"value": [{"name": "sharedsvcs", "routes": [{"name": "default", "properties":
+      {"addressPrefix": "0.0.0.0/0", "nextHopIpAddress": "10.4.1.4", "nextHopType":
+      "VirtualAppliance"}}, {"name": "to-on-premises", "properties": {"addressPrefix":
+      "192.168.1.0/28", "nextHopType": "VirtualNetworkGateway"}}]}]}, "enable-ddos-protection":
+      {"value": false}, "on-premises-primaryDC-IP": {"value": "192.168.1.4"}, "sas-key":
+      {"value": "se=2019-05-03T20%3A55%3A14Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=jRc8FcA1xd3X%2BMMcML2bpoGC8TGRH5bt1vzn5A0sqCo%3D"},
+      "output-params-storage-key": {"value": "0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},
+      "output-params-storage-account-name": {"value": "storage"}}, "mode": "Incremental"}}\'''''
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['5326']
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '6420'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-ssvcs-net-rg/providers/Microsoft.Resources/deployments/org-shared-services-ssvcs-deployment-onprem-vgw-connection?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-shared-serv?api-version=2018-05-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-ssvcs-net-rg/providers/Microsoft.Resources/deployments/org-shared-services-ssvcs-deployment-onprem-vgw-connection","name":"org-shared-services-ssvcs-deployment-onprem-vgw-connection","properties":{"templateHash":"11308665078084669754","parameters":{"on-premises-gateway-name":{"type":"String","value":"org-onprem-gw"},"on-premises-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"on-premises-vnet-rg":{"type":"String","value":"org-onprem-net-rg"},"on-premises-location":{"type":"String","value":"Central
-        US"},"vpn-shared-key":{"type":"String","value":"asodgfhjkaw4tu0w9vuijv0qu3409tu"},"shared-services-gateway-name":{"type":"String","value":"org-ssvcs-gw"},"shared-services-vnet-resourceGroup":{"type":"String","value":"org-ssvcs-net-rg"},"shared-services-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"enable-bgp":{"type":"Bool","value":false},"deployment-name":{"type":"String","value":"ssvcs"},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/org-ssvcs-vnet"},"vnet-name":{"type":"String","value":"org-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"org-ssvcs-net-rg"},"sas-key":{"type":"String","value":"se=2019-02-07T23%3A43%3A50Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=eVjfYFcGS/1/DnoIhyqlUVdxPaued9omnYdarsa4EyU%3D"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-02-07T07:44:08.4779579Z","duration":"PT0.7250896S","correlationId":"b2f80a4c-53c8-4531-89f9-1d9be56acd8d","providers":[{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[]}}'}
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-shared-serv","name":"cntso-shared-services-ssvcs-deployment-shared-serv","properties":{"templateHash":"11359246530465176860","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"vnet-address-prefix":{"type":"String","value":"10.4.0.0/23"},"subnets":{"type":"Array","value":[{"name":"sharedsvcs","address-prefix":"10.4.0.32/27","network-security-group":"sharedsvcs","user-defined-route":"sharedsvcs","service-endpoints":[{"service":"Microsoft.EventHub"},{"service":"Microsoft.Sql"},{"service":"Microsoft.KeyVault"},{"service":"Microsoft.Storage"}]},{"name":"trust","address-prefix":"10.4.0.96/28","network-security-group":"trust","user-defined-route":"","service-endpoints":[{"service":"Microsoft.EventHub"},{"service":"Microsoft.Sql"},{"service":"Microsoft.KeyVault"},{"service":"Microsoft.Storage"}]},{"name":"dmz","address-prefix":"10.4.0.0/27","network-security-group":"dmz","user-defined-route":"","service-endpoints":[{"service":"Microsoft.EventHub"},{"service":"Microsoft.Sql"},{"service":"Microsoft.KeyVault"},{"service":"Microsoft.Storage"}]},{"name":"AppGateway","address-prefix":"10.4.0.64/27","network-security-group":"","user-defined-route":"","service-endpoints":[]},{"name":"AzureFirewallSubnet","address-prefix":"10.4.1.0/25","network-security-group":"","user-defined-route":"","service-endpoints":[]},{"name":"GatewaySubnet","address-prefix":"10.4.0.128/27","network-security-group":"","user-defined-route":"","service-endpoints":[]}]},"user-defined-routes":{"type":"Array","value":[{"name":"sharedsvcs","routes":[{"name":"default","properties":{"addressPrefix":"0.0.0.0/0","nextHopIpAddress":"10.4.1.4","nextHopType":"VirtualAppliance"}},{"name":"to-on-premises","properties":{"addressPrefix":"192.168.1.0/28","nextHopType":"VirtualNetworkGateway"}}]}]},"enable-ddos-protection":{"type":"Bool","value":false},"on-premises-primaryDC-IP":{"type":"String","value":"192.168.1.4"},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A55%3A14Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=jRc8FcA1xd3X%2BMMcML2bpoGC8TGRH5bt1vzn5A0sqCo%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-05-03T03:55:17.4375348Z","duration":"PT0.426471S","correlationId":"c23e5239-bb2a-4cae-b3b6-f05486960b68","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"virtualNetworks","locations":["westus2"]},{"resourceType":"routeTables","locations":["westus2"]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/routeTables/cntso-ssvcs-sharedsvcs-udr","resourceType":"Microsoft.Network/routeTables","resourceName":"cntso-ssvcs-sharedsvcs-udr"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet","resourceType":"Microsoft.Network/virtualNetworks","resourceName":"cntso-ssvcs-vnet"}]}}'
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-ssvcs-net-rg/providers/Microsoft.Resources/deployments/org-shared-services-ssvcs-deployment-onprem-vgw-connection/operationStatuses/08586520814377359007?api-version=2018-05-01']
-      cache-control: [no-cache]
-      content-length: ['2098']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:44:08 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-      x-ms-ratelimit-remaining-subscription-writes: ['1199']
-    status: {code: 200, message: OK}
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-shared-serv/operationStatuses/08586447511684665699?api-version=2018-05-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '3455'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:55:17 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1197'
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-ssvcs-net-rg/providers/Microsoft.Resources/deployments/org-shared-services-ssvcs-deployment-onprem-vgw-connection/operationStatuses/08586520814377359007?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-shared-serv/operationStatuses/08586447511684665699?api-version=2018-05-01
   response:
-    body: {string: '{"status":"Running"}'}
+    body:
+      string: '{"status":"Succeeded"}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['20']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:44:39 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:55:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-ssvcs-net-rg/providers/Microsoft.Resources/deployments/org-shared-services-ssvcs-deployment-onprem-vgw-connection/operationStatuses/08586520814377359007?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-shared-serv?api-version=2018-05-01
   response:
-    body: {string: '{"status":"Succeeded"}'}
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-shared-serv","name":"cntso-shared-services-ssvcs-deployment-shared-serv","properties":{"templateHash":"11359246530465176860","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"vnet-address-prefix":{"type":"String","value":"10.4.0.0/23"},"subnets":{"type":"Array","value":[{"name":"sharedsvcs","address-prefix":"10.4.0.32/27","network-security-group":"sharedsvcs","user-defined-route":"sharedsvcs","service-endpoints":[{"service":"Microsoft.EventHub"},{"service":"Microsoft.Sql"},{"service":"Microsoft.KeyVault"},{"service":"Microsoft.Storage"}]},{"name":"trust","address-prefix":"10.4.0.96/28","network-security-group":"trust","user-defined-route":"","service-endpoints":[{"service":"Microsoft.EventHub"},{"service":"Microsoft.Sql"},{"service":"Microsoft.KeyVault"},{"service":"Microsoft.Storage"}]},{"name":"dmz","address-prefix":"10.4.0.0/27","network-security-group":"dmz","user-defined-route":"","service-endpoints":[{"service":"Microsoft.EventHub"},{"service":"Microsoft.Sql"},{"service":"Microsoft.KeyVault"},{"service":"Microsoft.Storage"}]},{"name":"AppGateway","address-prefix":"10.4.0.64/27","network-security-group":"","user-defined-route":"","service-endpoints":[]},{"name":"AzureFirewallSubnet","address-prefix":"10.4.1.0/25","network-security-group":"","user-defined-route":"","service-endpoints":[]},{"name":"GatewaySubnet","address-prefix":"10.4.0.128/27","network-security-group":"","user-defined-route":"","service-endpoints":[]}]},"user-defined-routes":{"type":"Array","value":[{"name":"sharedsvcs","routes":[{"name":"default","properties":{"addressPrefix":"0.0.0.0/0","nextHopIpAddress":"10.4.1.4","nextHopType":"VirtualAppliance"}},{"name":"to-on-premises","properties":{"addressPrefix":"192.168.1.0/28","nextHopType":"VirtualNetworkGateway"}}]}]},"enable-ddos-protection":{"type":"Bool","value":false},"on-premises-primaryDC-IP":{"type":"String","value":"192.168.1.4"},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A55%3A14Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=jRc8FcA1xd3X%2BMMcML2bpoGC8TGRH5bt1vzn5A0sqCo%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-05-03T03:55:18.6589102Z","duration":"PT1.6478464S","correlationId":"c23e5239-bb2a-4cae-b3b6-f05486960b68","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"virtualNetworks","locations":["westus2"]},{"resourceType":"routeTables","locations":["westus2"]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/routeTables/cntso-ssvcs-sharedsvcs-udr","resourceType":"Microsoft.Network/routeTables","resourceName":"cntso-ssvcs-sharedsvcs-udr"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet","resourceType":"Microsoft.Network/virtualNetworks","resourceName":"cntso-ssvcs-vnet"}],"outputs":{"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},"vnet-name":{"type":"String","value":"cntso-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"}},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/ddosProtectionPlans/cntso-ssvcs-ddos-plan"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/routeTables/cntso-ssvcs-sharedsvcs-udr"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"}]}}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['22']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:45:09 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '4382'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 03:55:47 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python/3.6.5 (Darwin-18.2.0-x86_64-i386-64bit) msrest/0.6.2 msrest_azure/0.5.1
-          resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-ssvcs-net-rg/providers/Microsoft.Resources/deployments/org-shared-services-ssvcs-deployment-onprem-vgw-connection?api-version=2018-05-01
-  response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-ssvcs-net-rg/providers/Microsoft.Resources/deployments/org-shared-services-ssvcs-deployment-onprem-vgw-connection","name":"org-shared-services-ssvcs-deployment-onprem-vgw-connection","properties":{"templateHash":"11308665078084669754","parameters":{"on-premises-gateway-name":{"type":"String","value":"org-onprem-gw"},"on-premises-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"on-premises-vnet-rg":{"type":"String","value":"org-onprem-net-rg"},"on-premises-location":{"type":"String","value":"Central
-        US"},"vpn-shared-key":{"type":"String","value":"asodgfhjkaw4tu0w9vuijv0qu3409tu"},"shared-services-gateway-name":{"type":"String","value":"org-ssvcs-gw"},"shared-services-vnet-resourceGroup":{"type":"String","value":"org-ssvcs-net-rg"},"shared-services-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"enable-bgp":{"type":"Bool","value":false},"deployment-name":{"type":"String","value":"ssvcs"},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/org-ssvcs-vnet"},"vnet-name":{"type":"String","value":"org-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"org-ssvcs-net-rg"},"sas-key":{"type":"String","value":"se=2019-02-07T23%3A43%3A50Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=eVjfYFcGS/1/DnoIhyqlUVdxPaued9omnYdarsa4EyU%3D"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-02-07T07:44:40.8868667Z","duration":"PT33.1339984S","correlationId":"b2f80a4c-53c8-4531-89f9-1d9be56acd8d","providers":[{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[],"outputs":{},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Network/connections/on-premises-to-ssvcs"}]}}'}
-    headers:
-      cache-control: [no-cache]
-      content-length: ['2293']
-      content-type: [application/json; charset=utf-8]
-      date: ['Thu, 07 Feb 2019 07:45:10 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      vary: [Accept-Encoding]
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Connection: [keep-alive]
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.6.5; Darwin 18.2.0)]
-      x-ms-date: ['Thu, 07 Feb 2019 07:45:09 GMT']
-      x-ms-version: ['2018-03-28']
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 03:55:47 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: GET
     uri: https://storage.blob.core.windows.net/output?restype=container
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      date: ['Thu, 07 Feb 2019 07:45:11 GMT']
-      etag: ['"0x8D677F58F5F4F8F"']
-      last-modified: ['Fri, 11 Jan 2019 18:49:47 GMT']
-      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      transfer-encoding: [chunked]
-      x-ms-has-immutability-policy: ['false']
-      x-ms-has-legal-hold: ['false']
-      x-ms-lease-state: [available]
-      x-ms-lease-status: [unlocked]
-      x-ms-version: ['2018-03-28']
-    status: {code: 200, message: OK}
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 03:55:48 GMT
+      etag:
+      - '"0x8D6C9C2C8DFA212"'
+      last-modified:
+      - Thu, 25 Apr 2019 21:12:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
 - request:
-    body: '{}'
+    body: 'b''b\''b\\\''{"vnet-id": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},
+      "vnet-name": { "value": "cntso-ssvcs-vnet"}, "vnet-resourceGroup": { "value":
+      "cntso-ssvcs-net-rg"}}\\\''\'''''
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['2']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.6.5; Darwin 18.2.0)]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-date: ['Thu, 07 Feb 2019 07:45:10 GMT']
-      x-ms-version: ['2018-03-28']
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '314'
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 03 May 2019 03:55:48 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storage.blob.core.windows.net/output/org-shared-services-ssvcs/parameters/onprem-vgw-connection/azureDeploy.parameters.output.json
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/shared-services-net/azureDeploy.parameters.output.json
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      content-md5: [mZFLkyvTelC5g8XnyQrpOw==]
-      date: ['Thu, 07 Feb 2019 07:45:11 GMT']
-      etag: ['"0x8D68CD0308ACF5A"']
-      last-modified: ['Thu, 07 Feb 2019 07:45:11 GMT']
-      server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      transfer-encoding: [chunked]
-      x-ms-request-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      content-length:
+      - '0'
+      content-md5:
+      - uuncXP3nwK/2kckRf2nBzg==
+      date:
+      - Fri, 03 May 2019 03:55:48 GMT
+      etag:
+      - '"0x8D6CF7B3A133AA8"'
+      last-modified:
+      - Fri, 03 May 2019 03:55:48 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 version: 1

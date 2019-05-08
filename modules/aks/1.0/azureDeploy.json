@@ -8,12 +8,6 @@
                 "description": "Deployment prefix. E.g. Organization-DeploymentType"
             }
         },
-        "shared-services-deployment-prefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Deployment prefix for Shared Services. E.g. Organization-DeploymentType"
-            }
-        },
         "location": {
             "type": "string",
             "metadata": {
@@ -97,10 +91,17 @@
                 "description": "Boolean flag to turn on and off of RBAC."
             }
         },
-        "vnet-subnet-id": {
+        "vnet-id": {
             "type": "string",
             "metadata": {
-                "description": "Resource ID of virtual network subnet used for nodes and/or pods IP assignment."
+                "description": "Resource ID of virtual network"
+            }
+        },
+        "default-subnet-name": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+                "description": "Name of the private subnet inside the workload virtual network."
             }
         },
         "service-cidr": {
@@ -121,13 +122,13 @@
                 "description": "A CIDR notation IP for Docker bridge."
             }
         },
-        "oms-id": {
+        "la-resourceId": {
             "type": "string",
             "metadata": {
-                "description": "Resource ID containing the insights"
+                "description": "Resource Identifier of Log Analytics"
             }
         },
-        "diagnostic-event-hub-name": {
+        "diagnostics-event-hub-name": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
@@ -140,10 +141,10 @@
               "description": "Resource ID of the event hub authorization rule for the Event Hubs namespace in which the event hub should be created or streamed to."
             }
         },
-        "oms-storage-id": {
+        "storageAccount-resourceId": {
             "type": "string",
             "metadata": {
-                "description": "Storage account for the diagnostics events"
+                "description": "Diagnostic Storage Account resource identifier"
             }
         },
         "rbac-server-appid": {
@@ -187,30 +188,44 @@
             "metadata": {
                 "description": "AKS Cluster deployment Subcription Id"
             }
+        },
+        "shared-services-subscription-id": {
+            "type": "string"
+        },
+        "azure-firewall-resource-group": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Firewall Resource Group name"
+            }
+        },
+        "azure-firewall-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Azure Firewall Resource name"
+            }
         }
     },
     "variables": {
         "auth-rule-resource-id": "[parameters('diagnostics-event-hub-auth-rule-id')]",
         "aks-cluster-name": "[concat(parameters('deployment-prefix'), '-k8s')]",
+        "subnet-id": "[concat(parameters('vnet-id'), '/subnets/', parameters('default-subnet-name'))]",
         "emptyContent": {},
         "omsAgentConfig": {
             "omsagent": {
                 "enabled": true,
                 "config": {
-                    "logAnalyticsWorkspaceResourceID": "[parameters('oms-id')]"
+                    "logAnalyticsWorkspaceResourceID": "[parameters('la-resourceId')]"
                 }
             }
-        },
-        "azure-fw-resource-group": "[concat(parameters('shared-services-deployment-prefix'), '-net-rg')]",
-        "azure-fw-name": "[concat(parameters('shared-services-deployment-prefix'), '-az-fw')]"
+        }
     },
     "resources": [
         {
             "apiVersion": "2017-05-10",
             "name": "nestedDeployCreateAzureApplicationRules",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[concat(parameters('shared-services-deployment-prefix'),'-net-rg')]",
-            "subscriptionId": "[parameters('subscription-id')]",
+            "resourceGroup": "[parameters('azure-firewall-resource-group')]",
+            "subscriptionId": "[parameters('shared-services-subscription-id')]",
             "dependsOn": [],
             "properties": {
               "mode": "Incremental",
@@ -224,12 +239,12 @@
                     "type": "Microsoft.Network/azureFirewalls",
                     "apiVersion": "2018-08-01",
                     "location": "[resourceGroup().location]",
-                    "name": "[variables('azure-fw-name')]",
+                    "name": "[parameters('azure-firewall-name')]",
                     "properties": {
-                        "ipConfigurations": "[reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').ipConfigurations]",
-                        "natRuleCollections": "[reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').natRuleCollections]",
-                        "applicationRuleCollections": "[concat(reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').applicationRuleCollections, parameters('azure-firewall-application-rule-collection'))]",
-                        "networkRuleCollections": "[concat(reference(resourceId(parameters('subscription-id'), variables('azure-fw-resource-group'), 'Microsoft.Network/azureFirewalls', variables('azure-fw-name')), '2018-08-01').networkRuleCollections, parameters('azure-firewall-network-rule-collection'))]"
+                        "ipConfigurations": "[reference(resourceId(parameters('shared-services-subscription-id'), parameters('azure-firewall-resource-group'), 'Microsoft.Network/azureFirewalls', parameters('azure-firewall-name')), '2018-08-01').ipConfigurations]",
+                        "natRuleCollections": "[reference(resourceId(parameters('shared-services-subscription-id'), parameters('azure-firewall-resource-group'), 'Microsoft.Network/azureFirewalls', parameters('azure-firewall-name')), '2018-08-01').natRuleCollections]",
+                        "applicationRuleCollections": "[concat(reference(resourceId(parameters('shared-services-subscription-id'), parameters('azure-firewall-resource-group'), 'Microsoft.Network/azureFirewalls', parameters('azure-firewall-name')), '2018-08-01').applicationRuleCollections, parameters('azure-firewall-application-rule-collection'))]",
+                        "networkRuleCollections": "[concat(reference(resourceId(parameters('shared-services-subscription-id'), parameters('azure-firewall-resource-group'), 'Microsoft.Network/azureFirewalls', parameters('azure-firewall-name')), '2018-08-01').networkRuleCollections, parameters('azure-firewall-network-rule-collection'))]"
                     }
                   }
                 ]
@@ -256,7 +271,7 @@
                         "vmSize": "[parameters('agent-vm-size')]",
                         "osType": "[parameters('os-type')]",
                         "storageProfile": "ManagedDisks",
-                        "vnetSubnetID": "[parameters('vnet-subnet-id')]"
+                        "vnetSubnetID": "[variables('subnet-id')]"
                     }
                 ],
                 "servicePrincipalProfile": {
@@ -275,7 +290,7 @@
                     "serverAppSecret": "[parameters('rbac-server-secret')]",
                     "tenantID": "[parameters('rbac-tenant')]"
                 },
-                "addonProfiles": "[if( empty(parameters('oms-id')) , variables('emptyContent'), variables('omsAgentConfig'))]"
+                "addonProfiles": "[if( empty(parameters('la-resourceId')) , variables('emptyContent'), variables('omsAgentConfig'))]"
                 
             },
             "resources": [
@@ -287,9 +302,9 @@
                     ],
                     "apiVersion": "2017-05-01-preview",
                     "properties": {
-                        "workspaceId": "[parameters('oms-id')]",
-                        "storageAccountId": "[parameters('oms-storage-id')]",
-                        "eventHubName": "[parameters('diagnostic-event-hub-name')]",
+                        "workspaceId": "[parameters('la-resourceId')]",
+                        "storageAccountId": "[parameters('storageAccount-resourceId')]",
+                        "eventHubName": "[parameters('diagnostics-event-hub-name')]",
                         "eventHubAuthorizationRuleId": "[parameters('diagnostics-event-hub-auth-rule-id')]",
                         "logs": [
                             {

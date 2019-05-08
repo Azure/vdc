@@ -150,6 +150,12 @@
             "metadata": {
                  "description": "Specifies if bootstrap storage account will be used"
              }
+        },
+        "storageAccount-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Diagnostic Storage Account name"
+            }
         }
     },
     "variables": {
@@ -161,8 +167,6 @@
         "shared-services-subnet-ID": "[concat(parameters('vnet-id'), '/subnets/', parameters('shared-services-subnet-name'))]",
         "untrust-subnet-ID": "[concat(parameters('vnet-id'), '/subnets/', parameters('untrust-subnet-name'))]",
         "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix": "[concat(variables('resource-prefix'), 'diag')]",
-        "diagnostic-storageAccount-name": "[replace(toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) ), '-', '')]",
         "lb-ID": "[resourceId('Microsoft.Network/loadBalancers',variables('nva-lb-name'))]",
         "trust-frontendIP-config-id": "[concat(variables('lb-ID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
         "lb-pool-id": "[concat(variables('lb-ID'),'/backendAddressPools/', parameters('nva-backend-pool-name'))]",
@@ -173,29 +177,6 @@
         "custom-data-field": "[concat('storage-account=', parameters('bootstrap-storage-account'), ',access-key=', parameters('bootstrap-storage-account-access-key'), ',file-share=', parameters('bootstrap-storage-share-name'), ',share-directory=', 'egress')]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "apiVersion": "2017-10-01",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "tags": {
-                "displayName": "Management Diagnostic Storage Account"
-            },
-            "properties": {
-                "encryption": {
-                    "keySource": "Microsoft.Storage",
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        }
-                    }
-                }
-            }
-        },
         {
             "type": "Microsoft.Compute/availabilitySets",
             "apiVersion": "2016-04-30-preview",
@@ -470,7 +451,6 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySet-name'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts',variables('diagnostic-storageAccount-name'))]",
                 "nic1Loop",
                 "nic2Loop",
                 "nic3Loop"
@@ -526,7 +506,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                        "storageUri": "[concat('https://', parameters('storageAccount-name'), '.blob.core.windows.net/')]"
                     }
                 }
             },

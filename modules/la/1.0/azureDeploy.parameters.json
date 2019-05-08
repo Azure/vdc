@@ -3,10 +3,13 @@
         "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
     },
     "data-retention": {
-        "value": 30
+        "value": 365
     },
     "location": {
         "value": "${ENV:ENVIRONMENT-TYPE.log-analytics.region}"
+    },
+    "automation-account-location": {
+        "value": "${ENV:ENVIRONMENT-TYPE.automation-account.region}"
     },
     "service-tier": {
         "value": "PerNode"

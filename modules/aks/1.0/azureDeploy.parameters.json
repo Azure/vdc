@@ -53,8 +53,8 @@
     "enable-rbac": {
         "value": "${workload.kubernetes.enable-rbac}"
     },
-    "vnet-subnet-id": {
-        "value": "/subscriptions/${general.workload.subscription-id}/resourceGroups/${workload.resource-group-prefix}-net-rg/providers/Microsoft.Network/virtualNetworks/${workload.resource-group-prefix}-vnet/subnets/default"
+    "default-subnet-name": {
+        "value": "${workload.network.subnets[0].name}"
     },
     "service-cidr": {
         "value": "${workload.kubernetes.service-cidr}"
@@ -73,5 +73,14 @@
     },
     "subscription-id": {
         "value": "${workload.subscription-id}"
+    },
+    "azure-firewall-resource-group": {
+        "value": "${shared-services.network.resource-group-name}"
+    },
+    "azure-firewall-name": {
+        "value": "${shared-services.network.network-virtual-appliance.azure-firewall.name}"
+    },
+    "shared-services-subscription-id": {
+        "value": "${shared-services.subscription-id}"
     }
 }

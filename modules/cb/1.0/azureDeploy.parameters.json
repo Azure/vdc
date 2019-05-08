@@ -20,7 +20,7 @@
         "value": "${shared-services.active-directory.domain-admin-user}@${shared-services.active-directory.domain-name}"
     },
     "extension-name": {
-        "value": "cb"
+        "value": "cb01"
     },
     "domain-name": {
         "value": "${shared-services.active-directory.domain-name}"

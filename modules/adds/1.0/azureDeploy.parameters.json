@@ -33,7 +33,7 @@
         "value": "Standard_DS2_v2"
     },
     "adds-address-start": {
-        "value": "${shared-services.adds.vm-ip-address-start}"
+        "value": "${shared-services.active-directory.vm-ip-address-start}"
     },
     "domain-name": {
         "value": "${on-premises.active-directory.domain-name}"

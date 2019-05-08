@@ -10,6 +10,12 @@
             "secretName": "${workload.azure-sql-configuration.admin-user}"
         }
     },
+    "aad-admin-objectId": {
+        "value": "${workload.azure-sql-configuration.aad-admin-objectId}"
+    },
+    "aad-admin-email": {
+        "value": "${workload.azure-sql-configuration.aad-admin-email}"
+    },
     "sql-server-properties":{
         "value":{
             "name": "${general.organization-name}-${workload.deployment-name}-db-server01",

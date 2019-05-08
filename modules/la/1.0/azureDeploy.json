@@ -10,127 +10,1189 @@
         },
         "service-tier": {
             "type": "string",
+            "defaultValue": "PerNode",
             "allowedValues": [
                 "Free",
                 "Standalone",
-                "PerNode"
+                "PerNode",
+                "PerGB2018"
             ],
             "metadata": {
-                "description": "Service Tier: Free, Standalone, or PerNode"
+                "description": "Service Tier: Free, Standalone, PerGB or PerNode"
             }
         },
         "data-retention": {
             "type": "int",
-            "defaultValue": 30,
-            "minValue": 7,
+            "defaultValue": 365,
+            "minValue": 0,
             "maxValue": 730,
             "metadata": {
-                "description": "Number of days data will be retained for."
+                "description": "Number of days data will be retained for"
             }
         },
         "location": {
             "type": "string",
             "allowedValues": [
+                "Australia Central",
+                "Australia East",
                 "Australia Southeast",
                 "Canada Central",
                 "Central India",
+                "Central US",
+                "East Asia",
                 "East US",
+                "East US 2",
+                "France Central",
                 "Japan East",
+                "Korea Central",
+                "North Europe",
+                "South Central US",
                 "Southeast Asia",
                 "UK South",
                 "West Europe",
-                "North Europe",
+                "West US",
                 "West US 2"
             ],
             "metadata": {
-                "description": "Region used when establishing the workspace."
+                "description": "Region used when establishing the workspace"
+            }
+        },
+        "storageAccount-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Diagnostic Storage Account name"
+            }
+        },
+        "storageAccount-resourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Log Analytics workspace resource identifier"
+            }
+        },
+        "storageAccount-accessKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Diagnostic Storage Account key"
             }
         }
     },
     "variables": {
-        "oms-workspace-name": "[concat(parameters('deployment-prefix'), '-la')]",
-        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id, 'diag-la')]",
-        "diagnostic-storageAccount-prefix": "[concat(replace(parameters('deployment-prefix'), '-', ''), 'diag')]",
-        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]"
+        "la-workspace-name": "[concat(parameters('deployment-prefix'), '-la')]",
+        "updates": {
+            "Name": "[Concat('Updates', '(', variables('la-workspace-name'), ')')]",
+            "GalleryName": "Updates"
+        },
+        "azureAutomation": {
+            "Name": "[Concat('AzureAutomation', '(', variables('la-workspace-name'), ')')]",
+            "GalleryName": "AzureAutomation"
+        },
+        "antiMalware": {
+            "Name": "[concat('AntiMalware', '(', variables('la-workspace-name'), ')')]",
+            "GalleryName": "AntiMalware"
+        },
+        "SQLAssessment": {
+            "Name": "[concat('SQLAssessment', '(', variables('la-workspace-name'), ')')]",
+            "GalleryName": "SQLAssessment"
+        },
+        "Security": {
+            "Name": "[concat('Security', '(', variables('la-workspace-name'), ')')]",
+            "GalleryName": "Security"
+        },
+        "SecurityCenter": {
+            "Name": "[concat('SecurityCenterFree', '(', variables('la-workspace-name'), ')')]",
+            "GalleryName": "SecurityCenterFree"
+        },
+        "ChangeTracking": {
+            "Name": "[concat('ChangeTracking', '(', variables('la-workspace-name'), ')')]",
+            "GalleryName": "ChangeTracking"
+        },
+        "KeyVaultAnalytics":{
+            "name": "[concat('KeyVaultAnalytics', '(', variables('la-workspace-name'), ')')]",
+            "galleryName": "KeyVaultAnalytics"
+        },
+        "log-analytics-search-version": 1
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2018-07-01",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "kind": "StorageV2",
+            "apiVersion": "2017-03-15-preview",
+            "type": "Microsoft.OperationalInsights/workspaces",
             "location": "[parameters('location')]",
-            "tags": {},
-            "scale": null,
+            "name": "[variables('la-workspace-name')]",
             "properties": {
-                "isHnsEnabled": false,
-                "networkAcls": {
-                    "bypass": "AzureServices",
-                    "virtualNetworkRules": [],
-                    "ipRules": [],
-                    "defaultAction": "Allow"
+                "features": {
+                    "searchVersion": "[variables('log-analytics-search-version')]"
                 },
-                "supportsHttpsTrafficOnly": true,
-                "encryption": {
-                    "services": {
-                        "file": {
-                            "enabled": true
-                        },
-                        "blob": {
-                            "enabled": true
-                        }
-                    },
-                    "keySource": "Microsoft.Storage"
+                "sku": {
+                    "name": "[parameters('service-tier')]"
                 },
-                "accessTier": "Cool"
+                "retentionInDays": "[parameters('data-retention')]"
             },
-            "dependsOn": []
+            "resources": [
+                {
+                    "apiVersion": "2017-03-15-preview",
+                    "name": "VMSSQueries",
+                    "type": "savedSearches",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "properties": {
+                        "etag": "*",
+                        "DisplayName": "VMSS Instance Count",
+                        "Category": "VDC Saved Searches",
+                        "Query": "Event | where Source == \"ServiceFabricNodeBootstrapAgent\" | summarize AggregatedValue = count() by Computer"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "applicationEvent",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsEvent",
+                    "properties": {
+                        "eventLogName": "Application",
+                        "eventTypes": [
+                            {
+                                "eventType": "Error"
+                            },
+                            {
+                                "eventType": "Warning"
+                            },
+                            {
+                                "eventType": "Information"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "systemEvent",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsEvent",
+                    "properties": {
+                        "eventLogName": "System",
+                        "eventTypes": [
+                            {
+                                "eventType": "Error"
+                            },
+                            {
+                                "eventType": "Warning"
+                            },
+                            {
+                                "eventType": "Information"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter1",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Processor",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Processor Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter2",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Processor",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Privileged Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter3",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Processor",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% User Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter4",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Processor",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Processor Frequency"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter5",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Process",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Thread Count"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter6",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Process",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Handle Count"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter7",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "System",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "System Up Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter8",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "System",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Context Switches/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter9",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "System",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Processor Queue Length"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter10",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "System",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Processes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter11",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Committed Bytes In Use"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter12",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Available MBytes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter13",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Available Bytes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter14",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Committed Bytes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter15",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Cache Bytes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter16",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Pool Paged Bytes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter17",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Pool Nonpaged Bytes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter18",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Pages/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter19",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Page Faults/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter20",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Process",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Working Set"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter21",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Process",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Working Set - Private"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter22",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Disk Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter23",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Disk Read Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter24",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Disk Write Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter25",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Idle Time"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter26",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Disk Bytes/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter27",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Disk Read Bytes/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter28",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Disk Write Bytes/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter29",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Disk Transfers/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter30",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Disk Reads/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter31",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Disk Writes/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter32",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Avg. Disk sec/Transfer"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter33",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Avg. Disk sec/Read"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter34",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Avg. Disk sec/Write"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter35",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Avg. Disk Queue Length"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter36",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Avg. Disk Write Queue Length"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter37",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "% Free Space"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter38",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "LogicalDisk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Free Megabytes"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter39",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Bytes Total/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter40",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Bytes Sent/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter41",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Bytes Received/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter42",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Packets/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter43",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Packets Sent/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter44",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Packets Received/sec"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter45",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Packets Outbound Errors"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "windowsPerfCounter46",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "WindowsPerformanceCounter",
+                    "properties": {
+                        "objectName": "Network Interface",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "counterName": "Packets Received Errors"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "sampleIISLog1",
+                    "condition": false,
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "IISLogs",
+                    "properties": {
+                        "state": "OnPremiseEnabled"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "sampleSyslog1",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "LinuxSyslog",
+                    "properties": {
+                        "syslogName": "kern",
+                        "syslogSeverities": [
+                            {
+                                "severity": "emerg"
+                            },
+                            {
+                                "severity": "alert"
+                            },
+                            {
+                                "severity": "crit"
+                            },
+                            {
+                                "severity": "err"
+                            },
+                            {
+                                "severity": "warning"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "sampleSyslogCollection1",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "LinuxSyslogCollection",
+                    "properties": {
+                        "state": "Enabled"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "sampleLinuxPerf1",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "performanceCounters": [
+                            {
+                                "counterName": "% Used Inodes"
+                            },
+                            {
+                                "counterName": "Free Megabytes"
+                            },
+                            {
+                                "counterName": "% Used Space"
+                            },
+                            {
+                                "counterName": "Disk Transfers/sec"
+                            },
+                            {
+                                "counterName": "Disk Reads/sec"
+                            },
+                            {
+                                "counterName": "Disk Writes/sec"
+                            }
+                        ],
+                        "objectName": "Logical Disk",
+                        "instanceName": "*",
+                        "intervalSeconds": 10
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "datasources",
+                    "name": "sampleLinuxPerfCollection1",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "kind": "LinuxPerformanceCollection",
+                    "properties": {
+                        "state": "Enabled"
+                    }
+                },
+                {
+                    "apiVersion": "2015-03-20",
+                    "name": "[concat(parameters('storageAccount-name'),variables('la-workspace-name'))]",
+                    "type": "storageinsightconfigs",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "properties": {
+                        "containers": [],
+                        "tables": [
+                            "WADWindowsEventLogsTable",
+                            "WADETWEventTable",
+                            "WADServiceFabric*EventTable",
+                            "LinuxsyslogVer2v0"
+                        ],
+                        "storageAccount": {
+                            "id": "[parameters('storageAccount-resourceId')]",
+                            "key": "[parameters('storageAccount-accessKey')]"
+                        }
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('Updates').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[Concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('Updates').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('Updates').Name]",
+                        "publisher": "Microsoft",
+                        "product": "[Concat('OMSGallery/', variables('Updates').GalleryName)]",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('AzureAutomation').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[Concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('AzureAutomation').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]",
+                        "[variables('Updates').Name]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('AzureAutomation').Name]",
+                        "publisher": "Microsoft",
+                        "product": "[Concat('OMSGallery/', variables('AzureAutomation').GalleryName)]",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('AntiMalware').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('AntiMalware').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]",
+                        "[variables('AzureAutomation').Name]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('AntiMalware').Name]",
+                        "publisher": "Microsoft",
+                        "product": "[Concat('OMSGallery/', variables('AntiMalware').GalleryName)]",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('SQLAssessment').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('SQLAssessment').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]",
+                        "[variables('AntiMalware').Name]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('SQLAssessment').Name]",
+                        "publisher": "Microsoft",
+                        "product": "[Concat('OMSGallery/', variables('SQLAssessment').GalleryName)]",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('Security').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('Security').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]",
+                        "[variables('SQLAssessment').Name]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('Security').Name]",
+                        "product": "[Concat('OMSGallery/', variables('Security').GalleryName)]",
+                        "publisher": "Microsoft",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('SecurityCenter').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('SecurityCenter').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]",
+                        "[variables('Security').Name]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('SecurityCenter').Name]",
+                        "product": "[Concat('OMSGallery/', variables('SecurityCenter').GalleryName)]",
+                        "publisher": "Microsoft",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('ChangeTracking').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('ChangeTracking').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]",
+                        "[variables('SecurityCenter').Name]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('ChangeTracking').Name]",
+                        "product": "[Concat('OMSGallery/', variables('ChangeTracking').GalleryName)]",
+                        "publisher": "Microsoft",
+                        "promotionCode": ""
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "location": "[parameters('location')]",
+                    "name": "[variables('KeyVaultAnalytics').Name]",
+                    "type": "Microsoft.OperationsManagement/solutions",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('KeyVaultAnalytics').Name)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]",
+                        "[variables('ChangeTracking').Name]"
+                    ],
+                    "properties": {
+                        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('la-workspace-name'))]"
+                    },
+                    "plan": {
+                        "name": "[variables('KeyVaultAnalytics').Name]",
+                        "product": "[Concat('OMSGallery/', variables('KeyVaultAnalytics').GalleryName)]",
+                        "publisher": "Microsoft",
+                        "promotionCode": ""
+                    }
+                }
+            ]
         },
         {
-            "apiVersion": "2017-03-15-preview",
-            "name": "[variables('oms-workspace-name')]",
-            "location": "[parameters('location')]",
-            "tags": {
-
-            },
-            "type": "Microsoft.OperationalInsights/workspaces",
+            "type": "Microsoft.OperationalInsights/workspaces/providers/locks",
+            "apiVersion": "2016-09-01",
+            "name": "[concat(variables('la-workspace-name'), '/Microsoft.Authorization/logAnalyticsDoNotDelete')]",
+            "dependsOn": [
+                "[variables('la-workspace-name')]"
+            ],
+            "comments": "Resource lock on Log Analytics",
             "properties": {
-                "sku": {
-                    "Name": "[parameters('service-tier')]"
-                },
-                "retention": "[parameters('data-retention')]"
+                "level": "CannotDelete"
             }
         }
     ],
     "outputs": {
-        "oms-id": {
+        "la-resourceId": {
             "type": "string",
-            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('oms-workspace-name'))]"
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('la-workspace-name'))]"
         },
-        "oms-workspace-resourceGroup": {
+        "la-workspace-resourceGroup": {
             "type": "string",
             "value": "[resourceGroup().name]"
         },
-        "oms-workspace-name": {
+        "la-workspace-name": {
             "type": "string",
-            "value": "[variables('oms-workspace-name')]"
+            "value": "[variables('la-workspace-name')]"
         },
-        "oms-workspace-id": {
+        "la-workspace-id": {
             "type": "string",
-            "value": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('oms-workspace-name')), '2015-03-20').customerId]"
+            "value": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('la-workspace-name')), '2015-03-20').customerId]"
         },
-        "oms-primary-shared-key": {
+        "la-primary-shared-key": {
             "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('oms-workspace-name')), '2015-03-20').primarySharedKey]"
-        },
-        "oms-storage-id": {
-            "type": "string",
-            "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]"
-
+            "value": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('la-workspace-name')), '2015-03-20').primarySharedKey]"
         }
     }
 }

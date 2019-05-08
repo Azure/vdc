@@ -34,11 +34,47 @@ class AllResources(BaseIntegrationTestCase):
                 parameters_file)
         self._environment_type = 'shared-services'
 
-    def test_a_shared_services_log_analytics_creation(self):
+    def test_a_shared_services_diagnostic_storage_account_creation(self):
+
+        self.set_resource_to_deploy('diagnostic-storage-account', args)
+        self.upload_scripts(args, False)
+        self.create_vdc_storage(args, False)
+        successful: bool = self.execute_deployment_test(
+            args,
+            self._shared_services_path,
+            self._environment_type)
+
+        self.assertEqual(successful, True)
+
+    def test_b_shared_services_log_analytics_creation(self):
 
         self.set_resource_to_deploy('la', args)
         self.upload_scripts(args, False)
-        self.create_vdc_storage(args, True)
+        self.create_vdc_storage(args, False)
+        successful: bool = self.execute_deployment_test(
+            args,
+            self._shared_services_path,
+            self._environment_type)
+
+        self.assertEqual(successful, True)
+
+    def test_c_shared_services_automation_account_creation(self):
+
+        self.set_resource_to_deploy('automation-account', args)
+        self.upload_scripts(args, False)
+        self.create_vdc_storage(args, False)
+        successful: bool = self.execute_deployment_test(
+            args,
+            self._shared_services_path,
+            self._environment_type)
+
+        self.assertEqual(successful, True)
+
+    def test_d_shared_services_security_center_creation(self):
+
+        self.set_resource_to_deploy('security-center', args)
+        self.upload_scripts(args, False)
+        self.create_vdc_storage(args, False)
         successful: bool = self.execute_deployment_test(
             args,
             self._shared_services_path,
@@ -46,7 +82,7 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
     
-    def test_b_shared_services_nsg_creation(self):
+    def test_e_shared_services_nsg_creation(self):
 
         self.set_resource_to_deploy('nsg', args)
         self.upload_scripts(args, False)
@@ -58,7 +94,7 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
 
-    def test_c_shared_services_network_creation(self):
+    def test_f_shared_services_network_creation(self):
         
         self.set_resource_to_deploy('shared-services-net', args)
         self.upload_scripts(args, False)
@@ -70,7 +106,19 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
 
-    def test_d_shared_services_network_creation(self):
+    def test_g_shared_services_enable_service_endpoint_on_diagnostic_storage_account_creation(self):
+        
+        self.set_resource_to_deploy('enable-service-endpoint-on-diagnostic-storage-account', args)
+        self.upload_scripts(args, False)
+        self.create_vdc_storage(args, False)
+        successful: bool = self.execute_deployment_test(
+            args,
+            self._shared_services_path,
+            self._environment_type)
+
+        self.assertEqual(successful, True)
+
+    def test_h_shared_services_network_creation(self):
         
         self.set_resource_to_deploy('vgw', args)
         self.upload_scripts(args, False)
@@ -82,7 +130,7 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
 
-    def test_e_shared_services_network_creation(self):
+    def test_i_shared_services_network_creation(self):
         
         self.set_resource_to_deploy('vgw-connection', args)
         self.upload_scripts(args, False)
@@ -94,7 +142,7 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
 
-    def test_f_shared_services_network_creation(self):
+    def test_j_shared_services_network_creation(self):
         
         self.set_resource_to_deploy('onprem-vgw-connection', args)
         self.upload_scripts(args, False)
@@ -106,7 +154,7 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
 
-    def test_g_shared_services_network_creation(self):
+    def test_k_shared_services_network_creation(self):
         
         self.set_resource_to_deploy('azure-fw', args)
         self.upload_scripts(args, False)
@@ -118,7 +166,7 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
 
-    def test_h_shared_services_keyvault_creation(self):
+    def test_l_shared_services_keyvault_creation(self):
         
         self.set_resource_to_deploy('kv', args)
         self.upload_scripts(args, False)
@@ -130,21 +178,9 @@ class AllResources(BaseIntegrationTestCase):
 
         self.assertEqual(successful, True)
 
-    def test_i_shared_services_jumpbox_creation(self):
+    def test_m_shared_services_jumpbox_creation(self):
         
         self.set_resource_to_deploy('jb', args)
-        self.upload_scripts(args, False)
-        self.create_vdc_storage(args, False)
-        successful: bool = self.execute_deployment_test(
-            args,
-            self._shared_services_path,
-            self._environment_type)
-
-        self.assertEqual(successful, True)
-
-    def test_j_shared_services_adds_creation(self):
-        
-        self.set_resource_to_deploy('adds', args)
         self.upload_scripts(args, False)
         self.create_vdc_storage(args, False)
         successful: bool = self.execute_deployment_test(

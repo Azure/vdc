@@ -41,6 +41,7 @@ legacy_mgmt_settings_real.py
 vdc_settings_real.py
 app_creds_real.py
 **/archetype.json
+**/archetypes.json
 
 # User-specific files
 *.suo
@@ -74,3 +75,4 @@ src/build
 # Azure deployment credentials
 *.pubxml
 archetypes/aks/archetypes.json
+archetypes/shared-services/archetype.test.devops.json

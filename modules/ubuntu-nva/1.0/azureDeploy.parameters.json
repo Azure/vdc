@@ -21,9 +21,9 @@
     },
     "os-image": {
         "value": {
-            "offer": "UbuntuServer",
             "publisher": "Canonical",
-            "sku": "14.04.5-LTS",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
             "version": "latest"
         }
     },

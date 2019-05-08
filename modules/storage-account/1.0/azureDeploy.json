@@ -1,0 +1,168 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deployment-prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
+        },
+        "lock-for-deletion": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "vnet-id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Shared services Virtual Network resource identifier"
+            }
+        },
+        "enable-network-acls": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Flag to enable network acls to whitelist IPs and subnets"
+            }
+        },
+        "network-acls": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "utcYear": {
+            "type": "string",
+            "defaultValue": "[utcNow('yyyy')]"
+        },
+        "storage-account-name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of the storage account"
+            }
+        },
+        "storage-account-kind": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account kind"
+            },
+            "defaultValue": "StorageV2",
+            "allowedValues": [
+                "Storage",
+                "StorageV2",
+                "BlobStorage", 
+                "FileStorage", 
+                "BlockBlobStorage"
+            ]
+        },
+        "storage-account-sku": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account SKU"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "storage-account-access-tier": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account access tier"
+            },
+            "defaultValue": "Hot",
+            "allowedValues": [
+                "Hot",
+                "Cold"
+            ]
+        }
+    },
+    "variables": {
+        "uniqueString": "[uniqueString(subscription().id, concat(parameters('deployment-prefix'), '-la'))]",
+        "diagnostic-storageAccount-prefix": "[concat(replace(parameters('deployment-prefix'), '-', ''), 'diag')]",
+        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]",
+        "storage-account-name": "[if(empty(parameters('storage-account-name')), variables('diagnostic-storageAccount-name'), parameters('storage-account-name'))]",
+        "accountSasProperties": {
+            "signedServices": "bt",
+            "signedPermission": "acuw",
+            "signedExpiry": "[concat(string(add(int(parameters('utcYear')), 100)), '-12-31T23:59:59Z')]",
+            "signedResourceTypes": "co",
+            "signedProtocol": "https"
+        },
+        "virtualNetwork-rules": {
+            "copy": [
+                {
+                    "name": "virtualNetworkRules",
+                    "count": "[if(not(parameters('enable-network-acls')), 1, if(equals(length(parameters('network-acls').virtualNetworkRules), 0), 1, length(parameters('network-acls').virtualNetworkRules)))]",
+                    "input": {
+                        "id": "[if(not(parameters('enable-network-acls')), json('null'), if(equals(length(parameters('network-acls').virtualNetworkRules), 0), json('null'), concat(parameters('vnet-id'), '/subnets/', parameters('network-acls').virtualNetworkRules[copyIndex('virtualNetworkRules')].subnet)))]"
+                    }
+                }
+            ]
+        },
+        "networkAcls": {
+            "bypass": "[if(not(parameters('enable-network-acls')), 'AzureServices', parameters('network-acls').bypass)]",
+            "defaultAction": "[if(not(parameters('enable-network-acls')), 'Deny', parameters('network-acls').defaultAction)]",
+            "virtualNetworkRules": "[if(not(parameters('enable-network-acls')), json('null'), variables('virtualNetwork-rules').virtualNetworkRules)]",
+            "ipRules": "[if(not(parameters('enable-network-acls')), json('null'), if(equals(length(parameters('network-acls').ipRules), 0), json('null'), parameters('network-acls').ipRules))]"
+        }
+    },
+    "resources": [
+        {
+            "comments": "----DIAGNOSTICS STORAGE ACCOUNT-----",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storage-account-name')]",
+            "apiVersion": "2018-11-01",
+            "location": "[resourceGroup().location]",
+            "kind": "[parameters('storage-account-kind')]",
+            "sku": {
+                "name": "[parameters('storage-account-sku')]"
+            },
+            "tags": {
+                "layer": "management"
+            },
+            "properties": {
+                "encryption": {
+                    "keySource": "Microsoft.Storage",
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        },
+                        "file": "[if(or(equals(parameters('storage-account-kind'), 'StorageV2'), equals(parameters('storage-account-kind'), 'Storage')), json('{\"enabled\": true}'), json('null'))]"
+                    }
+                },
+                "accessTier": "[parameters('storage-account-access-tier')]",
+                "supportsHttpsTrafficOnly": true,
+                "networkAcls": "[if(empty(parameters('network-acls')), json('null'), variables('networkAcls'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/providers/locks",
+            "apiVersion": "2016-09-01",
+            "condition": "[parameters('lock-for-deletion')]",
+            "name": "[concat(variables('storage-account-name'), '/Microsoft.Authorization/storageDoNotDelete')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storage-account-name'))]"
+            ],
+            "comments": "Resource lock on diagnostic storage account",
+            "properties": {
+                "level": "CannotDelete"
+            }
+        }
+    ],
+    "outputs": {
+        "storageAccount-resourceId":{
+            "type": "string",
+            "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('storage-account-name'))]"
+        },
+        "storageAccount-name": {
+            "type": "string",
+            "value": "[variables('storage-account-name')]"
+        },
+        "storageAccount-sasToken": {
+            "type": "string",
+            "value": "[listAccountSas(variables('storage-account-name'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
+        },
+        "storageAccount-accessKey": {
+            "type": "string",
+            "value": "[listKeys(variables('storage-account-name'),'2015-06-15').key1]"
+        }
+    }
+}

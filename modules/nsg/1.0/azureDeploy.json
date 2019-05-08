@@ -5,75 +5,47 @@
         "deployment-prefix": {
             "type": "string",
             "metadata": {
-                 "description": "Deployment prefix. E.g. Organization-DeploymentType"
-             }
+                "description": "Deployment prefix. E.g. Organization-DeploymentType"
+            }
         },
-        "deployment-name": {
+        "storageAccount-resourceId": {
             "type": "string",
             "metadata": {
-                 "description": "Deployment name"
-             }
+                "description": "Diagnostic Storage Account resource identifier"
+            }
         },
         "network-security-groups": {
             "type": "array",
             "metadata": {
-                 "description": "Array containing a list of network security group objects"
-             }
+                "description": "Array containing a list of network security group objects"
+            }
         },
         "application-security-groups": {
             "type": "array",
             "metadata": {
-                 "description": "Array containing a list of application security group objects"
-             }
-        },
-        "oms-id":{  
-            "type":"string",
-            "metadata":{  
-              "description": "ResourceId of the OMS workspace used for diagnostic log integration."
+                "description": "Array containing a list of application security group objects"
             }
         },
-        "data-retention":{  
-            "type":"int",
-            "defaultValue":30,
-            "minValue":7,
-            "maxValue":730,
-            "metadata":{  
-              "description":"Number of days data will be retained for."
+        "la-resourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "ResourceId of the OMS workspace used for diagnostic log integration."
+            }
+        },
+        "logs-retention-in-days": {
+            "type": "int",
+            "defaultValue": 365,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "description": "Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely."
             }
         }
     },
     "variables": {
-        "empty-array": [],
-        "uniqueString": "[uniqueString(parameters('deployment-name'), subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix": "[concat(replace(parameters('deployment-name'), '-', ''), 'diag')]",
-        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]"
+        "empty-array": []
     },
     "resources": [
-        {
-            "comments": "----DIAGNOSTICS STORAGE ACCOUNT-----",
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
-            "kind": "Storage",
-            "sku": {
-              "name": "Standard_LRS"
-            },
-            "tags": {
-              "layer": "management"
-            },
-            "properties": {
-              "mode": "Incremental",
-              "encryption": {
-                "keySource": "Microsoft.Storage",
-                "services": {
-                  "blob": {
-                    "enabled": true
-                  }
-                }
-              }
-            }
-        },
         {
             "apiVersion": "2017-10-01",
             "type": "Microsoft.Network/applicationSecurityGroups",
@@ -96,8 +68,7 @@
                 "name": "nsgLoop"
             },
             "dependsOn": [
-                "asgLoop",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]"
+                "asgLoop"
             ],
             "properties": {
                 "copy": [
@@ -127,38 +98,37 @@
             },
             "resources": [
                 {
-                  "type": "providers/diagnosticSettings",
-                  "name": "Microsoft.Insights/service",
-                  "dependsOn": [
-                    "[concat(parameters('deployment-prefix'), '-', parameters('network-security-groups')[copyIndex()].name, '-nsg')]"
-                  ],
-                  "apiVersion": "2015-07-01",
-                  "properties": {
-                    "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]",
-                    "workspaceId": "[parameters('oms-id')]",
-                    "logs": [
-                      {
-                        "category": "NetworkSecurityGroupEvent",
-                        "enabled": true,
-                        "retentionPolicy": {
-                          "days": "[parameters('data-retention')]",
-                          "enabled": true
-                        }
-                      },
-                      {
-                        "category": "NetworkSecurityGroupRuleCounter",
-                        "enabled": true,
-                        "retentionPolicy": {
-                          "days": "[parameters('data-retention')]",
-                          "enabled": false
-                        }
-                      }
-                    ]
-                  }
+                    "type": "providers/diagnosticSettings",
+                    "name": "Microsoft.Insights/service",
+                    "dependsOn": [
+                        "[concat(parameters('deployment-prefix'), '-', parameters('network-security-groups')[copyIndex()].name, '-nsg')]"
+                    ],
+                    "apiVersion": "2015-07-01",
+                    "properties": {
+                        "storageAccountId": "[parameters('storageAccount-resourceId')]",
+                        "workspaceId": "[parameters('la-resourceId')]",
+                        "logs": [
+                            {
+                                "category": "NetworkSecurityGroupEvent",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logs-retention-in-days')]",
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "NetworkSecurityGroupRuleCounter",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logs-retention-in-days')]",
+                                    "enabled": true
+                                }
+                            }
+                        ]
+                    }
                 }
             ]
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }

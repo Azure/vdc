@@ -17,12 +17,10 @@
         "shared-services": {
             "subscription-id": "00000000-0000-0000-0000-000000000000",
             "deployment-name": "ssvcs",
-            "adds": {
-                "vm-ip-address-start": "10.4.0.46"
-            },
             "active-directory": {
                 "domain-admin-user": "contoso",
-                "domain-name": "contoso.com"
+                "domain-name": "contoso.com",
+                "vm-ip-address-start": "10.4.0.46"
             },
             "network": {
                 "network-virtual-appliance": {
@@ -38,8 +36,8 @@
         },
         "workload": {
             "subscription-id": "00000000-0000-0000-0000-000000000000",       
-            "deployment-name": "iaas",
-            "region":"Central US",
+            "deployment-name": "ntier",
+            "region":"West US 2",
             "vm-configuration": {
                 "local-admin-user": "admin-user",
                 "enable-encryption": false,
@@ -60,6 +58,9 @@
             "log-analytics": {
                 "region": "West US 2"
             },
+            "automation-account": {
+                "region": "West US 2"
+            },
             "network": {
                 "enable-ddos-protection": false
             }
@@ -67,13 +68,16 @@
     },
     "orchestration": {
         "modules-to-deploy":[
+            "diagnostic-storage-account",
             "la",
+            "automation-account",
+            "security-center",
             "nsg",
             "workload-net",
+            "enable-service-endpoint-on-diagnostic-storage-account",
             "kv",
             "vmapp-web-lb",
             "vmapp-biz-lb",
-            "app-gateway",
             "sqlserver-alwayson"
         ],
         "module-validation-dependencies": [
@@ -83,6 +87,58 @@
             "import-modules": "file(modules)",
             "custom-scripts": "file(scripts)",
             "modules": [
+                {
+                    "module": "diagnostic-storage-account",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
+                    "source": {
+                        "version": "1.0",
+                        "template-path": "file(modules/storage-account/1.0)",
+                        "parameters-path": "file(modules/storage-account/1.0)"
+                    },
+                    "dependencies": []
+                },
+                {
+                    "module": "la",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "diagnostic-storage-account"
+                    ]
+                },
+                {
+                    "module": "automation-account",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la",
+                        "diagnostic-storage-account"
+                    ]
+                },
+                {
+                    "module": "security-center",
+                    "create-resource-group": false,
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la"
+                    ]
+                },
+                {
+                    "module": "nsg",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
+                    "source": {
+                        "version": "1.0"
+                    },
+                    "dependencies": [
+                        "la",
+                        "diagnostic-storage-account"
+                    ]
+                },
                 {
                     "module": "workload-net",
                     "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
@@ -94,13 +150,16 @@
                     ]
                 },
                 {
-                    "module": "nsg",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
+                    "module": "enable-service-endpoint-on-diagnostic-storage-account",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
                     "source": {
-                        "version": "1.0"
+                        "version": "1.0",
+                        "template-path": "file(modules/storage-account/1.0)",
+                        "parameters-path": "file(modules/storage-account/1.0/azureDeploy.enable-serviceEndpoint.parameters.json)"
                     },
                     "dependencies": [
-                        "la"
+                        "workload-net",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -110,7 +169,9 @@
                         "version": "1.0"
                     },
                     "dependencies": [
-                        "la"
+                        "workload-net",
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -122,7 +183,8 @@
                     "dependencies": [
                         "kv",
                         "workload-net",
-                        "la"
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -134,7 +196,8 @@
                     "dependencies": [
                         "kv",
                         "workload-net",
-                        "la"
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -148,7 +211,8 @@
                     "dependencies": [
                         "kv",
                         "workload-net",
-                        "la"
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -162,7 +226,8 @@
                     "dependencies": [
                         "kv",
                         "workload-net",
-                        "la"
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -174,7 +239,8 @@
                     "dependencies": [
                         "kv",
                         "workload-net",
-                        "la"
+                        "la",
+                        "diagnostic-storage-account"
                     ]
                 },
                 {
@@ -202,10 +268,8 @@
     "shared-services":{
         "subscription-id": "${general.shared-services.subscription-id}",
         "deployment-name": "${general.shared-services.deployment-name}",
-        "adds": {
-            "vm-ip-address-start": "${general.shared-services.adds.vm-ip-address-start}"
-        },
         "active-directory": {
+            "vm-ip-address-start": "${general.shared-services.active-directory.vm-ip-address-start}",
             "domain-admin-user": "${general.shared-services.active-directory.domain-admin-user}",
             "domain-name": "${general.shared-services.active-directory.domain-name}"
         },
@@ -258,7 +322,34 @@
         "log-analytics": {
             "region": "${general.workload.log-analytics.region}"
         },
-        "keyvault": "${general.workload.keyvault}",
+        "automation-account": {
+            "region": "${general.workload.automation-account.region}"
+        },
+        "keyvault": {
+            "secrets": "${general.workload.keyvault.secrets}",
+            "network-acls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${workload.network.subnets[0].name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
+        "storage-account": {
+            "network-acls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${workload.network.subnets[0].name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
         "network": {
             "address-prefix": "10.4.2.0/24",
             "enable-ddos-protection": "${general.workload.network.enable-ddos-protection}",
@@ -496,11 +587,25 @@
                     "address-prefix": "10.4.2.0/27",
                     "network-security-group": "${workload.network.network-security-groups[0].name}",
                     "user-defined-route": "${workload.network.user-defined-routes[0].name}",
-                    "service-endpoints": []
+                    "service-endpoints": [
+                        {
+                            "service": "Microsoft.EventHub"
+                        },
+                        {
+                            "service": "Microsoft.Sql"
+                        },
+                        {
+                            "service": "Microsoft.KeyVault"
+                        },
+                        {
+                            "service": "Microsoft.Storage"
+                        }
+                    ]
                 }
             ],
             "dns-servers": [
-                "${shared-services.adds.vm-ip-address-start}"
+                "${shared-services.active-directory.vm-ip-address-start}",
+                "next-ip(${shared-services.active-directory.vm-ip-address-start}, 1)"
             ]
         }
     }

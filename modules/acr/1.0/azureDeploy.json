@@ -36,10 +36,12 @@
             ]
         }
     },
-    "variables": {},
+    "variables": {
+      "acr-name": "[replace(parameters('acr-name'), '-', '')]"
+    },
     "resources": [
         {
-            "name": "[parameters('acr-name')]",
+            "name": "[variables('acr-name')]",
             "type": "Microsoft.ContainerRegistry/registries",
             "apiVersion": "2017-10-01",
             "location": "[parameters('location')]",
@@ -58,7 +60,7 @@
     ],
     "outputs": {
         "acr-login-server": {
-            "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries',parameters('acr-name')),'2017-10-01').loginServer]",
+            "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries',variables('acr-name')),'2017-10-01').loginServer]",
             "type": "string"
         }
     }

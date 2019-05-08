@@ -215,7 +215,8 @@ class ResourceDeployment(object):
 
             # If validation process invoked the module deployment, then validation_mode_on will be True.
             # If true, do not create policies at the subscription level
-            if not self._validation_mode_on:
+            if not self._validation_mode_on and \
+               not self._from_integration_test:
                 self._logger.info('***** creating policies at subscription level *****')
 
                 # Create and assign subscription policies
@@ -337,7 +338,6 @@ class ResourceDeployment(object):
         # If module is of type Bash or Powershell,
         # execute custom script
         if  module_found is not None and\
-            module_found._type != '' and\
             module_found._type is not None:
             
             self._logger\
@@ -477,45 +477,35 @@ class ResourceDeployment(object):
             .info('***** creating policies for module: {} *****'.format(
             module_to_deploy))
 
-        # Let's apply policies at the resource group level
-        self.create_policies(
-            all_modules=all_modules,
-            module_name=module_to_deploy, 
-            resource_group_name=resource_group_to_deploy,
-            is_subscription_policy=False)
+        if not self._from_integration_test:
+            # Let's apply policies at the resource group level
+            self.create_policies(
+                all_modules=all_modules,
+                module_name=module_to_deploy, 
+                resource_group_name=resource_group_to_deploy,
+                is_subscription_policy=False)
 
-        self._logger.info('***** policy creation completed successfully *****')
+            self._logger.info('***** policy creation completed successfully *****')
 
         self._logger.info('***** executing {} module deployment *****'.format(
             module_to_deploy.upper()))
 
-        deployment_name = '{}-deployment-{}'.format(
-            self._deployment_prefix,
-            module_to_deploy)
-
         # If we are not running integration tests, then let's
         # create unique deployment names
         if not self._from_integration_test:
-            
-            current_milliseconds = \
-                helper.get_current_time_milli()
-
-            milliseconds_length = \
-                len(str(current_milliseconds))
-
-            # Max length is 60 chars
-            deployment_name_max_length = \
-                60 - milliseconds_length
+            import uuid
+            deployment_name = str(uuid.uuid4())
+        else:
+            deployment_name = \
+                '{}-deployment-{}'.format(
+                    self._deployment_prefix,
+                    module_to_deploy)
+            deployment_name_max_length = 50
 
             if len(deployment_name) > deployment_name_max_length:
-                # We do -1 to accomodate the hyphen character
                 deployment_name = \
-                    deployment_name[:deployment_name_max_length - 1]
-
-            deployment_name = '{}-{}'.format(
-                deployment_name,
-                current_milliseconds)
-            
+                    deployment_name[:deployment_name_max_length]
+        
         # Execute the deployment
         deployment_result = \
             self._resource_management_integration_service\
@@ -608,7 +598,9 @@ class ResourceDeployment(object):
                 self.create_default_resource_group_name(
                     dependent_module_found._module)
         elif module_found is not None and \
-             not module_found._create_resource_group:
+             not module_found._create_resource_group and\
+             module_found._dependencies is not None and\
+             len(module_found._dependencies) > 0:
             
             # Let's use the resource group name of the first dependency found.
             # This is the case when the resource specifies create-resource-group = false.

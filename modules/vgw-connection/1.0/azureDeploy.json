@@ -2,46 +2,52 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "on-premises-gateway-name": {
+        "local-gateway-name": {
             "type": "string",
             "metadata": {
-                 "description": "Specifies the On-premises gateway name"
+                 "description": "Specifies the local Virtual Network Gateway name"
              }
          },
-         "on-premises-subscription-id": {
+         "local-subscription-id": {
             "type": "string",
             "metadata": {
-                 "description": "On-premises subscription id, this value is used to create a VPN connection between the Shared services and on-premises"
+                 "description": "Local subscription id, this value is used to create a VPN connection between a local and remote Virtual Network Gateway"
              }
         },
-        "on-premises-vnet-rg": {
+        "local-vnet-resourceGroup": {
             "type": "string",
             "metadata": {
-                 "description": "On-premises resource group that contains the Virtual Network, this value is used to create a VPN connection between the Shared services and on-premises"
+                 "description": "Local resource group that contains the Virtual Network, this value is used to create a local and remote Virtual Network Gateway"
              }
         },
         "vpn-shared-key": {
             "type": "string",
             "metadata": {
-                 "description": "Specifies a VPN shared key. The same value has to be specified in On-premises and Azure"
+                 "description": "Specifies a VPN shared key. The same value has to be specified on both Virtual Network Gateways"
              }
         },
-        "shared-services-gateway-id": {
+        "local-gateway-location": {
             "type": "string",
             "metadata": {
-                 "description": "Shared services Gateway Id"
+                 "description": "Specifies the remote Virtual Network Gateway location"
              }
-        },
-        "vnet-resourceGroup": {
+         },
+        "remote-gateway-name": {
             "type": "string",
             "metadata": {
-                "description": "Shared services Virtual Network resource group name"
+                 "description": "Specifies the remote Virtual Network Gateway"
+             }
+         },
+        "remote-vnet-resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Remote Virtual Network resource group name"
             }
         },
-        "subscription-id": {
+        "remote-subscription-id": {
             "type": "string",
             "metadata": {
-                 "description": "Subscription where to provision the Virtual Network Gateway"
+                 "description": "Remote Subscription Id"
              }
         },
         "enable-bgp": {
@@ -51,23 +57,24 @@
                 "description": "Value to specify if BGP is enabled or not"
             }
         },
-        "deployment-name": {
+        "remote-connection-name": {
             "type": "string",
             "metadata": {
-                 "description": "Shared services deployment name"
+                 "description": "Remote connection name"
              }
         }
     },
     "variables": {
-        "on-premises-gateway-resource-id": "[resourceId(parameters('on-premises-subscription-id'), parameters('on-premises-vnet-rg') ,'Microsoft.Network/virtualNetworkGateways', parameters('on-premises-gateway-name'))]"
+        "local-gateway-resource-id": "[resourceId(parameters('local-subscription-id'), parameters('local-vnet-resourceGroup') ,'Microsoft.Network/virtualNetworkGateways', parameters('local-gateway-name'))]",
+        "remote-gateway-resource-id": "[resourceId(parameters('remote-subscription-id'), parameters('remote-vnet-resourceGroup') ,'Microsoft.Network/virtualNetworkGateways', parameters('remote-gateway-name'))]"
     },
     "resources": [
         {
             "apiVersion": "2017-05-10",
             "name": "nestedDeployVGWConnection",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('vnet-resourceGroup')]",
-            "subscriptionId": "[parameters('subscription-id')]",
+            "resourceGroup": "[parameters('local-vnet-resourceGroup')]",
+            "subscriptionId": "[parameters('local-subscription-id')]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -77,19 +84,19 @@
                     "variables": {},
                     "resources": [
                         {
-                            "name": "[concat(parameters('deployment-name'), '-to-on-premises')]",
+                            "name": "[concat('local-to-', parameters('remote-connection-name'))]",
                             "type": "Microsoft.Network/connections",
                             "apiVersion": "2017-10-01",
-                            "location": "[resourceGroup().location]",
+                            "location": "[parameters('local-gateway-location')]",
                             "tags": {
-                                "displayName": "[concat(parameters('deployment-name'), '-to-on-premises')]"
+                                "connectionName": "[concat('local-to-', parameters('remote-connection-name'))]"
                             },
                             "properties":{
                                 "virtualNetworkGateway1":{
-                                    "id": "[parameters('shared-services-gateway-id')]"
+                                    "id": "[variables('local-gateway-resource-id')]"                                    
                                 },
                                 "virtualNetworkGateway2":{
-                                    "id": "[variables('on-premises-gateway-resource-id')]"
+                                    "id": "[variables('remote-gateway-resource-id')]"
                                 },
                                 "enableBgp": "[parameters('enable-bgp')]",
                                 "connectionType": "VNet2VNet",

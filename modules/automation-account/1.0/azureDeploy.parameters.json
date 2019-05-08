@@ -1,0 +1,14 @@
+{
+    "deployment-prefix": {
+        "value": "${general.organization-name}-${ENV:ENVIRONMENT-TYPE.deployment-name}"
+    },
+    "location": {
+        "value": "${ENV:ENVIRONMENT-TYPE.automation-account.region}"
+    },
+    "um-startdate": {
+        "value": "2019/03/29 7:00 PM"
+    },
+    "um-timezone": {
+        "value": "America/Chicago"
+    }
+}

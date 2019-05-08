@@ -32,23 +32,21 @@
                 "description": "Specifies the shared services UDR"
             }
         },
-        "oms-workspace-resourceGroup": {
+        "storageAccount-resourceId": {
             "type": "string",
-            "minLength": 1,
             "metadata": {
-                "description": "Name of the Resource Group housing the OMS workspace."
+                "description": "Diagnostic Storage Account resource identifier"
             }
         },
-        "oms-workspace-name": {
+        "la-resourceId": {
             "type": "string",
-            "minLength": 1,
             "metadata": {
-                "description": "Name of the OMS workspace used for diagnostic log integration."
+                "description": "OMS workspace resource identifier"
             }
         },
         "logs-retention-in-days": {
             "type": "int",
-            "defaultValue": 0,
+            "defaultValue": 365,
             "minValue": 0,
             "maxValue": 365,
             "metadata": {
@@ -61,35 +59,9 @@
         "azure-fw-pip-name": "[concat(parameters('deployment-prefix'), '-az-fw-pip')]",
         "azure-fw-pip-id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('azure-fw-pip-name'))]",
         "azure-fw-name": "[concat(parameters('deployment-prefix'), '-az-fw')]",
-        "shared-services-udr-name": "[concat(parameters('deployment-prefix'), '-', parameters('shared-services-udr-name'), '-udr')]",
-        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix": "[concat(replace(parameters('deployment-prefix'), '-', ''), 'azfwdiag')]",
-        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]"
+        "shared-services-udr-name": "[concat(parameters('deployment-prefix'), '-', parameters('shared-services-udr-name'), '-udr')]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "tags": {
-                "displayName": "Azure Firewall Diagnostic Storage Account')"
-            },
-            "properties": {
-                "encryption": {
-                    "keySource": "Microsoft.Storage",
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        }
-                    }
-                }
-            }
-        },
         {
             "name": "[variables('azure-fw-pip-name')]",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -209,7 +181,17 @@
                                         "api.snapcraft.io",
                                         "api.rubygems.org",
                                         "*.powershellgallery.com",
-                                        "powershellgallery.com"
+                                        "powershellgallery.com", 
+                                        "*.msecnd.net",
+                                        "msecnd.net",
+                                        "*.nuget.org",
+                                        "nuget.org",
+                                        "*.azureprofilerfrontdoor.cloudapp.net",
+                                        "azureprofilerfrontdoor.cloudapp.net",
+                                        "*.download.opensuse.org",
+                                        "download.opensuse.org",
+                                        "*.monitoring.azure.com",
+                                        "monitoring.azure.com"
                                     ]
                                 }
                             ]
@@ -240,6 +222,21 @@
                                     "protocols": [
                                         "Any"
                                     ]
+                                },
+                                {
+                                    "name": "allow-windows-activation-server",
+                                    "sourceAddresses": [
+                                        "*"
+                                    ],
+                                    "destinationAddresses": [
+                                        "23.102.135.246"
+                                    ],
+                                    "destinationPorts": [
+                                        "1688"
+                                    ],
+                                    "protocols": [
+                                        "TCP"
+                                    ]
                                 }
                             ]
                         }
@@ -253,12 +250,11 @@
                     "apiVersion": "2016-09-01",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[concat('Microsoft.Network/azureFirewalls/', variables('azure-fw-name'))]",
-                        "[concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]"
+                        "[concat('Microsoft.Network/azureFirewalls/', variables('azure-fw-name'))]"
                     ],
                     "properties": {
-                        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]",
-                        "workspaceId": "[resourceId(parameters('oms-workspace-resourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('oms-workspace-name'))]",
+                        "storageAccountId": "[parameters('storageAccount-resourceId')]",
+                        "workspaceId": "[parameters('la-resourceId')]",
                         "logs": [
                             {
                                 "category": "AzureFirewallApplicationRule",
@@ -274,6 +270,16 @@
                                 "retentionPolicy": {
                                     "enabled": true,
                                     "days": "[parameters('logs-retention-in-days')]"
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logs-retention-in-days')]",
+                                    "enabled": true
                                 }
                             }
                         ]

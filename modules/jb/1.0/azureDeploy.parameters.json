@@ -34,9 +34,9 @@
     },
     "linux-os-image": {
         "value": {
-            "offer": "UbuntuServer",
             "publisher": "Canonical",
-            "sku": "16.04-LTS",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
             "version": "latest"
         }
     },
@@ -47,10 +47,7 @@
         "value": 1
     },
     "linux-virtualMachine-size": {
-        "value": "Standard_DS2_v2"
-    },
-    "linux-sequence-version": {
-        "value": "a37ae7a2115d"
+        "value": "Standard_D2s_v3"
     },
     "shared-services-subnet-name": {
         "value": "${shared-services.network.subnets[0].name}"

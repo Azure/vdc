@@ -104,7 +104,8 @@
                             "properties": {
                                 "addressPrefix": "[parameters('subnets')[copyIndex('subnets')]['address-prefix']]",
                                 "networkSecurityGroup": "[if(equals(parameters('subnets')[copyIndex('subnets')]['network-security-group'], ''), json('null'), json(concat('{\"id\": \"', resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('deployment-prefix'), '-', parameters('subnets')[copyIndex('subnets')]['network-security-group'], '-nsg')), '\"}')))]",
-                                "routeTable": "[if(equals(parameters('subnets')[copyIndex('subnets')]['user-defined-route'], ''), json('null'), json(concat('{\"id\": \"', resourceId('Microsoft.Network/routeTables', concat(parameters('deployment-prefix'), '-', parameters('subnets')[copyIndex('subnets')]['user-defined-route'], '-udr')), '\"}')))]"
+                                "routeTable": "[if(equals(parameters('subnets')[copyIndex('subnets')]['user-defined-route'], ''), json('null'), json(concat('{\"id\": \"', resourceId('Microsoft.Network/routeTables', concat(parameters('deployment-prefix'), '-', parameters('subnets')[copyIndex('subnets')]['user-defined-route'], '-udr')), '\"}')))]",
+                                "serviceEndpoints": "[if(equals(length(parameters('subnets')[copyIndex('subnets')]['service-endpoints']), 0), json('null'), parameters('subnets')[copyIndex('subnets')]['service-endpoints'])]"
                             }
                         }
                     }

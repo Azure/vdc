@@ -16,7 +16,7 @@
         },
         "logs-retention-in-days": {
             "type": "int",
-            "defaultValue": 0,
+            "defaultValue": 365,
             "minValue": 0,
             "maxValue": 365,
             "metadata": {
@@ -66,18 +66,16 @@
                 "description": "Specifies the SKU for the vault"
             }
         },
-        "oms-workspace-resourceGroup": {
+        "la-resourceId": {
             "type": "string",
-            "minLength": 1,
             "metadata": {
-                "description": "Name of the Resource Group housing the OMS workspace."
+                "description": "Log Analytics workspace resource identifier"
             }
         },
-        "oms-workspace-name": {
+        "storageAccount-resourceId": {
             "type": "string",
-            "minLength": 1,
             "metadata": {
-                "description": "Name of the OMS workspace used for diagnostic log integration."
+                "description": "Diagnostic storage account resource identifier"
             }
         },
         "secrets-object": {
@@ -86,42 +84,41 @@
             "metadata": {
                 "description": "all secrets {\"secretName\":\"\",\"secretValue\":\"\"} wrapped in a secure object"
             }
+        },
+        "network-acls": {
+            "type": "object",
+            "metadata": {
+                "description": "Service endpoint object information"
+            }
+        },
+        "vnet-id": {
+            "type": "string",
+            "metadata": {
+                "description": "Shared services Virtual Network resource identifier"
+            }
         }
     },
     "variables": {
+        "deploy-service-endpoint": "[not(empty(parameters('network-acls')))]",
         "key-vault-name": "[concat(parameters('deployment-prefix'), '-kv')]",
-        "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix": "[concat(replace(parameters('deployment-prefix'), '-', ''), 'kvdiag')]",
-        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]"
+        "virtualNetwork-rules": {
+            "copy": [
+                {
+                    "name": "virtualNetworkRules",
+                    "count": "[if(equals(variables('deploy-service-endpoint'), bool('false')), 1, if(equals(length(parameters('network-acls').virtualNetworkRules), 0), 1, length(parameters('network-acls').virtualNetworkRules)))]",
+                    "input": {
+                        "id": "[if(equals(variables('deploy-service-endpoint'), bool('false')), json('null'), if(equals(length(parameters('network-acls').virtualNetworkRules), 0), json('null'), concat(parameters('vnet-id'), '/subnets/', parameters('network-acls').virtualNetworkRules[copyIndex('virtualNetworkRules')].subnet)))]"
+                    }
+                }
+            ]
+        },
+        "empty-array": []
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "tags": {
-                "displayName": "Key Vault Diagnostic Storage Account')"
-            },
-            "properties": {
-                "encryption": {
-                    "keySource": "Microsoft.Storage",
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        }
-                    }
-                }
-            }
-        },
-        {
             "type": "Microsoft.KeyVault/vaults",
             "name": "[variables('key-vault-name')]",
-            "apiVersion": "2016-10-01",
+            "apiVersion": "2018-02-14",
             "location": "[resourceGroup().location]",
             "tags": {
                 "displayName": "[variables('key-vault-name')]"
@@ -137,10 +134,10 @@
                     "family": "A"
                 },
                 "networkAcls": {
-                    "value": {
-                        "defaultAction": "Allow",
-                        "bypass": "AzureServices"
-                    }
+                    "bypass": "[if(not(variables('deploy-service-endpoint')), json('null'), parameters('network-acls').bypass)]",
+                    "defaultAction": "[if(not(variables('deploy-service-endpoint')), json('null'), parameters('network-acls').defaultAction)]",
+                    "virtualNetworkRules": "[if(not(variables('deploy-service-endpoint')), json('null'), if(equals(length(parameters('network-acls').virtualNetworkRules), 0), variables('empty-array'), variables('virtualNetwork-rules').virtualNetworkRules))]",
+                    "ipRules": "[if(not(variables('deploy-service-endpoint')), json('null'), if(equals(length(parameters('network-acls').ipRules), 0), variables('empty-array'), parameters('network-acls').ipRules))]"
                 }
             },
             "resources": [
@@ -150,12 +147,11 @@
                     "apiVersion": "2016-09-01",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]",
-                        "[concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]"
+                        "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]"
                     ],
                     "properties": {
-                        "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagnostic-storageAccount-name'))]",
-                        "workspaceId": "[resourceId(parameters('oms-workspace-resourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('oms-workspace-name'))]",
+                        "storageAccountId": "[parameters('storageAccount-resourceId')]",
+                        "workspaceId": "[parameters('la-resourceId')]",
                         "logs": [
                             {
                                 "category": "AuditEvent",
@@ -163,6 +159,16 @@
                                 "retentionPolicy": {
                                     "enabled": true,
                                     "days": "[parameters('logs-retention-in-days')]"
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logs-retention-in-days')]",
+                                    "enabled": true
                                 }
                             }
                         ]
@@ -178,18 +184,6 @@
                 "[concat('Microsoft.KeyVault/vaults/', variables('key-vault-name'))]"
             ],
             "comments": "Resource lock on key vault",
-            "properties": {
-                "level": "CannotDelete"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/providers/locks",
-            "apiVersion": "2016-09-01",
-            "name": "[concat(variables('diagnostic-storageAccount-name'), '/Microsoft.Authorization/storageDoNotDelete')]",
-            "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name'))]"
-            ],
-            "comments": "Resource lock on key vault diagnostic storage account",
             "properties": {
                 "level": "CannotDelete"
             }

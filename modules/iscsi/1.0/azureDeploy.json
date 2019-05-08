@@ -8,6 +8,12 @@
                  "description": ""
              }
         },
+        "storageAccount-name": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage account used to store diagnostic information"
+            }
+        },
         "output-params-storage-key":{  
             "type":"string",
             "metadata":{  
@@ -138,8 +144,6 @@
         "resource-prefix": "[concat(parameters('deployment-prefix'), '-', parameters('extension-name'))]",
         "virtualMachine-name-prefix": "[concat(variables('resource-prefix'), '-vm')]",
         "uniqueString": "[uniqueString(subscription().id, resourceGroup().id)]",
-        "diagnostic-storageAccount-prefix": "[concat(parameters('extension-name'), 'diag')]",
-        "diagnostic-storageAccount-name": "[toLower(substring(replace(concat(variables('diagnostic-storageAccount-prefix'), variables('uniqueString'), variables('uniqueString')), '-', ''), 0, 23) )]",
         "networkWatcher-extension-name": "NetworkWatcher",
         "iscsi-install-extension-name": "ISCSISetup",
         "images": {
@@ -203,36 +207,12 @@
             }
         },
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('diagnostic-storageAccount-name')]",
-            "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "tags": {
-                "displayName": "Management Diagnostic Storage Account"
-            },
-            "properties": {
-                "encryption": {
-                    "keySource": "Microsoft.Storage",
-                    "services": {
-                        "blob": {
-                            "enabled": true
-                        }
-                    }
-                }
-            }
-        },
-        {
             "apiVersion": "2017-12-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(variables('virtualMachine-name-prefix'), '1')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), '1', '-nic'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts',variables('diagnostic-storageAccount-name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('virtualMachine-name-prefix'), '1', '-nic'))]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -265,7 +245,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('diagnostic-storageAccount-name')), '2016-12-01').primaryEndpoints.blob)]"
+                        "storageUri": "[concat('https://', parameters('storageAccount-name'), '.blob.core.windows.net/')]"
                     }
                 }
             },

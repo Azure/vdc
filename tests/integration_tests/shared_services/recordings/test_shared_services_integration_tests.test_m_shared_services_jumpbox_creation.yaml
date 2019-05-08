@@ -1,0 +1,569 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 06:17:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        azure-mgmt-storage/2.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: POST
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/vdc-storage-rg/providers/Microsoft.Storage/storageAccounts/storage/listKeys?api-version=2018-02-01
+  response:
+    body:
+      string: '{"keys":[{"keyName":"key1","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg==","permissions":"FULL"},{"keyName":"key2","value":"BARXTAxfMvR7WzSsdrD8Lt+60pbIP0lhpgw7aX6Hv+91UCXTxWc2Ekq2XZzwM50RfVbEPNh6nFCnp56bDjwpJg==","permissions":"FULL"}]}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '288'
+      content-type:
+      - application/json
+      date:
+      - Fri, 03 May 2019 06:17:55 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 06:17:55 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/kv/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"kv-id": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-kv-rg/providers/Microsoft.KeyVault/vaults/cntso-ssvcs-kv"},
+        "kv-name": { "value": "cntso-ssvcs-kv"}, "kv-resourceGroup": { "value": "cntso-ssvcs-kv-rg"},
+        "kv-uri": { "value": "https://cntso-ssvcs-kv.vault.azure.net/"}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '369'
+      content-range:
+      - bytes 0-368/369
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 06:17:55 GMT
+      etag:
+      - '"0x8D6CF7C0C590050"'
+      last-modified:
+      - Fri, 03 May 2019 04:01:40 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - LAvFJ8pjfwKMdovTMaGk/w==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 23:04:03 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 06:17:55 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/shared-services-net/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"vnet-id": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},
+        "vnet-name": { "value": "cntso-ssvcs-vnet"}, "vnet-resourceGroup": { "value":
+        "cntso-ssvcs-net-rg"}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '314'
+      content-range:
+      - bytes 0-313/314
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 06:17:55 GMT
+      etag:
+      - '"0x8D6CF7B3A133AA8"'
+      last-modified:
+      - Fri, 03 May 2019 03:55:48 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - uuncXP3nwK/2kckRf2nBzg==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:42:15 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 06:17:56 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/la/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"la-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},
+        "la-workspace-resourceGroup": { "value": "cntso-ssvcs-diagnostics-rg"}, "la-workspace-name":
+        { "value": "cntso-ssvcs-la"}, "la-workspace-id": { "value": "d4856489-3d3d-4a90-939d-3d00f85d2cca"},
+        "la-primary-shared-key": { "value": "GZflgFjoJgtzBIMryWzsx6c9zIpTZddkO9dfyADchEPEo9vCbVc59K2Ak2KZK4jLia05vTfiaLiaEYM6IjsDkw=="}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '555'
+      content-range:
+      - bytes 0-554/555
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 06:17:56 GMT
+      etag:
+      - '"0x8D6CF7AC54B0169"'
+      last-modified:
+      - Fri, 03 May 2019 03:52:32 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - VSRHCa/+VUVqQZ3n66L9fQ==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:39:06 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 06:17:56 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/diagnostic-storage-account/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: '{"storageAccount-resourceId": { "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},
+        "storageAccount-name": { "value": "cntsowus2shrdsvcs01diag"}, "storageAccount-sasToken":
+        { "value": "sv=2015-04-05&ss=bt&srt=co&sp=acuw&se=2119-12-31T23%3A59%3A59.0000000Z&spr=https&sig=S6l09DNkd4q1py%2FEBG2X2tpgxgVdZKHBY%2F6%2FmyyfpLk%3D"},
+        "storageAccount-accessKey": { "value": "tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="}}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '590'
+      content-range:
+      - bytes 0-589/590
+      content-type:
+      - application/octet-stream
+      date:
+      - Fri, 03 May 2019 06:17:55 GMT
+      etag:
+      - '"0x8D6CF7AB158698E"'
+      last-modified:
+      - Fri, 03 May 2019 03:51:58 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5:
+      - UzcGkQ4IgSSQOnpmSwhZwg==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 25 Apr 2019 22:38:01 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: HEAD
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-jb-rg?api-version=2018-05-01
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 06:17:56 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: '!!! The request body has been omitted from the recording because its size
+      59407 is larger than 10KB. !!!'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '48920'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-jb?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-jb","name":"cntso-shared-services-ssvcs-deployment-j","properties":{"templateHash":"4998265894761262322","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"la-workspace-id":{"type":"SecureString"},"la-primary-shared-key":{"type":"SecureString"},"output-params-storage-key":{"type":"SecureString"},"output-params-storage-account-name":{"type":"SecureString"},"kv-uri":{"type":"SecureString"},"kv-id":{"type":"SecureString"},"aad-principal-id":{"type":"SecureString"},"aad-certificate-thumb":{"type":"SecureString"},"aad-certificate-url":{"type":"SecureString"},"jb-key":{"type":"SecureString"},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"jb-asg-name":{"type":"String","value":"jb"},"shared-services-subnet-name":{"type":"String","value":"sharedsvcs"},"extension-name":{"type":"String","value":"jb"},"admin-username":{"type":"String","value":"admin-user"},"admin-password":{"type":"SecureString","reference":{"keyVault":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-kv-rg/providers/Microsoft.KeyVault/vaults/cntso-ssvcs-kv"},"secretName":"admin-user"}},"windows-virtualMachine-count":{"type":"Int","value":1},"windows-virtualMachine-size":{"type":"String","value":"Standard_DS2_v2"},"windows-os-type":{"type":"String","value":"Windows"},"windows-os-image":{"type":"Object","value":{"offer":"WindowsServer","publisher":"MicrosoftWindowsServer","sku":"2016-Datacenter"}},"linux-virtualMachine-count":{"type":"Int","value":1},"linux-virtualMachine-size":{"type":"String","value":"Standard_D2s_v3"},"linux-os-type":{"type":"String","value":"Linux"},"linux-os-image":{"type":"Object","value":{"publisher":"Canonical","offer":"UbuntuServer","sku":"18.04-LTS","version":"latest"}},"enable-encryption":{"type":"Bool","value":false},"encryption-secrets":{"type":"Array","value":[{"sourceVault":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-kv-rg/providers/Microsoft.KeyVault/vaults/cntso-ssvcs-kv"},"vaultCertificates":[{"certificateUrl":"","certificateStore":"My"}]}]},"storageAccount-name":{"type":"String","value":"cntsowus2shrdsvcs01diag"},"storageAccount-sasToken":{"type":"SecureString"},"organization-name":{"type":"String","value":"cntso"},"kv-name":{"type":"String","value":"cntso-ssvcs-kv"},"kv-resourceGroup":{"type":"String","value":"cntso-ssvcs-kv-rg"},"vnet-name":{"type":"String","value":"cntso-ssvcs-vnet"},"la-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},"la-workspace-resourceGroup":{"type":"String","value":"cntso-ssvcs-diagnostics-rg"},"la-workspace-name":{"type":"String","value":"cntso-ssvcs-la"},"storageAccount-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},"storageAccount-accessKey":{"type":"String","value":"tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="},"sas-key":{"type":"String","value":"se=2019-05-03T23%3A17%3A55Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=ZjaGk7jSYzke8h4IHOAUIiGPvtfJLogz5OO/zy6AooE%3D"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-05-03T06:17:59.7882988Z","duration":"PT0.6399214S","correlationId":"ac1696a7-1c78-4cea-811a-6759f5e93d49","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus2"]},{"resourceType":"virtualMachines","locations":["westus2"]},{"resourceType":"virtualMachines/extensions","locations":["westus2"]},{"resourceType":"virtualMachines/providers/guestConfigurationAssignments","locations":["westus2"]}]},{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"networkInterfaces","locations":["westus2"]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/availabilitySets/cntso-ssvcs-jb-win-as","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"cntso-ssvcs-jb-win-as"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Network/networkInterfaces/cntso-ssvcs-jb-win-vm1-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"cntso-ssvcs-jb-win-vm1-nic"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSDiagnostics"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/NetworkWatcher"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordLength","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordLength"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordAge"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/EnforcePasswordHistory","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/EnforcePasswordHistory"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/StorePasswordsUsingReversibleEncryption","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/StorePasswordsUsingReversibleEncryption"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/AuditSecureProtocol","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/AuditSecureProtocol"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MaximumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MaximumPasswordAge"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/PasswordMustMeetComplexityRequirements","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/PasswordMustMeetComplexityRequirements"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzurePolicyforWindows","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzurePolicyforWindows"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSDiagnostics"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzurePolicyforWindows","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzurePolicyforWindows"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzureDiskEncryption","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzureDiskEncryption"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSDiagnostics"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordLength","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordLength"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordAge"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/EnforcePasswordHistory","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/EnforcePasswordHistory"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/StorePasswordsUsingReversibleEncryption","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/StorePasswordsUsingReversibleEncryption"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/AuditSecureProtocol","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/AuditSecureProtocol"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MaximumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MaximumPasswordAge"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/PasswordMustMeetComplexityRequirements","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/PasswordMustMeetComplexityRequirements"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzurePolicyforWindows","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzurePolicyforWindows"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzureDiskEncryption","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzureDiskEncryption"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/vm1OSEncryptionNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"vm1OSEncryptionNestedDeployment"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/availabilitySets/cntso-ssvcs-jb-linux-as","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"cntso-ssvcs-jb-linux-as"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Network/networkInterfaces/cntso-ssvcs-jb-linux-vm1-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"cntso-ssvcs-jb-linux-vm1-nic"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/LinuxDiagnostic","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/LinuxDiagnostic"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/linux-NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/linux-NetworkWatcher"}]}}'
+    headers:
+      azure-asyncoperation:
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-jb/operationStatuses/08586447426063293928?api-version=2018-05-01
+      cache-control:
+      - no-cache
+      content-length:
+      - '32566'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 06:17:59 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-jb/operationStatuses/08586447426063293928?api-version=2018-05-01
+  response:
+    body:
+      string: '{"status":"Succeeded"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '22'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 06:18:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
+        resourcemanagementclient/2.1.0 Azure-SDK-For-Python
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-jb?api-version=2018-05-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-jb","name":"cntso-shared-services-ssvcs-deployment-j","properties":{"templateHash":"4998265894761262322","parameters":{"deployment-prefix":{"type":"String","value":"cntso-ssvcs"},"la-workspace-id":{"type":"SecureString"},"la-primary-shared-key":{"type":"SecureString"},"output-params-storage-key":{"type":"SecureString"},"output-params-storage-account-name":{"type":"SecureString"},"kv-uri":{"type":"SecureString"},"kv-id":{"type":"SecureString"},"aad-principal-id":{"type":"SecureString"},"aad-certificate-thumb":{"type":"SecureString"},"aad-certificate-url":{"type":"SecureString"},"jb-key":{"type":"SecureString"},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"jb-asg-name":{"type":"String","value":"jb"},"shared-services-subnet-name":{"type":"String","value":"sharedsvcs"},"extension-name":{"type":"String","value":"jb"},"admin-username":{"type":"String","value":"admin-user"},"admin-password":{"type":"SecureString","reference":{"keyVault":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-kv-rg/providers/Microsoft.KeyVault/vaults/cntso-ssvcs-kv"},"secretName":"admin-user"}},"windows-virtualMachine-count":{"type":"Int","value":1},"windows-virtualMachine-size":{"type":"String","value":"Standard_DS2_v2"},"windows-os-type":{"type":"String","value":"Windows"},"windows-os-image":{"type":"Object","value":{"offer":"WindowsServer","publisher":"MicrosoftWindowsServer","sku":"2016-Datacenter"}},"linux-virtualMachine-count":{"type":"Int","value":1},"linux-virtualMachine-size":{"type":"String","value":"Standard_D2s_v3"},"linux-os-type":{"type":"String","value":"Linux"},"linux-os-image":{"type":"Object","value":{"publisher":"Canonical","offer":"UbuntuServer","sku":"18.04-LTS","version":"latest"}},"enable-encryption":{"type":"Bool","value":false},"encryption-secrets":{"type":"Array","value":[{"sourceVault":{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-kv-rg/providers/Microsoft.KeyVault/vaults/cntso-ssvcs-kv"},"vaultCertificates":[{"certificateUrl":"","certificateStore":"My"}]}]},"storageAccount-name":{"type":"String","value":"cntsowus2shrdsvcs01diag"},"storageAccount-sasToken":{"type":"SecureString"},"organization-name":{"type":"String","value":"cntso"},"kv-name":{"type":"String","value":"cntso-ssvcs-kv"},"kv-resourceGroup":{"type":"String","value":"cntso-ssvcs-kv-rg"},"vnet-name":{"type":"String","value":"cntso-ssvcs-vnet"},"la-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/cntso-ssvcs-la"},"la-workspace-resourceGroup":{"type":"String","value":"cntso-ssvcs-diagnostics-rg"},"la-workspace-name":{"type":"String","value":"cntso-ssvcs-la"},"storageAccount-resourceId":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/cntsowus2shrdsvcs01diag"},"storageAccount-accessKey":{"type":"String","value":"tY1tE79dGJFdVuVjR9XL/48fu97GeBxLpxr6obq2PsplTMHS7Bc+Uby5/w9sXam2mA0JzlWIxYY1+335cBqiSw=="},"sas-key":{"type":"String","value":"se=2019-05-03T23%3A17%3A55Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=ZjaGk7jSYzke8h4IHOAUIiGPvtfJLogz5OO/zy6AooE%3D"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-05-03T06:18:18.3435836Z","duration":"PT19.1952062S","correlationId":"ac1696a7-1c78-4cea-811a-6759f5e93d49","providers":[{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"availabilitySets","locations":["westus2"]},{"resourceType":"virtualMachines","locations":["westus2"]},{"resourceType":"virtualMachines/extensions","locations":["westus2"]},{"resourceType":"virtualMachines/providers/guestConfigurationAssignments","locations":["westus2"]}]},{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"networkInterfaces","locations":["westus2"]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/availabilitySets/cntso-ssvcs-jb-win-as","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"cntso-ssvcs-jb-win-as"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Network/networkInterfaces/cntso-ssvcs-jb-win-vm1-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"cntso-ssvcs-jb-win-vm1-nic"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSDiagnostics"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/NetworkWatcher"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordLength","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordLength"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordAge"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/EnforcePasswordHistory","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/EnforcePasswordHistory"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/StorePasswordsUsingReversibleEncryption","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/StorePasswordsUsingReversibleEncryption"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/AuditSecureProtocol","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/AuditSecureProtocol"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MaximumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MaximumPasswordAge"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/PasswordMustMeetComplexityRequirements","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/PasswordMustMeetComplexityRequirements"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzurePolicyforWindows","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzurePolicyforWindows"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSDiagnostics"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzurePolicyforWindows","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzurePolicyforWindows"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzureDiskEncryption","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzureDiskEncryption"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSAntimalware"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/IaaSDiagnostics"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/PwdPolicies"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/DependencyAgent"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordLength","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordLength"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MinimumPasswordAge"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/EnforcePasswordHistory","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/EnforcePasswordHistory"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/StorePasswordsUsingReversibleEncryption","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/StorePasswordsUsingReversibleEncryption"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/AuditSecureProtocol","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/AuditSecureProtocol"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MaximumPasswordAge","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/MaximumPasswordAge"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/PasswordMustMeetComplexityRequirements","resourceType":"Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments","resourceName":"cntso-ssvcs-jb-win-vm1/Microsoft.GuestConfiguration/PasswordMustMeetComplexityRequirements"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzurePolicyforWindows","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzurePolicyforWindows"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzureDiskEncryption","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/AzureDiskEncryption"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Resources/deployments/vm1OSEncryptionNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"vm1OSEncryptionNestedDeployment"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/availabilitySets/cntso-ssvcs-jb-linux-as","resourceType":"Microsoft.Compute/availabilitySets","resourceName":"cntso-ssvcs-jb-linux-as"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Network/networkInterfaces/cntso-ssvcs-jb-linux-vm1-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"cntso-ssvcs-jb-linux-vm1-nic"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/LinuxDiagnostic","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/LinuxDiagnostic"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"cntso-ssvcs-jb-linux-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-win-vm1/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/OMSExtension"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/linux-NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"cntso-ssvcs-jb-linux-vm1/linux-NetworkWatcher"}],"outputs":{},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/availabilitySets/cntso-ssvcs-jb-linux-as"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/availabilitySets/cntso-ssvcs-jb-win-as"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/LinuxDiagnostic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/linux-NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-linux-vm1/extensions/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzureDiskEncryption"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/AzurePolicyforWindows"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/DependencyAgent"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSAntimalware"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/IaaSDiagnostics"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/OMSExtension"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/extensions/PwdPolicies"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/AuditSecureProtocol"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/EnforcePasswordHistory"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MaximumPasswordAge"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordAge"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/MinimumPasswordLength"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/PasswordMustMeetComplexityRequirements"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Compute/virtualMachines/cntso-ssvcs-jb-win-vm1/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/StorePasswordsUsingReversibleEncryption"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Network/networkInterfaces/cntso-ssvcs-jb-linux-vm1-nic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-jb-rg/providers/Microsoft.Network/networkInterfaces/cntso-ssvcs-jb-win-vm1-nic"}]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '37935'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Fri, 03 May 2019 06:18:29 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-date:
+      - Fri, 03 May 2019 06:18:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://storage.blob.core.windows.net/output?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Fri, 03 May 2019 06:18:29 GMT
+      etag:
+      - '"0x8D6C9C2C8DFA212"'
+      last-modified:
+      - Thu, 25 Apr 2019 21:12:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      User-Agent:
+      - Azure-Storage/1.4.0-1.5.0 (Python CPython 3.6.5; Darwin 18.5.0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 03 May 2019 06:18:30 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storage.blob.core.windows.net/output/cntso-shared-services-ssvcs/parameters/jb/azureDeploy.parameters.output.json
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - mZFLkyvTelC5g8XnyQrpOw==
+      date:
+      - Fri, 03 May 2019 06:18:29 GMT
+      etag:
+      - '"0x8D6CF8F29A96686"'
+      last-modified:
+      - Fri, 03 May 2019 06:18:30 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+version: 1
