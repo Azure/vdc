@@ -8,9 +8,22 @@ variables:
 stages:
 - stage: Validate
   jobs:
+  - job: SetupValidationResourceGroup
+    pool: 
+      name: 'vdc-self-hosted'
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Setup Validation Resource Group"
+      inputs:
+        azureSubscription: 'vdc2-hub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
+        ScriptArguments: '-ResourceGroupName vdc-validation-rg'
+        azurePowerShellVersion: 'LatestVersion'
   - job: StorageAccounts
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Storage Accounts"
@@ -49,6 +62,7 @@ stages:
   - job: LogAnalytics
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Log Analytics"
@@ -79,6 +93,7 @@ stages:
   - job: AutomationAccounts
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Automation Accounts"
@@ -101,6 +116,7 @@ stages:
   - job: ApplicationSecurityGroups
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Application Security Groups"
@@ -131,6 +147,7 @@ stages:
   - job: NetworkSecurityGroups
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Network Security Groups"
@@ -161,6 +178,7 @@ stages:
   - job: RouteTables
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Route Tables"
@@ -183,6 +201,7 @@ stages:
   - job: vNet
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - vNet"
@@ -205,6 +224,7 @@ stages:
   - job: VirtualNetworkGateway
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Virtual Network Gateway"
@@ -227,6 +247,7 @@ stages:
   - job: VirtualNetworkGatewayConnection
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Virtual Network Gateway Connection"
@@ -257,6 +278,7 @@ stages:
   - job: AzureFirewall
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Azure Firewall"
@@ -279,6 +301,7 @@ stages:
   - job: KeyVault
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Key Vault"
@@ -301,6 +324,7 @@ stages:
   - job: Jumpbox
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Jumpbox"
@@ -323,6 +347,7 @@ stages:
   - job: ADDS
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - ADDS"
@@ -341,6 +366,19 @@ stages:
         ScriptType: 'FilePath'
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ADDS" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+  - job: TearDownValidationResourceGroup
+    pool: 
+      name: 'vdc-self-hosted'
+    dependsOn: [ StorageAccounts, LogAnalytics, AutomationAccounts, ApplicationSecurityGroups, NetworkSecurityGroups, RouteTables, vNet, VirtualNetworkGateway, VirtualNetworkGatewayConnection, AzureFirewall, Jumpbox, ADDS ]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Teardown Validation Resource Group"
+      inputs:
+        azureSubscription: 'vdc2-hub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
+        ScriptArguments: '-TearDown'
         azurePowerShellVersion: 'LatestVersion'
 - stage: Deploy
   jobs:

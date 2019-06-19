@@ -173,11 +173,16 @@ Function New-Deployment {
                 -SubscriptionName $archetypeInstanceJson.ArchetypeParameters.Subscription `
                 -ModuleConfiguration $moduleConfiguration;
         
-        Write-Debug "Setting subscription context";
+        # Do not change the subscription context if the operation is validate.
+        # This is because the script will expect the validation resource 
+        # group to be present in all the subscriptions we are deploying.
+        if(-not $Validate.IsPresent) {
+            Write-Debug "Setting subscription context";
 
-        Set-SubscriptionContext `
-            -SubscriptionId $subscriptionInformation.SubscriptionId `
-            -TenantId $subscriptionInformation.TenantId;
+            Set-SubscriptionContext `
+                -SubscriptionId $subscriptionInformation.SubscriptionId `
+                -TenantId $subscriptionInformation.TenantId;
+        }
 
         # Let's attempt to get the Audit Id from cache
         $auditCacheKey = `
@@ -1305,11 +1310,12 @@ Function Deploy-AzureResourceManagerTemplate {
     try {
         if($Validate.IsPresent) { 
             Write-Debug "Validating the template";
+
             return `
                 $deploymentService.ExecuteValidation(
                     $TenantId,
                     $SubscriptionId,
-                    $ResourceGroupName,
+                    $defaultValidationResourceGroupName,
                     $DeploymentTemplate,
                     $DeploymentParameters,
                     $Location);

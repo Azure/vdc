@@ -83,3 +83,8 @@ $modulePath = Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildP
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
+
+$modulePath = Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'OrchestrationService') -ChildPath 'ValidationResourceGroupSetup.ps1'
+$scriptBlock = ". $modulePath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;

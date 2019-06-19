@@ -53,17 +53,32 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                             [string] $deploymentTemplate, `
                             [string] $deploymentParameters, `
                             [string] $location) {
+        
+        # Try to fetch the validation resource group
+        $validationResourceGroup = `
+            Get-AzResourceGroup `
+                -Name $resourceGroupName `
+                -ErrorAction SilentlyContinue;
 
-        # call arm validation
-        $validation = `
-            $this.InvokeARMOperation(
-                $tenantId,
-                $subscriptionId,
-                $resourceGroupName,
-                $deploymentTemplate,
-                $deploymentParameters,
-                $location,
-                "validate");
+        # Does the validation resource group exists?
+        if($null -ne $validationResourceGroup) {
+            # call arm validation
+            $validation = `
+                $this.InvokeARMOperation(
+                    $tenantId,
+                    $subscriptionId,
+                    $resourceGroupName,
+                    $deploymentTemplate,
+                    $deploymentParameters,
+                    $location,
+                    "validate");
+        }
+        else {
+            # Fail early if the validation resource group does not
+            # exists
+            Throw "Validation resource group - $resourceGroupName is not setup. Create the validation resource `
+                group before invoking the ARM validation.";
+        }
 
         # Did the validation succeed?
         if($validation.error.code -eq "InvalidTemplateDeployment") {
