@@ -27,24 +27,24 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Enable Service Endpoint On Diagnostic Storage Account"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Artifacts Storage Account"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: LogAnalytics
     pool:
@@ -65,16 +65,16 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Link Log Analytics With Automation Account"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: AutomationAccounts
     pool:
@@ -95,8 +95,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "AutomationAccounts" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AutomationAccounts" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: ApplicationSecurityGroups
     pool:
@@ -117,16 +117,16 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "JumpboxASG" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "JumpboxASG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Domain Controller ASG"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "DomainControllerASG" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DomainControllerASG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: NetworkSecurityGroups
     pool:
@@ -147,16 +147,16 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesNSG" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesNSG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "ARM Validation - DMZ NSG"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "DMZNSG" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DMZNSG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: RouteTables
     pool:
@@ -177,8 +177,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesRouteTable" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesRouteTable" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: vNet
     pool:
@@ -199,8 +199,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: VirtualNetworkGateway
     pool:
@@ -221,8 +221,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetworkGateway" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetworkGateway" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: VirtualNetworkGatewayConnection
     pool:
@@ -243,16 +243,16 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection" -Validate'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Remote Virtual Network Gateway Connection"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "RemoteVirtualNetworkGatewayConnection" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "RemoteVirtualNetworkGatewayConnection" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: AzureFirewall
     pool:
@@ -273,8 +273,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "AzureFirewall" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AzureFirewall" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: KeyVault
     pool:
@@ -295,8 +295,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "KeyVault" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "KeyVault" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: Jumpbox
     pool:
@@ -317,8 +317,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "Jumpbox" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "Jumpbox" -Validate'
         azurePowerShellVersion: 'LatestVersion'
   - job: ADDS
     pool:
@@ -339,8 +339,8 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "ADDS" -Validate'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ADDS" -Validate'
         azurePowerShellVersion: 'LatestVersion'
 - stage: Deploy
   jobs:
@@ -353,136 +353,136 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Log Analytics"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "LogAnalytics"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LogAnalytics"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Automation Accounts"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "AutomationAccounts"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AutomationAccounts"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Link Log Analytics With Automation Account"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "JumpboxASG"
       inputs: 
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "JumpboxASG"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "JumpboxASG"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Domain Controller ASG"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "DomainControllerASG"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DomainControllerASG"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Shared Services NSG"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesNSG"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesNSG"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "DMZ NSG"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "DMZNSG"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DMZNSG"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Shared Services Route Table"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesRouteTable"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesRouteTable"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Virtual Network"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetwork"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetwork"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Enable Service Endpoint On Diagnostic Storage Account"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Virtual Network Gateway"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetworkGateway"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetworkGateway"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Local Virtual Network Gateway Connection"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Remote Virtual Network Gateway Connection"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "RemoteVirtualNetworkGatewayConnection"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "RemoteVirtualNetworkGatewayConnection"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Azure Firewall"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "AzureFirewall"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AzureFirewall"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Key Vault"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "KeyVault"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "KeyVault"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "Artifacts Storage Account"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Debug'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Debug'
         azurePowerShellVersion: 'LatestVersion'
     - task: turtlesystems-azure-storage@1
       displayName: "Upload Scripts to Artifacts Storage"
@@ -501,14 +501,14 @@ stages:
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "Jumpbox"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "Jumpbox"'
         azurePowerShellVersion: 'LatestVersion'
     - task: AzurePowerShell@4
       displayName: "ADDS"
       inputs:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
-        ScriptPath: 'azure-devops/2.0/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/2.0/archetypeDefinition.json" -ModuleConfigurationName "ADDS"'
+        ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-ArchetypeDefinitionPath "./archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ADDS"'
         azurePowerShellVersion: 'LatestVersion'
