@@ -1,5 +1,5 @@
 {
-    "ModuleConfigurationsPath": "../../../modules",
+    "ModuleConfigurationsPath": "../../modules",
     "ModuleConfigurations": [
         {
             "Name": "DiagnosticStorageAccount",
@@ -23,7 +23,7 @@
             },
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
-                "TemplatePath": "../../../modules/StorageAccounts/2.0/deploy.json",
+                "TemplatePath": "../../modules/StorageAccounts/2.0/deploy.json",
                 "OverrideParameters": {
                     "storageAccountName": {
                         "value": "${ArchetypeParameters.Parameters.DiagnosticStorageAccount.Name}"

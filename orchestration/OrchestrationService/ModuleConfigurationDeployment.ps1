@@ -1210,8 +1210,8 @@ Function Get-ModuleConfigurationVersion {
             Write-Debug "Current module configuration version is: $currentVersion";
         }
 
-        if ($currentVersion -le $notSupportedVersion) {
-            throw "Not supported version, version retrieved is: $currentVersion. Supported versions are 2.x+";
+        if ($currentVersion -le $defaultSupportedVersion) {
+            throw "Not supported version, version retrieved is: $currentVersion. Supported versions are $defaultSupportedVersion and up.";
         }
         
         return $currentVersion;
