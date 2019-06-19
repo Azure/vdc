@@ -80,14 +80,13 @@ Function ConvertTo-AbsolutePath() {
 
     # Test if the path is valid
     $fileExists = Test-Path -Path $fullFilePath;
-
+    
     # Return path if file exists (truthy)
     if($fileExists -eq $true) {
         return (Get-Item -Path $fullFilePath).FullName;
     }
     else {
-        Write-Error "File does not exists";
-        throw $_;
+        throw "File does not exists, path: $fullFilePath";
     }
 }
 
