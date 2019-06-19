@@ -482,7 +482,7 @@ stages:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Debug'
+        ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
     - task: turtlesystems-azure-storage@1
       displayName: "Upload Scripts to Artifacts Storage"
