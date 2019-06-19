@@ -1,6 +1,0 @@
-{
-    "aks-node-role-assignments": {
-        "value": "${workload.rbac.aks-node-resource-group-assignments}"
-    }
-
-}

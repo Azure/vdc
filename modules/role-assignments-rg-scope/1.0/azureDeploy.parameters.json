@@ -1,5 +1,0 @@
-{
-    "role-assignments": {
-        "value": "${ENV:ENVIRONMENT-TYPE.rbac.resource-group-assignments}"
-    }
-}

@@ -6,28 +6,31 @@
         "vdc-storage-account-name": "storage",
         "vdc-storage-account-rg": "vdc-storage-rg",
         "on-premises": {
-            "subscription-id": "00000000-0000-0000-0000-000000000000",
             "deployment-name": "onprem",
+            "subscription-id": "00000000-0000-0000-0000-000000000000",
             "region": "West US 2",
             "network": {
                 "address-prefix": "192.168.1.0/28"
-            }
+            },
+            "active-directory": {
+                "primaryDC-IP": "192.168.1.4"
+            },
+            "allow-rdp-address-range": "192.168.1.4"
         },
         "shared-services": {
-            "subscription-id": "00000000-0000-0000-0000-000000000000",
             "deployment-name": "ssvcs",
+            "subscription-id": "00000000-0000-0000-0000-000000000000",
             "region": "West US 2",
-            "active-directory": {
-                "vm-ip-address-start": "10.4.0.46"
+            "vm-configuration": {
+                "local-admin-user": "admin-user",
+                "enable-encryption": false,
+                "encryption-keys-for": []
+            },
+            "log-analytics": {
+                "region": "West US 2"
             },
             "network": {
-                "address-prefix": "10.4.0.32/27",
-                "network-virtual-appliance": {
-                    "egress-ip": "10.4.1.4",
-                    "azure-firewall": {
-                        "name": "${general.organization-name}-${general.shared-services.deployment-name}-az-fw"
-                    }
-                }
+                "address-prefix": "10.4.0.32/27"
             }
         },
         "workload": {
@@ -35,13 +38,9 @@
             "subscription-id": "00000000-0000-0000-0000-000000000000",
             "region": "West US 2",
             "keyvault": {
-                "name": "${general.organization-name}-${general.workload.deployment-name}-kv",
                 "secrets": []
             },
             "log-analytics": {
-                "region": "West US 2"
-            },
-            "automation-account": {
                 "region": "West US 2"
             },
             "kubernetes": {
@@ -56,14 +55,14 @@
                 "enable-http-application-routing": false,
                 "enable-oms-agent": true,
                 "service-principal-client-id": "00000000-0000-0000-0000-000000000000",
-                "service-principal-client-secret": "",
+                "service-principal-client-secret": "00000000-0000-0000-0000-000000000000",
                 "rbac-server-appid": "00000000-0000-0000-0000-000000000000",
                 "rbac-server-secret": "",
                 "rbac-client-appid": "00000000-0000-0000-0000-000000000000",
                 "rbac-tenant": "00000000-0000-0000-0000-000000000000",
-                "aks-cluster-admin-rbac-role-id": "00000000-0000-0000-0000-000000000000",
-                "aks-cluster-user-rbac-role-id": "00000000-0000-0000-0000-000000000000",
-                "reader-rbac-role-id": "00000000-0000-0000-0000-000000000000",
+                "aks-cluster-admin-rbac-role-id": "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8",
+                "aks-cluster-user-rbac-role-id": "4abbcc35-e782-43d8-92c5-2d3f1bd2253f",
+                "reader-rbac-role-id": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
                 "cluster-admin-group-id": "00000000-0000-0000-0000-000000000000",
                 "noc-user-group-id": "00000000-0000-0000-0000-000000000000",
                 "dev-user-group-id": "00000000-0000-0000-0000-000000000000",
@@ -85,7 +84,7 @@
                     {
                         "name": "aks-cluster-nrc-01",
                         "properties": {
-                            "priority": "500",
+                            "priority": "100",
                             "action": {
                                 "type": "Allow"
                             },
@@ -114,7 +113,7 @@
                     {
                         "name": "aks-cluster-01",
                         "properties": {
-                            "priority": 500,
+                            "priority": 130,
                             "action": {
                                 "type": "Allow"
                             },
@@ -148,18 +147,14 @@
     },
     "orchestration": {
         "modules-to-deploy": [
-            "diagnostic-storage-account",
             "la",
-            "automation-account",
-            "security-center",
             "event-hub",
             "nsg",
             "workload-net",
-            "enable-service-endpoint-on-diagnostic-storage-account",
             "kv",
             "acr",
             "aks",
-            "role-assignments-rg-scope",
+            "role-assignments",
             "aks-node-role-assignments",
             "permissions-scripts-pre-reqs",
             "scripts-pre-reqs",
@@ -172,45 +167,12 @@
             "custom-scripts": "file(scripts)",
             "modules": [
                 {
-                    "module": "diagnostic-storage-account",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
-                    "source": {
-                        "version": "1.0",
-                        "template-path": "file(modules/storage-account/1.0)",
-                        "parameters-path": "file(modules/storage-account/1.0)"
-                    },
-                    "dependencies": []
-                },
-                {
                     "module": "la",
                     "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
                     "source": {
                         "version": "1.0"
                     },
-                    "dependencies": [
-                        "diagnostic-storage-account"
-                    ]
-                },
-                {
-                    "module": "automation-account",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
-                    "source": {
-                        "version": "1.0"
-                    },
-                    "dependencies": [
-                        "la",
-                        "diagnostic-storage-account"
-                    ]
-                },
-                {
-                    "module": "security-center",
-                    "create-resource-group": false,
-                    "source": {
-                        "version": "1.0"
-                    },
-                    "dependencies": [
-                        "la"
-                    ]
+                    "dependencies": []
                 },
                 {
                     "module": "event-hub",
@@ -219,17 +181,6 @@
                         "version": "1.0"
                     },
                     "dependencies": []
-                },
-                {
-                    "module": "nsg",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
-                    "source": {
-                        "version": "1.0"
-                    },
-                    "dependencies": [
-                        "la",
-                        "diagnostic-storage-account"
-                    ]
                 },
                 {
                     "module": "workload-net",
@@ -242,16 +193,13 @@
                     ]
                 },
                 {
-                    "module": "enable-service-endpoint-on-diagnostic-storage-account",
-                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-diagnostics-rg",
+                    "module": "nsg",
+                    "resource-group-name": "${general.organization-name}-${workload.deployment-name}-net-rg",
                     "source": {
-                        "version": "1.0",
-                        "template-path": "file(modules/storage-account/1.0)",
-                        "parameters-path": "file(modules/storage-account/1.0/azureDeploy.enable-serviceEndpoint.parameters.json)"
+                        "version": "1.0"
                     },
                     "dependencies": [
-                        "workload-net",
-                        "diagnostic-storage-account"
+                        "la"
                     ]
                 },
                 {
@@ -261,9 +209,7 @@
                         "version": "1.0"
                     },
                     "dependencies": [
-                        "la",
-                        "workload-net",
-                        "diagnostic-storage-account"
+                        "la"
                     ]
                 },
                 {
@@ -275,10 +221,12 @@
                     "dependencies": []
                 },
                 {
-                    "module": "role-assignments-rg-scope",
+                    "module": "role-assignments",
                     "resource-group-name": "${general.organization-name}-${workload.deployment-name}-rg",
                     "source": {
-                        "version": "1.0"
+                        "version": "1.0",
+                        "template-path": "file(modules/role-assignments/resourceGroup-scope/azureDeploy.json)",
+                        "parameters-path": "file(modules/role-assignments/resourceGroup-scope/azureDeploy.parameters.json)"
                     },
                     "dependencies": [
                         "aks"
@@ -288,7 +236,9 @@
                     "module": "aks-node-role-assignments",
                     "resource-group-name": "${general.organization-name}-${workload.deployment-name}-rg",
                     "source": {
-                        "version": "1.0"
+                        "version": "1.0",
+                        "template-path": "file(modules/aks-node-role-assignments/1.0/azureDeploy.json)",
+                        "parameters-path": "file(modules/aks-node-role-assignments/1.0/azureDeploy.parameters.json)"
                     },
                     "dependencies": [
                         "aks"
@@ -302,7 +252,6 @@
                     },
                     "dependencies": [
                         "la",
-                        "diagnostic-storage-account",
                         "event-hub",
                         "workload-net"
                     ]
@@ -334,7 +283,7 @@
                 {
                     "module": "create-cluster-rbac-role-bindings",
                     "type": "bash",
-                    "command": "scripts/aks/create-cluster-rbac-role-bindings.sh ${workload.kubernetes.cluster-name} ${workload.kubernetes.cluster-resource-group-name} ${general.workload.kubernetes.cluster-admin-group-id} ${general.workload.kubernetes.noc-user-group-id} Y Y",
+                    "command": "scripts/aks/create-cluster-rbac-role-bindings.sh ${workload.kubernetes.cluster-name} ${workload.kubernetes.cluster-resource-group-name} 558eed0b-9358-483a-813c-aa7fc19b8f94 f8016c94-5774-4d07-910c-65bdc4d1412d Y Y",
                     "dependencies": [
                         "scripts-pre-reqs"
                     ]
@@ -347,24 +296,46 @@
         "deployment-name": "${general.on-premises.deployment-name}",
         "region": "${general.on-premises.region}",
         "network": {
-            "address-prefix": "${general.on-premises.network.address-prefix}"
-        }
+            "address-prefix": "192.168.1.0/28",
+            "resource-group-name": "${general.organization-name}-${on-premises.deployment-name}-net-rg",
+            "virtual-gateway": {
+                "gateway-name": "${general.organization-name}-${on-premises.deployment-name}-gw"
+            }
+        },
+        "allow-rdp-address-range": "192.168.1.4"
     },
     "shared-services": {
         "subscription-id": "${general.shared-services.subscription-id}",
         "deployment-name": "${general.shared-services.deployment-name}",
         "region": "${general.shared-services.region}",
-        "active-directory": {
-            "vm-ip-address-start": "${general.shared-services.active-directory.vm-ip-address-start}"
+        "adds": {
+            "vm-ip-address-start": "10.4.0.46"
+        },
+        "vm-configuration": {
+            "local-admin-user": "${general.shared-services.vm-configuration.local-admin-user}",
+            "enable-encryption": "${general.shared-services.vm-configuration.enable-encryption}",
+            "encryption-keys-for": "${general.shared-services.vm-configuration.encryption-keys-for}"
+        },
+        "log-analytics": {
+            "region": "${general.shared-services.log-analytics.region}"
         },
         "network": {
-            "name": "${general.organization-name}-${general.shared-services.deployment-name}-vnet",
             "resource-group-name": "${general.organization-name}-${general.shared-services.deployment-name}-net-rg",
+            "name": "${general.organization-name}-${general.shared-services.deployment-name}-vnet",
             "address-prefix": "${general.shared-services.network.address-prefix}",
+            "virtual-gateway": {
+                "gateway-udr-name": "${general.organization-name}-${general.shared-services.deployment-name}-gw-udr"
+            },
             "network-virtual-appliance": {
-                "egress-ip": "${general.shared-services.network.network-virtual-appliance.egress-ip}",
+                "egress-ip": "10.4.1.4",
                 "azure-firewall": {
-                    "name": "${general.shared-services.network.network-virtual-appliance.azure-firewall.name}"
+                    "name": "${general.organization-name}-${general.shared-services.deployment-name}-az-fw"
+                },
+                "custom-ubuntu": {
+                    "egress": {
+                        "ip": "10.4.0.20",
+                        "vm-ip-address-start": "10.4.0.5"
+                    }
                 }
             }
         }
@@ -380,21 +351,8 @@
             "sku": "standalone"
         },
         "keyvault": {
-            "name": "${general.workload.keyvault.name}",
-            "secrets": "${general.workload.keyvault.secrets}",
-            "network-acls": {}
-        },
-        "storage-account": {
-            "network-acls": {
-                "bypass": "AzureServices",
-                "defaultAction": "Deny",
-                "virtualNetworkRules": [
-                    {
-                        "subnet": "${workload.network.subnets[0].name}"
-                    }
-                ],
-                "ipRules": []
-            }
+            "name": "${general.organization-name}-${general.workload.deployment-name}-kv",
+            "secrets": "${general.workload.keyvault.secrets}"
         },
         "network": {
             "enable-ddos-protection": "${general.workload.network.enable-ddos-protection}",
@@ -547,23 +505,16 @@
                     "user-defined-route": "${workload.network.user-defined-routes[0].name}",
                     "service-endpoints": [
                         {
-                            "service": "Microsoft.EventHub"
-                        },
-                        {
                             "service": "Microsoft.Sql"
                         },
                         {
                             "service": "Microsoft.KeyVault"
-                        },
-                        {
-                            "service": "Microsoft.Storage"
                         }
                     ]
                 }
             ],
             "dns-servers": [
-                "${shared-services.active-directory.vm-ip-address-start}",
-                "next-ip(${shared-services.active-directory.vm-ip-address-start}, 1)"
+                "${shared-services.adds.vm-ip-address-start}"
             ]
         },
         "kubernetes": {
@@ -656,9 +607,6 @@
         },
         "log-analytics": {
             "region": "${general.workload.log-analytics.region}"
-        },
-        "automation-account": {
-            "region": "${general.workload.automation-account.region}"
         },
         "event-hub": {
             "namespace": "${general.organization-name}eventhubnamespace",
