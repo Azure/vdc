@@ -1,0 +1,54 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "2.0.0.0",
+  "parameters": {
+    "routeTableName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Name given for the hub route table."
+      }
+    },
+    "routes": {
+      "type": "array",
+      "minLength": 1,
+      "metadata": {
+        "description": "Required. An Array of Routes to be established within the hub route table."
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Network/routeTables",
+      "apiVersion": "2019-02-01",
+      "name": "[parameters('routeTableName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "routes": "[parameters('routes')]"
+      }
+    }
+  ],
+  "outputs": {
+    "routeTableResourceGroup":{
+      "type": "string",
+      "value": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The name of the Resource Group the Route Table was deployed to."
+      }
+    },
+    "routeTableName": {
+      "type": "string",
+      "value": "[parameters('routeTableName')]",
+      "metadata":{
+        "description": "The name of the Route Table deployed."
+      }
+    },
+    "routeTableResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/routeTables', parameters('routeTableName'))]",
+      "metadata":{
+        "description": "The Resource id of the Virtual Network deployed."
+      }
+    }
+  }
+}

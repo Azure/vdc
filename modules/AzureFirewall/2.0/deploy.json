@@ -1,0 +1,191 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "azureFirewallName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Name of the Azure Firewall."
+            }
+        },
+        "applicationRuleCollections": {
+            "type": "array",
+            "metadata": {
+                "description": "Required. Collection of application rule collections used by Azure Firewall."
+            }
+        },
+        "networkRuleCollections": {
+            "type": "array",
+            "metadata": {
+                "description": "Required. Collection of network rule collections used by Azure Firewall."
+            }
+        },
+        "vNetId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Shared services Virtual Network resource Id"
+            }
+        },
+        "diagnosticStorageAccountId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Diagnostic Storage Account resource identifier"
+            }
+        },
+        "workspaceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Log Analytics workspace resource identifier"
+            }
+        },
+        "logsRetentionInDays": {
+            "type": "int",
+            "defaultValue": 365,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "description": "Optional. Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely."
+            }
+        }
+    },
+    "variables": {
+        "azureFirewallSubnetId": "[concat(parameters('vNetId'), '/subnets/AzureFirewallSubnet')]",
+        "azureFirewallPipName": "[concat(parameters('azureFirewallName'), '-pip')]",
+        "azureFirewallPipId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('azureFirewallPipName'))]"
+    },
+    "resources": [
+        {
+            "name": "[variables('azureFirewallPipName')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static",
+                "publicIPAddressVersion": "IPv4"
+            }
+        },
+        {
+            "apiVersion": "2018-08-01",
+            "type": "Microsoft.Network/azureFirewalls",
+            "name": "[parameters('azureFirewallName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('azureFirewallPipName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('azureFirewallSubnetId')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables('azureFirewallPipId')]"
+                            }
+                        }
+                    }
+                ],
+                "applicationRuleCollections": "[parameters('applicationRuleCollections')]",
+                "networkRuleCollections": "[parameters('networkRuleCollections')]"
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.Network/azureFirewalls/providers/diagnosticsettings",
+                    "name": "[concat(parameters('azureFirewallName'), '/Microsoft.Insights/service')]",
+                    "apiVersion": "2016-09-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Network/azureFirewalls/', parameters('azureFirewallName'))]"
+                    ],
+                    "properties": {
+                        "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
+                        "workspaceId": "[parameters('workspaceId')]",
+                        "logs": [
+                            {
+                                "category": "AzureFirewallApplicationRule",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": true,
+                                    "days": "[parameters('logsRetentionInDays')]"
+                                }
+                            },
+                            {
+                                "category": "AzureFirewallNetworkRule",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": true,
+                                    "days": "[parameters('logsRetentionInDays')]"
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logsRetentionInDays')]",
+                                    "enabled": true
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "azureFirewallResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/azureFirewalls', parameters('azureFirewallName'))]",
+            "metadata": {
+                "description": "The Resource Id of the Azure Firewall."
+            }
+        },
+        "azureFirewallName": {
+            "type": "string",
+            "value": "[parameters('azureFirewallName')]",
+            "metadata": {
+                "description": "The Name of the Azure Firewall."
+            }
+        },
+        "azureFirewallResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group the Azure Firewall was created in."
+            }
+        },
+        "azureFirewallPrivateIp": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Network/azureFirewalls', parameters('azureFirewallName'))).ipConfigurations[0].properties.privateIPAddress]",
+            "metadata": {
+                "description": "The private IP of the Azure Firewall."
+            }
+        },
+        "azureFirewallPublicIp": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('azureFirewallPipName'))).ipAddress]",
+            "metadata": {
+                "description": "The public IP of the Azure Firewall."
+            }
+        },
+        "applicationRuleCollections": {
+            "type": "array",
+            "value": "[parameters('applicationRuleCollections')]",
+            "metadata": {
+                "description": "List of Application Rule Collections."
+            }
+        },
+        "networkRuleCollections": {
+            "type": "array",
+            "value": "[parameters('networkRuleCollections')]",
+            "metadata": {
+                "description": "List of Network Rule Collections."
+            }
+        }
+    }
+}

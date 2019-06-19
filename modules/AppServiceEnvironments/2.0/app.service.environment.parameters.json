@@ -1,0 +1,39 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deployment-prefix": {
+      "value": "${general.organization-name}-${workload.deployment-name}"
+    },
+    "default-subnet-name": {
+      "value": "${workload.network.subnets[0].name}"
+    },
+    "default-subnet-address-prefix": {
+      "value": "${workload.network.subnets[0].address-prefix}"
+    },
+    "vnet-address-prefix": {
+      "value": "${workload.network.address-prefix}"
+    },
+    "location": {
+      "value": "${workload.region}"
+    },
+    "website-name": {
+      "value": "samplemvc"
+    },
+    "worker-size": {
+      "value": "0"
+    },
+    "sku-tier": {
+      "value": "Isolated"
+    },
+    "sku-code": {
+      "value": "I1"
+    },
+    "internal-loadBalancing-mode": {
+      "value": 3
+    },
+    "dns-suffix": {
+      "value": "${shared-services.active-directory.domain-name}"
+    }
+  }
+}

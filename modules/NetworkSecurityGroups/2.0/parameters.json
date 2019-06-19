@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceId": {
+      "value": "workspace1"
+    },
+    "diagnosticStorageAccountId": {
+      "value": "vdcstorage1"
+    },
+    "networkSecurityGroupName": {
+      "value": "vdc-nsg"
+    },
+    "networkSecurityGroupSecurityRules": {
+      "value": [
+        {
+          "name": "Port_8080",
+          "properties": {
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "8080",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": null,
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound",
+              "sourcePortRanges": [],
+              "destinationPortRanges": [],
+              "sourceAddressPrefixes": [],
+              "destinationAddressPrefixes": [],
+              "destinationApplicationSecurityGroups": [
+                  {
+                    "name": "test-asg"
+                  }
+              ],
+              "sourceApplicationSecurityGroups": []
+          }
+        }
+      ]
+    }
+  }
+}

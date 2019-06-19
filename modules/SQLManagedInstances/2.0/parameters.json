@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "managedInstanceName": {
+      "value": "bestesql"
+    },
+    "location": {
+      "value": "westeurope"
+    },
+    "adminUsername": {
+      "value": "hardtoguess"
+    },
+    "adminPassword": {
+      "value": "replace"
+    },
+    "vNetResourceGroup": {
+      "value": "BesteRG"
+    },
+    "vNetName": {
+      "value": "bestevnet"
+    },
+    "subnetName": {
+      "value": "default"
+    },
+    "skuName": {
+      "value": "GP_Gen5"
+    },
+    "skuEdition": {
+      "value": "GeneralPurpose"
+    },
+    "storageSizeInGB": {
+      "value": 256
+    },
+    "vCores": {
+      "value": 8
+    },
+    "licenseType": {
+      "value": "LicenseIncluded"
+    },
+    "hardwareFamily": {
+      "value": "Gen5"
+    },
+    "dnsZonePartner": {
+      "value": ""
+    },
+    "timezoneId": {
+      "value": "UTC"
+    },
+    "collation": {
+      "value": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "proxyOverride": {
+      "value": "Proxy"
+    },
+    "publicDataEndpointEnabled": {
+      "value": false
+    }
+  }
+}

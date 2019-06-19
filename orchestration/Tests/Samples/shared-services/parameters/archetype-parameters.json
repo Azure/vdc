@@ -1,0 +1,116 @@
+{
+    "InstanceName": "contoso-aks-workload",
+    "Subscription": "SharedServices",
+    "Parameters": {
+        "OnPremisesInformation": {
+            "ActiveDirectory": {
+                "PrimaryDomainControllerIP": "192.168.0.4"
+            }
+        },
+        "DiagnosticStorageAccount": {
+            "SKU": "Premium_ZRS"
+        },
+        "VirtualNetwork": {
+            "AddressPrefixes": [
+                "10.0.0.0/16"
+            ],
+            "EnableDdosProtection": true
+        },
+        "ApplicationSecurityGroups": {
+            "SharedServices": {
+                "Name": "sharedsvcs-asg"
+            },
+            "Jumbox": {
+                "Name": "jumpbox-asg"
+            },
+            "DomainController": {
+                "Name": "dc-asg"
+            }
+        },
+        "NetworkSecurityGroups": {
+            "SharedServices": {
+                "Name": "sharedsvcs-nsg",
+                "Rules": [
+                    {
+                        "name": "allow-tcp-between-adds",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRange": "",
+                            "destinationPortRanges": [
+                                "389"
+                            ],
+                            "direction": "Inbound",
+                            "priority": 100,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "test1"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": [
+                                {
+                                    "name": "test2"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "allow-udp-ad",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRange": "",
+                            "destinationPortRanges": [
+                                "389"
+                            ],
+                            "direction": "Inbound",
+                            "priority": 130,
+                            "protocol": "Udp",
+                            "sourceAddressPrefix": "t1",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "t2"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-rdp-into-dc",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRange": "3389",
+                            "destinationPortRanges": [],
+                            "direction": "Inbound",
+                            "priority": 140,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "test1"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": [
+                                {
+                                    "name": "test2"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

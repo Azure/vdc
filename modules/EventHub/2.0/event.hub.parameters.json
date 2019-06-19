@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "West US 2"
+    },
+    "eventHubName": {
+      "value": "org-event-hub-name"
+    },
+    "eventHubSku": {
+      "value": "Standard"
+    },
+    "namespaceName": {
+      "value": "org-eventhubnamespace"
+    },
+    "skuCapacity": {
+      "value": 1
+    },
+    "consumerGroupName": {
+      "value": "org-consumer"
+    },
+    "authorizationRulesRootManageSharedAccessKeyName": {
+      "value": "RootManageSharedAccessKey"
+    }
+  }
+}

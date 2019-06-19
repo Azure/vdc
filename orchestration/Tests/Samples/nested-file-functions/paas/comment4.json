@@ -1,0 +1,8 @@
+{
+    "fromEnvironmentVariable": "env(FromEnvironmentVariable)",
+    "concatEnvironmentVariables": "env(FROMENVIRONMENTVARIABLE)-env(fromanotherenvironmentvariable)",
+    "comments": [
+        "Environment keys specified in your JSON file are converted into uppercase to avoid case sensitive issues",
+        "Environment keys must be set in uppercase, this is to avoid case sensitive issues"
+    ]
+}

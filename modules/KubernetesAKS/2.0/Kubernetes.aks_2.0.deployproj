@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>d31d50c1-187d-4e1a-aa32-869b2cb1a70f</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>
+    </PrepareForBuildDependsOn>
+  </PropertyGroup>
+  <Import Condition=" Exists('Deployment.targets') " Project="Deployment.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <!-- vertag<:>start tokens<:>maj.min -->
+  <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
+  <!-- vertag<:>end -->
+  <ItemGroup>
+    <Content Include="kubernetes.aks.deploy.json" />
+    <Content Include="kubernetes.aks.parameters.json" />
+    <None Include="Deployment.targets">
+      <Visible>False</Visible>
+    </None>
+    <None Include="Pipeline\git_placeholder.md" />
+    <Content Include="Policy\kubernetes.aks.deploy.json" />
+    <Content Include="Policy\kubernetes.aks.parameters.json" />
+    <Content Include="RBAC\kubernetes.aks.deploy.json" />
+    <Content Include="RBAC\kubernetes.aks.parameters.json" />
+    <Content Include="Scripts\create-and-upload-ca-cert.sh" />
+    <Content Include="Scripts\create-and-upload-helm-and-tiller-certs.sh" />
+    <Content Include="Scripts\create-cluster-rbac-role-bindings.sh" />
+    <Content Include="Scripts\create-sign-w-x509-and-upload-cert.sh" />
+    <Content Include="Scripts\create-tiller-enabled-namespace.sh" />
+    <Content Include="Scripts\install-kubectl.sh" />
+    <Content Include="Scripts\install-secured-tiller-instance.sh" />
+    <Content Include="Scripts\view-all-cluster-role.yaml" />
+    <None Include="Tests\kubernetes.aks.module.tests.ps1" />
+    <Content Include="Tests\kubernetes.aks.output.tests.ps1" />
+    <None Include="_README.md" />
+  </ItemGroup>
+  <Target Name="GetReferenceAssemblyPaths" />
+</Project>

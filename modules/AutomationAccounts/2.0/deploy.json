@@ -1,0 +1,408 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Specifies the Automation Account name."
+            }
+        },
+        "location": {
+            "type": "string",
+            "allowedValues": [
+                "Australia Central",
+                "Australia East",
+                "Australia Southeast",
+                "Brazil South",
+                "Canada Central",
+                "Central India",
+                "East US",
+                "East US 2",
+                "France Central",
+                "Japan East",
+                "Korea Central",
+                "North Europe",
+                "South Central US",
+                "Southeast Asia",
+                "UK South",
+                "West Central US",
+                "West Europe",
+                "West US 2"
+            ],
+            "metadata": {
+                "description": "Required. Specifies the region for your Automation Account"
+            }
+        },
+        "month": {
+            "type": "string",
+            "defaultValue": "[utcNow('MM')]",
+            "metadata": {
+                "description": "Optional. Format: yyyy/mm/dd hh:mm:ss AM/PM, start time must be at least 5 minutes after the time you create the schedule"
+            }
+        },
+        "year": {
+            "type": "string",
+            "defaultValue": "[utcNow('yyyy')]",
+            "metadata": {
+                "description": "Optional. Format: yyyy/mm/dd hh:mm:ss AM/PM, start time must be at least 5 minutes after the time you create the schedule"
+            }
+        },
+        "umTimeZone": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Time zone format is based on IANA ID and restricted to below values only for now, full list at: https://docs.microsoft.com/en-us/rest/api/maps/timezone/gettimezoneenumwindows"
+            },
+            "allowedValues": [
+                "America/New_York",
+                "America/Chicago",
+                "America/Los_Angeles",
+                "Europe/London",
+                "Europe/Budapest",
+                "Asia/Bangkok",
+                "Asia/Singapore"
+            ]
+        },
+        "workspaceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource Id of the Log Analytics workspace."
+            }
+        },
+        "diagnosticStorageAccountId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource Id of the diagnostics Storage Account."
+            }
+        },
+        "logRetentionInDays": {
+            "type": "int",
+            "defaultValue": 365,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "description": "Optional. Information about how many days log information will be retained in a diagnostic Storage Account."
+            }
+        }
+    },
+    "variables": {
+        "day": 1,
+        "month": "[if(equals(parameters('month'), 12), '01', padLeft(string(add(int(parameters('month')), 1)), 2, '0'))]",
+        "year": "[if(equals(parameters('month'), 12), add(int(parameters('year')), 1), parameters('year'))]",
+        "umStartDate": "[concat(variables('year'), '/', variables('month'), '/', variables('day'), ' 11:00:00 PM')]",
+        "tagPatching": [
+            {
+                "name": "2ndSat7pm",
+                "schedule": {
+                    "startTime": "[variables('umStartDate')]",
+                    "isEnabled": true,
+                    "interval": 1,
+                    "frequency": "Month",
+                    "timeZone": "[parameters('umTimeZone')]",
+                    "advancedSchedule": {
+                        "monthlyOccurrences": [
+                            {
+                                "occurrence": 2,
+                                "day": "Saturday"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "3rdSat7pm",
+                "schedule": {
+                    "startTime": "[variables('umStartDate')]",
+                    "isEnabled": true,
+                    "interval": 1,
+                    "frequency": "Month",
+                    "timeZone": "[parameters('umTimeZone')]",
+                    "advancedSchedule": {
+                        "monthlyOccurrences": [
+                            {
+                                "occurrence": 3,
+                                "day": "Saturday"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "4thSat7pm",
+                "schedule": {
+                    "startTime": "[variables('umStartDate')]",
+                    "isEnabled": true,
+                    "interval": 1,
+                    "frequency": "Month",
+                    "timeZone": "[parameters('umTimeZone')]",
+                    "advancedSchedule": {
+                        "monthlyOccurrences": [
+                            {
+                                "occurrence": 4,
+                                "day": "Saturday"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "2ndSun7pm",
+                "schedule": {
+                    "startTime": "[variables('umStartDate')]",
+                    "isEnabled": true,
+                    "interval": 1,
+                    "frequency": "Month",
+                    "timeZone": "[parameters('umTimeZone')]",
+                    "advancedSchedule": {
+                        "monthlyOccurrences": [
+                            {
+                                "occurrence": 2,
+                                "day": "Sunday"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "3rdSun7pm",
+                "schedule": {
+                    "startTime": "[variables('umStartDate')]",
+                    "isEnabled": true,
+                    "interval": 1,
+                    "frequency": "Month",
+                    "timeZone": "[parameters('umTimeZone')]",
+                    "advancedSchedule": {
+                        "monthlyOccurrences": [
+                            {
+                                "occurrence": 3,
+                                "day": "Sunday"
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "name": "4thSun7pm",
+                "schedule": {
+                    "startTime": "[variables('umStartDate')]",
+                    "isEnabled": true,
+                    "interval": 1,
+                    "frequency": "Month",
+                    "timeZone": "[parameters('umTimeZone')]",
+                    "advancedSchedule": {
+                        "monthlyOccurrences": [
+                            {
+                                "occurrence": 4,
+                                "day": "Sunday"
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-10-31",
+            "type": "Microsoft.Automation/automationAccounts",
+            "name": "[parameters('automationAccountName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "Basic"
+                }
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.Automation/automationAccounts/providers/diagnosticsettings",
+                    "name": "[concat(parameters('automationAccountName'), '/Microsoft.Insights/service')]",
+                    "apiVersion": "2016-09-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('automationAccountName')]"
+                    ],
+                    "properties": {
+                        "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
+                        "workspaceId": "[parameters('workspaceId')]",
+                        "logs": [
+                            {
+                                "category": "JobLogs",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": true,
+                                    "days": "[parameters('logRetentionInDays')]"
+                                }
+                            },
+                            {
+                                "category": "JobStreams",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": true,
+                                    "days": "[parameters('logRetentionInDays')]"
+                                }
+                            },
+                            {
+                                "category": "DscNodeStatus",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": true,
+                                    "days": "[parameters('logRetentionInDays')]"
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logRetentionInDays')]",
+                                    "enabled": true
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "name": "[concat('nestedDeploymentUM-Win',variables('tagPatching')[copyindex()].name)]",
+            "type": "Microsoft.Resources/deployments",
+            "comments": "Using nested deployment because a nested resource cannot have a copy function",
+            "apiVersion": "2017-05-10",
+            "copy": {
+                "count": "[length(variables('tagPatching'))]",
+                "name": "patchingWinTagLoop"
+            },
+            "dependsOn": [
+                "[parameters('automationAccountName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "[concat(parameters('automationAccountName'), '/windows-um-',subscription().displayName,'-',variables('tagPatching')[copyindex()].name)]",
+                            "type": "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations",
+                            "apiVersion": "2017-05-15-preview",
+                            "properties": {
+                                "updateConfiguration": {
+                                    "operatingSystem": "Windows",
+                                    "windows": {
+                                        "includedUpdateClassifications": "Unclassified, Critical, Security, UpdateRollup, FeaturePack, ServicePack, Definition, Tools, Updates",
+                                        "rebootSetting": "Always"
+                                    },
+                                    "duration": "PT3H",
+                                    "targets": {
+                                        "azureQueries": [
+                                            {
+                                                "scope": [
+                                                    "[subscription().id]"
+                                                ],
+                                                "locations": [],
+                                                "tagSettings": {
+                                                    "tags": {
+                                                        "UpdateManagement": [
+                                                            "[variables('tagPatching')[copyindex()].name]"
+                                                        ]
+                                                    },
+                                                    "filterOperator": "Any"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "scheduleInfo": "[variables('tagPatching')[copyindex()].schedule]"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[concat('nestedDeploymentUM-Linux',variables('tagPatching')[copyindex()].name)]",
+            "type": "Microsoft.Resources/deployments",
+            "comments": "Using nested deployment because a nested resource cannot have a copy function",
+            "apiVersion": "2017-05-10",
+            "copy": {
+                "count": "[length(variables('tagPatching'))]",
+                "name": "patchingLinuxTagLoop"
+            },
+            "dependsOn": [
+                "[parameters('automationAccountName')]",
+                "patchingWinTagLoop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "[concat(parameters('automationAccountName'), '/linux-um-',subscription().displayName,'-',variables('tagPatching')[copyindex()].name)]",
+                            "type": "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations",
+                            "apiVersion": "2017-05-15-preview",
+                            "properties": {
+                                "updateConfiguration": {
+                                    "operatingSystem": "Linux",
+                                    "linux": {
+                                        "includedPackageClassifications": "Unclassified, Critical, Security, Other",
+                                        "rebootSetting": "Always"
+                                    },
+                                    "duration": "PT3H",
+                                    "targets": {
+                                        "azureQueries": [
+                                            {
+                                                "scope": [
+                                                    "[subscription().id]"
+                                                ],
+                                                "locations": [],
+                                                "tagSettings": {
+                                                    "tags": {
+                                                        "UpdateManagement": [
+                                                            "[variables('tagPatching')[copyindex()].name]"
+                                                        ]
+                                                    },
+                                                    "filterOperator": "Any"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                },
+                                "scheduleInfo": "[variables('tagPatching')[copyindex()].schedule]"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "automationAccountResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
+            "metadata": {
+                "description": "The Resource Id of the Automation Account."
+            }
+        },
+        "automationAccountResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The Resource Group the Automation Account was deployed to."
+            }
+        },
+        "automationAccountName": {
+            "type": "string",
+            "value": "[parameters('automationAccountName')]",
+            "metadata": {
+                "description": "The Name of the Automation Account."
+            }
+        }
+    }
+}

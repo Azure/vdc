@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsWorkspaceName": {
+      "value": "workspace"
+    },
+    "serviceTier": {
+      "value": "PerNode"
+    },
+    "dataRetention": {
+      "value": 365
+    },
+    "location": {
+      "value": "West US 2"
+    },
+    "diagnosticStorageAccountName": {
+      "value": "storage"
+    },
+    "diagnosticStorageAccountId": {
+      "value": ""
+    },
+    "diagnosticStorageAccountAccessKey": {
+      "value": ""
+    }
+  }
+}

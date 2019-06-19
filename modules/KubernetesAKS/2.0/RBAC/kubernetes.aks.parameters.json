@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "roleAssignments": {
+      "value": [
+        {
+          "comments": "Reader Role - Use Admin Persona Principal Id",
+          "roleDefinitionId": "00000000-0000-0000-0000-000000000000",
+          "principalId": "00000000-0000-0000-0000-000000000000"
+        },
+        {
+          "comments": "Reader Role - Use Dev Persona Principal Id",
+          "roleDefinitionId": "00000000-0000-0000-0000-000000000000",
+          "principalId": "00000000-0000-0000-0000-000000000000"
+        },
+        {
+          "comments": "Reader Role - Use NOC Persona Principal Id",
+          "roleDefinitionId": "00000000-0000-0000-0000-000000000000",
+          "principalId": "00000000-0000-0000-0000-000000000000"
+        }
+      ]
+    }
+  }
+}

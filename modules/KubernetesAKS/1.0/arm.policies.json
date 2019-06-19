@@ -1,0 +1,112 @@
+{
+    "policies": [
+        {
+            "name": "Diagnositcs Enabled for AKS Cluster",
+            "description": "Policy to prevent the disabling diagnostics in AKS Cluster.",
+            "rules": {
+                "if": {
+                    "field": "type",
+                    "in": [
+                        "Microsoft.ContainerService/managedClusters"
+                    ]
+                },
+                "then": {
+                    "effect": "auditIfNotExists",
+                    "details": {
+                        "type": "Microsoft.Insights/diagnosticSettings",
+                        "existenceCondition": {
+                            "allOf": [
+                                {
+                                    "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                                    "equals": "true"
+                                },
+                                {
+                                    "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                                    "equals": "true"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "RBAC Role - Reader Role Assigned",
+            "description": "Policy to check the RBAC role assignment.",
+            "rules": {
+                "if": {
+                    "field": "type",
+                    "in": [
+                        "Microsoft.ContainerService/managedClusters"
+                    ]
+                },
+                "then": {
+                    "effect": "auditIfNotExists",
+                    "details": {
+                        "type": "Microsoft.Authorization/roleAssignments",
+                        "existenceCondition": {
+                            "allOf": [
+                                {
+                                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                                    "contains": "acdd72a7-3385-48ef-bd42-f606fba81ae7"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "RBAC Role - Azure Kubernetes Service Cluster User Role Assigned",
+            "description": "Policy to check the RBAC role assignment.",
+            "rules": {
+                "if": {
+                    "field": "type",
+                    "in": [
+                        "Microsoft.ContainerService/managedClusters"
+                    ]
+                },
+                "then": {
+                    "effect": "auditIfNotExists",
+                    "details": {
+                        "type": "Microsoft.Authorization/roleAssignments",
+                        "existenceCondition": {
+                            "allOf": [
+                                {
+                                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                                    "contains": "4abbcc35-e782-43d8-92c5-2d3f1bd2253f"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "RBAC Role - Azure Kubernetes Service Cluster Admin Role Assigned",
+            "description": "Policy to check the RBAC role assignment.",
+            "rules": {
+                "if": {
+                    "field": "type",
+                    "in": [
+                        "Microsoft.ContainerService/managedClusters"
+                    ]
+                },
+                "then": {
+                    "effect": "auditIfNotExists",
+                    "details": {
+                        "type": "Microsoft.Authorization/roleAssignments",
+                        "existenceCondition": {
+                            "allOf": [
+                                {
+                                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                                    "contains": "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

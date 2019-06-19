@@ -1,0 +1,24 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ServiceName": {
+      "value": null
+    },
+    "omsWorkspaceName": {
+      "value": null
+    },
+    "omsWorkspaceResourceGroup": {
+      "value": null
+    },
+    "diagnosticStorageAccountName": {
+      "value": null
+    },
+    "diagnosticStorageAccountRG": {
+      "value": null
+    },
+    "logsRetentionInDays": {
+      "value": 30
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "redisCacheName": {
+      "value": null
+    },
+    "redisCacheSKU": {
+      "value": "Premium"
+    },
+    "logsRetentionInDays": {
+      "value": 30
+    },
+    "omsWorkspaceName": {
+      "value": null
+    },
+    "omsWorkspaceResourceGroup": {
+      "value": null
+    },
+    "diagnosticStorageAccountName": {
+      "value": null
+    },
+    "diagnosticStorageAccountRG": {
+      "value": null
+    },
+    "vNetResourceGroup": {
+      "value": null
+    },
+    "vnetResourceName": {
+      "value": null
+    },
+    "subnetName": {
+      "value": null
+    }
+  }
+}

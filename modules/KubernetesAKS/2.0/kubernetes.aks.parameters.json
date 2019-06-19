@@ -1,0 +1,81 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aksClusterName": {
+      "value": "org-aks-cluster"
+    },
+    "subscriptionId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000"
+    },
+    "location": {
+      "value": "West US 2"
+    },
+    "osDiskSizeGb": {
+      "value": 60
+    },
+    "osType": {
+      "value": "Linux"
+    },
+    "agentCount": {
+      "value": 2
+    },
+    "agentVMSize": {
+      "value": "Standard_DS3_v2"
+    },
+    "servicePrincipalClientId": {
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    "servicePrincipalClientSecret": {
+      "value": "secret"
+    },
+    "kubernetesVersion": {
+      "value": "1.12.6"
+    },
+    "networkPlugin": {
+      "value": "azure"
+    },
+    "vnetSubnetId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-net-rg/providers/Microsoft.Network/virtualNetworks/org-aks-vnet/subnets/default"
+    },
+    "serviceCIDR": {
+      "value": "11.0.0.0/16"
+    },
+    "dnsPrefix": {
+      "value": "aks"
+    },
+    "dnsServiceIP": {
+      "value": "11.0.0.10"
+    },
+    "dockerBridgeCIDR": {
+      "value": "172.17.0.1/16"
+    },
+    "diagnosticEventHubName": {
+      "value": "org-event-hub"
+    },
+    "diagnosticEventHubAuthRuleId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.EventHub/namespaces/doeventhubnamespace/AuthorizationRules/RootManageSharedAccessKey"
+    },
+    "diagnosticOMSId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/org-aks-la"
+    },
+    "diagnosticStorageId": {
+      "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/doaksdiagcyxhc6odcasnec"
+    },
+    "enableRBAC": {
+      "value": true
+    },
+    "rbacServerAppId": {
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    "rbacServerSecret": {
+      "value": "secret"
+    },
+    "rbacClientAppId": {
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    "rbacTenant": {
+      "value": "00000000-0000-0000-0000-000000000000"
+    }
+  }
+}

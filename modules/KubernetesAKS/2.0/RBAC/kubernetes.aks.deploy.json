@@ -1,0 +1,31 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "roleAssignments": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of Role Assignment Information for AKS infra resource group"
+      }
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "comments": "Role grants to the AKS resource group",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2017-05-01",
+      "copy": {
+        "name": "roleAssignmentLoop",
+        "count": "[length(parameters('roleAssignments'))]"
+      },
+      "name": "[guid(subscription().id, resourceGroup().id, parameters('roleAssignments')[copyIndex()].roleDefinitionId, parameters('roleAssignments')[copyIndex()].principalId)]",
+      "properties": {
+        "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', parameters('roleAssignments')[copyIndex()].roleDefinitionId)]",
+        "principalId": "[parameters('roleAssignments')[copyIndex()].principalId]",
+        "scope": "[resourceGroup().id]"
+      }
+    }
+  ],
+  "outputs": {}
+}

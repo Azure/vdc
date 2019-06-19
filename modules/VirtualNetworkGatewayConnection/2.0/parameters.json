@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "localVirtualNetworkGatewayName": {
+            "value": "vdcvgwlocal"
+        },
+        "vpnSharedKey": {
+            "value": "asodgfhjkaw4tu0w9vuijv0qu3409tu"
+        },
+        "remoteVirtualNetworkGatewayName": {
+            "value": "vdcvgwremote"
+        },
+        "remoteVirtualNetworkResourceGroup": {
+            "value": "vdc-network-rg"
+        },
+        "remoteVirtualNetworkGatewaySubscriptionId": {
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "enableBgp": {
+            "value": false
+        },
+        "remoteConnectionName": {
+            "value": "vpnconnection"
+        }
+    }
+}

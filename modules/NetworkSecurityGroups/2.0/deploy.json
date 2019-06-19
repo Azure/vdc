@@ -1,0 +1,132 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "2.0.0.0",
+    "parameters": {
+        "workspaceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource Id of the Log Analytics workspace."
+            }
+        },
+        "diagnosticStorageAccountId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource Id of the diagnostics Storage Account."
+            }
+        },
+        "logRetentionInDays": {
+            "type": "int",
+            "defaultValue": 365,
+            "minValue": 0,
+            "maxValue": 365,
+            "metadata": {
+                "description": "Optional. Information about how many days log information will be retained in a diagnostic Storage Account."
+            }
+        },
+        "networkSecurityGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Name of the Network Security Group."
+            }
+        },
+        "networkSecurityGroupSecurityRules": {
+            "type": "array",
+            "metadata": {
+                "description": "Required. Array of Security Rules to deploy to the Network Security Group."
+            }
+        }
+    },
+    "variables": {
+        "emptyArray": []
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-09-01",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroupName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "properties": {
+                "copy": [
+                    {
+                        "name": "securityRules",
+                        "count": "[length(parameters('networkSecurityGroupSecurityRules'))]",
+                        "input": {
+                            "name": "[parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].name]",
+                            "properties": {
+                                "access": "[parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.access]",
+                                "destinationAddressPrefix": "[if(equals(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationAddressPrefix, ''), json('null'), parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationAddressPrefix)]",
+                                "destinationAddressPrefixes": "[if(equals(length(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationAddressPrefixes), 0), json('null'), parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationAddressPrefixes)]",
+                                "destinationApplicationSecurityGroups": "[if(equals(length(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationApplicationSecurityGroups), 0), json('null'), concat(variables('emptyArray'), array(json(concat('{\"id\": \"', resourceId('Microsoft.Network/applicationSecurityGroups', parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationApplicationSecurityGroups[0].name), '\"', ',', '\"location\": \"', resourceGroup().location, '\"}')))))]",
+                                "destinationPortRanges": "[if(equals(length(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationPortRanges), 0), json('null'), parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationPortRanges)]",
+                                "destinationPortRange": "[if(equals(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationPortRange, ''), json('null'), parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.destinationPortRange)]",
+                                "direction": "[parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.direction]",
+                                "priority": "[int(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.priority)]",
+                                "protocol": "[parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.protocol]",
+                                "sourceAddressPrefix": "[if(equals(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.sourceAddressPrefix, ''), json('null'), parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.sourceAddressPrefix)]",
+                                "sourceApplicationSecurityGroups": "[if(equals(length(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.sourceApplicationSecurityGroups), 0), json('null'), concat(variables('emptyArray'), array(json(concat('{\"id\": \"', resourceId('Microsoft.Network/applicationSecurityGroups', parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.sourceApplicationSecurityGroups[0].name), '\"', ',', '\"location\": \"', resourceGroup().location, '\"}')))))]",
+                                "sourcePortRanges": "[if(equals(length(parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.sourcePortRanges), 0), json('null'), parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.sourcePortRanges)]",
+                                "sourcePortRange": "[parameters('networkSecurityGroupSecurityRules')[copyIndex('securityRules')].properties.sourcePortRange]"
+                            }
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "type": "providers/diagnosticSettings",
+                    "name": "Microsoft.Insights/service",
+                    "dependsOn": [
+                        "[parameters('networkSecurityGroupName')]"
+                    ],
+                    "apiVersion": "2015-07-01",
+                    "properties": {
+                        "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
+                        "workspaceId": "[parameters('workspaceId')]",
+                        "logs": [
+                            {
+                                "category": "NetworkSecurityGroupEvent",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logRetentionInDays')]",
+                                    "enabled": true
+                                }
+                            },
+                            {
+                                "category": "NetworkSecurityGroupRuleCounter",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": "[parameters('logRetentionInDays')]",
+                                    "enabled": true
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "networkSecurityGroupResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group the Network Security Groups were created in."
+            }
+        },
+        "networkSecurityGroupResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+            "metadata": {
+                "description": "The Resource Ids of the Network Security Group deployed."
+            }
+        },
+        "networkSecurityGroupName": {
+            "type": "string",
+            "value": "[parameters('networkSecurityGroupName')]",
+            "metadata": {
+                "description": "The Name of the Network Security Group deployed."
+            }
+        }
+    }
+}

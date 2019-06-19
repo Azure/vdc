@@ -1,0 +1,126 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Specifies the Virtual Network Gateway name."
+            }
+        },
+        "virtualNetworkGatewayType": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Specifies the gateway type. E.g. VPN, ExpressRoute"
+            }
+        },
+        "virtualNetworkGatewaySku": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. The Sku of the Gateway. This must be one of Basic, Standard or HighPerformance."
+            }
+        },
+        "vpnType": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Specifies the VPN type"
+            }
+        },
+        "vNetId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Virtual Network resource Id"
+            }
+        },
+        "enableBgp": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Optional. Value to specify if BGP is enabled or not"
+            }
+        },
+        "asn": {
+            "type": "int",
+            "defaultValue": 65815,
+            "metadata": {
+                "description": "Optional. ASN value"
+            }
+        }
+    },
+    "variables": {
+        "gatewayPipName": "[concat(parameters('virtualNetworkGatewayName'), '-pip')]",
+        "gatewayPipResourceName": "[concat('Microsoft.Network/publicIpAddresses/',variables('gatewayPipName'))]",
+        "gatewaySubnetId": "[concat(parameters('vNetId'), '/subnets/GatewaySubnet')]",
+        "gatewayPipId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('gatewayPipName'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('gatewayPipName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        },
+        {
+            "name": "[parameters('virtualNetworkGatewayName')]",
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('gatewayPipResourceName')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('gatewaySubnetId')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables('gatewayPipId')]"
+                            }
+                        },
+                        "name": "vNetGatewayConfig"
+                    }
+                ],
+                "enableBgp": "[parameters('enableBgp')]",
+                "bgpSettings": {
+                    "asn": "[parameters('asn')]"
+                },
+                "sku": {
+                    "name": "[parameters('virtualNetworkGatewaySku')]",
+                    "tier": "[parameters('virtualNetworkGatewaySku')]"
+                },
+                "gatewayType": "[parameters('virtualNetworkGatewayType')]",
+                "vpnType": "[parameters('vpnType')]"
+            }
+        }
+    ],
+    "outputs": {
+        "virtualNetworkGatewayResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The Resource Group the Virtual Network Gateway was deployed."
+            }
+        },
+        "virtualNetworkGatewayName": {
+            "type": "string",
+            "value": "[parameters('virtualNetworkGatewayName')]",
+            "metadata": {
+                "description": "The Name of the Virtual Network Gateway."
+            }
+        },
+        "virtualNetworkGatewayId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGatewayName'))]",
+            "metadata": {
+                "description": "The Resource Id of the Virtual Network Gateway."
+            }
+        }
+    }
+}

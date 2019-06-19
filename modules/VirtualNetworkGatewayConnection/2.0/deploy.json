@@ -1,0 +1,110 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "localVirtualNetworkGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Specifies the local Virtual Network Gateway name"
+            }
+        },
+        "vpnSharedKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Specifies a VPN shared key. The same value has to be specified on both Virtual Network Gateways"
+            }
+        },
+        "remoteVirtualNetworkGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Specifies the remote Virtual Network Gateway"
+            }
+        },
+        "remoteVirtualNetworkResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Remote Virtual Network resource group name"
+            }
+        },
+        "remoteVirtualNetworkGatewaySubscriptionId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Remote Subscription Id"
+            }
+        },
+        "enableBgp": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Optional. Value to specify if BGP is enabled or not"
+            }
+        },
+        "remoteConnectionName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Remote connection name"
+            }
+        },
+        "virtualNetworkGatewayConnectionType": {
+            "type": "string",
+            "defaultValue": "VNet2VNet",
+            "allowedValues": [
+                "Ipsec",
+                "VNet2VNet",
+                "ExpressRoute",
+                "VPNClient"
+            ],
+            "metadata": {
+                "description": "Optional. Gateway connection type."
+            }
+        }
+    },
+    "variables": {
+        "localVirtualNetworkGatewayId": "[resourceId(resourceGroup().name ,'Microsoft.Network/virtualNetworkGateways', parameters('localVirtualNetworkGatewayName'))]",
+        "remoteVirtualNetworkGatewayId": "[resourceId(parameters('remoteVirtualNetworkGatewaySubscriptionId'), parameters('remoteVirtualNetworkResourceGroup') ,'Microsoft.Network/virtualNetworkGateways', parameters('remoteVirtualNetworkGatewayName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('remoteConnectionName')]",
+            "type": "Microsoft.Network/connections",
+            "apiVersion": "2017-10-01",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "properties": {
+                "virtualNetworkGateway1": {
+                    "id": "[variables('localVirtualNetworkGatewayId')]"
+                },
+                "virtualNetworkGateway2": {
+                    "id": "[variables('remoteVirtualNetworkGatewayId')]"
+                },
+                "enableBgp": "[parameters('enableBgp')]",
+                "connectionType": "[parameters('virtualNetworkGatewayConnectionType')]",
+                "routingWeight": 3,
+                "sharedKey": "[parameters('vpnSharedKey')]"
+            }
+        }
+    ],
+    "outputs": {
+        "remoteConnectionResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The Resource Group deployed it."
+            }
+        },
+        "remoteConnectionName": {
+            "type": "string",
+            "value": "[parameters('remoteConnectionName')]",
+            "metadata": {
+                "description": "The Name of the Virtual Network Gateway Connection."
+            }
+        },
+        "remoteConnectionResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/connections', parameters('remoteConnectionName'))]",
+            "metadata": {
+                "description": "The Resource Id of the Virtual Network Gateway Connection."
+            }
+        }
+    }
+}

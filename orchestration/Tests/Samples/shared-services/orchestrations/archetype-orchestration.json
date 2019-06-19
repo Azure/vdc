@@ -1,0 +1,20 @@
+{
+    "ModuleDefinitionsRootPath": "Optional - otherwise assumes modules folder",
+    "ModuleInstances": [
+        {
+            "Name": "DiagnosticStorageAccount",
+            "ModuleDefinitionName": "StorageAccount",
+            "Comments": "Storage Account that is used for ...",
+            "Deployment": {
+                "TemplatePath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
+                "ParametersPath": "../../../../../../modules/StorageAccounts/2.0/storage.account.parameters.json",
+                "OverrideParameters": [
+                    {
+                        "Parameter": "storageAccountSku",
+                        "Value": "ArchetypeParameters.Archetype.DiagnosticStorageAccount.SKU"
+                    }
+                ]
+            }
+        }
+    ]
+}

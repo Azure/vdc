@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationSecurityGroupName": {
+           "type": "string",
+           "metadata": {
+                "description": "Required. Name of the Application Security Group."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/applicationSecurityGroups",
+            "apiVersion": "2017-10-01",
+            "name": "[parameters('applicationSecurityGroupName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {}
+        }
+    ],
+    "outputs": {
+        "applicationSecurityGroupResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Resource Group the Application Security Groups were created in."
+            }
+        },
+        "applicationSecurityGroupResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/applicationSecurityGroups', parameters('applicationSecurityGroupName'))]",
+            "metadata": {
+                "description": "The Resource Ids of the Network Security Group deployed."
+            }
+        },
+        "applicationSecurityGroupName": {
+            "type": "string",
+            "value": "[parameters('applicationSecurityGroupName')]",
+            "metadata": {
+                "description": "The Name of the Application Security Group deployed."
+            }
+        }
+    }
+}

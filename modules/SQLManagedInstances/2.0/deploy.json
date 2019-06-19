@@ -1,0 +1,123 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The username used to establish jumpbox VMs."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password given to the admin user."
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure region where the SQL managed instance will be deployed."
+      }
+    },
+    "managedInstanceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the SQL managed instance."
+      }
+    },
+    "skuName": {
+      "type": "string",
+      "defaultValue": "GP_Gen4"
+    },
+    "skuEdition": {
+      "type": "string",
+      "defaultValue": "GeneralPurpose"
+    },
+    "storageSizeInGB": {
+      "type": "int",
+      "defaultValue": "32"
+    },
+    "vCores": {
+      "type": "int",
+      "defaultValue": "16"
+    },
+    "licenseType": {
+      "type": "string",
+      "defaultValue": "LicenseIncluded"
+    },
+    "hardwareFamily": {
+      "type": "string",
+      "defaultValue": "Gen4"
+    },
+    "dnsZonePartner": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "collation": {
+      "type": "string",
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "proxyOverride": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "publicDataEndpointEnabled": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "timezoneId": {
+      "type": "string",
+      "defaultValue": "UTC"
+    },
+    "vNetResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the resource group where the VNet resides."
+      }
+    },
+    "vNetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name the VNet on which the SQL managed instance will be placed."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name the subnet on which the SQL managed instance will be placed."
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "location": "[parameters('location')]",
+      "name": "[parameters('managedInstanceName')]",
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "tier": "[parameters('skuEdition')]"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('adminUsername')]",
+        "administratorLoginPassword": "[parameters('adminPassword')]",
+        "subnetId": "[resourceId(parameters('vNetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vNetName'), parameters('subnetName'))]",
+        "storageSizeInGB": "[parameters('storageSizeInGB')]",
+        "vCores": "[parameters('vCores')]",
+        "licenseType": "[parameters('licenseType')]",
+        "hardwareFamily": "[parameters('hardwareFamily')]",
+        "dnsZonePartner": "[parameters('dnsZonePartner')]",
+        "collation": "[parameters('collation')]",
+        "proxyOverride": "[parameters('proxyOverride')]",
+        "publicDataEndpointEnabled": "[parameters('publicDataEndpointEnabled')]",
+        "timezoneId": "[parameters('timezoneId')]"
+      },
+      "type": "Microsoft.Sql/managedInstances"
+    }
+  ],
+  "outputs": {},
+  "variables": {}
+}

@@ -1,0 +1,40 @@
+{
+    "policies":[  
+    {  
+        "name":"SharedServicesDnsPermittedResourceTypes",
+        "description":"Policy to prevent the creation of unauthorized resource types within the resource group.",
+        "rules":{  
+            "if":{
+                "not":{
+                    "field":"type",
+                    "in":[
+                            "Microsoft.Compute/availabilitySets",
+                            "Microsoft.Storage/storageAccounts",
+                            "Microsoft.Network/networkInterfaces",
+                            "Microsoft.Compute/virtualMachines",
+                            "Microsoft.Compute/disks",
+                            "Microsoft.Compute/virtualMachines/extensions"
+                        ]
+                }
+            },
+            "then":{
+                "effect":"audit"
+            }
+        }
+    },
+    {  
+        "name":"denyPublicIP",
+        "description":"Policy to prevent the creation of public ip resources",
+        "rules":{  
+            "if":{  
+                "field":"type",
+                "in":[  
+                    "Microsoft.Network/publicIPAddresses"
+                ]
+            },
+            "then":{  
+                "effect":"audit"
+            }
+        }
+    }]
+}

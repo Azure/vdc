@@ -1,0 +1,181 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {},
+  "resources": [
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "name": "[guid('diagnositcs-enabled-for-aks-cluster')]",
+      "apiVersion": "2018-03-01",
+      "properties": {
+        "policyType": "Custom",
+        "displayName": "Diagnositcs Enabled for AKS Cluster",
+        "description": "Policy to prevent the disabling diagnostics in AKS Cluster.",
+        "mode": "all",
+        "policyRule": {
+          "if": {
+            "field": "type",
+            "in": [
+              "Microsoft.ContainerService/managedClusters"
+            ]
+          },
+          "then": {
+            "effect": "auditIfNotExists",
+            "details": {
+              "type": "Microsoft.Insights/diagnosticSettings",
+              "existenceCondition": {
+                "allOf": [
+                  {
+                    "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                    "equals": "true"
+                  },
+                  {
+                    "field": "Microsoft.Insights/diagnosticSettings/metrics.enabled",
+                    "equals": "true"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "name": "[guid('rbac-Role-reader-role-assigned')]",
+      "apiVersion": "2018-03-01",
+      "properties": {
+        "policyType": "Custom",
+        "displayName": "RBAC Role - Reader Role Assigned",
+        "description": "Policy to check the RBAC role assignment.",
+        "mode": "all",
+        "policyRule": {
+          "if": {
+            "field": "type",
+            "in": [
+              "Microsoft.ContainerService/managedClusters"
+            ]
+          },
+          "then": {
+            "effect": "auditIfNotExists",
+            "details": {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "existenceCondition": {
+                "allOf": [
+                  {
+                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                    "contains": "acdd72a7-3385-48ef-bd42-f606fba81ae7"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "name": "[guid('rbac-role-azure-kubernetes-service-cluster-user-role-assigned')]",
+      "apiVersion": "2018-03-01",
+      "properties": {
+        "policyType": "Custom",
+        "displayName": "RBAC Role - Azure Kubernetes Service Cluster User Role Assigned",
+        "description": "Policy to check the RBAC role assignment.",
+        "mode": "all",
+        "policyRule": {
+          "if": {
+            "field": "type",
+            "in": [
+              "Microsoft.ContainerService/managedClusters"
+            ]
+          },
+          "then": {
+            "effect": "auditIfNotExists",
+            "details": {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "existenceCondition": {
+                "allOf": [
+                  {
+                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                    "contains": "4abbcc35-e782-43d8-92c5-2d3f1bd2253f"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyDefinitions",
+      "name": "[guid('rbac-role-azure-kubernetes-service-cluster-admin-role-assigned')]",
+      "apiVersion": "2018-03-01",
+      "properties": {
+        "policyType": "Custom",
+        "displayName": "RBAC Role - Azure Kubernetes Service Cluster Admin Role Assigned",
+        "description": "Policy to check the RBAC role assignment.",
+        "mode": "all",
+        "policyRule": {
+          "if": {
+            "field": "type",
+            "in": [
+              "Microsoft.ContainerService/managedClusters"
+            ]
+          },
+          "then": {
+            "effect": "auditIfNotExists",
+            "details": {
+              "type": "Microsoft.Authorization/roleAssignments",
+              "existenceCondition": {
+                "allOf": [
+                  {
+                    "field": "Microsoft.Authorization/roleAssignments/roleDefinitionId",
+                    "contains": "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "name": "[guid('diagnositcs-enabled-for-aks-cluster')]",
+      "apiVersion": "2018-05-01",
+      "properties": {
+        "scope": "[resourceGroup().id]",
+        "policyDefinitionId": "[concat('/providers/Microsoft.Authorization/policyDefinitions/', guid('diagnositcs-enabled-for-aks-cluster'))]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "name": "[guid('rbac-Role-reader-role-assigned')]",
+      "apiVersion": "2018-05-01",
+      "properties": {
+        "scope": "[resourceGroup().id]",
+        "policyDefinitionId": "[concat('/providers/Microsoft.Authorization/policyDefinitions/', guid('rbac-Role-reader-role-assigned'))]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "name": "[guid('rbac-role-azure-kubernetes-service-cluster-user-role-assigned')]",
+      "apiVersion": "2018-05-01",
+      "properties": {
+        "scope": "[resourceGroup().id]",
+        "policyDefinitionId": "[concat('/providers/Microsoft.Authorization/policyDefinitions/', guid('rbac-role-azure-kubernetes-service-cluster-user-role-assigned'))]"
+      }
+    },
+    {
+      "type": "Microsoft.Authorization/policyAssignments",
+      "name": "[guid('rbac-role-azure-kubernetes-service-cluster-admin-role-assigned')]",
+      "apiVersion": "2018-05-01",
+      "properties": {
+        "scope": "[resourceGroup().id]",
+        "policyDefinitionId": "[concat('/providers/Microsoft.Authorization/policyDefinitions/', guid('rbac-role-azure-kubernetes-service-cluster-admin-role-assigned'))]"
+      }
+    }
+  ]
+}

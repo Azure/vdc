@@ -1,0 +1,223 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "SQLServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Azure SQL Server name"
+      }
+    },
+    "SQLserverLocation": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "The location of the SQL server."
+      }
+    },
+    "SQLServerAzureADAdmin": {
+      "type": "string",
+      "metadata": {
+        "description": "The account name to use for the SQL server administrator."
+      }
+    },
+    "SQLServerAzureADAdminSID": {
+      "type": "string"
+    },
+    
+    "SQLServerAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SQL.admin password"
+      }
+    },
+    "SQLServerFirewallAllowedPublicIPs": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "List of IPv4 IPs or ranges to allow access from the internet to the SQL Server"
+      }
+    },
+    "SQLServerFirewallAllowedSubnets": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Information of existing virtual networks and subnets allowed to access the SQL Server"
+      }
+    },
+    "SQLServerMicrosoftServicesBypassFirewall": {
+      "type": "bool",
+      "defaultValue": true
+    },
+     "SecurityLogStorageAccountEndpoint": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Endpoint of the storage account where Audit Logs will be stored",
+        "AllEnvironmentsAutoAssignValueFromVariablesKeyVaultSecretName": "SecurityLogStorageAccountEndpoint",
+        "ConcatParameterAfterValue": "parameters('SQLserverLocation')"
+      }
+    },
+    "SecurityLogStorageAccountAccessKey": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Access Key to be used in the Audit Logs storage account",
+        "AllEnvironmentsAutoAssignValueFromSecretsKeyVaultSecretName": "Security-Storage-Account-PrimaryKey",
+        "ConcatParameterAfterValue": "parameters('SQLserverLocation')"
+      }
+    }
+  },
+  "variables": {
+    "SQLServerFirewallAllowedIPsArrayCount": "[length(parameters('SQLServerFirewallAllowedPublicIPs'))]",
+    "SQLServerFirewallAllowedIPsArrayEmpty": "[equals(variables('SQLServerFirewallAllowedIPsArrayCount'),0)]",
+    "SQLServerFirewallAllowedSubnetsArrayCount": "[length(parameters('SQLServerFirewallAllowedSubnets'))]",
+    "SQLServerFirewallAllowedSubnetsArrayEmpty": "[equals(variables('SQLServerFirewallAllowedSubnetsArrayCount'),0)]",
+    "EmptyArray": []
+  },
+  "resources": [
+    {
+      "name": "[parameters('SQLServerName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[parameters('SQLserverLocation')]",
+      "apiVersion": "2015-05-01-preview",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "administratorLogin": "admin.SQL",
+        "administratorLoginPassword": "[parameters('SQLServerAdminPassword')]"
+      },
+      "resources": [
+        {
+          "condition" : "[not(equals(parameters('SecurityLogStorageAccountEndpoint'),''))]",
+          "apiVersion": "2017-03-01-preview",
+          "type": "auditingSettings",
+          "name": "[concat(parameters('SQLServerName'),'-auditsettings')]",
+          "location": "[parameters('SQLserverLocation')]",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('SQLServerName'))]"
+          ],
+          "properties": {
+            "state": "Enabled",
+            "storageEndpoint": "[parameters('SecurityLogStorageAccountEndpoint')]",
+            "storageAccountAccessKey": "[parameters('SecurityLogStorageAccountAccessKey')]",
+            "retentionDays": 365,
+            "auditActionsAndGroups": [
+              "BATCH_STARTED_GROUP",
+              "BATCH_COMPLETED_GROUP",
+              "APPLICATION_ROLE_CHANGE_PASSWORD_GROUP",
+              "BACKUP_RESTORE_GROUP",
+              "DATABASE_LOGOUT_GROUP",
+              "DATABASE_OBJECT_CHANGE_GROUP",
+              "DATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP",
+              "DATABASE_OBJECT_PERMISSION_CHANGE_GROUP",
+              "FAILED_DATABASE_AUTHENTICATION_GROUP",
+              "SCHEMA_OBJECT_ACCESS_GROUP",
+              "SCHEMA_OBJECT_CHANGE_GROUP",
+              "SCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP",
+              "SCHEMA_OBJECT_PERMISSION_CHANGE_GROUP",
+              "SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP",
+              "USER_CHANGE_PASSWORD_GROUP",
+              "DATABASE_PERMISSION_CHANGE_GROUP",
+              "DATABASE_PRINCIPAL_CHANGE_GROUP",
+              "DATABASE_PRINCIPAL_IMPERSONATION_GROUP",
+              "DATABASE_ROLE_MEMBER_CHANGE_GROUP",
+              "DATABASE_OPERATION_GROUP"
+            ]
+          }
+        },
+        {
+          "condition" : "[not(equals(parameters('SecurityLogStorageAccountEndpoint'),''))]",
+          "apiVersion": "2015-05-01-preview",
+          "type": "securityAlertPolicies",
+          "name": "[concat(parameters('SQLServerName'),'-securityAlertsettings')]",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', parameters('SQLServerName'))]",
+            "[concat('Microsoft.Sql/servers/', parameters('SQLServerName'),'/auditingSettings/',parameters('SQLServerName'),'-auditsettings')]"
+          ],
+          "properties": {
+            "state": "Enabled",
+            "emailAccountAdmins": "Enabled",
+            "retentionDays": "365",
+            "storageEndpoint": "[parameters('SecurityLogStorageAccountEndpoint')]",
+            "storageAccountAccessKey": "[parameters('SecurityLogStorageAccountAccessKey')]"
+          }
+        },
+        {
+          "condition" : "[parameters('SQLServerMicrosoftServicesBypassFirewall')]",
+          "type": "Microsoft.Sql/servers/firewallrules",
+          "name": "[concat(parameters('SQLServerName'), '/', 'AllowAllWindowsAzureIps')]",
+          "apiVersion": "2015-05-01-preview",
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          },
+          "dependsOn": [
+            "[parameters('SQLServerName')]"
+          ]
+        },
+        {
+          "type": "Microsoft.Sql/servers/administrators",
+          "apiVersion": "2014-04-01-preview",
+          "name": "[concat(parameters('SQLServerName'), '/', 'ActiveDirectory')]",
+          "properties": {
+            "administratorType": "ActiveDirectory",
+            "login": "[parameters('SQLServerAzureADAdmin')]",
+            "sid": "[parameters('SQLServerAzureADAdminSID')]",
+            "tenantId": "[subscription().tenantId]"
+          },
+          "dependsOn": [
+            "[parameters('SQLServerName')]"
+          ]
+        }
+      ]
+    },
+    {
+      "condition":  "[not(variables('SQLServerFirewallAllowedSubnetsArrayEmpty'))]",
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Sql/servers/virtualNetworkRules",
+      "name": "[concat(parameters('SQLServerName'), '/', 'SubnetRule', copyIndex('SQLServerFirewallAllowedSubnets'))]",
+      "scale": null,
+      "properties": {
+        "virtualNetworkSubnetId": "[if(variables('SQLServerFirewallAllowedSubnetsArrayEmpty'),' ',concat('/subscriptions/',parameters('SQLServerFirewallAllowedSubnets')[copyIndex('SQLServerFirewallAllowedSubnets')].VNetSubscriptionId,'/resourceGroups/',parameters('SQLServerFirewallAllowedSubnets')[copyIndex('SQLServerFirewallAllowedSubnets')].VNetResourceGroupName,'/providers/Microsoft.Network/virtualnetworks/',parameters('SQLServerFirewallAllowedSubnets')[copyIndex('SQLServerFirewallAllowedSubnets')].VNetName,'/subnets/',parameters('SQLServerFirewallAllowedSubnets')[copyIndex('SQLServerFirewallAllowedSubnets')].VNetSubnetName))]",
+        "ignoreMissingVnetServiceEndpoint": false
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('SQLServerName'))]",
+        "[resourceId('Microsoft.Sql/servers/administrators', parameters('SQLServerName'), 'ActiveDirectory')]",
+        "[concat('Microsoft.Sql/servers/', parameters('SQLServerName'),'/auditingSettings/',parameters('SQLServerName'),'-auditsettings')]",
+        "[concat('Microsoft.Sql/servers/', parameters('SQLServerName'),'/securityAlertPolicies/',parameters('SQLServerName'),'-securityAlertsettings')]",
+        "[resourceId('Microsoft.Sql/servers/firewallrules', parameters('SQLServerName'), 'AllowAllWindowsAzureIps')]"
+
+      ],
+      "copy":
+        {
+          "name": "SQLServerFirewallAllowedSubnets",
+          "count": "[if(variables('SQLServerFirewallAllowedSubnetsArrayEmpty'),1,variables('SQLServerFirewallAllowedSubnetsArrayCount'))]"
+        }
+    },
+    {
+	    "condition":  "[not(variables('SQLServerFirewallAllowedIPsArrayEmpty'))]",
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Sql/servers/firewallRules",
+      "name": "[concat(parameters('SQLServerName'), '/', 'FirewallRule', copyIndex('SQLServerFirewallAllowedIPAddresses'))]",
+      "properties": {
+        "startIpAddress": "[if(variables('SQLServerFirewallAllowedIPsArrayEmpty'),' ', parameters('SQLServerFirewallAllowedPublicIPs')[copyIndex('SQLServerFirewallAllowedIPAddresses')].start)]",
+        "endIpAddress": "[if(variables('SQLServerFirewallAllowedIPsArrayEmpty'),' ', parameters('SQLServerFirewallAllowedPublicIPs')[copyIndex('SQLServerFirewallAllowedIPAddresses')].end)]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', parameters('SQLServerName'))]",
+        "[resourceId('Microsoft.Sql/servers/administrators', parameters('SQLServerName'), 'ActiveDirectory')]",
+        "[concat('Microsoft.Sql/servers/', parameters('SQLServerName'),'/auditingSettings/',parameters('SQLServerName'),'-auditsettings')]",
+        "[concat('Microsoft.Sql/servers/', parameters('SQLServerName'),'/securityAlertPolicies/',parameters('SQLServerName'),'-securityAlertsettings')]",
+        "[resourceId('Microsoft.Sql/servers/firewallrules', parameters('SQLServerName'), 'AllowAllWindowsAzureIps')]"
+      ],
+      "copy": {
+        "name": "SQLServerFirewallAllowedIPAddresses",
+        "count": "[if(variables('SQLServerFirewallAllowedIPsArrayEmpty'),1,variables('SQLServerFirewallAllowedIPsArrayCount'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

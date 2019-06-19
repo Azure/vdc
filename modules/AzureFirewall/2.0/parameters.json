@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "azureFirewallName": {
+            "value": "azureFirewallName"
+        },
+        "applicationRuleCollections": {
+            "value": [
+                {
+                    "name": "allow-app-rules",
+                    "properties": {
+                        "priority": 100,
+                        "action": {
+                            "type": "allow"
+                        },
+                        "rules": [
+                            {
+                                "name": "allow-ase-tags",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "protocols": [
+                                    {
+                                        "protocolType": "HTTP",
+                                        "port": "80"
+                                    },
+                                    {
+                                        "protocolType": "HTTPS",
+                                        "port": "443"
+                                    }
+                                ],
+                                "fqdnTags": [
+                                    "AppServiceEnvironment",
+                                    "WindowsUpdate"
+                                ]
+                            },
+                            {
+                                "name": "allow-ase-management",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "protocols": [
+                                    {
+                                        "protocolType": "HTTP",
+                                        "port": "80"
+                                    },
+                                    {
+                                        "protocolType": "HTTPS",
+                                        "port": "443"
+                                    }
+                                ],
+                                "targetFqdns": [
+                                    "management.azure.com"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "networkRuleCollections": {
+            "value": [
+                {
+                    "name": "allow-network-rules",
+                    "properties": {
+                        "priority": 100,
+                        "action": {
+                            "type": "allow"
+                        },
+                        "rules": [
+                            {
+                                "name": "allow-ntp",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "destinationAddresses": [
+                                    "*"
+                                ],
+                                "destinationPorts": [
+                                    "123",
+                                    "12000"
+                                ],
+                                "protocols": [
+                                    "Any"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Network/"
+        },
+        "diagnosticStorageAccountId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Storage/"
+        },
+        "workspaceId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.OperationalInsights/workspaces/"
+        }
+    }
+}

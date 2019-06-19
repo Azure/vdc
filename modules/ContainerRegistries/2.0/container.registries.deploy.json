@@ -1,0 +1,65 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of AKS resource."
+      }
+    },
+    "containerRegistryName": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 50,
+      "metadata": {
+        "description": "Name of your Container Registry"
+      }
+    },
+    "containerRegistryAdminUserEnabled": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable admin user that have push / pull permission to the registry."
+      }
+    },
+    "containerRegistrySku": {
+      "type": "string",
+      "metadata": {
+        "description": "Tier of your Container Registry."
+      },
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ]
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "name": "[parameters('containerRegistryName')]",
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2017-10-01",
+      "location": "[parameters('location')]",
+      "comments": "Container registry for storing docker images",
+      "tags": {
+        "displayName": "[concat(parameters('containerRegistryName'))]"
+      },
+      "sku": {
+        "name": "[parameters('containerRegistrySku')]",
+        "tier": "[parameters('containerRegistrySku')]"
+      },
+      "properties": {
+        "adminUserEnabled": "[parameters('containerRegistryAdminUserEnabled')]"
+      }
+    }
+  ],
+  "outputs": {
+    "containerRegistryLoginServer": {
+      "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries',parameters('containerRegistryName')),'2017-10-01').loginServer]",
+      "type": "string"
+    }
+  }
+}

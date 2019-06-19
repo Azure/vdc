@@ -1,0 +1,6 @@
+{
+    "Subscriptions": "file(common/subscriptions.json)",
+    "ToolkitComponents": "file(common/toolkit.json)",
+    "ArchetypeOrchestration": "file(common/toolkit.json)",
+    "ArchetypeParameters": "file(common/toolkit.json)"
+}

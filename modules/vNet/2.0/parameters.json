@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetName": {
+            "value": "app-vnet"
+        },
+        "vnetAddressPrefixes": {
+            "value": [
+                "10.0.0.0/16"
+            ]
+        },
+        "dnsServers": {
+            "value": [
+              "192.168.1.4"
+            ]
+        },
+        "subnets": {
+            "value": [
+                {
+                    "name": "sharedsvcs",
+                    "addressPrefix": "10.4.0.32/27",
+                    "networkSecurityGroupName": "sharedsvcs-nsg",
+                    "routeTableName": "sharedsvcs-udr",
+                    "serviceEndpoints": [
+                        {
+                            "service": "Microsoft.EventHub"
+                        },
+                        {
+                            "service": "Microsoft.Sql"
+                        },
+                        {
+                            "service": "Microsoft.Storage"
+                        },
+                        {
+                            "service": "Microsoft.KeyVault"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

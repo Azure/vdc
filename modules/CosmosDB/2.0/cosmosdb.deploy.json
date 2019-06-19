@@ -1,0 +1,189 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiType": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure Cosmos DB API type"
+      },
+      "allowedValues": [
+        "Cassandra",
+        "Gremlin",
+        "MongoDB",
+        "SQL",
+        "Table"
+      ],
+      "defaultValue": "SQL"
+    },
+    "databaseAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Azure Cosmos DB account name."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "omsWorkspaceResourceGroup": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the Resource Group housing the OMS workspace."
+      }
+    },
+    "omsWorkspaceName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the OMS workspace used for diagnostic log integration."
+      }
+    },
+    "diagnosticStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage Account for diagnostics."
+      }
+    },
+    "diagnosticStorageAccountRG": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage Account for diagnostics."
+      }
+    },
+    "logsRetentionInDays": {
+      "type": "int",
+      "defaultValue": 0,
+      "minValue": 0,
+      "maxValue": 365,
+      "metadata": {
+        "description": "Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely."
+      }
+    },
+    "vNetResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "vNet Resource Group Name"
+      }
+    },
+    "vnetResourceName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the virtual network"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Subnet name contain within the virtual network"
+      }
+    }
+  },
+  "variables": {
+    "dbAccountName": "[parameters('databaseAccountName')]",
+    "resourceId": "[resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('databaseAccountName'))]",
+    "vNetResourceGroup": "[parameters('vNetResourceGroup')]",
+    "vnetResourceName": "[parameters('vnetResourceName')]",
+    "subnetName": "[parameters('subnetName')]",
+    "apiVersion": "[providers('Microsoft.DocumentDB', 'databaseAccounts').apiVersions[0]]",
+    "offerType": "Standard"
+  },
+  "resources": [
+    {
+      "apiVersion": "[providers('Microsoft.DocumentDB','databaseAccounts').apiVersions[0]]",
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "name": "[parameters('databaseAccountName')]",
+      "kind": "[if(equals(parameters('apiType'), 'MongoDB'), 'MongoDB', 'GlobalDocumentDB')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "defaultExperience": "[if(equals(parameters('apiType'), 'Cassandra'), 'Cassandra', if(equals(parameters('apiType'), 'Gremlin'), 'Graph', if(equals(parameters('apiType'), 'MongoDB'), 'MongoDB', if(equals(parameters('apiType'), 'SQL'), 'DocumentDB', if(equals(parameters('apiType'), 'Table'), 'Table', '')))))]"
+      },
+      "properties": {
+        "name": "[parameters('databaseAccountName')]",
+        "databaseAccountOfferType": "[variables('offerType')]",
+        "locations": [
+          {
+            "locationName": "[parameters('location')]",
+            "failoverPriority": 0
+          },
+          {
+            "failoverPriority": 1,
+            "locationName": "[parameters('location')]"
+          }
+        ],
+        "capabilities": [
+          {
+            "name": "EnableTable"
+          }
+        ]
+      },
+      "resources": [
+        {
+          "type": "Microsoft.DocumentDB/databaseAccounts/providers/diagnosticsettings",
+          "name": "[concat(parameters('databaseAccountName'), '/Microsoft.Insights/service')]",
+          "apiVersion": "2016-09-01",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountName'))]"
+          ],
+          "properties": {
+            "storageAccountId": "[resourceId(parameters('diagnosticStorageAccountRG'),'Microsoft.Storage/storageAccounts', parameters('diagnosticStorageAccountName'))]",
+            "workspaceId": "[resourceId(parameters('omsWorkspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+            "logs": [
+              {
+                "category": "DataPlaneRequests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": "[parameters('LogsRetentionInDays')]"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "CosmosdbAccountName": {
+      "type": "string",
+      "value": "[variables('dbAccountName')]"
+    },
+    "CosmosdbEndpoint": {
+      "type": "string",
+      "value": "[reference(variables('resourceId'), variables('apiVersion')).documentEndpoint]"
+    },
+    "CosmosdbAccountKey": {
+      "type": "string",
+      "value": "[listKeys(variables('resourceId'), variables('apiVersion')).primaryMasterKey]"
+    },
+    "CosmosdbConnectionString": {
+      "type": "string",
+      "value": "[concat('AccountEndpoint=https://', parameters('databaseAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(variables('resourceId'), variables('apiVersion')).primaryMasterKey, ';')]"
+    },
+    "CosmosdbTableApiConnectionString": {
+      "type": "string",
+      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('databaseAccountName'), ';AccountKey=', listKeys(variables('resourceId'), variables('apiVersion')).primaryMasterKey, ';TableEndpoint=https://', parameters('databaseAccountName'), '.table.cosmosdb.azure.com:443/;')]"
+    },
+    "CosmosdbvNetResourceGroup": {
+      "type": "string",
+      "value": "[variables('vNetResourceGroup')]"
+    },
+    "CosmosdbvnetResourceName": {
+      "type": "string",
+      "value": "[variables('vnetResourceName')]"
+    },
+    "CosmosdbsubnetName": {
+      "type": "string",
+      "value": "[variables('subnetName')]"
+    },
+    "CosmosdbResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]"
+    }
+  }
+}

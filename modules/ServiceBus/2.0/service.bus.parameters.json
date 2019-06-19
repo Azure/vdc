@@ -1,0 +1,33 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceBusNamespaceName": {
+      "value": null
+    },
+    "serviceBusTopicName001": {
+      "value": null
+    },
+    "serviceBusTopicName002": {
+      "value": null
+    },
+    "SendListenSASKeyName": {
+      "value": null
+    },
+    "omsWorkspaceName": {
+      "value": null
+    },
+    "omsWorkspaceResourceGroup": {
+      "value": null
+    },
+    "diagnosticStorageAccountName": {
+      "value": null
+    },
+    "diagnosticStorageAccountRG": {
+      "value": null
+    },
+    "logsRetentionInDays": {
+      "value": 30
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+    "Toolkit": { 
+        "demo": "file(../subscriptions/toolkit-subscription.json)",
+        "nested": "file(../comment4.json)"
+    },
+    "OnPremises": "file(../subscriptions/on-premises-subscription.json)",
+    "SharedServices": "file(../subscriptions/shared-services-subscription.json)",
+    "ASE-SQL": {
+        "Comments": "ASE/SQL Workload subscription and tenant information",
+        "TenantId": "00000000000000000000000",
+        "SubscriptionId": "00000000000000000000000",
+        "Location": "West US"
+    }
+}

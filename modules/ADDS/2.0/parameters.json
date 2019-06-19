@@ -1,0 +1,79 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineName": {
+            "value": "adds"
+        },
+        "virtualMachineCount": {
+            "value": 2
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "virtualMachineOSImage": {
+            "value": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            }
+        },
+        "artifactsStorageAccountSasKey": {
+            "value": ""
+        },
+        "artifactsStorageAccountName": {
+            "value": "vdcstorage"
+        },
+        "artifactsStorageAccountKey": {
+            "value": ""
+        },
+        "workspaceId": {
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "logAnalyticsWorkspacePrimarySharedKey": {
+            "value": ""
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "contoso-diag-storage"
+        },
+        "diagnosticsStorageAccountSasToken": {
+            "value": ""
+        },
+        "addsAddressStart": {
+            "value": "11.4.0.46"
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Network/virtualNetworks/contoso-vnet-example"
+        },
+        "domainControllerAsgId": {
+            "value": "dc"
+        },
+        "subnetName": {
+            "value": "sharedsvcs"
+        },
+        "adminUsername": {
+            "value": "admin-user"
+        },
+        "adminPassword": {
+            "value": "password"
+        },
+        "domainName": {
+            "value": "contoso.com"
+        },
+        "primaryDCIP": {
+            "value": "192.168.1.4"
+        },
+        "ADSitename": {
+            "value": "Cloud-Site"
+        },
+        "domaincontrollerDriveLetter": {
+            "value": "F"
+        },
+        "domainAdminUsername": {
+            "value": "contoso"
+        },
+        "domainAdminPassword": {
+            "value": "password"
+        }
+    }
+}

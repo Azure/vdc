@@ -1,0 +1,24 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "SQLDBServerName": {
+      "value": null
+    },
+    "SQLDBName": {
+      "value": null
+    },
+    "SQLDBServiceLevel": {
+      "value": null
+    },
+    "SQLDBOMSworkspaceResourceId": {
+      "value": null
+    },
+    "SQLDBSecurityLogStorageAccountEndpoint": {
+      "value": null
+    },
+    "SQLDBSecurityLogStorageAccountAccessKey": {
+      "value": null
+    }
+  }
+}

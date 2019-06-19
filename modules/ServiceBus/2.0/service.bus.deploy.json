@@ -1,0 +1,182 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus namespace"
+      }
+    },
+    "serviceBusTopicName001": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus Topic"
+      }
+    },
+    "serviceBusTopicName002": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus Topic"
+      }
+    },
+    "serviceBusSku": {
+      "type": "string",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Standard",
+      "metadata": {
+        "description": "The messaging tier for service Bus namespace"
+      }
+    },
+    "SendListenSASKeyName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Send Listen Namespace AuthorizationRule"
+      }
+    },
+    "diagnosticStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage Account for diagnostics."
+      }
+    },
+    "diagnosticStorageAccountRG": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage Account for diagnostics."
+      }
+    },
+    "omsWorkspaceResourceGroup": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the Resource Group housing the OMS workspace."
+      }
+    },
+    "omsWorkspaceName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the OMS workspace used for diagnostic log integration."
+      }
+    },
+    "logsRetentionInDays": {
+      "type": "int",
+      "defaultValue": 0,
+      "minValue": 0,
+      "maxValue": 365,
+      "metadata": {
+        "description": "Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "variables": {
+    "defaultSASKeyName": "RootManageSharedAccessKey",
+    "defaultAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), variables('defaultSASKeyName'))]",
+    "SendListenSASKeyName": "[concat(parameters('serviceBusNamespaceName'), concat('/', parameters('SendListenSASKeyName')))]",
+    "SendListenAuthRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), parameters('SendListenSASKeyName'))]",
+    "sbVersion": "2017-04-01"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('serviceBusNamespaceName')]",
+      "type": "Microsoft.ServiceBus/namespaces",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('serviceBusSku')]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[parameters('serviceBusTopicName001')]",
+          "type": "topics",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'))]"
+          ],
+          "properties": {
+            "path": "[parameters('serviceBusTopicName001')]"
+          }
+        },
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[parameters('serviceBusTopicName002')]",
+          "type": "topics",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'))]"
+          ],
+          "properties": {
+            "path": "[parameters('serviceBusTopicName002')]"
+          }
+        },
+        {
+          "type": "Microsoft.ServiceBus/namespaces/providers/diagnosticsettings",
+          "name": "[concat(parameters('serviceBusNamespaceName'), '/Microsoft.Insights/service')]",
+          "apiVersion": "2016-09-01",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName'))]"
+          ],
+          "properties": {
+            "storageAccountId": "[resourceId(parameters('diagnosticStorageAccountRG'),'Microsoft.Storage/storageAccounts', parameters('diagnosticStorageAccountName'))]",
+            "workspaceId": "[resourceId(parameters('omsWorkspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+            "logs": [
+              {
+                "category": "OperationalLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "enabled": true,
+                  "days": "[parameters('LogsRetentionInDays')]"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[variables('SendListenSASKeyName')]",
+      "type": "Microsoft.ServiceBus/namespaces/authorizationRules",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.ServiceBus/namespaces/', parameters('serviceBusNamespaceName')) ]"
+      ],
+      "properties": {
+        "Rights": [
+          "Send",
+          "Listen"
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "ServiceBusConnectionString": {
+      "type": "string",
+      "value": "[listkeys(variables('defaultAuthRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
+    },
+    "ServiceBusPrimaryKey": {
+      "type": "string",
+      "value": "[listkeys(variables('defaultAuthRuleResourceId'), variables('sbVersion')).primaryKey]"
+    },
+    "ServiceBusSendListenConnectionString": {
+      "type": "string",
+      "value": "[listkeys(variables('SendListenAuthRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
+    },
+    "ServiceBusSendListenPrimaryKey": {
+      "type": "string",
+      "value": "[listkeys(variables('SendListenAuthRuleResourceId'), variables('sbVersion')).primaryKey]"
+    }
+  }
+}

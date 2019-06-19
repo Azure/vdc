@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Container_Registries_2.0", "2.0\Container_Registries_2.0.deployproj", "{BC0088DC-A19A-4B17-ABEC-3B71CE40B413}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC0088DC-A19A-4B17-ABEC-3B71CE40B413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC0088DC-A19A-4B17-ABEC-3B71CE40B413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC0088DC-A19A-4B17-ABEC-3B71CE40B413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC0088DC-A19A-4B17-ABEC-3B71CE40B413}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5E10046C-42A3-4415-8E75-0277A88109A9}
+	EndGlobalSection
+EndGlobal

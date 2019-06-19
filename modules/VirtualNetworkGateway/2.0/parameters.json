@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkGatewayName": {
+            "value": "vdcgateway"
+        },
+        "virtualNetworkGatewayType": {
+            "value": "type"
+        },
+        "virtualNetworkGatewaySku": {
+            "value": "sku"
+        },
+        "vpnType": {
+            "value": "vpnType"
+        },
+        "vNetId": {
+            "value": "subscriptions/0000000000/resourceGroups/resourceGroup"
+        }
+    }
+}

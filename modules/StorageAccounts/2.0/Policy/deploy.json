@@ -1,0 +1,119 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policyEffect": {
+            "type": "string",
+            "metadata": {
+                "description": "String value that has the following format [parameters('effect')], this is the string that gets passed to the Policy definition."
+            }
+        },
+        "effect": {
+            "type": "string",
+            "defaultValue": "Audit",
+            "metadata": {
+                "description": "Policy effect."
+            }
+        },
+        "resourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group name used as part of the Policy assignment."
+            }
+        },
+        "resourceGroupLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group location used as part of the Policy assignment."
+            }
+        },
+    },
+    "variables": {
+        "storageAccountEncryptionPolicyDefinitionName": "[guid('storageEncryptionDefinition')]",
+        "storageAccountEncryptionPolicyAssignmentName": "[guid('storageEncryptionAssignment')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('storageAccountEncryptionPolicyDefinitionName')]",
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "policyType": "Custom",
+                "mode": "All",
+                "displayName": "Analyzes the use of Storage Account encryption",
+                "description": "This Policy evaluates if a Storage Account has Blob Encryption enabled or not.",
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Storage/storageAccounts"
+                            },
+                            {
+                                "not": {
+                                    "field": "Microsoft.Storage/storageAccounts/enableBlobEncryption",
+                                    "equals": "true"
+                                }
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "[parameters('policyEffect')]"
+                    }
+                },
+                "metadata": {},
+                "parameters": {
+                    "effect": {
+                        "type": "string",
+                        "metadata": {
+                            "description": "Policy effect to be applied."
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[parameters('resourceGroup')]",
+            "name": "[guid(subscription().id, 'PolicyAssignment', variables('storageAccountEncryptionPolicyDefinitionName'))]",
+            "dependsOn": [
+                "[variables('storageAccountEncryptionPolicyDefinitionName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template":{
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "metadata": "resourceGroup() function not available within subscription deployment",
+                    "resources": [
+                        {
+                            "name": "[variables('storageAccountEncryptionPolicyAssignmentName')]",
+                            "type": "Microsoft.Authorization/policyAssignments",
+                            "apiVersion": "2018-05-01",
+                            "location": "[parameters('resourceGroupLocation')]",
+                            "properties": {
+                                "displayName": "Analyzes the use of Storage Account encryption",
+                                "policyDefinitionId": "[resourceId('Microsoft.Authorization/policyDefinitions', variables('storageAccountEncryptionPolicyDefinitionName'))]",
+                                "scope": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'))]",
+                                "notScopes": [],
+                                "parameters": {
+                                    "effect": {
+                                        "value": "[parameters('effect')]"
+                                    }
+                                },
+                                "description": "This Policy evaluates if a Storage Account has Blob Encryption enabled or not.",
+                                "metadata": {}
+                            }
+                        }
+                    ],
+                    "outputs": {}
+                },
+                "parameters": {}
+            }
+        }
+    ],
+    "outputs": {}
+}

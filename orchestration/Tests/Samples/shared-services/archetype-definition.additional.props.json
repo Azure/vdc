@@ -1,0 +1,9 @@
+{
+    "metadata": {
+        "comments": "Optional metadata for the archetype definition"
+    },
+    "Subscriptions": "file(./subscriptions/subscriptions.json)",
+    "ToolkitComponents": "file(./toolkit-components/toolkit-components.json)",
+    "ArchetypeParameters": "file(./parameters/archetype-parameters.json)",
+    "ArchetypeOrchestration": "file(./orchestrations/archetype-orchestration-absPathFn.json)"
+}

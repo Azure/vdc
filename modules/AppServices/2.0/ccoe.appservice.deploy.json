@@ -1,0 +1,489 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "WindowsAppServiceName": {
+      "metadata": {
+        "description": "The name of the App Service"
+      },
+      "type": "string"
+    },
+    "WindowsAppServicePlanName": {
+      "metadata": {
+        "description": "The name of the App Service Plan that hosts the App Service"
+      },
+      "type": "string"
+    },
+    "WindowsAppServicePlanLocation": {
+      "metadata": {
+        "description": "The location where the App Service and the App Service Plan will be deployed"
+      },
+      "type": "string"
+    },
+    "WindowsAppServicePlanInstances": {
+      "metadata": {
+        "description": "The amount of instances that will run the App Services in the App Service Plan"
+      },
+      "type": "int"
+    },
+    "WindowsAppServicePlanTier": {
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard",
+        "Premium",
+        "PremiumV2"
+      ],
+      "metadata": {
+        "description": "The Tier of the App Service Plan. 'Free' and 'Shared' are shared plans that run Apps in shared Virtual Machines, with Apps from other customers. 'Basic', 'Standard', 'Premium' and 'PremiumV2' run apps on dedicated VMs"
+      }
+    },
+    "WindowsAppServicePlanSize": {
+      "type": "string",
+      "allowedValues": ["1", "2", "3"],
+      "metadata": {
+        "description": " The Size of the VMs that run the Apps. The higher this number is, the better the hardware of the underlying VMs is"
+      }
+    },
+    "WindowsAppServiceAppInsightsName": {
+      "metadata": {
+        "description": "The Application Insights instance connected to the App Service"
+      },
+      "type": "string"
+    },
+    "WindowsAppServiceAppInsightsLocation": {
+      "metadata": {
+        "description": "The location of the Application Insights instance connected to the App Service"
+      },
+      "type": "string"
+    },
+    "WindowsAppServicePhpVersion": {
+      "metadata": {
+        "description": "The version of PHP on Windows Machines"
+      },
+      "type": "string",
+      "defaultValue": "Off"
+    },
+    "WindowsAppServicePythonVersion": {
+      "metadata": {
+        "description": "The version of Phyton on Windows Machines"
+      },
+      "type": "string",
+      "defaultValue": "Off"
+    },
+    "WindowsAppServiceNodeVersion": {
+      "metadata": {
+        "description": "The Version of Node.js on Windows Machines"
+      },
+      "type": "string",
+      "defaultValue": "6.9.1"
+    },
+    "WindowsAppServiceJavaVersion": {
+      "metadata": {
+        "description": "The Java Version on Windows Machines"
+      },
+      "type": "string",
+      "defaultValue": "Off"
+    },
+    "WindowsAppServiceJavaContainer": {
+      "metadata": {
+        "description": "The Java Container on Windows Machines"
+      },
+      "type": "string",
+      "defaultValue": ""
+    },
+    "WindowsAppServiceJavaContainerVersion": {
+      "metadata": {
+        "description": "The Java Container Version on Windows Machines"
+      },
+      "type": "string",
+      "defaultValue": ""
+    },
+    "WindowsAppServiceHTTPS": {
+      "metadata": {
+        "description": "Configures a web site to accept only https requests. Issues redirect forhttp requests",
+        "mandatory": "true"
+      },
+      "type": "bool",
+      "defaultValue": true
+    },
+    "WindowsAppServiceAlwaysOn": {
+      "metadata": {
+        "description": "Indicates that your web app needs to be loaded at all times. By default, web apps are unloaded after they have been idle. It is recommended that you enable this option when you have continuous web jobs running on the web app.",
+        "mandatory": "true"
+      },
+      "type": "bool",
+      "defaultValue": true
+    },
+    "WindowsAppServiceIPRestrictions": {
+      "metadata": {
+        "description": "Define rules that control access to your app for specific IP address. Ex: [{\"ipAddress\":\"195.53.125.0/24\",\"action\":\"Allow\",\"tag\":\"Default\",\"priority\":1,\"name\":\"repsol\"}]",
+        "mandatory": "false"
+      },
+      "type": "array",
+      "defaultValue": []
+    },
+    "WindowsAppServiceAuthenticationADApplicationId": {
+      "metadata": {
+        "description": "These settings allow users to sign in with Azure Active Directory",
+        "mandatory": "false"
+      },
+      "type": "string",
+      "defaultValue": ""
+    },
+    "WindowsAppServiceManagedServiceIdentityEnabled": {
+      "metadata": {
+        "description": "Enables the usage of Managed Service Identities in App Service",
+        "mandatory": "false"
+      },
+      "type": "bool",
+      "defaultValue": true
+    },
+    "WindowsAppServiceAppInsightsPriceCode": {
+      "type": "int",
+      "defaultValue": 1,
+      "allowedValues": [1, 2],
+      "metadata": {
+        "description": "1 = Basic, 2 = Enterprise"
+      }
+    },
+    "WindowsAppServiceAppInsightsDailyQuota": {
+      "type": "int",
+      "defaultValue": 100,
+      "minValue": 1,
+      "metadata": {
+        "description": "Enter daily quota in GB."
+      }
+    },
+    "WindowsAppServiceStorageAccountLogsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage account to be created to store Cybersecurity logs"
+      },
+      "defaultValue": ""
+    },
+    "WindowsAppServiceAppIngishtsSmartDetectionEmailRecipients": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "If any, 'Email the subscription's owners, contributors and readers' is enabled and emails typed are notified in case of detection"
+      }
+    }
+  },
+  "variables": {
+    "priceArray": ["Basic", "Application Insights Enterprise"],
+    "pricePlan": "[take(variables('priceArray'),parameters('WindowsAppServiceAppInsightsPriceCode'))]",
+    "billingplan": "[concat(parameters('WindowsAppServiceAppInsightsName'),'/', variables('pricePlan')[0])]",
+    "appServiceKind": "app",
+    "AADApplicationSecret": "null",
+    "appServicePlanSizes": {
+      "Free": {
+        "SizeName": {
+          "1": "F1",
+          "2": "F1",
+          "3": "F1"
+        },
+        "Family": "F"
+      },
+      "Shared": {
+        "SizeName": {
+          "1": "D1",
+          "2": "D1",
+          "3": "D1"
+        },
+        "Family": "D"
+      },
+      "Basic": {
+        "SizeName": {
+          "1": "B1",
+          "2": "B2",
+          "3": "B3"
+        },
+        "Family": "B"
+      },
+      "Standard": {
+        "SizeName": {
+          "1": "S1",
+          "2": "S2",
+          "3": "S3"
+        },
+        "Family": "S"
+      },
+      "Premium": {
+        "SizeName": {
+          "1": "P1",
+          "2": "P2",
+          "3": "P3"
+        },
+        "Family": "P"
+      },
+      "PremiumV2": {
+        "SizeName": {
+          "1": "P1v2",
+          "2": "P2v2",
+          "3": "P3v3"
+        },
+        "Family": "Pv2"
+      }
+    },
+    "appServicePlanSkuSize": "[variables('appServicePlanSizes')[parameters('WindowsAppServicePlanTier')].SizeName[parameters('WindowsAppServicePlanSize')]]",
+    "appServicePlanSkuFamily": "[variables('appServicePlanSizes')[parameters('WindowsAppServicePlanTier')].Family]",
+    "appServicePlanSkuName": "[variables('appServicePlanSkuSize')]",
+    "azureADAuthenticationProperties": {
+      "enabled": true,
+      "httpApiPrefixPath": null,
+      "unauthenticatedClientAction": 0,
+      "tokenStoreEnabled": true,
+      "allowedExternalRedirectUrls": null,
+      "defaultProvider": 0,
+      "clientId": "[parameters('WindowsAppServiceAuthenticationADApplicationId')]",
+      "clientSecret": "[if(equals(variables('AADApplicationSecret'),'null'),json('null'),if(empty(variables('AADApplicationSecret')), json('null'), variables('AADApplicationSecret')))]",
+      "issuer": "[concat('https://sts.windows.net/', subscription().tenantId)]",
+      "allowedAudiences": null,
+      "additionalLoginParams": null,
+      "isAadAutoProvisioned": false
+    },
+    "nullAuthenticationProperties": {
+      "enabled": false,
+      "unauthenticatedClientAction": 1,
+      "issuer": null,
+      "clientId": null,
+      "clientSecret": null
+    },
+    "nullValue": {},
+    "appServiceOrServicePlan": "[if(bool(parameters('WindowsAppServiceManagedServiceIdentityEnabled')), parameters('WindowsAppServiceName'), parameters('WindowsAppServicePlanName'))]",
+    "appServiceIdentityOrServicePlan": "[if(bool(parameters('WindowsAppServiceManagedServiceIdentityEnabled')), 'identity', 'name')]",
+    "IPRestrictionsArrayCount": "[length(parameters('WindowsAppServiceIPRestrictions'))]",
+    "IPRestrictionsArrayEmpty": "[equals(variables('IPRestrictionsArrayCount'),0)]",
+    "IPRestrictionArray": "[concat(parameters('WindowsAppServiceIPRestrictions'))]",
+    "scmIpSecurityRestrictionsUseMain": true,
+    "EmptyArray": [],
+    "applicationInsightsSmartDetections": [
+      "slowpageloadtime",
+      "slowserverresponsetime",
+      "longdependencyduration",
+      "degradationinserverresponsetime",
+      "degradationindependencyduration"
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/components",
+      "kind": "web",
+      "name": "[parameters('WindowsAppServiceAppInsightsName')]",
+      "apiVersion": "2015-05-01",
+      "location": "[parameters('WindowsAppServiceAppInsightsLocation')]",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('WindowsAppServiceName'))]": "Resource"
+      },
+      "scale": null,
+      "properties": {
+        "applicationId": "[parameters('WindowsAppServiceAppInsightsName')]"
+      },
+      "dependsOn": []
+    },
+    {
+      "name": "[concat(parameters('WindowsAppServiceAppInsightsName'), '/', variables('applicationInsightsSmartDetections')[copyIndex()])]",
+      "type": "Microsoft.Insights/components/proactiveDetectionConfigs",
+      "location": "[parameters('WindowsAppServiceAppInsightsLocation')]",
+      "apiVersion": "2018-05-01-preview",
+      "copy": {
+        "name": "applicationInsightsSmartDetections",
+        "count": "[length(variables('applicationInsightsSmartDetections'))]"
+      },
+      "properties": {
+        "name": "[variables('applicationInsightsSmartDetections')[copyIndex()]]",
+        "sendEmailsToSubscriptionOwners": false,
+        "customEmails": "[parameters('WindowsAppServiceAppIngishtsSmartDetectionEmailRecipients')]",
+        "enabled": true
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', parameters('WindowsAppServiceAppInsightsName'))]"
+      ]
+    },
+    {
+      "name": "[concat('Failure Anomalies - ', parameters('WindowsAppServiceAppInsightsName'))]",
+      "type": "Microsoft.Insights/alertRules",
+      "apiVersion": "2016-03-01",
+      "location": "[parameters('WindowsAppServiceAppInsightsLocation')]",
+      "tags": {
+        "[concat('hidden-link:',resourceId('microsoft.insights/components', parameters('WindowsAppServiceAppInsightsName')))]": "Resource"
+      },
+      "properties": {
+        "name": "[concat('Failure Anomalies - ', parameters('WindowsAppServiceAppInsightsName'))]",
+        "description": "",
+        "isEnabled": true,
+        "condition": {
+          "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
+          "dataSource": {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
+            "resourceUri": "[resourceId('microsoft.insights/components', parameters('WindowsAppServiceAppInsightsName'))]",
+            "metricName": "advanced::A3108E3D-5E26-44CF-B232-783F5E20EF10::ewAiAEgAeQBwAGUAcgBpAG8AbgBBAHAAcABsAGkAYwBhAHQAaQBvAG4AUwBpAGQAIgA6AG4AdQBsAGwALAAiAEgAeQBwAGUAcgBpAG8AbgBTAHUAYgBqAGUAYwB0AFMAaQBkACIAOgBuAHUAbABsACwAIgBIAHkAcABlAHIAaQBvAG4ATwBiAHMAZQByAHYAZQByAFMAaQBkACIAOgBuAHUAbABsACwAIgBDAHUAcwB0AG8AbQBlAHIAQQBjAGMAbwB1AG4AdABJAGQAIgA6ACIAMAAwADAAMAAwADAAMAAwAC0AMAAwADAAMAAtADAAMAAwADAALQAwADAAMAAwAC0AMAAwADAAMAAwADAAMAAwADAAMAAwADAAIgAsACIAQQBwAHAAbABpAGMAYQB0AGkAbwBuAE4AYQBtAGUAIgA6AG4AdQBsAGwALAAiAEEAcABwAGwAaQBjAGEAdABpAG8AbgBJAGQAIgA6AG4AdQBsAGwALAAiAFAAcgBvAGYAaQBsAGUASQBkACIAOgAwACwAIgBXAGkAbgBkAG8AdwBTAGkAegBlAEkAbgBNAGkAbgB1AHQAZQBzACIAOgA2ADAALAAiAE0AZQB0AHIAaQBjAE4AYQBtAGUAIgA6ACIAIgAsACIAVABoAHIAZQBzAGgAbwBsAGQAIgA6ADIALAAiAEEAbABlAHIAdABUAGUAbQBwAGwAYQB0AGUASQBkACIAOgAiACIALAAiAFIAdQBsAGUASQBkACIAOgAiACIALAAiAFIAdQBsAGUATgBhAG0AZQAiADoAIgAiACwAIgBSAHUAbABlAEQAZQBzAGMAcgBpAHAAdABpAG8AbgAiADoAIgAiACwAIgBSAGUAcwBvAHUAcgBjAGUASQBkACIAOgBuAHUAbABsACwAIgBTAHUAYgBzAGMAcgBpAHAAdABpAG8AbgBJAGQAIgA6AG4AdQBsAGwALAAiAEEAZwBnAHIAZQBnAGEAdABlAEYAdQBuAGMAdABpAG8AbgAiADoAIgAiACwAIgBDAG8AbQBwAGEAcgBpAHMAbwBuAE8AcABlAHIAYQB0AG8AcgAiADoAIgB7AFwAIgBCAGEAcwBlAGwAaQBuAGUAVABpAG0AZQBzAHAAYQBuAFwAIgA6AFwAIgAwADAAOgA0ADAAOgAwADAAXAAiACwAXAAiAEkAbgBzAGkAZwBoAHQAcwBTAGUAcgB2AGkAYwBlAEwAYQBnAFwAIgA6AFwAIgAwADAAOgAwADAAOgAwADAAXAAiACwAXAAiAEIAdQBmAGYAZQByAFQAaQBtAGUAXAAiADoAXAAiADAAMAA6ADAAMQA6ADAAMABcACIALABcACIAQgBsAG8AYgBTAHQAbwByAGEAZwBlAEwAbwBnAGcAaQBuAGcARQBuAGEAYgBsAGUAZABcACIAOgBmAGEAbABzAGUALABcACIAVQBzAGUAcgBTAHUAcABwAHIAZQBzAHMAaQBvAG4AcwBcACIAOgBuAHUAbABsACwAXAAiAFAAcgBvAGYAaQBsAGUASQBkAFwAIgA6ADAALABcACIARQBtAGEAaQBsAFQAeQBwAGUAXAAiADoAMgAsAFwAIgBSAGQAZABGAGEAaQBsAHUAcgBlAHMAUwBwAGkAawBlAFQAaAByAGUAcwBoAG8AbABkAFwAIgA6ADMALABcACIAUgBhAHcAUAByAG8AYQBjAHQAaQB2AGUAUgB1AGwAZQBDAG8AbgBmAGkAZwBcACIAOgBuAHUAbABsAH0AIgAsACIARQBuAGEAYgBsAGUAUwBlAG4AZABFAG0AYQBpAGwAVABvAEMAdQBzAHQAbwBtACIAOgBmAGEAbABzAGUALAAiAEMAdQBzAHQAbwBtAEUAbQBhAGkAbABzAEUAbgBjAG8AZABlAGQAIgA6ACIAIgAsACIARQBuAGEAYgBsAGUAUwBlAG4AZABFAG0AYQBpAGwAVABvAE8AdwBuAGUAcgBzACIAOgBmAGEAbABzAGUAfQA="
+          },
+          "operator": "GreaterThan",
+          "threshold": 0,
+          "windowSize": "PT1H",
+          "timeAggregation": null
+        },
+        "actions": [
+          {
+            "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
+            "sendToServiceOwners": false,
+            "customEmails": "[parameters('WindowsAppServiceAppIngishtsSmartDetectionEmailRecipients')]"
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', parameters('WindowsAppServiceAppInsightsName'))]"
+      ]
+    },
+    {
+      "name": "[variables('billingplan')]",
+      "type": "microsoft.insights/components/CurrentBillingFeatures",
+      "location": "[parameters('WindowsAppServiceAppInsightsLocation')]",
+      "apiVersion": "2015-05-01",
+      "dependsOn": [
+        "[resourceId('microsoft.insights/components', parameters('WindowsAppServiceAppInsightsName'))]"
+      ],
+      "properties": {
+        "CurrentBillingFeatures": "[variables('pricePlan')]",
+        "DataVolumeCap": {
+          "Cap": "[parameters('WindowsAppServiceAppInsightsDailyQuota')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "kind": "app",
+      "name": "[parameters('WindowsAppServicePlanName')]",
+      "apiVersion": "2016-09-01",
+      "location": "[parameters('WindowsAppServicePlanLocation')]",
+      "sku": {
+        "name": "[variables('appServicePlanSkuName')]",
+        "capacity": "[parameters('WindowsAppServicePlanInstances')]",
+        "tier": "[parameters('WindowsAppServicePlanTier')]",
+        "size": "[variables('appServicePlanSkuSize')]",
+        "family": "[variables('appServicePlanSkuFamily')]"
+      },
+      "scale": null,
+      "properties": {
+        "name": "[parameters('WindowsAppServicePlanName')]",
+        "perSiteScaling": false,
+        "reserved": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "kind": "[variables('appServiceKind')]",
+      "name": "[parameters('WindowsAppServiceName')]",
+      "apiVersion": "2018-02-01",
+      "location": "[parameters('WindowsAppServicePlanLocation')]",
+      "scale": null,
+      "identity": {
+        "type": "[if(parameters('WindowsAppServiceManagedServiceIdentityEnabled'), 'SystemAssigned', 'None')]"
+      },
+      "properties": {
+        "name": "[parameters('WindowsAppServiceName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('WindowsAppServicePlanName'))]",
+        "reserved": false,
+        "httpsOnly": "[parameters('WindowsAppServiceHTTPS')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('WindowsAppServicePlanName'))]",
+        "[resourceId('microsoft.insights/components/', parameters('WindowsAppServiceAppInsightsName'))]"
+      ],
+      "resources": [
+        {
+          "condition" : "[not(equals(parameters('WindowsAppServiceStorageAccountLogsName'),''))]",
+          "type": "Microsoft.Web/sites/providers/links",
+          "apiVersion": "2018-02-01",
+          "name": "[concat(parameters('WindowsAppServiceName'),'/Microsoft.Resources/WebSiteToStorageAccountLog')]",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('WindowsAppServiceName'))]"
+          ],
+          "properties": {
+            "targetId": "[resourceId('Microsoft.Storage/storageAccounts',parameters('WindowsAppServiceStorageAccountLogsName'))]",
+            "notes": "This web site uses sotrage account to store cybersecutiry logs"
+          }
+        },
+        {
+          "apiVersion": "2016-08-01",
+          "name": "authsettings",
+          "type": "config",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('WindowsAppServiceName'))]",
+            "[resourceId('microsoft.insights/components/', parameters('WindowsAppServiceAppInsightsName'))]",
+            "Microsoft.ApplicationInsights.AzureWebSites"
+          ],
+          "tags": {
+            "displayName": "websiteAuthSettings"
+          },
+          "properties": "[if(empty(parameters('WindowsAppServiceAuthenticationADApplicationId')), variables('nullAuthenticationProperties'), variables('azureADAuthenticationProperties'))]"
+        },
+        {
+          "name": "web",
+          "type": "config",
+          "apiVersion": "2018-02-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('WindowsAppServiceName'))]",
+            "[resourceId('microsoft.insights/components/', parameters('WindowsAppServiceAppInsightsName'))]",
+            "Microsoft.ApplicationInsights.AzureWebSites"
+          ],
+          "properties": {
+            "phpVersion": "[parameters('WindowsAppServicePhpVersion')]",
+            "pythonVersion": "[parameters('WindowsAppServicePythonVersion')]",
+            "javaVersion": "[if(equals(parameters('WindowsAppServiceJavaVersion'),'Off'),'',parameters('WindowsAppServiceJavaVersion'))]",
+            "javaContainer": "[if(equals(parameters('WindowsAppServiceJavaVersion'),'Off'),'',parameters('WindowsAppServiceJavaContainer'))]",
+            "javaContainerVersion": "[if(equals(parameters('WindowsAppServiceJavaVersion'),'Off'),'',parameters('WindowsAppServiceJavaContainerVersion'))]",
+            "minTlsVersion": "1.2",
+            "ipSecurityRestrictions": "[variables('IPRestrictionArray')]",
+            "ftpsState": "Disabled",
+            "alwaysOn": "[parameters('WindowsAppServiceAlwaysOn')]",
+            "httpLoggingEnabled": true,
+            "requestTracingEnabled": true,
+            "detailedErrorLoggingEnabled": true
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "appsettings",
+          "type": "config",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/', parameters('WindowsAppServiceName'))]",
+            "[resourceId('microsoft.insights/components/', parameters('WindowsAppServiceAppInsightsName'))]",
+            "Microsoft.ApplicationInsights.AzureWebSites"
+          ],
+          "properties": {
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('WindowsAppServiceAppInsightsName'))).InstrumentationKey]",
+            "WEBSITE_NODE_DEFAULT_VERSION": "[parameters('WindowsAppServiceNodeVersion')]"
+          }
+        },
+        {
+          "apiVersion": "2016-08-01",
+          "name": "Microsoft.ApplicationInsights.AzureWebSites",
+          "type": "siteextensions",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('WindowsAppServiceName'))]",
+            "[resourceId('Microsoft.Insights/components', parameters('WindowsAppServiceAppInsightsName'))]"
+          ],
+          "properties": {}
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "outboundIpAddresses": {
+      "type": "string",
+      "value": "[replace(replace(string(split(reference(parameters('WindowsAppServiceName')).outboundIpAddresses,',')),'[',''),']','')]"
+    },
+    "identity": {
+      "type": "object",
+      "value": "[if(parameters('WindowsAppServiceManagedServiceIdentityEnabled'), reference(variables('appServiceOrServicePlan'), '2018-02-01', 'Full')[variables('appServiceIdentityOrServicePlan')], variables('nullValue'))]"
+    }
+  }
+}
