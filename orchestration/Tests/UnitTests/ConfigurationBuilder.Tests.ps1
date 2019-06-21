@@ -1,9 +1,9 @@
 ########################################################################################################################
 ##
-## ArchetypeInstanceBuilder.Tests.ps1
+## ConfigurationBuilder.Tests.ps1
 ##
-##          The purpose of this script is to perform the unit testing for the ArchetypeInstanceBuilder Module using Pester.
-##          The script will import the ArchetypeInstanceBuilder Module and any dependency moduels to perform the tests.
+##          The purpose of this script is to perform the unit testing for the ConfigurationBuilder Module using Pester.
+##          The script will import the ConfigurationBuilder Module and any dependency moduels to perform the tests.
 ##
 ########################################################################################################################
 
@@ -20,7 +20,7 @@ $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-$tokenReplacementSvcPath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath "..") -ChildPath 'OrchestrationService') -ChildPath 'ArchetypeInstanceBuilder.ps1'
+$tokenReplacementSvcPath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath "..") -ChildPath 'OrchestrationService') -ChildPath 'ConfigurationBuilder.ps1'
 $scriptBlock = ". $tokenReplacementSvcPath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
@@ -33,8 +33,8 @@ Describe  "Orchestration Instance Builder Unit Test Cases" {
         $ENV:FROMANOTHERENVIRONMENTVARIABLE = "bar";
         It "Should build the archetype instance from definition file using absolute path" {
             $archetypeDefinitionFileAbsolutePath = Join-Path $rootPath -ChildPath ".." -AdditionalChildPath @("Tests", "Samples", "nested-file-functions", "paas", "archetype-definition.json");
-            $archetypeInstanceBuilder = New-Object ArchetypeInstanceBuilder("shared-services", $archetypeDefinitionFileAbsolutePath);
-            $archetypeInstance = $archetypeInstanceBuilder.BuildArchetypeInstance();
+            $ConfigurationBuilder = New-Object ConfigurationBuilder("shared-services", $archetypeDefinitionFileAbsolutePath);
+            $archetypeInstance = $ConfigurationBuilder.BuildConfigurationInstance();
             $archetypeInstance.Subscriptions | Should BeOfType [object];
             $archetypeInstance.Subscriptions.Toolkit.nested.fromEnvironmentVariable| Should Be "My value";
             $archetypeInstance.Subscriptions.Toolkit.nested.concatEnvironmentVariables | Should Be "My value-bar";
@@ -48,9 +48,9 @@ Describe  "Orchestration Instance Builder Unit Test Cases" {
         $ENV:FROMENVIRONMENTVARIABLE = "My value";
         $ENV:FROMANOTHERENVIRONMENTVARIABLE = "bar";
         It "Should build the archetype instance from definition file using absolute path" {
-            $archetypeDefinitionFileAbsolutePath = Join-Path $rootPath -ChildPath ".." -AdditionalChildPath @("Tests", "Samples", "environment-keys", "archetypeDefinition.json");
-            $archetypeInstanceBuilder = New-Object ArchetypeInstanceBuilder("shared-services", $archetypeDefinitionFileAbsolutePath);
-            $archetypeInstance = $archetypeInstanceBuilder.BuildArchetypeInstance();
+            $archetypeDefinitionFileAbsolutePath = Join-Path $rootPath -ChildPath ".." -AdditionalChildPath @("Tests", "Samples", "shared-services", "archetype-definition.rel-path.json");
+            $ConfigurationBuilder = New-Object ConfigurationBuilder("shared-services", $archetypeDefinitionFileAbsolutePath);
+            $archetypeInstance = $ConfigurationBuilder.BuildConfigurationInstance();
             $archetypeInstance.Subscriptions | Should BeOfType [object];
         }
     }

@@ -1,63 +1,63 @@
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-$helperPath = Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'Common') -ChildPath 'Helper.psm1';
+$helperPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('Common', 'Helper.psm1');
 Import-Module $helperPath;
 
-Class ArchetypeInstanceBuilder {
+Class ConfigurationBuilder {
 
-    $archetypeInstance = $null;
-    $archetypeInstanceName = "";
-    $archetypeDefinitionParentFolder = "";
-    $archetypeDefinitionFileName = "";
+    $configurationInstance = $null;
+    $configurationInstanceName = "";
+    $configurationDefinitionParentFolder = "";
+    $configurationDefinitionFileName = "";
     $fileFunctionResolutionDepthLimit = 20;
 
-    ArchetypeInstanceBuilder([string] $archetypeInstanceName, 
-                             [string] $archetypeDefinitionPath) {
-        # setting the archetype name for use with token parser
-        $this.archetypeInstanceName = $archetypeInstanceName;
+    ConfigurationBuilder([string] $configurationInstanceName, 
+                             [string] $configurationDefinitionPath) {
+        # setting the configuration name for use with token parser
+        $this.configurationInstanceName = $configurationInstanceName;
         
         # check if the path is valid path
-        $filePathExists = Test-Path -Path $archetypeDefinitionPath;
+        $filePathExists = Test-Path -Path $configurationDefinitionPath;
         if($filePathExists) {
-            # archetypeDefinitionParentFolder variable will be used to set 
+            # configurationDefinitionParentFolder variable will be used to set 
             # the base folder for all relative paths. Relative paths are
-            # relative to the archetype definition file's parent folder.
-            $this.archetypeDefinitionParentFolder = (Get-Item $archetypeDefinitionPath).DirectoryName;
-            $this.archetypeDefinitionFileName = (Get-Item $archetypeDefinitionPath).Name;
+            # relative to the configuration definition file's parent folder.
+            $this.configurationDefinitionParentFolder = (Get-Item $configurationDefinitionPath).DirectoryName;
+            $this.configurationDefinitionFileName = (Get-Item $configurationDefinitionPath).Name;
         }   
         else {
-            throw "ArchetypeDefinitionPath value is invalid";
+            throw "ConfigurationDefinitionPath - $configurationDefinitionPath is invalid";
         }
     }
 
-    [hashtable] BuildArchetypeInstance() {
+    [hashtable] BuildConfigurationInstance() {
 
-       # Get the absolute path to the archetype definition file
-        $archetypeDefinitionPath = `
+       # Get the absolute path to the configuration definition file
+        $configurationDefinitionPath = `
             Join-Path `
-                $this.archetypeDefinitionParentFolder `
-                $this.archetypeDefinitionFileName;
+                $this.configurationDefinitionParentFolder `
+                $this.configurationDefinitionFileName;
         
-        # Process the archetype definition file passing the absolute
+        # Process the configuration definition file passing the absolute
         # path.
-        $archetypeInstanceContentString = `
-            $this.ProcessFile($archetypeDefinitionPath, 0);
+        $configurationInstanceContentString = `
+            $this.ProcessFile($configurationDefinitionPath, 0);
 
         # Convert the resultant string from previous step to an
         # object. We cannot convert this to hashtable here because
         # the ReplaceTokens function expects an object
-        $this.archetypeInstance = `
+        $this.configurationInstance = `
             ConvertFrom-Json `
-                -InputObject $archetypeInstanceContentString `
+                -InputObject $configurationInstanceContentString `
                 -Depth 100;
 
-        # Replace Tokens in Archetype Instance
-        $this.archetypeInstance = `
-            $this.ReplaceTokens($this.archetypeInstance);
+        # Replace Tokens in Configuration Instance
+        $this.configurationInstance = `
+            $this.ReplaceTokens($this.configurationInstance);
 
-        # Convert to hashtable and return Archetype Instance
+        # Convert to hashtable and return Configuration Instance
         return `
             ConvertTo-HashTable `
-                -InputObject $this.archetypeInstance;
+                -InputObject $this.configurationInstance;
 
     }
     
@@ -299,7 +299,7 @@ Class ArchetypeInstanceBuilder {
         $fileFunctionExtracts = @();
 
         # Regex to match the pattern below:
-        # "File(/archetype.json)"
+        # "File(/configuration.json)"
         $fullFileFunctionReferenceRegex = "([`"`"F\''F]+ile\(.*?[`"\'\)]+)";
 
         # Check if the path matches the regex pattern specified,
@@ -369,7 +369,7 @@ Class ArchetypeInstanceBuilder {
             }
             Catch {
                 # Throw an exception if we're unable to resolve relative path to absolute path
-                throw ("Unable to resolve the file path {} in file located at {1}" -F $relativePath, $filePath);
+                throw ("Unable to resolve the file path {0} in file located at {1}" -F $relativePath, $filePath);
             }
         }
 
@@ -411,7 +411,7 @@ Class ArchetypeInstanceBuilder {
     hidden [string] GetPathFromFileFunction([string]  $fullFileFunctionReference) {
 
         # Regex to match the pattern below:
-        # File(/archetype.json)
+        # File(/configuration.json)
         $fileFunctionPathOnlyRegex = "File\((.*?)\)";
 
         # Check if the path matches the regex pattern specified
@@ -426,49 +426,24 @@ Class ArchetypeInstanceBuilder {
         }
     }
 
-    hidden [object] ReplaceTokens([object] $archetypeInstance) {
+    hidden [object] ReplaceTokens([object] $configurationInstance) {
 
-        # this variable will hold the processed archetype instance
+        # this variable will hold the processed configuration instance
         # that will have all the tokens replaced with values
-        $archetypeInstanceWithoutTokens = $null;
+        $configurationInstanceWithoutTokens = $null;
 
         # create an instance of TokenReplacementService
         $tokenReplacement = [TokenReplacementService]::new();
 
         # call ReplaceAllTokens method to replace the tokens
         # Reference values and token
-        $archetypeInstanceWithoutTokens = $tokenReplacement.ReplaceAllTokens(
-            $this.archetypeInstanceName, 
-            $archetypeInstance,
-            $archetypeInstance
+        $configurationInstanceWithoutTokens = $tokenReplacement.ReplaceAllTokens(
+            $this.configurationInstanceName, 
+            $configurationInstance,
+            $configurationInstance
         );
 
-        # return the token replaced archetype instance
-        return $archetypeInstanceWithoutTokens;
+        # return the token replaced configuration instance
+        return $configurationInstanceWithoutTokens;
     }
-}
-
-Function Build-ArchetypeInstance() {
-
-    Param(
-        [Parameter(Mandatory=$true)]
-        $ArchetypeInstanceName,
-        [Parameter(Mandatory=$true)]
-        $ArchetypeDefinitionPath
-    )
-
-    # Create an instance of the Factory and the Cache Data Service
-    $factory = New-FactoryInstance;
-    $cacheDataService = $factory.container.CacheDataService;
-
-    # Create an instance of the ArchetypeInstanceBuilder and build 
-    # the archetype instance
-    $archetypeInstanceBuilder = [ArchetypeInstanceBuilder]::new($ArchetypeInstanceName, $ArchetypeDefinitionPath);
-
-    # Invoke the BuildArchetypeInstance to retrieve the archetype instance object
-    $archetypeInstance = $archetypeInstanceBuilder.BuildArchetypeInstance();
-
-    # Cache the retrieved object
-    $cacheDataService.SetByKey($ArchetypeInstanceName, $archetypeInstance);
-
 }

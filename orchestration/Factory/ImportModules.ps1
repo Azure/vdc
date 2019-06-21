@@ -1,90 +1,90 @@
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Interface') -ChildPath 'IStateRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Interface', 'IStateRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Implementations') -ChildPath 'BlobContainerStateRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Implementations', 'BlobContainerStateRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Interface') -ChildPath 'IAuditRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Interface', 'IAuditRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Implementations') -ChildPath 'BlobContainerAuditRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Implementations', 'BlobContainerAuditRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Implementations') -ChildPath 'LocalStorageStateRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Implementations', 'LocalStorageStateRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Implementations') -ChildPath 'LocalStorageAuditRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Implementations', 'LocalStorageAuditRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Interface') -ChildPath 'ICacheRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Interface', 'ICacheRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Implementations') -ChildPath 'AzureDevOpsCacheRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Implementations', 'AzureDevOpsCacheRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'RepositoryService') -ChildPath 'Implementations') -ChildPath 'LocalCacheRepository.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Implementations', 'LocalCacheRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'DataService') -ChildPath 'Interface') -ChildPath 'IModuleStateDataService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('DataService', 'Interface', 'IModuleStateDataService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'DataService') -ChildPath 'Implementations') -ChildPath 'ModuleStateDataService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('DataService', 'Implementations', 'ModuleStateDataService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'DataService') -ChildPath 'Interface') -ChildPath 'IDeploymentAuditDataService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('DataService', 'Interface', 'IDeploymentAuditDataService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'DataService') -ChildPath 'Implementations') -ChildPath 'DeploymentAuditDataService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('DataService', 'Implementations', 'DeploymentAuditDataService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'DataService') -ChildPath 'Interface') -ChildPath 'ICacheDataService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('DataService', 'Interface', 'ICacheDataService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'DataService') -ChildPath 'Implementations') -ChildPath 'CacheDataService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('DataService', 'Implementations', 'CacheDataService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'IntegrationService') -ChildPath 'Interface') -ChildPath 'IDeploymentService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' --AdditionalChildPath @('IntegrationService', 'Interface', 'IDeploymentService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'IntegrationService') -ChildPath 'Implementations') -ChildPath 'AzureResourceManagerDeploymentService.ps1'
-$scriptBlock = ". $modulePath";
-$script = [scriptblock]::Create($scriptBlock);
-. $script;
-
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'TokenReplacementService') -ChildPath 'Interface') -ChildPath 'ITokenReplacementService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('IntegrationService', 'Implementations', 'AzureResourceManagerDeploymentService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
-$modulePath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'TokenReplacementService') -ChildPath 'Implementations') -ChildPath 'TokenReplacementService.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('TokenReplacementService', 'Interface', 'ITokenReplacementService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
-$modulePath = Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'OrchestrationService') -ChildPath 'ArchetypeInstanceBuilder.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('TokenReplacementService', 'Implementations', 'TokenReplacementService.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
-$modulePath = Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'OrchestrationService') -ChildPath 'ValidationResourceGroupSetup.ps1'
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('OrchestrationService', 'ConfigurationBuilder.ps1');
+$scriptBlock = ". $modulePath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
+
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('OrchestrationService', 'ValidationResourceGroupSetup.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;

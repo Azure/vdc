@@ -1,0 +1,16 @@
+{
+    "Subscription": "env(vdc_toolkit_configuration)",
+    "Configuration": {
+        "Audit": {
+            "Comments": "Audit service",
+            "StorageType": "StorageAccount",
+            "StorageAccountName": "",
+            "Subscription": "Toolkit",
+            "ResourceGroup": "vdc-toolkit-rg"
+        },
+        "Cache": {
+            "Comments": "Caching service",
+            "StorageType": "AzureDevOps"
+        }
+    }
+}

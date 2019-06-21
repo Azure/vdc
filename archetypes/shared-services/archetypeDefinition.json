@@ -1,6 +1,5 @@
 {
     "Subscriptions": "env(VDC_SUBSCRIPTIONS)",
-    "ToolkitComponents": "file(../common/toolkit.json)",
     "ArchetypeParameters": "file(./archetypeParameters.json)",
     "ArchetypeOrchestration": "file(./archetypeOrchestration.json)"
 }

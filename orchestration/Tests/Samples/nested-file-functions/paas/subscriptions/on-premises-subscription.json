@@ -1,6 +1,6 @@
 {
     "Comments": "Simulated On-Premises subscription and tenant information",
-    "TenantId": "b590c310-f80d-4c5b-981f-7dc9c87ea414",
-    "SubscriptionId": "0d1a176a-24aa-4490-83d7-957707a93b4d",
+    "TenantId": "00000000000000000000000",
+    "SubscriptionId": "00000000000000000000000",
     "Location": "West US 2"
 }

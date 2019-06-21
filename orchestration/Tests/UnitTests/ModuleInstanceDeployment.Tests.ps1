@@ -17,7 +17,7 @@ Describe  "Module Instance Deployment Orchestrator Unit Test Cases" {
             $defaultWorkingDirectory = "$ScriptPath/../../../../";
             $ArchetypeDefinitionPath = "$ScriptPath/../../../../archetypes/shared-services/2.0/archetypeDefinition.json";
             $archetypeInstanceJson = `
-                Get-ArchetypeInstance `
+                Build-ConfigurationUsingFile `
                     -ArchetypeDefinitionPath $ArchetypeDefinitionPath;
         }
 
@@ -51,7 +51,7 @@ Describe  "Module Instance Deployment Orchestrator Unit Test Cases" {
             
 
             $archetypeInstanceJson = `
-                Get-ArchetypeInstance `
+                Build-ConfigurationUsingFile  `
                     -ArchetypeDefinitionPath $ArchetypeDefinitionPath;
             $cacheRepository = `
                 [AzureDevOpsCacheRepository]::new();

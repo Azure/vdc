@@ -6,8 +6,8 @@
             "ModuleDefinitionName": "StorageAccount",
             "Comments": "Storage Account that is used for ...",
             "Deployment": {
-                "TemplatePath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
-                "ParametersPath": "../../../../../../modules/StorageAccounts/2.0/storage.account.parameters.json",
+                "TemplatePath": "../../../../../modules/StorageAccounts/2.0/deploy.json",
+                "ParametersPath": "../../../../../modules/StorageAccounts/2.0/parameters.json",
                 "OverrideParameters": [
                     {
                         "Parameter": "storageAccountSku",

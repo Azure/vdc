@@ -1,6 +1,0 @@
-{
-    "Subscriptions": "file(/Users/kungumarajnachimuthu/git/azure-devops/azure-devops/2.0/Tests/Samples/shared-services/subscriptions/subscriptions.json)",
-    "ToolkitComponents": "file(/Users/kungumarajnachimuthu/git/azure-devops/azure-devops/2.0/Tests/Samples/shared-services/toolkit-components/toolkit-components.json)",
-    "ArchetypeParameters": "file(/Users/kungumarajnachimuthu/git/azure-devops/azure-devops/2.0/Tests/Samples/shared-services/parameters/archetype-parameters.json)",
-    "ArchetypeOrchestration": "file(/Users/kungumarajnachimuthu/git/azure-devops/azure-devops/2.0/Tests/Samples/shared-services/orchestrations/archetype-orchestration.json)"
-}

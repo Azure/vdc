@@ -7,17 +7,17 @@
             "Comments": "Storage Account that is used for ...",
             "Policies": {
                 "Comments" : "Optional - If no object is specified, no Policies deployment will occur",
-                "TemplatePath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
-                "ParametersPath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json"
+                "TemplatePath": "../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
+                "ParametersPath": "../../../../modules/StorageAccounts/2.0/storage.account.deploy.json"
             },
             "RBAC": {
                 "Comments" : "Optional - If no object is specified, no RBAC deployment will occur",
-                "TemplatePath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
-                "ParametersPath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json"
+                "TemplatePath": "../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
+                "ParametersPath": "../../../../modules/StorageAccounts/2.0/storage.account.deploy.json"
             },
             "Deployment": {
-                "TemplatePath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
-                "ParametersPath": "../../../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
+                "TemplatePath": "../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
+                "ParametersPath": "../../../../modules/StorageAccounts/2.0/storage.account.deploy.json",
                 "OverrideParameters": [
                     {
                         "Parameter": "storageAccountSku",
