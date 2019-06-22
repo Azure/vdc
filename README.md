@@ -2,7 +2,7 @@
 
 _Enabling developer agility and operational consistency without compromising security and governance._
 
-[![Build Status](https://travis-ci.org/Azure/vdc.svg?branch=master)](https://travis-ci.org/Azure/vdc)
+[![Build Status](https://travis-ci.org/Azure/vdc.svg?branch=vnext)](https://travis-ci.org/Azure/vdc)
 
 Microsoft Azure Virtual Datacenter (VDC) is an approach for designing a foundational cloud architecture for enterprises. It provides a vision for enterprise IT in the cloud and a strategy for implementing it. For more information about the approach, visit [Azure Virtual Datacenter](https://aka.ms/vdc).
 
