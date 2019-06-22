@@ -6,8 +6,17 @@
 ##          The script will import the BlobContainerStateRepository Module and any dependency moduels to perform the tests.
 ##
 ########################################################################################################################
-. ../../RepositoryService/Interface/IStateRepository.ps1;
-. ../../RepositoryService/Implementations/BlobContainerStateRepository.ps1;
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Interface", "IStateRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
+
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Implementations", "BlobContainerStateRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
 Describe  "Blob Container State Repository Unit Test Cases" {
 
@@ -37,7 +46,7 @@ Describe  "Blob Container State Repository Unit Test Cases" {
                 "DeploymentId" = "demofile"
             };
             $blobContainerStateRepository.SaveResourceState($entity);
-            Assert-MockCalled Set-AzStorageblobcontent -Times 1 -Exactly;
+            Assert-MockCalled Set-AzStorageblobcontent -Times 2 -Exactly;
         }
 
         It "Should check for blob existence given container and blob name" {

@@ -8,20 +8,20 @@
 ########################################################################################################################
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-$tokenReplacementSvcPath = Join-Path (Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath "..") -ChildPath 'TokenReplacementService') -ChildPath 'Interface') -ChildPath 'ITokenReplacementService.ps1'
-$scriptBlock = ". $tokenReplacementSvcPath";
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "TokenReplacementService", "Interface", "ITokenReplacementService.ps1");
+$scriptBlock = ". $scriptPath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-$tokenReplacementSvcPath = Join-Path (Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath "..") -ChildPath 'TokenReplacementService') -ChildPath 'Implementations') -ChildPath 'TokenReplacementService.ps1'
-$scriptBlock = ". $tokenReplacementSvcPath";
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "TokenReplacementService", "Implementations", "TokenReplacementService.ps1");
+$scriptBlock = ". $scriptPath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-$tokenReplacementSvcPath = Join-Path (Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath "..") -ChildPath 'OrchestrationService') -ChildPath 'ConfigurationBuilder.ps1'
-$scriptBlock = ". $tokenReplacementSvcPath";
+$scriptPath = Join-Path $rootPath -ChildPath ".." -AdditionalChildPath  @("..", "OrchestrationService", "ConfigurationBuilder.ps1");
+$scriptBlock = ". $scriptPath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
@@ -45,13 +45,14 @@ Describe  "Orchestration Instance Builder Unit Test Cases" {
     }
 
     Context "Build Archetype Instance using environment variables" {
-        $ENV:FROMENVIRONMENTVARIABLE = "My value";
-        $ENV:FROMANOTHERENVIRONMENTVARIABLE = "bar";
+        $environmentValue = "My value";
+        $ENV:SUBSCRIPTIONS = $environmentValue;
         It "Should build the archetype instance from definition file using absolute path" {
-            $archetypeDefinitionFileAbsolutePath = Join-Path $rootPath -ChildPath ".." -AdditionalChildPath @("Tests", "Samples", "shared-services", "archetype-definition.rel-path.json");
-            $ConfigurationBuilder = New-Object ConfigurationBuilder("shared-services", $archetypeDefinitionFileAbsolutePath);
-            $archetypeInstance = $ConfigurationBuilder.BuildConfigurationInstance();
-            $archetypeInstance.Subscriptions | Should BeOfType [object];
+            $archetypeDefinitionFileAbsolutePath = Join-Path $rootPath -ChildPath ".." -AdditionalChildPath @("Tests", "Samples", "environment-keys", "archetypeDefinition.json");
+            $archetypeInstanceBuilder = New-Object ConfigurationBuilder("shared-services", $archetypeDefinitionFileAbsolutePath);
+            $archetypeInstance = $archetypeInstanceBuilder.BuildConfigurationInstance();
+            $archetypeInstance.Subscriptions | Should BeOfType [string];
+            $archetypeInstance.Subscriptions | Should be $environmentValue;
         }
     }
 }

@@ -6,14 +6,35 @@
 ##          The script will import the CacheDataService Module and any dependency moduels to perform the tests.
 ##
 ########################################################################################################################
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Interface", "ICacheRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
-. './../../DataService/Interface/ICacheDataService.ps1';
-. './../../DataService/Implementations/CacheDataService.ps1';
-. './../../RepositoryService/Interface/ICacheRepository.ps1';
-. './../../RepositoryService/Implementations/AzureDevOpsCacheRepository.ps1';
-. './../../RepositoryService/Implementations/LocalCacheRepository.ps1';
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Implementations", "AzureDevOpsCacheRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
-$ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Implementations", "LocalCacheRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
+
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "DataService", "Interface", "ICacheDataService.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
+
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "DataService", "Implementations", "CacheDataService.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
 Describe  "Cache Data Service Unit Test Cases" {
 

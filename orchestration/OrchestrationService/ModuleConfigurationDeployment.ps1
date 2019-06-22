@@ -2187,9 +2187,16 @@ Function Get-OutputFromStateStore() {
     }
 }
 
-New-Deployment `
-    -ArchetypeDefinitionPath $ArchetypeDefinitionPath `
-    -ArchetypeInstanceName $ArchetypeInstanceName `
-    -ModuleConfigurationName $ModuleConfigurationName `
-    -WorkingDirectory $WorkingDirectory `
-    -Validate:$($Validate.IsPresent);
+# Entry point script, used when invoking ModuleConfigurationDeployment.ps1
+# In order to allow the module to be imported (Import-Module), let's
+# verify if the mandatory parameters are not passed.
+
+if (![string]::IsNullOrEmpty($ArchetypeInstanceName) -and `
+    ![string]::IsNullOrEmpty($ArchetypeDefinitionPath)) {
+        New-Deployment `
+            -ArchetypeDefinitionPath $ArchetypeDefinitionPath `
+            -ArchetypeInstanceName $ArchetypeInstanceName `
+            -ModuleConfigurationName $ModuleConfigurationName `
+            -WorkingDirectory $WorkingDirectory `
+            -Validate:$($Validate.IsPresent);
+}

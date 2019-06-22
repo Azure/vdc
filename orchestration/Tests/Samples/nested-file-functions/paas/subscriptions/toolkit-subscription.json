@@ -1,8 +1,8 @@
 {
     "Comments": { 
-        "Comment1": [ "file(../../comment1.json)", "file(../comment2.json)", "file(../common/comment3.json)",  "testing" ]
+        "Comment1": [ "file(../comment4.json)", "file(../comment2.json)", "file(../common/comment3.json)", "testing" ]
     },
-    "TenantId": "00000000000000000000000",
-    "SubscriptionId": "00000000000000000000000",
+    "TenantId": "00000000-0000-0000-0000-000000000000",
+    "SubscriptionId": "00000000-0000-0000-0000-000000000000",
     "Location": "West US"
 }

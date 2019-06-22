@@ -8,7 +8,10 @@ param (
     $ResourceGroupLocation,
     [Parameter(Mandatory=$false)]
     [switch]
-    $TearDown
+    $TearDownResourceGroup,
+    [Parameter(Mandatory=$false)]
+    [switch]
+    $SetupResourceGroup
 )
 
 $defaultValidationResourceGroupName = "vdc-validation-rg";
@@ -90,12 +93,12 @@ if([string]::IsNullOrEmpty($ResourceGroupLocation)) {
     $ResourceGroupLocation = $defaultValidationResourceGroupLocation;
 }
 
-if($TearDown.IsPresent) {
+if($TearDownResourceGroup.IsPresent) {
     # Call function to tear down the validation resource group
     TearDownResourceGroup `
         -ResourceGroupName $ResourceGroupName;
 }
-else {
+elseif ($SetupResourceGroup.IsPresent) {
     # Call function to setup the validation resource group
     SetupResourceGroup `
         -ResourceGroupName $ResourceGroupName `

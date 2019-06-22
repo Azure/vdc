@@ -6,15 +6,21 @@
 ##          The script will import the TokenReplacementService Module and any dependency moduels to perform the tests.
 ##
 ########################################################################################################################
-. ../../TokenReplacementService/Interface/ITokenReplacementService.ps1;
-. ../../TokenReplacementService/Implementations/TokenReplacementService.ps1;
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "TokenReplacementService", "Interface", "ITokenReplacementService.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
-$rootPath = Resolve-Path "./"
-$sharedServicesArcheJsonPath = "$ScriptPath/../../../../archetypes/shared-services/archetype.test.json"
-$onpremArcheJsonPath = "$ScriptPath/../../../../archetypes/on-premises/archetype.test.json"
-$iaasArcheJsonPath = "$ScriptPath/../../../archetypes/ntier-iaas/archetype.test.json"
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "TokenReplacementService", "Implementations", "TokenReplacementService.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
-$ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$sharedServicesArcheJsonPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "..", "archetypes", "shared-services", "archetype.test.json");
+$onpremArcheJsonPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "..", "archetypes", "on-premises", "archetype.test.json");
+$iaasArcheJsonPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "..", "archetypes", "ntier-iaas", "archetype.test.json");
 
 Describe  "Token Replacement Service Unit Test Cases" {
 

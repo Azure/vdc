@@ -6,8 +6,17 @@
 ##          The script will import the AzureDevOpsCacheRepository Module and any dependency moduels to perform the tests.
 ##
 ########################################################################################################################
-. ../../RepositoryService/Interface/ICacheRepository.ps1;
-. ../../RepositoryService/Implementations/AzureDevOpsCacheRepository.ps1;
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Interface", "ICacheRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
+
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Implementations", "AzureDevOpsCacheRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
 Describe  "Azure DevOps Cache Repository Unit Test Cases" {
 
@@ -16,24 +25,27 @@ Describe  "Azure DevOps Cache Repository Unit Test Cases" {
             
             $storageAccountName = "vdc-storage-account"
             $storageResourceGroupName = "do-storage-rg"
-            $Env:vdc_tests_storageAccountName = $storageAccountName;
-            $Env:vdc_tests_storageResourceGroupName = $storageResourceGroupName;
+            $Env:VDC_CACHE_TESTS_STORAGEACCOUNTNAME = $storageAccountName;
+            $Env:VDC_CACHE_TESTS_STORAGERESOURCEGROUPNAME = $storageResourceGroupName;
 
             $azureDevOpsCacheRepository = `
                 New-Object AzureDevOpsCacheRepository;
         }
         It "Should save the value to cache" {
-            $cache = $azureDevOpsCacheRepository.GetByKey('vdc_tests_storageAccountName');
-            $cache | Should Be $storageAccountName;
+            $cacheValue1 = $azureDevOpsCacheRepository.GetByKey('tests_storageAccountName');
+            $cacheValue1 | Should Be $storageAccountName;
+
+            $cacheValue2 = $azureDevOpsCacheRepository.GetByKey('tests_storageResourceGroupName');
+            $cacheValue2 | Should Be $storageResourceGroupName;
         }
 
         It "Should get the cache by key" {
-            { $azureDevOpsCacheRepository.Set('vdc_tests_storageBlobContainer', 'true') } | Should Not Throw "Failed";
+            { $azureDevOpsCacheRepository.Set('storageBlobContainer', 'true') } | Should Not Throw "Failed";
         }
 
         It "Should get all cache given a prefix" {
-            $caches = $azureDevOpsCacheRepository.GetAll("vdc_tests");
-            $caches.Count | Should Be 2;
+            $caches = $azureDevOpsCacheRepository.GetAll();
+            $caches.Count | Should BeGreaterThan 0;
         }
     }
 }

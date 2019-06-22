@@ -6,60 +6,63 @@
 ##          The scrip will import the AuditDataService Module and any dependencty modules to perform the tests.
 ##
 ########################################################################################################################
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Interface", "IAuditRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
-. ../../DataService/Interface/IDeploymentAuditDataService.ps1;
-. ../../DataService/Implementations/DeploymentAuditDataService.ps1;
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Implementations", "LocalStorageAuditRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "DataService", "Interface", "IDeploymentAuditDataService.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
-$ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "DataService", "Implementations", "DeploymentAuditDataService.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
 Describe  "Audit Data Service Unit Test Cases" {
 
     Context "Save audit trail" {
         BeforeEach {
-            $auditDataService = New-Object AuditDataService;
+            $localAuditRepository = `
+                New-Object LocalStorageAuditRepository;
+            $auditDataService = [DeploymentAuditDataService]::new($localAuditRepository);
         }
 
         It "Should save the audit data" {
-            $auditId = $auditDataService.SaveAuditTrail((New-Guid).Guid, `
-                                                        'Mock Build Name', `
-                                                        (New-Guid).Guid, `
-                                                        (New-Guid).Guid, `
-                                                        (New-Guid).Guid, `
-                                                        (New-Guid).Guid, `
-                                                        'Mock-Shared-Services');
-            $auditTrail = $auditDataService.GetResourceStateById($auditId);
-            $auditTrail.AuditId | Should Be $auditId;
+
+            $auditId = $auditDataService.SaveAuditTrail('BuildId',
+                                                        'BuildName',
+                                                        (New-Guid).Guid,
+                                                        'Commit Message',
+                                                        'Commit Username',
+                                                        'BuildQueuedBy',
+                                                        'ReleaseId',
+                                                        'ReleaseName',
+                                                        'ReleaseRequestedFor',
+                                                        (New-Guid).Guid,
+                                                        (New-Guid).Guid,
+                                                        @{},
+                                                        'ArchetypeInstanceName');
+            $auditId| Should Not Be $null;
         }
     }
 
     Context "Get audit trail" {
         BeforeEach {
-            $auditDataService = New-Object AuditDataService;
-        }
-
-        It "Should get audit trail by audit id" {
-            $auditId = (New-Guid).Guid;
-            $auditTrail = $auditDataService.GetAuditTrailById($auditId);
-            $auditTrail.AuditId | Should Be $auditId;
-        }
-
-        It "Should get audit trail by build id" {
-            $buildId = (New-Guid).Guid;
-            $auditDataService.GetAuditTrailByBuildId($buildId);
-            $auditTrail[0].BuildId | Should Be $buildId;
-        }
-
-        It "Should get audit trail by commit id" {
-            $commitId = (New-Guid).Guid;
-            $auditDataService.GetAuditTrailByCommitId($commitId);
-            $auditTrail[0].CommitId | Should Be $commitId;
-        }
-
-        It "Should get audit trail by user id" {
-            $userId = (New-Guid).Guid;
-            $auditDataService.GetAuditTraiByUserId($userId);
-            $auditTrail[0].UserId | Should Be $userId;
+            $localAuditRepository = `
+                New-Object LocalStorageAuditRepository;
+            $auditDataService = [DeploymentAuditDataService]::new($localAuditRepository);
         }
     }
 }

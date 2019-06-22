@@ -9,7 +9,7 @@ __pycache__/
 .cache
 
 # Virtual environment
-env*/
+venv*/
 
 # PTVS analysis
 .ptvs/
@@ -76,3 +76,14 @@ src/build
 *.pubxml
 archetypes/aks/archetypes.json
 archetypes/shared-services/archetype.test.devops.json
+*/TestResult.xml
+TestResults.xml
+*/Test-Pester.xml
+Test-Pester.xml
+**/*.xml
+audit
+audit/**
+mappings/**
+mappings
+deployments/**
+deployments

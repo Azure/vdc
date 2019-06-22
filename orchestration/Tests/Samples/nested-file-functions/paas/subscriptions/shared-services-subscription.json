@@ -1,7 +1,7 @@
 {
     "Comments": "Shared services subscription and tenant information",
-    "TenantId": "00000000000000000000000",
-    "SubscriptionId": "00000000000000000000000",
+    "TenantId": "00000000-0000-0000-0000-000000000000",
+    "SubscriptionId": "00000000-0000-0000-0000-000000000000",
     "Location": "West US 2",
     "Path": "../subscriptions/on-premises-subscription.json"
 }

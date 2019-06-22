@@ -1,0 +1,16 @@
+stages:
+- stage: Test
+  jobs:
+  - job: Testing
+    pool: 
+      name: 'vdc-self-hosted'
+    steps:
+    - task: PowerShell@2
+      displayName: "Runs all Pester Tests"
+      inputs:
+        filePath: 'orchestration/Tests/UnitTests/RunAll.ps1'
+        pwsh: true
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFormat: 'NUnit'
+        testResultsFiles: '**/Test-Pester.XML'

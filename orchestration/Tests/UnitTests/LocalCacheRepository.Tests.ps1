@@ -6,8 +6,17 @@
 ##          The script will import the localCacheRepository Module and any dependency moduels to perform the tests.
 ##
 ########################################################################################################################
-. ../../RepositoryService/Interface/ICacheRepository.ps1;
-. ../../RepositoryService/Implementations/LocalCacheRepository.ps1;
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Interface", "ICacheRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
+
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "RepositoryService", "Implementations", "LocalCacheRepository.ps1");
+$scriptBlock = ". $scriptPath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
 Describe  "Azure DevOps Cache Repository Unit Test Cases" {
 

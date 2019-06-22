@@ -181,7 +181,7 @@ Class BlobContainerAuditRepository: IAuditRepository {
         Throw "Method Not Implemented";
     }
 
-    [hashtable] GetAuditTrailByFilters([string] $filters) {
+    [hashtable] GetAuditTrailByFilters([array] $filters) {
 
         try {
             if($filters.Count -ge 2) {
