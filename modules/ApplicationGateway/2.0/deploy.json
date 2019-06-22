@@ -1,0 +1,658 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "applicationGatewayName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name to be used for the Application Gateway version 1 resource",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/overview"
+                ]
+            }
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "WAF_Medium",
+            "allowedValues": [
+                "Standard_Small",
+                "Standard_Medium",
+                "Standard_Large",
+                "WAF_Medium",
+                "WAF_Large"
+            ],
+            "metadata": {
+                "description": "The name of the SKU Name of the v1 Application Gateway to be configured",
+                "links": [
+                    "https://azure.microsoft.com/en-us/pricing/details/application-gateway/"
+                ]
+            }
+        },
+        "capacity": {
+            "type": "int",
+            "defaultValue": 2,
+            "minValue": 1,
+            "maxValue": 10,
+            "metadata": {
+                "description": "The number of Application instances to be configured",
+                "links": [
+                    "https://azure.microsoft.com/en-us/pricing/details/application-gateway/"
+                ]
+            }
+        },
+        "http2Enabled": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Enables HTTP/2 support",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#http2-support"
+                ]
+            }
+        },
+        "publicIPAllocationIdleTimeoutInMinutes": {
+            "type": "int",
+            "defaultValue": 10,
+            "minValue": 4,
+            "maxValue": 30,
+            "metadata": {
+                "description": "The maximum allowed idle time in minutes for Public IP allocation"
+            }
+        },
+        "vNetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Virtual Network where the Application Gateway will be deployed",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#azure-virtual-network-and-dedicated-subnet"
+                ]
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of Gateway Subnet Name where the Application Gateway will be deployed",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#azure-virtual-network-and-dedicated-subnet"
+                ]
+            }
+        },
+        "vNetResourceGroup": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().name]",
+            "metadata": {
+                "description": "The name of the Virtual Network Resource Group where the Application Gateway will be deployed. If empty, the current Resource Group name will be chosen",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#azure-virtual-network-and-dedicated-subnet"
+                ]
+            }
+        },
+        "vNetSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]",
+            "metadata": {
+                "description": "The Subscription Id of the Virtual Network where the Application Gateway will be deployed. If empty, the current Subscription Id will be chosen",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#azure-virtual-network-and-dedicated-subnet"
+                ]
+            }
+        },
+        "frontendPrivateIPAddress": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The private IP within the Application Gateway subent to be used as frontend private address",
+                "limitations": "The IP must be available in the configured subnet. If empty, allocation method will be set to dynamic. Once a method (static or dynamic) has been configured, it cannot be changed"
+            }
+        },
+        "sslBase64CertificateData": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The SSL base64-coded Certificate that will be used to configure the HTTPS listeners",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/ssl-overview",
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/tutorial-ssl-powershell#create-a-self-signed-certificate",
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#protocol"
+                ]
+            }
+        },
+        "sslCertificatePassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password of the SSL base64-coded Certificate that will be used to configure the HTTPS listeners",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/ssl-overview",
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/tutorial-ssl-powershell#create-a-self-signed-certificate",
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#protocol"
+                ]
+            }
+        },
+        "backendPools": {
+            "type": "array",
+            "metadata": {
+                "description": "The backend pools to be configured",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#back-end-pool"
+                ],
+                "schema": [
+                    {
+                        "backendPoolName": "String. The name to be given to the backend pool. It must be unique across backend pools",
+                        "backendAddresses": [
+                            {
+                                "ipAddress": "String. Choose between property 'ipAddress' or property 'fqdn'. The IP address to be used for the health probe request. E.g.: 10.0.0.1",
+                                "fqdn": "String. Choose between property 'ipAddress' or property 'fqdn'. The fqdn to be used for the health probe request. E.g.: appservice.azurewebsites.net"
+                            }
+                        ]
+                    }
+                ],
+                "example": [
+                    {
+                        "backendPoolName": "appServiceBackendPool",
+                        "backendAddresses": [
+                            {
+                                "fqdn": "aghapp.azurewebsites.net"
+                            }
+                        ]
+                    },
+                    {
+                        "backendPoolName": "privateVmBackendPool",
+                        "backendAddresses": [
+                            {
+                                "ipAddress": "10.0.0.4"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "backendHttpConfigurations": {
+            "type": "array",
+            "metadata": {
+                "description": "The backend HTTP settings to be configured. These HTTP settings will be used to rewrite the incoming HTTP requests for the backend pools",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#http-settings"
+                ],
+                "schema": [
+                    {
+                        "backendHttpConfigurationName": "String. The name to be given to the backend HTTP setting. It must be unique across backend HTTP settings",
+                        "port": "Integer. The port to be used for the HTTP request to the backend pools. Integer",
+                        "protocol": "String. Allowed values: [http, https]. The port to be used for the HTTP request to the backend pools",
+                        "cookieBasedAffinity": "String. Allowed values: [Disabled, Enabled]. The port to be used for the HTTP request to the backend pools",
+                        "pickHostNameFromBackendAddress": "Boolean. True if the host header in the request should be set to the host name of the backend pool (IP or FQDN). This is helpful in the scenarios where the domain name of the backend is different from the DNS name of the application, such as in a scenario where Azure App Service is used as backend",
+                        "probeEnabled": "Boolean. If a defined probe should be used to check the health of the backend pool",
+                        "healthProbe": {
+                            "host": "String. The host name or IP address to be used for the health probe request. E.g.: appservice.azurewebsites.net",
+                            "path": "String. The path to append to the host name for the health probe request. It must start by '/'. E.g.: /",
+                            "statusCodes": [
+                                "Integer. HTTP response codes that will make the probe to be considered as healthy. E.g.: [200, 201]"
+                            ]
+                        }
+                    }
+                ],
+                "example": [
+                    {
+                        "backendHttpConfigurationName": "appServiceBackendHttpsSetting",
+                        "port": 443,
+                        "protocol": "https",
+                        "cookieBasedAffinity": "Disabled",
+                        "pickHostNameFromBackendAddress": true,
+                        "probeEnabled": true,
+                        "healthProbe": {
+                            "host": "aghapp.azurewebsites.net",
+                            "path": "/",
+                            "statusCodes": [
+                                "200"
+                            ]
+                        }
+                    },
+                    {
+                        "backendHttpConfigurationName": "privateVmHttpSetting",
+                        "port": 80,
+                        "protocol": "http",
+                        "cookieBasedAffinity": "Disabled",
+                        "pickHostNameFromBackendAddress": false,
+                        "probeEnabled": true,
+                        "healthProbe": {
+                            "host": "10.0.0.4",
+                            "path": "/",
+                            "statusCodes": [
+                                "200",
+                                "401"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "frontendHttpsListeners": {
+            "type": "array",
+            "metadata": {
+                "description": "The frontend https listeners to be configured",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#listeners"
+                ],
+                "schema": [
+                    {
+                        "frontendListenerName": "String. The name to be given to the frontend listener. It must be unique across listeners",
+                        "frontendIPType": "String. Allowed values: [public | private]. The frontend IP to be used for the listener",
+                        "port": "Integer. The port to be configured in the HTTPS listener. Ports must be unique across listeners"
+                    }
+                ],
+                "example": [
+                    {
+                        "frontendListenerName": "public443",
+                        "frontendIPType": "Public",
+                        "port": 443
+                    },
+                    {
+                        "frontendListenerName": "private443",
+                        "frontendIPType": "Private",
+                        "port": 4433
+                    }
+                ]
+            }
+        },
+        "frontendHttpRedirects": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "The http redirects to be configured. Each redirect will route http traffic to a pre-defined frontEnd https listener",
+                "schema": [
+                    {
+                        "frontendIPType": "String. Allowed values: [public | private]. The frontend IP to be used for the listener",
+                        "port": "Integer. The port to be configured in the HTTP listener. Ports must be unique across listeners",
+                        "frontendListenerName": "String. The name of an existing frontend listener where the HTTP requests will be redirected"
+                    }
+                ],
+                "example": [
+                    {
+                        "frontendIPType": "Public",
+                        "port": 80,
+                        "frontendListenerName": "public443"
+                    },
+                    {
+                        "frontendIPType": "Private",
+                        "port": 8080,
+                        "frontendListenerName": "private443"
+                    }
+                ],
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#redirection-setting"
+                ]
+            }
+        },
+        "routingRules": {
+            "type": "array",
+            "metadata": {
+                "description": "The routing rules to be configured. These rules will be used to route requests from frontend listeners to backend pools using a backend HTTP configuration",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/configuration-overview#request-routing-rules"
+                ],
+                "schema": [
+                    {
+                        "frontendListenerName": "String. The name of an existing frontend listener where the requests will be received",
+                        "backendPoolName": "String. The name of an backend pool where the requests will be routed to",
+                        "backendHttpConfigurationName": "String. The name of the backend HTTP configuration that will be used to rewrite the HTTP requests"
+                    }
+                ],
+                "example": [
+                    {
+                        "frontendListenerName": "public443",
+                        "backendPoolName": "appServiceBackendPool",
+                        "backendHttpConfigurationName": "appServiceBackendHttpsSetting"
+                    },
+                    {
+                        "frontendListenerName": "private443",
+                        "backendPoolName": "privateVmBackendPool",
+                        "backendHttpConfigurationName": "privateVmHttpSetting"
+                    }
+                ]
+            }
+        },
+        "logAnalyticsWorkspaceResourceId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The resource Id of the Log Analytics workspace where logs and metrics will be sent",
+                "links": [
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/application-gateway-diagnostics#diagnostic-logging",
+                    "https://docs.microsoft.com/en-us/azure/application-gateway/application-gateway-diagnostics#metrics"
+                ]
+            }
+        }
+    },
+    "variables": {
+        "applicationGatewayResourceId": "[resourceId('Microsoft.Network/applicationGateways', parameters('applicationGatewayName'))]",
+        "subnetResourceId": "[resourceId(parameters('vNetSubscriptionId'), parameters('vNetResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vNetName'), parameters('subnetName'))]",
+        "publicIPResourceName": "[concat(parameters('applicationGatewayName'), 'Pip')]",
+        "publicIPResourceId": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicIPResourceName'))]",
+        "sslCertificateName": "sslCertificate01",
+        "gatewayIPConfigurationName": "gatewayIpConfiguration01",
+        "frontendPublicIPConfigurationName": "public",
+        "frontendPrivateIPConfigurationName": "private",
+        "frontendPrivateIPDynamicConfiguration": {
+            "privateIPAllocationMethod": "Dynamic",
+            "subnet": {
+                "id": "[variables('subnetResourceId')]"
+            }
+        },
+        "frontendPrivateIPStaticConfiguration": {
+            "privateIPAllocationMethod": "Static",
+            "privateIPAddress": "[parameters('frontendPrivateIPAddress')]",
+            "subnet": {
+                "id": "[variables('subnetResourceId')]"
+            }
+        },
+        "backendPoolsCount": "[length(parameters('backendPools'))]",
+        "backendHttpConfigurationsCount": "[length(parameters('backendHttpConfigurations'))]",
+        "frontendHttpsListenersCount": "[length(parameters('frontendHttpsListeners'))]",
+        "frontendHttpListenersCount": "[length(parameters('frontendHttpRedirects'))]",
+        "frontendListenerhttpsCertificateObject": {
+            "Id": "[concat(variables('applicationGatewayResourceId'), '/sslCertificates/', variables('sslCertificateName'))]"
+        },
+        "routingRulesCount": "[length(parameters('routingRules'))]",
+        "redirectConfigurationsHttpRedirectNamePrefix": "httpRedirect",
+        "httpListenerhttpRedirectNamePrefix": "httpRedirect",
+        "requestRoutingRuleHttpRedirectNamePrefix": "httpRedirect",
+        "wafConfiguration": {
+            "enabled": true,
+            "firewallMode": "Detection",
+            "ruleSetType": "OWASP",
+            "ruleSetVersion": "3.0",
+            "disabledRuleGroups": [],
+            "requestBodyCheck": true,
+            "maxRequestBodySizeInKb": "128"
+        },
+        "sslCertificates": [
+            {
+                "name": "[variables('sslCertificateName')]",
+                "properties": {
+                    "data": "[parameters('sslBase64CertificateData')]",
+                    "password": "[parameters('sslCertificatePassword')]"
+                }
+            }
+        ],
+        "logAnalyticsWorkspaceResourceId": "[parameters('logAnalyticsWorkspaceResourceId')]",
+        "copy": [
+            {
+                "name": "backendAddressPools",
+                "count": "[variables('backendPoolsCount')]",
+                "input": {
+                    "name": "[parameters('backendPools')[copyIndex('backendAddressPools')].backendPoolName]",
+                    "type": "Microsoft.Network/applicationGateways/backendAddressPools",
+                    "properties": {
+                        "BackendAddresses": "[parameters('backendPools')[copyIndex('backendAddressPools')].BackendAddresses]"
+                    }
+                }
+            },
+            {
+                "name": "probes",
+                "count": "[variables('backendHttpConfigurationsCount')]",
+                "input": {
+                    "name": "[concat(parameters('backendHttpConfigurations')[copyIndex('probes')].backendHttpConfigurationName,'Probe')]",
+                    "type": "Microsoft.Network/applicationGateways/probes",
+                    "properties": {
+                        "protocol": "[parameters('backendHttpConfigurations')[copyIndex('probes')].protocol]",
+                        "host": "[parameters('backendHttpConfigurations')[copyIndex('probes')].healthProbe.host]",
+                        "path": "[parameters('backendHttpConfigurations')[copyIndex('probes')].healthProbe.path]",
+                        "interval": 30,
+                        "timeout": 30,
+                        "unhealthyThreshold": 3,
+                        "minServers": 0,
+                        "match": {
+                            "body": "",
+                            "statusCodes": "[parameters('backendHttpConfigurations')[copyIndex('probes')].healthProbe.statusCodes]"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "backendHttpConfigurations",
+                "count": "[variables('backendHttpConfigurationsCount')]",
+                "input": {
+                    "name": "[parameters('backendHttpConfigurations')[copyIndex('backendHttpConfigurations')].backendHttpConfigurationName]",
+                    "properties": {
+                        "Port": "[parameters('backendHttpConfigurations')[copyIndex('backendHttpConfigurations')].port]",
+                        "Protocol": "[parameters('backendHttpConfigurations')[copyIndex('backendHttpConfigurations')].protocol]",
+                        "CookieBasedAffinity": "[parameters('backendHttpConfigurations')[copyIndex('backendHttpConfigurations')].cookieBasedAffinity]",
+                        "pickHostNameFromBackendAddress": "[parameters('backendHttpConfigurations')[copyIndex('backendHttpConfigurations')].pickHostNameFromBackendAddress]",
+                        "probeEnabled": "[parameters('backendHttpConfigurations')[copyIndex('backendHttpConfigurations')].probeEnabled]",
+                        "probe": {
+                            "id": "[concat(variables('applicationGatewayResourceId'), '/probes/', concat(parameters('backendHttpConfigurations')[copyIndex('backendHttpConfigurations')].backendHttpConfigurationName,'Probe'))]"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "frontendHttpsPorts",
+                "count": "[variables('frontendHttpsListenersCount')]",
+                "input": {
+                    "name": "[concat('port',parameters('frontendHttpsListeners')[copyIndex('frontendHttpsPorts')].port)]",
+                    "properties": {
+                        "Port": "[parameters('frontendHttpsListeners')[copyIndex('frontendHttpsPorts')].port]"
+                    }
+                }
+            },
+            {
+                "name": "frontendHttpsListeners",
+                "count": "[variables('frontendHttpsListenersCount')]",
+                "input": {
+                    "name": "[parameters('frontendHttpsListeners')[copyIndex('frontendHttpsListeners')].frontendListenerName]",
+                    "properties": {
+                        "FrontendIPConfiguration": {
+                            "Id": "[concat(variables('applicationGatewayResourceId'),'/frontendIPConfigurations/',parameters('frontendHttpsListeners')[copyIndex('frontendHttpsListeners')].frontendIPType)]"
+                        },
+                        "FrontendPort": {
+                            "Id": "[concat(variables('applicationGatewayResourceId'),'/frontendPorts/',concat('port',parameters('frontendHttpsListeners')[copyIndex('frontendHttpsListeners')].port))]"
+                        },
+                        "Protocol": "https",
+                        "SslCertificate": "[variables('frontendListenerhttpsCertificateObject')]"
+                    }
+                }
+            },
+            {
+                "name": "httpsRequestRoutingRules",
+                "count": "[variables('routingRulesCount')]",
+                "input": {
+                    "name": "[concat(parameters('routingRules')[copyIndex('httpsRequestRoutingRules')].frontendListenerName,'-',concat(parameters('routingRules')[copyIndex('httpsRequestRoutingRules')].backendHttpConfigurationName),'-',concat(parameters('routingRules')[copyIndex('httpsRequestRoutingRules')].backendHttpConfigurationName))]",
+                    "properties": {
+                        "RuleType": "Basic",
+                        "httpListener": {
+                            "id": "[concat(variables('applicationGatewayResourceId'), '/httpListeners/', parameters('routingRules')[copyIndex('httpsRequestRoutingRules')].frontendListenerName)]"
+                        },
+                        "backendAddressPool": {
+                            "id": "[concat(variables('applicationGatewayResourceId'), '/backendAddressPools/', parameters('routingRules')[copyIndex('httpsRequestRoutingRules')].backendPoolName)]"
+                        },
+                        "backendHttpSettings": {
+                            "id": "[concat(variables('applicationGatewayResourceId'), '/backendHttpSettingsCollection/', parameters('routingRules')[copyIndex('httpsRequestRoutingRules')].backendHttpConfigurationName)]"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "frontendHttpPorts",
+                "count": "[if(equals(variables('frontendHttpListenersCount'),0),1,variables('frontendHttpListenersCount'))]",
+                "input": {
+                    "name": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat('port',parameters('frontendHttpRedirects')[copyIndex('frontendHttpPorts')].port))]",
+                    "properties": {
+                        "Port": "[if(equals(variables('frontendHttpListenersCount'),0),0,parameters('frontendHttpRedirects')[copyIndex('frontendHttpPorts')].port)]"
+                    }
+                }
+            },
+            {
+                "name": "frontendHttpListeners",
+                "count": "[if(equals(variables('frontendHttpListenersCount'),0),1,variables('frontendHttpListenersCount'))]",
+                "input": {
+                    "name": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('httpListenerhttpRedirectNamePrefix'),parameters('frontendHttpRedirects')[copyIndex('frontendHttpListeners')].port))]",
+                    "properties": {
+                        "FrontendIPConfiguration": {
+                            "Id": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('applicationGatewayResourceId'),'/frontendIPConfigurations/',parameters('frontendHttpRedirects')[copyIndex('frontendHttpListeners')].frontendIPType))]"
+                        },
+                        "FrontendPort": {
+                            "Id": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('applicationGatewayResourceId'),'/frontendPorts/',concat('port',parameters('frontendHttpRedirects')[copyIndex('frontendHttpListeners')].port)))]"
+                        },
+                        "Protocol": "http"
+                    }
+                }
+            },
+            {
+                "name": "httpRequestRoutingRules",
+                "count": "[if(equals(variables('frontendHttpListenersCount'),0),1,variables('frontendHttpListenersCount'))]",
+                "input": {
+                    "name": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('requestRoutingRuleHttpRedirectNamePrefix'),parameters('frontendHttpRedirects')[copyIndex('httpRequestRoutingRules')].port,'-',parameters('frontendHttpRedirects')[copyIndex('httpRequestRoutingRules')].frontendListenerName))]",
+                    "properties": {
+                        "RuleType": "Basic",
+                        "httpListener": {
+                            "id": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('applicationGatewayResourceId'), '/httpListeners/', concat(variables('httpListenerhttpRedirectNamePrefix'),parameters('frontendHttpRedirects')[copyIndex('httpRequestRoutingRules')].port)))]"
+                        },
+                        "redirectConfiguration": {
+                            "id": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('applicationGatewayResourceId'), '/redirectConfigurations/', concat(variables('redirectConfigurationsHttpRedirectNamePrefix'),parameters('frontendHttpRedirects')[copyIndex('httpRequestRoutingRules')].port)))]"
+                        }
+                    }
+                }
+            },
+            {
+                "name": "httpRedirectConfigurations",
+                "count": "[if(equals(variables('frontendHttpListenersCount'),0),1,variables('frontendHttpListenersCount'))]",
+                "input": {
+                    "name": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('redirectConfigurationsHttpRedirectNamePrefix'),parameters('frontendHttpRedirects')[copyIndex('httpRedirectConfigurations')].port))]",
+                    "properties": {
+                        "redirectType": "Permanent",
+                        "includePath": true,
+                        "includeQueryString": true,
+                        "requestRoutingRules": [
+                            {
+                                "id": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('ApplicationGatewayResourceID'), '/requestRoutingRules/', concat(variables('requestRoutingRuleHttpRedirectNamePrefix'),parameters('frontendHttpRedirects')[copyIndex('httpRedirectConfigurations')].port)))]"
+                            }
+                        ],
+                        "targetListener": {
+                            "id": "[if(equals(variables('frontendHttpListenersCount'),0),'dummy',concat(variables('ApplicationGatewayResourceID'), '/httpListeners/', parameters('frontendHttpRedirects')[copyIndex('httpRedirectConfigurations')].frontendListenerName))]"
+                        }
+                    }
+                }
+            }
+        ],
+        "emptyArray": [],
+        "frontendPorts": "[concat(variables('frontendHttpsPorts'),if(empty(parameters('frontendHttpRedirects')),variables('emptyArray'),variables('frontendHttpPorts')))]",
+        "httpListeners": "[concat(variables('frontendHttpsListeners'),if(empty(parameters('frontendHttpRedirects')),variables('emptyArray'),variables('frontendHttpListeners')))]",
+        "redirectConfigurations": "[if(empty(parameters('frontendHttpRedirects')),variables('emptyArray'),variables('httpRedirectConfigurations'))]",
+        "requestRoutingRules": "[concat(variables('httpsRequestRoutingRules'),if(empty(parameters('frontendHttpRedirects')),variables('emptyArray'),variables('httpRequestRoutingRules')))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-08-01",
+            "name": "[variables('publicIPResourceName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Basic"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": "[parameters('publicIPAllocationIdleTimeoutInMinutes')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/applicationGateways",
+            "name": "[parameters('applicationGatewayName')]",
+            "apiVersion": "2018-12-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('publicIPResourceId')]"
+            ],
+            "properties": {
+                "sku": {
+                    "name": "[parameters('sku')]",
+                    "tier": "[substring(parameters('sku'),0,indexOf(parameters('sku'),'_'))]",
+                    "capacity": "[parameters('capacity')]"
+                },
+                "gatewayIPConfigurations": [
+                    {
+                        "name": "[variables('gatewayIPConfigurationName')]",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetResourceId')]"
+                            }
+                        }
+                    }
+                ],
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[variables('frontendPrivateIPConfigurationName')]",
+                        "type": "Microsoft.Network/applicationGateways/frontendIPConfigurations",
+                        "properties": "[if(empty(parameters('frontendPrivateIPAddress')),variables('frontendPrivateIPDynamicConfiguration'),variables('frontendPrivateIPStaticConfiguration'))]"
+                    },
+                    {
+                        "name": "[variables('frontendPublicIPConfigurationName')]",
+                        "properties": {
+                            "PublicIPAddress": {
+                                "id": "[variables('publicIPResourceId')]"
+                            }
+                        }
+                    }
+                ],
+                "sslCertificates": "[if(empty(parameters('sslBase64CertificateData')), json('null'), variables('sslCertificates'))]",
+                "backendAddressPools": "[variables('backendAddressPools')]",
+                "probes": "[variables('probes')]",
+                "backendHttpSettingsCollection": "[variables('backendHttpConfigurations')]",
+                "frontendPorts": "[variables('frontendPorts')]",
+                "httpListeners": "[variables('httpListeners')]",
+                "redirectConfigurations": "[variables('redirectConfigurations')]",
+                "requestRoutingRules": "[variables('requestRoutingRules')]",
+                "enableHttp2": "[parameters('http2Enabled')]",
+                "webApplicationFirewallConfiguration": "[if(startsWith(parameters('sku'),'WAF'), variables('wafConfiguration'),json('null'))]"
+            },
+            "resources": [
+                {
+                    "condition": "[not(empty(variables('logAnalyticsWorkspaceResourceId')))]",
+                    "type": "providers/diagnosticSettings",
+                    "apiVersion": "2017-05-01-preview",
+                    "name": "Microsoft.Insights/logAnalytics",
+                    "dependsOn": [
+                        "[parameters('applicationGatewayName')]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+                        "logs": [
+                            {
+                                "category": "ApplicationGatewayPerformanceLog",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            },
+                            {
+                                "category": "ApplicationGatewayAccessLog",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            },
+                            {
+                                "category": "ApplicationGatewayFirewallLog",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "PT1M",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}

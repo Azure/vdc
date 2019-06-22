@@ -1,0 +1,21 @@
+# This YAML file can be used as a 'template' step
+# The template defines all the steps related to ci for modules
+# Modifying this file will result into modifying all the ci pipelines for all modules
+
+parameters:
+  ModulePath: ''
+  ArtifactName: 'contents'
+
+steps:
+  - template: runandpublishpestertests.yaml
+    parameters:
+      TestsFolder: '${{ parameters.ModulePath }}\Tests'
+  - task: CopyFiles@2
+    displayName: 'Prepare Artifact Files'
+    inputs:
+      SourceFolder: ${{ parameters.ModulePath }}
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+  - template: publishartifacts.yaml
+    parameters:
+      PathToPublish: $(Build.ArtifactStagingDirectory) 
+      ArtifactName: ${{ parameters.ArtifactName }}

@@ -1,0 +1,82 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "applicationGatewayName": {
+      "value": "alguadamgw"
+    },
+    "vNetName": {
+      "value": "alguadam"
+    },
+    "subnetName": {
+      "value": "ApplicationGatewaySubnet"
+    },
+    "sslBase64CertificateData": {
+      "value": "MIIKiQIBAzCCCkUGCSqGSIb3DQEHAaCCCjYEggoyMIIKLjCCBg8GCSqGSIb3DQEHAaCCBgAEggX8MIIF+DCCBfQGCyqGSIb3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAgsdHpanPDkRQICB9AEggTY+J1QVJVCyvUYmvGX2+Zu1veg7IK88xWgHk1sZqz0ugt1XBngysLjnQJv6qni97IDucD4pVxSpk/THHBR2HdIhfQyIgXmKYonGR4ZRxgUiI07sgqSnIwHKiSnY9AgmyW63HHaFxkHQvVbUtNYGw+8NB2Lg26olaWDUZC23ha9z1PBXELmiF6tjPExXczbKUVOkLCN6GgcJ1zSluq7Ssn10eOIhDiTk0QOiBgM/DcG7YeDF/j+lK9eD633rXeycqCZcrFv5oI2VrUhxX5Fkt3UOMZet7XQIScAck6A5YrF09wklh7wBrZyjLNPA99LPfmRI7bbLnFNeL21KPtcnJbyAgj2/GAd0JyhlBuOk6VBiAxufVE2sIZYbD++b/S74m6Dx4J43J7mc8qUOtCGG2e+jNga5YaFUbWI0sl+BBg06p2s4R8nAYgftMO4Pwd0LnVQjjbtcVst0TkkAG38AckL5aMug2GGK5YLjHd0icHXxIbTiutwdXg51xVcxp6doDfxorQh3+LSZsPzbkGuR5O3Cw3Hhc0npiYzUfhBJR+Aglzu+DJVi4iLNND++I3ooagMlpjfVqMH6FRJd+Yykd0SLvyxOJcSNQ42wJxLwsaYxcfLNzYKWMFFUpUlxPT95R/M+NMzMA0iQ4GJBvIbYbbSSjDU3r3SFLhykDvnpl4nT7ITxRvIM9YWGBCKFMMHPGxhm9VpPf0aCk5BdQr4qzpBtCI8m9jfgx5IrIfP6F8Z5+0bBQ/OJ9iTfur2kF82gkF6ouHdi2k65GgI+X7DUJoOS1Kfp7ODT55VtOO6hPQzNmQmhP4A0sgi/JUkWENjaO14P3sc3KK9Hd/W4QdlLpsZLFNZ63WUPhLYUvrU6H7X2QXk+fuVcZ6W1on7WTPrvAONVlcZyd6xx7aDfPbubBC0ogXbEQPI3w1oUeWqifjqNo9w3sm0j6U9t12q38W6JmYCSF3MvhlozjsF4GG08bwXPU+5EOzHhDxI2zCo7bWFaQrCjWY6QKbIOl32KqJsYM3GoI7u8aT7kXF7XNrtBbHdBVpngiQ/1Mn6f5Rjzxybl0da+WN8T93jgZhrqBuzZr1ShtqRpLpGU+nndmRDWme35P2vHMB24Kc/wzu3y1f4gCohUclcqsmiG/bdJWwTYm7mTxgfqWaM4wHzkL/XGWdDs6dTPIWLdZM+397Ox1XVBO+L7PVIho+pz+6gGCev5pt/eLZ5OC+oYaegpfxfgrxWNFQ/i1qlzajxormrNpCnBukMrF21ZIdZBL7H/c3eSlHmxz+gKmt6T9PLqiFlxqN9P+dyZtWcKiVVDugWZ5cvnzqPwSXJEmjJ1SstA24uNkPtBK4QfAlo+E2VdjNomhzpraoP0xsqS+blsib/qcQ2gXaxGPqbSfbIujDk2BF0gZuj8fnunaqnSaZqRBCRe95IhU7vw9mfJWbu9vC9Kb2zl83wMLGwVigjc2ViRg/X77fHuwNvm+b2F7jFlpkSZmALcvyrFThYZA2JhqI1hwtNK3hGlbw/LeDfOO1TBTfyQLq7rFQaRBZL20M1M5UwTjgyfuLrjmJatzoSYIJqfoZ4dxKyM1RZSGja8LJi9Vjs+z2Z3woMGT9tpbg35MEUx7QdPuDELdfDB9HA9MEt6mKE/yNmkT3pWYks4zGB4jANBgkrBgEEAYI3EQIxADATBgkqhkiG9w0BCRUxBgQEAQAAADBdBgkqhkiG9w0BCRQxUB5OAHQAZQAtADMAZQA2AGYAYwBlAGEAMgAtADgAZgBlADUALQA0AGIAOAA3AC0AOQA2AGMANgAtAGYANABkADEAZQAxADQAZgBiADkAYwBiMF0GCSsGAQQBgjcRATFQHk4ATQBpAGMAcgBvAHMAbwBmAHQAIABTAG8AZgB0AHcAYQByAGUAIABLAGUAeQAgAFMAdABvAHIAYQBnAGUAIABQAHIAbwB2AGkAZABlAHIwggQXBgkqhkiG9w0BBwagggQIMIIEBAIBADCCA/0GCSqGSIb3DQEHATAcBgoqhkiG9w0BDAEDMA4ECJgnXm/5B9qcAgIH0ICCA9BhqHIo6ZEvaoEM5iQ5R18XF2ZHmSm3YkPjojQQBGT0BO4ZYIswh0px26znK8+zPVc0WnMwbxBTkmns4VWJ3w5+84yduKVJFDVZsDvZTOOhgFCMlCNPHMz4uxW/lU7ZiDSX3cmVEP3DuL+SxjOMkG0inLxO4lceToBfg6Y9zgD7JBpU6agPIP63bXwSoSjI63M450V4jiNWh3DW/zRHNG07fKNlS2moIXtxaHaCoYvlI9gtHCs2YRfz9FwhIBWCmAOOT80jtVlhy2unP6v6Rt0oRNwZ1rT/4GKfdCnDgGKt+fMwBblTNFBrV+2d3RCXkl/4knaETIAMFfOXCo4UN9kie6fTrMKkDk/Cd2/ptNK5JucuLphcY05uwSPzvB6y2UczGYr0kCgnwLyXLP9L6oKx1+wsQxZr7Aehv7+JNVNlJl+0IOUbEil9UKx1I24fl5Ed4joj+0kw2+arQAy7I9qjCb6FrtZZlDq7DtoDgi84cZlyCkqR/Vf1DuhKrOhhCgtLL6Cf6TIh+XUTT+EZ/v6O1Q8LjFlrRHvkDhQLubPPULYvpNTPt8craDB9XTODOPcwfpDHciQnDAAyDV81ye2vi77hh9g5mOGwddSWNsHIsZn+jj3Wc/xmkD9FCRRdE67G7QOBeZW/B8gDBT03TaOHCdYlhRGPAfiOLlKGQXkoOp60cpZNFbpJR571I3+L00g5OJzC2PGkyLYCmNbfLY+zfa9s/8K/rVEKNuouYxn6wSgMMvXlRyztAwrDRmhvm7EXNBC9hmDFMHu3TB3D17SxWzy5A0TZ44hwt3/2CXvsDchvcfG7oteyIfesP+xIYgO0trWoVOff4hidk0+a0EaVCF0LB+ObkApzhWP3dLnLhiZfcywsmCfBo9D1kgXsIC86oy95CA87FAMpI4noO9JUfw0RrTnxvrnwAFHDymqqEUfxFpJxTK6vw8FoKCtf68/JFKJ80UlrcA63x9KcfLbsdBNegqwgC5D8viMuuKk/KxtXTgMFQnWsnedkRzw8BmNM8yG85eENL2l4CyT9OU7CmJwheqKSYtzkk850WUcZKJw9cGva9DGzUzgcFlgVhaqH7yaCHWbhwaPC0osE6RsHeYMusjzEBK9tia3IoZ3Gzu+fpI81qtD3JJMlXRGMnJya+T6sogfEAeDtlKC2DQ5+9A2LkrpsBRr/H1lBinl8asedZRa1MFq4Irobs8rZO2GApElHKsip4oqIgRJj0rKMCrOTbcbHQqPLALx42T6Lb8zPgCQvQtulsWw4kfjafF88qdUTExfstz/JB2dIkvgiMDswHzAHBgUrDgMCGgQUogR2xELHKGETzB1sAd8dqg9kFGYEFLgCl5O3d4rlstUdhnpLApidZd0PAgIH0A=="
+    },
+    "sslCertificatePassword": {
+      "value": "1234"
+    },
+    "backendPools": {
+      "value": [
+        {
+          "backendPoolName": "appServiceBackendPool",
+          "backendAddresses": [
+            {
+              "fqdn": "aghapp.azurewebsites.net"
+            }
+          ]
+        }
+      ]
+    },
+    "backendHttpConfigurations": {
+      "value": [
+        {
+          "backendHttpConfigurationName": "webappBackendHttpsSetting",
+          "port": 443,
+          "protocol": "https",
+          "cookieBasedAffinity": "Disabled",
+          "pickHostNameFromBackendAddress": true,
+          "probeEnabled": true,
+          "healthProbe": {
+            "host": "aghapp.azurewebsites.net",
+            "path": "/",
+            "statusCodes": [
+              "200"
+            ]
+          }
+        }
+      ]
+    },
+    "frontendHttpsListeners": {
+      "value": [
+        {
+          "frontendListenerName": "public443",
+          "frontendIPType": "Public",
+          "port": 443
+        }
+      ]
+    },
+    "frontendHttpRedirects": {
+      "value": [
+        {
+          "frontendIPType": "Public",
+          "port": 80,
+          "frontendListenerName": "public443"
+        }
+      ]
+    },
+    "routingRules": {
+      "value": [
+        {
+          "frontendListenerName": "public443",
+          "backendPoolName": "appServiceBackendPool",
+          "backendHttpConfigurationName": "webappBackendHttpsSetting"
+        }
+      ]
+    },
+    "logAnalyticsWorkspaceResourceId": {
+      "value": "/subscriptions/40671de7-26c1-4a7e-8591-9ace0aea34eb/resourceGroups/VDCCodeBlocksDev/providers/Microsoft.OperationalInsights/workspaces/aghla"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+name: $(Build.DefinitionName)-$(SourceBranchName)-$(Date:yyyyMMdd).$(Rev:rr)
+
+variables:
+  ModuleName: ApplicationGateway
+  ModuleVersion: 2.0
+  RepoName: azure-devops
+  ModulePath: modules/$(ModuleName)/$(ModuleVersion)
+  ArtifactName: contents
+
+resources:
+  repositories:
+    - repository: main
+      type: git
+      name: '$(RepoName)'
+
+trigger:
+  branches:
+    include:
+      - master
+      - '*'
+  paths:
+    include:
+      - modules/ApplicationGateway/2.0
+
+jobs:
+- job: BuildModule
+  displayName: Build Module
+  pool:
+    vmImage: ubuntu-16.04
+  workspace:
+    clean: all
+  
+  steps:
+  - template: /azure-devops/ci/buildmodule.yaml
+    parameters:
+      ModulePath: $(ModulePath)
+      ArtifactName: $(ArtifactName)

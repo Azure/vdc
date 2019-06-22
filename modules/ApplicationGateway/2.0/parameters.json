@@ -1,0 +1,142 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "applicationGatewayName": {
+      "value": "alguadamgw"
+    },
+    "sku": {
+      "value": "WAF_Medium"
+    },
+    "capacity": {
+      "value": 2
+    },
+    "http2Enabled": {
+      "value": true
+    },
+    "publicIPAllocationIdleTimeoutInMinutes": {
+      "value": 10
+    },
+    "vNetName": {
+      "value": "alguadam"
+    },
+    "subnetName": {
+      "value": "ApplicationGatewaySubnet"
+    },
+    "vNetResourceGroup": {
+      "value": "VDCCodeBlocksDev"
+    },
+    "vNetSubscriptionId": {
+      "value": "40671de7-26c1-4a7e-8591-9ace0aea34eb"
+    },
+    "frontendPrivateIPAddress": {
+      "value": "10.0.2.6"
+    },
+    "sslBase64CertificateData": {
+      "value": ""
+    },
+    "sslCertificatePassword": {
+      "value": ""
+    },
+    "backendPools": {
+      "value": [
+        {
+          "backendPoolName": "appServiceBackendPool",
+          "backendAddresses": [
+            {
+              "fqdn": "aghapp.azurewebsites.net"
+            }
+          ]
+        },
+        {
+          "backendPoolName": "privateVmBackendPool",
+          "backendAddresses": [
+            {
+              "ipAddress": "10.0.0.4"
+            }
+          ]
+        }
+      ]
+    },
+    "backendHttpConfigurations": {
+      "value": [
+        {
+          "backendHttpConfigurationName": "appServiceBackendHttpsSetting",
+          "port": 443,
+          "protocol": "https",
+          "cookieBasedAffinity": "Disabled",
+          "pickHostNameFromBackendAddress": true,
+          "probeEnabled": true,
+          "healthProbe": {
+            "host": "aghapp.azurewebsites.net",
+            "path": "/",
+            "statusCodes": [
+              "200"
+            ]
+          }
+        },
+        {
+          "backendHttpConfigurationName": "privateVmHttpSetting",
+          "port": 80,
+          "protocol": "http",
+          "cookieBasedAffinity": "Disabled",
+          "pickHostNameFromBackendAddress": false,
+          "probeEnabled": true,
+          "healthProbe": {
+            "host": "10.0.0.4",
+            "path": "/",
+            "statusCodes": [
+              "200",
+              "401"
+            ]
+          }
+        }
+      ]
+    },
+    "frontendHttpsListeners": {
+      "value": [
+        {
+          "frontendListenerName": "public443",
+          "frontendIPType": "Public",
+          "port": 443
+        },
+        {
+          "frontendListenerName": "private4433",
+          "frontendIPType": "Private",
+          "port": 4433
+        }
+      ]
+    },
+    "frontendHttpRedirects": {
+      "value": [
+        {
+          "frontendIPType": "Public",
+          "port": 80,
+          "frontendListenerName": "public443"
+        },
+        {
+          "frontendIPType": "Private",
+          "port": 8080,
+          "frontendListenerName": "private4433"
+        }
+      ]
+    },
+    "routingRules": {
+      "value": [
+        {
+          "frontendListenerName": "public443",
+          "backendPoolName": "appServiceBackendPool",
+          "backendHttpConfigurationName": "appServiceBackendHttpsSetting"
+        },
+        {
+          "frontendListenerName": "private4433",
+          "backendPoolName": "privateVmBackendPool",
+          "backendHttpConfigurationName": "privateVmHttpSetting"
+        }
+      ]
+    },
+    "logAnalyticsWorkspaceResourceId": {
+      "value": "/subscriptions/40671de7-26c1-4a7e-8591-9ace0aea34eb/resourceGroups/VDCCodeBlocksDev/providers/Microsoft.OperationalInsights/workspaces/aghla"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+# This YAML file can be used as a 'template' step
+# The template contains steps for running and Publishing Pester Tests for the modules
+
+parameters:
+  TestsFolder: ''
+
+steps:
+  - task: PowerShell@2
+    displayName: 'Run Pester Tests'
+    inputs:
+      targetType: 'inline'
+      script: '
+$ErrorActionPreference = "Stop";
+Install-Module Pester -Force;
+$VerbosePreference = "Continue";
+$OutputFilePath = "$(Agent.WorkFolder)/testsresult.xml";
+Invoke-Pester -Script "${{ parameters.TestsFolder }}\*.tests.ps1" -OutputFile $OutputFilePath -OutputFormat NUnitXml;
+if(-not (Test-Path $OutputFilePath)) {
+  Write-Error "File $OutputFilePath was not successfully created";
+}
+Write-Verbose "File $OutputFilePath was successfully created"
+'
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    inputs:
+      testResultsFormat: 'NUnit'
+      testResultsFiles: '$(Agent.WorkFolder)/testsresult.xml'

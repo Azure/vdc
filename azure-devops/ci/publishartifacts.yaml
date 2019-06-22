@@ -1,0 +1,13 @@
+# This YAML file can be used as a 'template' step
+# The template contains the steps to publish a directory as an artifact
+
+parameters:
+  PathToPublish: ''  
+  ArtifactName: 'contents'
+
+steps:
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Module Files as Azure DevOps artifact'
+    inputs:
+      PathtoPublish: ${{ parameters.PathToPublish }}
+      ArtifactName: ${{ parameters.ArtifactName }}
