@@ -14,7 +14,7 @@ $ErrorActionPreference = "Stop";
 Install-Module Pester -Force;
 $VerbosePreference = "Continue";
 $OutputFilePath = "$(Agent.WorkFolder)/testsresult.xml";
-Invoke-Pester -Script "${{ parameters.TestsFolder }}\*.tests.ps1" -OutputFile $OutputFilePath -OutputFormat NUnitXml;
+Invoke-Pester -Script "${{ parameters.TestsFolder }}\\*.tests.ps1" -OutputFile $OutputFilePath -OutputFormat NUnitXml;
 if(-not (Test-Path $OutputFilePath)) {
   Write-Error "File $OutputFilePath was not successfully created";
 }
