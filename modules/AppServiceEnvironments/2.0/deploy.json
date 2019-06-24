@@ -1,0 +1,136 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "2.0.0.0",
+  "parameters": {
+    "appServiceEnvironmentName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the App Service Environment."
+      }
+    },
+    "dnsSuffix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The DNS Suffix to use for the default App Service Environment domain name."
+      }
+    },
+    "vnetResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The Resource Group of the Virtual Network."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The Name of the Virtual Network to connect the App Service Environment."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "default",
+      "metadata": {
+        "description": "Optional. The name of the Virtual Network Subnet to connect the App Service Environment."
+      }
+    },
+    "internalLoadBalancingMode": {
+      "type": "string",
+      "defaultValue": "None",
+      "allowedValues": [
+        "None",
+        "Web",
+        "Publishing"
+      ],
+      "metadata": {
+        "description": "Optional. Specifies which endpoints to serve internally in the Virtual Network for the App Service Environment."
+      }
+    },
+    "ipSSLAddressCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Optional. Number of IP addresses reserved for the App Service Environment.  This value *must* be zero when internalLoadBalancing mode is set to either None or Publishing."
+      }
+    },
+    "multiSize": {
+      "type": "string",
+      "defaultValue": "Standard_D1_V2",
+      "metadata": {
+        "description": "Optional. Front-end VM size."
+      }
+    },
+    "multiRoleCount": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Optional. Number of front-end instances."
+      }
+    },
+    "workerPools": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "workerSizeId": 0,
+          "workerSize": "Small",
+          "workerCount": "2"
+        }
+      ],
+      "metadata": {
+        "description": "Optional. Description of worker pools with worker size IDs, VM sizes, and number of workers in each pool."
+      }
+    }
+  },
+  "variables": { },
+  "resources": [
+    {
+      "apiVersion": "2016-09-01",
+      "type": "Microsoft.Web/hostingEnvironments",
+      "name": "[parameters('appServiceEnvironmentName')]",
+      "kind": "ASEV2",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[parameters('appServiceEnvironmentName')]",
+        "location": "[resourceGroup().location]",
+        "multiSize": "[parameters('multiSize')]",
+        "multiRoleCount": "[parameters('multiRoleCount')]",
+        "workerPools": "[parameters('workerPools')]",
+
+        "vnetResourceGroupName": "[parameters('vnetResourceGroup')]",
+        "vnetName": "[parameters('vnetName')]",
+        "vnetSubnetName": "[parameters('subnetName')]",
+        "virtualNetwork": {
+            "id": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+            "subnet": "[parameters('subnetName')]"
+        },
+
+        "dnsSuffix": "[if(or(empty(parameters('dnsSuffix')), equals(parameters('dnsSuffix'), json('null'))), json('null'), parameters('dnsSuffix'))]",
+        "ipSSLAddressCount": "[parameters('ipSSLAddressCount')]",
+        "internalLoadBalancingMode": "[parameters('internalLoadBalancingMode')]"
+      }
+    }
+  ],
+  "outputs": {
+    "appServiceEnvironmentResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The Resource Group the App Service Environment was deployed to."
+      }
+    },
+    "appServiceEnvironmentName": {
+      "type": "string",
+      "value": "[parameters('appServiceEnvironmentName')]",
+      "metadata": {
+        "description": "The Name of the App Service Environment."
+      }
+    },
+    "appServiceEnvironmentResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('appServiceEnvironmentName'))]",
+      "metadata": {
+        "description": "The Resource Id of the App Service Environment."
+      }
+    }
+  }
+}

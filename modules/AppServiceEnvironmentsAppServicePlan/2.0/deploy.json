@@ -1,0 +1,82 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "2.0.0.0",
+    "parameters": {
+        "appServiceEnvironmentPlanName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. The Name of the App Service Plan to deploy."
+            }
+        },
+        "appServiceEnvironmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. The Resource Id of the App Service Environment to use for the App Service Plan."
+            }
+        },
+        "appServicePlanWorkerPool": {
+            "type": "string",
+            "allowedValues": [
+              "1",
+              "2",
+              "3"
+            ],
+            "defaultValue": "1",
+            "metadata": {
+              "description": "Optional. Defines which worker pool's (WP1, WP2 or WP3) resources will be used for the app service plan."
+            }
+        },
+        "appServicePlanNumberOfWorkersFromWorkerPool": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+              "description": "Optional. Defines the number of workers from the worker pool that will be used by the app service plan."
+            }
+        }
+    },
+    "variables": { },
+    "resources": [
+        {
+            "apiVersion": "2018-02-01",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "name": "[parameters('appServiceEnvironmentPlanName')]",
+            "properties": {
+                "name": "[parameters('appServiceEnvironmentPlanName')]",
+                "hostingEnvironmentProfile": {
+                    "id": "[parameters('appServiceEnvironmentId')]"
+                }
+            },
+            "sku": {
+                "name": "[concat('I', parameters('appServicePlanWorkerPool'))]",
+                "tier": "Isolated",
+                "size": "[concat('I', parameters('appServicePlanWorkerPool'))]",
+                "family": "I",
+                "capacity": "[parameters('appServicePlanNumberOfWorkersFromWorkerPool')]"
+            }
+        }
+    ],
+    "outputs": {
+        "appServiceEnvironmentPlanResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]",
+            "metadata": {
+              "description": "The Resource Group the App Service Plan was deployed to."
+            }
+          },
+          "appServiceEnvironmentPlanName": {
+            "type": "string",
+            "value": "[parameters('appServiceEnvironmentPlanName')]",
+            "metadata": {
+              "description": "The Name of the App Service Plan that was deployed."
+            }
+          },
+          "appServiceEnvironmentPlanResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServiceEnvironmentPlanName'))]",
+            "metadata": {
+              "description": "The Resource Id of the App Service Plan that was deployed."
+            }
+          }
+    }
+}
