@@ -1,5 +1,5 @@
 {
-    "Subscription": "env(vdc_toolkit_configuration)",
+    "Subscription": "env(vdc_toolkit_subscription)",
     "Configuration": {
         "Audit": {
             "Comments": "Audit service",

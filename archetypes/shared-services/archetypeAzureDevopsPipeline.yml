@@ -43,6 +43,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Enable Service Endpoint On Diagnostic Storage Account"
       inputs:
@@ -51,6 +57,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Artifacts Storage Account"
       inputs:
@@ -59,6 +71,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: LogAnalytics
     pool:
       name: 'vdc-self-hosted'
@@ -82,6 +100,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Link Log Analytics With Automation Account"
       inputs:
@@ -90,6 +114,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: AutomationAccounts
     pool:
       name: 'vdc-self-hosted'
@@ -113,6 +143,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AutomationAccounts" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: ApplicationSecurityGroups
     pool:
       name: 'vdc-self-hosted'
@@ -136,6 +172,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "JumpboxASG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Domain Controller ASG"
       inputs:
@@ -144,6 +186,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DomainControllerASG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: NetworkSecurityGroups
     pool:
       name: 'vdc-self-hosted'
@@ -167,6 +215,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesNSG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "ARM Validation - DMZ NSG"
       inputs:
@@ -175,6 +229,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DMZNSG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: RouteTables
     pool:
       name: 'vdc-self-hosted'
@@ -198,6 +258,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesRouteTable" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: vNet
     pool:
       name: 'vdc-self-hosted'
@@ -221,6 +287,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: VirtualNetworkGateway
     pool:
       name: 'vdc-self-hosted'
@@ -244,6 +316,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetworkGateway" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: VirtualNetworkGatewayConnection
     pool:
       name: 'vdc-self-hosted'
@@ -267,6 +345,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "ARM Validation - Remote Virtual Network Gateway Connection"
       inputs:
@@ -275,6 +359,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "RemoteVirtualNetworkGatewayConnection" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: AzureFirewall
     pool:
       name: 'vdc-self-hosted'
@@ -298,6 +388,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AzureFirewall" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: KeyVault
     pool:
       name: 'vdc-self-hosted'
@@ -321,6 +417,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "KeyVault" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: Jumpbox
     pool:
       name: 'vdc-self-hosted'
@@ -344,6 +446,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "Jumpbox" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: ADDS
     pool:
       name: 'vdc-self-hosted'
@@ -367,6 +475,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ADDS" -Validate'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
   - job: TearDownValidationResourceGroup
     pool: 
       name: 'vdc-self-hosted'
@@ -394,6 +508,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Log Analytics"
       inputs:
@@ -402,6 +522,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LogAnalytics"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Automation Accounts"
       inputs:
@@ -410,6 +536,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AutomationAccounts"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Link Log Analytics With Automation Account"
       inputs:
@@ -418,6 +550,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "JumpboxASG"
       inputs: 
@@ -426,6 +564,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "JumpboxASG"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Domain Controller ASG"
       inputs:
@@ -434,6 +578,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DomainControllerASG"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Shared Services NSG"
       inputs:
@@ -442,6 +592,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesNSG"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "DMZ NSG"
       inputs:
@@ -450,6 +606,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "DMZNSG"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Shared Services Route Table"
       inputs:
@@ -458,6 +620,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "SharedServicesRouteTable"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Virtual Network"
       inputs:
@@ -466,6 +634,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetwork"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Enable Service Endpoint On Diagnostic Storage Account"
       inputs:
@@ -474,6 +648,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Virtual Network Gateway"
       inputs:
@@ -482,6 +662,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "VirtualNetworkGateway"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Local Virtual Network Gateway Connection"
       inputs:
@@ -490,6 +676,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Remote Virtual Network Gateway Connection"
       inputs:
@@ -498,6 +690,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "RemoteVirtualNetworkGatewayConnection"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Azure Firewall"
       inputs:
@@ -506,6 +704,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "AzureFirewall"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Key Vault"
       inputs:
@@ -514,6 +718,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "KeyVault"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "Artifacts Storage Account"
       inputs:
@@ -522,6 +732,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: turtlesystems-azure-storage@1
       displayName: "Upload Scripts to Artifacts Storage"
       inputs:
@@ -542,6 +758,12 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "Jumpbox"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
     - task: AzurePowerShell@4
       displayName: "ADDS"
       inputs:
@@ -550,3 +772,9 @@ stages:
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
         ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ADDS"'
         azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
