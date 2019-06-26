@@ -1,12 +1,11 @@
 {
-    "Comment": "Subscription information can be included here or can be a reference to a file() or env()",
+    "Comment": "Subscription information can be included here or can be a reference to a file function or env function",
     "Subscription": "env(vdc_toolkit_subscription)",
     "Configuration": {
         "Audit": {
             "Comments": "Audit service",
             "StorageType": "StorageAccount",
             "StorageAccountName": "",
-            "Subscription": "Toolkit",
             "ResourceGroup": "vdc-toolkit-rg"
         },
         "Cache": {
