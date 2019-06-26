@@ -3,18 +3,21 @@ Class Factory {
     $container = @{};
 
     Factory([string]$auditStorageType,
-            [string]$cacheStorageType) {
+            [string]$cacheStorageType,
+            [string]$auditStoragePath) {
         Factory(
             $auditStorageType,
             $null,
             $null,
-            $cacheStorageType);
+            $cacheStorageType,
+            $auditStoragePath);
     }
 
     Factory([string]$auditStorageType,
             [string]$auditStorageAccountName, 
             [string]$auditStorageAccountSasToken,
-            [string]$cacheStorageType) {
+            [string]$cacheStorageType,
+            [string]$auditStoragePath) {
         
         $stateRepository = $null;
         $auditRepository = $null;
@@ -43,11 +46,15 @@ Class Factory {
         }
         else {
             # Assumes local storage for now.
+            if ([string]::IsNullOrEmpty($auditStoragePath)) {
+                throw "Audit storage path is empty for local audit storage type, please provide a valid local storage path";
+            }
+
             $stateRepository = `
-                [LocalStorageStateRepository]::new();
+                [LocalStorageStateRepository]::new($auditStoragePath);
 
             $auditRepository = `
-                [LocalStorageAuditRepository]::new();
+                [LocalStorageAuditRepository]::new($auditStoragePath);
         }
 
         if($cacheStorageType.ToLower() -eq "azuredevops") {
@@ -85,6 +92,7 @@ Class Factory {
             IDeploymentAuditDataService = $deploymentAuditDataService
             IModuleStateDataService = $moduleStateDataService
             IDeploymentService = $deploymentService
+            ITokenReplacementService = $tokenReplacementService
         };
     }
 
@@ -109,11 +117,15 @@ Function New-FactoryInstance() {
         $AuditStorageAccountSasToken,
         [Parameter(Mandatory=$true)]
         [string] 
-        $CacheStorageType
+        $CacheStorageType,
+        [Parameter(Mandatory=$false)]
+        [string]
+        $AuditStoragePath
     )
     return [Factory]::new(
         $AuditStorageType,
         $AuditStorageAccountName, 
         $AuditStorageAccountSasToken,
-        $CacheStorageType);
+        $CacheStorageType,
+        $AuditStoragePath);
 }

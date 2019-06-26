@@ -17,11 +17,12 @@
     $Validate)
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent;
-$bootstrapModulePath = Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'Bootstrap') -ChildPath 'Initialize.psd1';
-$scriptBlock = "using Module $bootstrapModulePath";
+$bootstrapModulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('Bootstrap', 'Initialize.ps1');
+$scriptBlock = ". $bootstrapModulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
-$factoryModulePath = Join-Path (Join-Path (Join-Path $rootPath -ChildPath '..') -ChildPath 'Factory') -ChildPath 'Factory.psd1';
+
+$factoryModulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('Factory', 'Factory.psd1');
 Import-Module $bootstrapModulePath -Force;
 Import-Module $factoryModulePath -Force;
 Import-Module "$($rootPath)/../Common/Helper.psd1" -Force;
@@ -33,7 +34,6 @@ $moduleStateDataService = $null;
 $configurationBuilder = $null;
 $factory = $null;
 $defaultLocation = "West US";
-$notSupportedVersion = 1.9;
 $defaultSupportedVersion = 2.0;
 $defaultModuleConfigurationsFolderName = "modules";
 $defaultTemplateFileName = "deploy.json";
@@ -68,54 +68,15 @@ Function New-Deployment {
     )
     try {
         
-        $hostType = `
-            Get-PowershellEnvironmentVariable `
-                -Key "SYSTEM_HOSTTYPE";
-
-        Write-Debug "Host type is: $hostType";
-
-        $systemDefaultWorkingDirectory = `
-            Get-PowershellEnvironmentVariable `
-                -Key "SYSTEM_DEFAULTWORKINGDIRECTORY";
-
-        Write-Debug "System default working directory is: `
-            $systemDefaultWorkingDirectory";
-
-        # Set the defaultWorkingDirectory
-        if(![string]::IsNullOrEmpty($WorkingDirectory)) {
-            Write-Debug "Working directory parameter passed: $WorkingDirectory";
-            # If Working directory information is explicitly passed,
-            # then set it
-            $defaultWorkingDirectory = $WorkingDirectory;
-        }
-        elseif ($hostType -eq "build") {
-            # If the environment is build environment, use the 
-            # system_defaultworkingdirectory that is available in the pipeline
-
-            $defaultWorkingDirectory = $systemDefaultWorkingDirectory;
-        }
-        # This is true when the running the script from Azure DevOps - release pipeline
-        elseif ($hostType -eq "release"){
-            # If the environment is release environment, use a combination of 
-            # system_defaukltWorkingDirectory and the release_primaryArtifactSourceAlias
-
-            $releasePrimaryArtifactSourceAlias = `
-                Get-PowershellEnvironmentVariable `
-                    -Key "RELEASE_PRIMARYARTIFACTSOURCEALIAS";
-
-            $defaultWorkingDirectory = "$systemDefaultWorkingDirectory\$releasePrimaryArtifactSourceAlias"
-        }
-        # This is true when the running the script locally
-        else {
-            Write-Debug "Local deployment, attempting to resolve root path";
-            # If no explicity working directory is passed and the script
-            # is run locally, then use the current path
-            $defaultWorkingDirectory = (Resolve-Path ".\").Path;
-        }
+        $defaultWorkingDirectory = `
+            Get-WorkingDirectory `
+                -WorkingDirectory $WorkingDirectory;
 
         Write-Debug "Working directory is: $defaultWorkingDirectory";
 
-        $factory = Invoke-Bootstrap;
+        $factory = `
+            Invoke-Bootstrap `
+                -WorkingDirectory $defaultWorkingDirectory;
         
         $deploymentService = `
             $factory.GetInstance('IDeploymentService');
@@ -374,6 +335,70 @@ Function New-Deployment {
     }
 }
 
+Function Get-WorkingDirectory {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$false)]
+        [string]
+        $WorkingDirectory
+    )
+
+    try {
+        $hostType = `
+            Get-PowershellEnvironmentVariable `
+                -Key "SYSTEM_HOSTTYPE";
+
+        Write-Debug "Host type is: $hostType";
+
+        $systemDefaultWorkingDirectory = `
+            Get-PowershellEnvironmentVariable `
+                -Key "SYSTEM_DEFAULTWORKINGDIRECTORY";
+
+        Write-Debug "System default working directory is: `
+            $systemDefaultWorkingDirectory";
+
+        # Set the defaultWorkingDirectory
+        if(![string]::IsNullOrEmpty($WorkingDirectory)) {
+            Write-Debug "Working directory parameter passed: $WorkingDirectory";
+            # If Working directory information is explicitly passed,
+            # then set it
+            $defaultWorkingDirectory = $WorkingDirectory;
+        }
+        elseif ($hostType -eq "build") {
+            # If the environment is build environment, use the 
+            # system_defaultworkingdirectory that is available in the pipeline
+
+            $defaultWorkingDirectory = $systemDefaultWorkingDirectory;
+        }
+        # This is true when the running the script from Azure DevOps - release pipeline
+        elseif ($hostType -eq "release"){
+            # If the environment is release environment, use a combination of 
+            # system_defaukltWorkingDirectory and the release_primaryArtifactSourceAlias
+
+            $releasePrimaryArtifactSourceAlias = `
+                Get-PowershellEnvironmentVariable `
+                    -Key "RELEASE_PRIMARYARTIFACTSOURCEALIAS";
+
+            $defaultWorkingDirectory = `
+                "$systemDefaultWorkingDirectory\$releasePrimaryArtifactSourceAlias";
+        }
+        # This is true when the running the script locally
+        else {
+            Write-Debug "Local deployment, attempting to resolve root path";
+            # If no explicity working directory is passed and the script
+            # is run locally, then use the current path
+            $defaultWorkingDirectory = Resolve-Path ".\";
+        }
+
+        return $defaultWorkingDirectory;
+    }
+    catch {
+        Write-Host "An error ocurred while running Get-WorkingDirectory";
+        Write-Host $_;
+        throw $_;
+    }
+}
+
 Function Get-ArchetypeInstanceName {
     [CmdletBinding()]
     param(
@@ -499,16 +524,21 @@ Function Build-ConfigurationInstance {
 
 Function Invoke-Bootstrap {
     [CmdletBinding()]
-    param ()
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]
+        $WorkingDirectory
+    )
 
-    $toolkitConfigurationFileName = "toolkit.config.json";
+    $toolkitConfigurationFileName = `
+        Join-Path "config" -ChildPath "toolkit.config.json";
 
     try {
         # Build toolkit configuration from file
         $toolkitConfigurationJson = `
             Build-ConfigurationInstance `
                 -FilePath $toolkitConfigurationFileName `
-                -WorkingDirectory $defaultWorkingDirectory;
+                -WorkingDirectory $WorkingDirectory;
 
         # Getting cache information from toolkit configuration
         $cacheStorageInformation = `
@@ -520,7 +550,8 @@ Function Invoke-Bootstrap {
         # Getting audit information from toolkit configuration
         $auditStorageInformation = `
             Get-AuditStorageInformation `
-                -ToolkitConfigurationJson $toolkitConfigurationJson;
+                -ToolkitConfigurationJson $toolkitConfigurationJson `
+                -WorkingDirectory $WorkingDirectory;
 
         Write-Debug "Audit storage information is: $(ConvertTo-Json $auditStorageInformation -Depth 100)";
 
@@ -549,13 +580,16 @@ Function Invoke-Bootstrap {
         }
         elseif ($auditStorageInformation.StorageType.ToLower() `
                 -eq "local") {
-            $bootstrapResults = `
+            # When initializing a local store, the return will be a path
+            # where all the audit and state information will be stored
+            $bootstrapAuditStoragePath = `
                 $bootstrap.InitializeLocalStore();
 
             $factory = `
                 New-FactoryInstance `
                     -AuditStorageType $auditStorageInformation.StorageType `
-                    -CacheStorageType $cacheStorageInformation.StorageType;
+                    -CacheStorageType $cacheStorageInformation.StorageType `
+                    -AuditStoragePath $bootstrapAuditStoragePath;
             
             Write-Debug "Bootstrap type: local storage, result is: $(ConvertTo-Json $bootstrapResults -Depth 100)";
         }
@@ -695,7 +729,10 @@ Function Get-AuditStorageInformation {
     param (
         [Parameter(Mandatory=$true)]
         [hashtable] 
-        $ToolkitConfigurationJson
+        $ToolkitConfigurationJson,
+        [Parameter(Mandatory=$false)]
+        [string] 
+        $WorkingDirectory
     )
     try {
         $auditStorageInformation = @{
@@ -752,7 +789,7 @@ Function Get-AuditStorageInformation {
                 # This path is optional, you can provide a specific path where all the audit information will get
                 # saved.
                 $auditStorageInformation.LocalPath = `
-                    $defaultWorkingDirectory;
+                    $WorkingDirectory;
             }
         }
         # Not supported error
@@ -1027,7 +1064,6 @@ Function Get-DeploymentTemplateFileContents {
     try {
         Write-Debug "Getting Deployment template contents";
 
-        # TODO: Can DeploymentFileType be an ENUM? `
         return `
             Get-DeploymentFileContents `
                 -DeploymentConfiguration $DeploymentConfiguration `
@@ -1060,7 +1096,6 @@ Function Get-DeploymentParametersFileContents {
     try {
         Write-Debug "Getting Deployment parameters contents";
 
-        # TODO: Can DeploymentFileType be an ENUM? `
         return `
             Get-DeploymentFileContents `
                 -DeploymentConfiguration $DeploymentConfiguration `
@@ -1109,10 +1144,10 @@ Function Get-DeploymentFileContents {
         $DeploymentConfiguration,
         [Parameter(Mandatory=$true)]
         [string] 
-        $DeploymentType, # TODO: Can this be an ENUM? Possible values are ARM, Policies, RBAC
+        $DeploymentType, # Possible values are ARM, Policies, RBAC
         [Parameter(Mandatory=$true)]
         [string]
-        $DeploymentFileType, # TODO: Is this the right name for TemplatePath or ParametersPath?
+        $DeploymentFileType, # Possible values are TemplatePath or ParametersPath
         [Parameter(Mandatory=$false)]
         [string] 
         $ModuleConfigurationsPath,
@@ -2140,7 +2175,6 @@ Function Get-OutputFromStateStore() {
         $moduleConfigurationName = $Filters[0];
     }
     else {
-        # TODO: Check if we need to return null of the filter or at least 2 or more
         return $null;
     }
 

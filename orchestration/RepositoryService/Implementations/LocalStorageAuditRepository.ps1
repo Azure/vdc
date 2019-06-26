@@ -19,10 +19,8 @@ Class LocalStorageAuditRepository: IAuditRepository {
     # mappingContainerName/auditMappings.json
     $mappingsFileName = "auditMappings.json"
 
-    LocalStorageAuditRepository() {
-        # TODO: Get value from cache
-        $this.rootPath = `
-            $ENV:vdc_localAuditPath;
+    LocalStorageAuditRepository([string] $auditStoragePath) {
+        $this.rootPath = $auditStoragePath;
     }
 
     # entity is a wrapper around the collection of data

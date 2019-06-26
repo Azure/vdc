@@ -21,10 +21,8 @@ Class LocalStorageStateRepository: IStateRepository {
     # mappingContainerName/deploymentMappings.json
     $mappingsFileName = "deploymentMappings.json";
 
-    LocalStorageStateRepository() {
-        # TODO: Get value from cache
-        $this.rootPath = `
-            $ENV:vdc_localAuditPath;
+    LocalStorageStateRepository([string] $auditStoragePath) {
+        $this.rootPath = $auditStoragePath;
     }
 
     [void] SaveResourceState([object] $entity) {

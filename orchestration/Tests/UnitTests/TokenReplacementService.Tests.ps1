@@ -608,10 +608,8 @@ Describe  "Token Replacement Service Unit Test Cases" {
 
                                                     }
                                                     'par5'= 'some value'
-                                                    # TODO: Check #1 - is this is a valid case?
                                                     # Python toolkit expects shared-services but Powershell sends back an object
                                                     'par6'= 'main-module/v1.0/${ENV:ENVIRONMENT-TYPE}'
-                                                    # TODO: Check #2 - is this is a valid case?
                                                     # Python toolkit expects shared-services but Powershell sends back an object
                                                     'par61'= '${shared-services.par7_strValue}/v1.0/${ENV:ENVIRONMENT-TYPE}'
                                                     'par7'= '${shared-services.par7_strValue}'

@@ -5,11 +5,8 @@ Class LocalCacheRepository: ICacheRepository {
     static $memoryCache = $null;
 
     LocalCacheRepository() {
-        # Constructor overloaded to allow cache name prefix
-        # default value usage in case no prefix is to be passed
-        if(-not [LocalCacheRepository]::memoryCache) {
-            [LocalCacheRepository]::memoryCache = New-Object System.Runtime.Caching.MemoryCache('Main');
-        }
+        [LocalCacheRepository]::memoryCache = `
+                New-Object System.Runtime.Caching.MemoryCache('Main');
     }
 
     [string] GetByKey([string] $key) {

@@ -12,6 +12,15 @@ ModuleVersion = '0.0.1'
 # ID used to uniquely identify this module
 GUID = '848a2d5f-be56-4113-9671-8e90214d4ff1'
 
+# Author of this module
+Author = 'VDC Team'
+
+# Company or vendor of this module
+CompanyName = 'Microsoft'
+
+# Copyright statement for this module
+Copyright = '(c) Microsoft Corporation. All rights reserved.'
+
 # Description of the functionality provided by this module
 # Description = ''
 

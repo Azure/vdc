@@ -5,7 +5,7 @@ Class ModuleStateDataService: IModuleStateDataService {
     ModuleStateDataService([IStateRepository] $stateRepository) {
         $this.stateRepository = $stateRepository;
     }
-    # TODO: Check if we can set subscription and tenant id as guids
+    
     [Guid] SaveResourceState([guid] $auditId, `
                         [string] $deploymentId, `
                         [string] $deploymentName, `

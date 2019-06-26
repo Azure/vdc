@@ -1,4 +1,3 @@
-
 Class Initialize {
     [string]$dataStoreSubscriptionId = '';
     [string]$dataStoreTenantId = '';
@@ -54,7 +53,6 @@ Class Initialize {
         # Getting HOME path environment variable
         $homePath = Get-ChildItem -Path Env:HOME;
 
-
         $homePath = `
             (Get-ChildItem -Path Env:HOME -ErrorAction SilentlyContinue).Value;
         
@@ -77,9 +75,6 @@ Class Initialize {
         $vdcDataStorePath = `
             Join-Path -Path $homePath -ChildPath $this.dataStoreName;
         
-        # TODO: We should cache this value
-        $ENV:vdc_localAuditPath = $vdcDataStorePath;
-
         # Check for directory existence, if directory does not exist, create it
         $mainFolderExists = Test-Path $vdcDataStorePath;
         if ($mainFolderExists -eq $false){

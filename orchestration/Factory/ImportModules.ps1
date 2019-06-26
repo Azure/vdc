@@ -1,5 +1,4 @@
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
-
 $modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('RepositoryService', 'Interface', 'IStateRepository.ps1');
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);

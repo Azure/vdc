@@ -63,7 +63,6 @@ CA_KEY=$(openssl pkey \
   -out /dev/stdout)
 
 # create the private key and convert to pkcs8 format
-# TODO: confirm with keyvault that we need pkcs8
 echo "$PGM: Creating private key for $CERT_NAME ..."
 PK=$( \
   openssl genpkey \
@@ -85,7 +84,6 @@ if [[ "$SAN" != "" ]];then
   SUBJECT_ALT_NAME="subjectAltName = DNS:$CERT_NAME,$SAN"
 fi
 
-#TODO: see what other properties/usage flags are needed
 CONFIG_FILE=$(cat <<EOF
 [req]
 prompt = no

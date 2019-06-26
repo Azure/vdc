@@ -1,4 +1,5 @@
 {
+    "Comment": "Subscription information can be included here or can be a reference to a file() or env()",
     "Subscription": "env(vdc_toolkit_subscription)",
     "Configuration": {
         "Audit": {
