@@ -376,7 +376,7 @@
         },
         {
             "Name": "ArtifactsStorageAccount",
-            "Subscription": "Toolkit",
+            "Subscription": "Artifacts",
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "fabrikam-shrdsvcs-artifacts-rg",
             "Comments": "Storage Account that is used for ...",

@@ -96,7 +96,7 @@ Function New-Deployment {
         # Contruct the archetype instance object only if it is not already
         # cached
         $archetypeInstanceJson = `
-            Build-ConfigurationInstance `
+            New-ConfigurationInstance `
                 -FilePath $ArchetypeDefinitionPath `
                 -WorkingDirectory $defaultWorkingDirectory `
                 -CacheKey $ArchetypeInstanceName;
@@ -455,7 +455,7 @@ Function Set-SubscriptionContext {
     }
     
 }
-Function Build-ConfigurationInstance {
+Function New-ConfigurationInstance {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -516,7 +516,7 @@ Function Build-ConfigurationInstance {
         return $configurationInstance;
     }
     catch {
-        Write-Host "An error ocurred while running Build-ConfigurationInstance";
+        Write-Host "An error ocurred while running New-ConfigurationInstance";
         Write-Host $_;
         throw $_;
     }
@@ -536,7 +536,7 @@ Function Invoke-Bootstrap {
     try {
         # Build toolkit configuration from file
         $toolkitConfigurationJson = `
-            Build-ConfigurationInstance `
+            New-ConfigurationInstance `
                 -FilePath $toolkitConfigurationFileName `
                 -WorkingDirectory $WorkingDirectory;
 
@@ -651,7 +651,9 @@ Function Get-SubscriptionInformation {
                 $moduleConfiguration.$subscriptionKey;
         }
 
-        $subscriptionNameMatch = $ArchetypeInstanceJson.$archetypeInstanceSubscriptions.Keys -match $SubscriptionName;
+        $subscriptionNameMatch = `
+            $ArchetypeInstanceJson.$archetypeInstanceSubscriptions.Keys `
+                -match $SubscriptionName;
         if($archetypeInstanceSubscriptions `
             -and $subscriptionNameMatch) {
             # Retrieve case-sensitive key name from case-insensitive key name using match operation

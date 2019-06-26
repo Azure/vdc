@@ -16,5 +16,11 @@
         "TenantId": "00000000000000000000000",
         "SubscriptionId": "00000000000000000000000",
         "Location": "West US"
+    },
+    "Artifacts": {
+        "Comments": "Subscription and tenant information where the Artifacts Storage Account will reside",
+        "TenantId": "00000000000000000000000",
+        "SubscriptionId": "00000000000000000000000",
+        "Location": "West US"
     }
 }

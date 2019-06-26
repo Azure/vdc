@@ -10,8 +10,14 @@ Class ConfigurationBuilder {
     $configurationDefinitionFileName = "";
     $fileFunctionResolutionDepthLimit = 20;
 
+    ConfigurationBuilder([string] $configurationDefinitionPath) {
+        ConfigurationBuilder(
+            $null, 
+            $configurationDefinitionPath);
+    }
+
     ConfigurationBuilder([string] $configurationInstanceName, 
-                             [string] $configurationDefinitionPath) {
+                         [string] $configurationDefinitionPath) {
         # setting the configuration name for use with token parser
         $this.configurationInstanceName = $configurationInstanceName;
         
@@ -86,7 +92,7 @@ Class ConfigurationBuilder {
                 $this.ExtractAllFileFunctionsFromFileContent(
                     $fileContentString
                 );
-
+            
             # Convert the relative paths to absolute path
             $fileFunctionExtracts | ForEach-Object {
 
