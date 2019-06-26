@@ -469,16 +469,19 @@ Function New-ConfigurationInstance {
         $CacheKey
     )
 
+    $tempFileName = "$([Guid]::NewGuid()).json";
+
     try {
         # First, retrieve the value from the cache
         # If a value exists, it is going to be a
         # hashtable in this case.
-        $configurationInstance = $null;
+        $archetypeInstance = $null;
 
         if(![string]::IsNullOrEmpty($CacheKey)) {
-            $configurationInstance = $cacheDataService.GetByKey($CacheKey);
+            $archetypeInstance = `
+                $cacheDataService.GetByKey($CacheKey);
         }
-        Write-Debug "Configuration instance found: $($null -ne $configurationInstance)";
+        Write-Debug "Archetype instance found: $($null -ne $configurationInstance)";
         
         if($null -eq $configurationInstance) {
             Write-Debug "No configuration instance found in the cache, generating one";
@@ -499,26 +502,48 @@ Function New-ConfigurationInstance {
             );
             
             # Generate archetype Instance from archetype 
-            # definition
-            $configurationInstance = `
+            # definition (expand the definition by replacing
+            # file include references, or environment references)
+            $expandedArchetype = `
                 $configurationBuilder.BuildConfigurationInstance();
-            Write-Debug "Configuration instance: $(ConvertTo-Json $configurationInstance -Depth 100)"
+            Write-Debug "Archetype expanded: $(ConvertTo-Json $expandedArchetype -Depth 100)"
+
+            Write-Debug "Creating hash of ArchetypeOrchestration and ArchetypeParameters";
+            
+            # Saving a temporal file so we can invoke Get-FileHash
+            # This temporal file contains what we assume would not
+            # change in a given Archetype deployment
+            @{
+                "Parameters" = $expandedArchetype.ArchetypeParameters
+                "Orchestration" = $expandedArchetype.ArchetypeOrchestration
+            } | ConvertTo-Json -Depth 100 -Compress > $tempFileName;
+            
+            $fileHash = `
+                (Get-FileHash $tempFileName).Hash.ToString();
+
+            $archetypeInstance = @{
+                "ArchetypeExpanded" = $expandedArchetype
+                "Hash" = $fileHash
+            }
 
             if(![string]::IsNullOrEmpty($CacheKey)) {
                 # Let's cache the archetype instance
                 $cacheDataService.SetByKey(
                     $CacheKey,
-                    $configurationInstance);
+                    $archetypeInstance);
             }
 
-            Write-Debug "Configuration instance properly cached, using key: $ArchetypeInstanceName";
+            Write-Debug "Archetype instance properly cached, using key: $ArchetypeInstanceName";
         }
-        return $configurationInstance;
+        return $archetypeInstance;
     }
     catch {
         Write-Host "An error ocurred while running New-ConfigurationInstance";
         Write-Host $_;
         throw $_;
+    }
+    finally {
+
     }
 }
 
