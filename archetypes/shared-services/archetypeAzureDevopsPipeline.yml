@@ -18,7 +18,7 @@ stages:
         azureSubscription: 'vdc2-hub'
         ScriptType: 'FilePath'
         ScriptPath: 'orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount"'
+        ScriptArguments: '-ArchetypeDefinitionPath "archetypes/shared-services/archetypeDefinition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Debug'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
