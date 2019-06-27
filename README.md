@@ -53,7 +53,7 @@ This repository contains the _Azure Virtual Datacenter Automation Toolkit_. The 
   - [Simulated on-premises environment](docs/archetypes/on-premises/overview.adoc)
   - [Shared services](docs/archetypes/shared-services/overview.adoc)
   - [IaaS N-tier architecture](docs/archetypes/ntier-iaas/overview.adoc)
-  - [Azure Kubernetes Service (AKS)](archetypes/aks/overview.adoc)
+  - [Azure Kubernetes Service (AKS)](docs/archetypes/aks/overview.adoc)
   - [App Service Environment + SQL Database](docs/archetypes/paas/overview.adoc)
   - [SAP HANA](docs/archetypes/sap-hana/overview.adoc)
   - [Cloudbreak](docs/archetypes/cloudbreak/overview.adoc)
