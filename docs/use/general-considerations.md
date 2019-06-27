@@ -18,4 +18,4 @@ To interact with your on-premises network, your central IT shared services and w
 
 ## Next steps
 
-After reviewing these general considerations, read about additional [considerations for workloads](workload-considerations.md).
+After reviewing these general considerations, read about additional [considerations for archetype deployments](archetype-deployment-considerations.md).

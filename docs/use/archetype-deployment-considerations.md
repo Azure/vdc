@@ -18,8 +18,9 @@ The workload deployments need to reference shared services deployment output fil
 The toolkit provides several sample workload archetypes:
 
 - [Shared services deployment](../archetypes/shared-services/overview.adoc)
-- [ASE + SQL Database deployment](../archetypes/ntier-iaas/overview.adoc)
-- [IaaS N-tier deployment](../archetypes/paas/overview.adoc)
+- [ASE + SQL Database deployment](../archetypes/paas/overview.adoc)
+- [IaaS N-tier deployment](../archetypes/ntier-iaas/overview.adoc)
+- [Azure Kubernetes Service (AKS) deployment](../archetypes/aks/overview.adoc)
 - [Hadoop Cloudbreak deployment](../archetypes/cloudbreak/overview.adoc)
 - [SAP HANA deployment](../archetypes/sap-hana/overview.adoc)
 

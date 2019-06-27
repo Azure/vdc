@@ -36,6 +36,7 @@
   - [Simulated on-premises environment](archetypes/on-premises/overview.adoc)
   - [Shared services](archetypes/shared-services/overview.adoc)
   - [IaaS N-tier architecture](archetypes/ntier-iaas/overview.adoc)
+  - [Azure Kubernetes Service (AKS)](archetypes/aks/overview.adoc)
   - [App Service Environment + SQL Database](archetypes/paas/overview.adoc)
   - [SAP HANA](archetypes/sap-hana/overview.adoc)
   - [Cloudbreak](archetypes/cloudbreak/overview.adoc)

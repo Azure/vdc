@@ -1,4 +1,4 @@
-= Archetype: Azure Kubernetes Services (AKS) architecture
+= Archetype: Azure Kubernetes Service (AKS) architecture
 :toc:
 :toc-placement: auto
 :toclevels: 3
