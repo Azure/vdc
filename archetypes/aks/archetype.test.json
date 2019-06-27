@@ -45,7 +45,7 @@
                 "region": "West US 2"
             },
             "kubernetes": {
-                "kubernetes-version": "1.12.6",
+                "kubernetes-version": "1.13.5",
                 "os-type": "Linux",
                 "network-plugin": "azure",
                 "max-pods": 30,
@@ -148,22 +148,21 @@
     },
     "orchestration": {
         "modules-to-deploy": [
+            "permissions-scripts-pre-reqs",
+            "scripts-pre-reqs",
             "diagnostic-storage-account",
             "la",
-            "automation-account",
             "security-center",
             "event-hub",
             "nsg",
             "workload-net",
             "enable-service-endpoint-on-diagnostic-storage-account",
             "kv",
+            "create-ca-cert",
             "acr",
             "aks",
             "role-assignments-rg-scope",
             "aks-node-role-assignments",
-            "permissions-scripts-pre-reqs",
-            "scripts-pre-reqs",
-            "create-ca-cert",
             "create-cluster-rbac-role-bindings"
         ],
         "module-validation-dependencies": [],
