@@ -10,7 +10,7 @@ interactions:
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/vdc-storage-rg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/vdc-storage-rg?api-version=2019-05-01
   response:
     body: {string: ''}
     headers:
@@ -126,7 +126,7 @@ interactions:
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg?api-version=2019-05-01
   response:
     body: {string: ''}
     headers:
@@ -152,7 +152,7 @@ interactions:
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg?api-version=2019-05-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg","name":"org-onprem-net-rg","location":"centralus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -196,11 +196,11 @@ interactions:
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg?api-version=2019-05-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg","name":"org-on-premises-onprem-deployment-nsg","properties":{"templateHash":"11958411307360498011","parameters":{"deployment-prefix":{"type":"String","value":"org-onprem"},"network-security-groups":{"type":"Array","value":[{"name":"default","rules":[{"name":"allow-rdp","properties":{"access":"Allow","destinationPortRange":"3389","destinationAddressPrefix":"VirtualNetwork","direction":"Inbound","priority":100,"protocol":"*","sourcePortRange":"*","sourceAddressPrefix":"VirtualNetwork"}}]}]},"sas-key":{"type":"String","value":"se=2019-01-12T18%3A49%3A11Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=dv6ZACuOD3JXj510bAq%2BjbshfXdTw4KtDMrTwM6blqU%3D"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-01-11T18:49:15.678196Z","duration":"PT0.7498239S","correlationId":"5e315331-1602-4a13-80f5-f108148678b5","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"networkSecurityGroups","locations":["centralus"]}]}],"dependencies":[]}}'}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg/operationStatuses/08586543743305492527?api-version=2018-05-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg/operationStatuses/08586543743305492527?api-version=2019-05-01']
       cache-control: [no-cache]
       content-length: ['1423']
       content-type: [application/json; charset=utf-8]
@@ -220,7 +220,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg/operationStatuses/08586543743305492527?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg/operationStatuses/08586543743305492527?api-version=2019-05-01
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
@@ -243,7 +243,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg?api-version=2019-05-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-nsg","name":"org-on-premises-onprem-deployment-nsg-1547232553253","properties":{"templateHash":"11958411307360498011","parameters":{"deployment-prefix":{"type":"String","value":"org-onprem"},"network-security-groups":{"type":"Array","value":[{"name":"default","rules":[{"name":"allow-rdp","properties":{"access":"Allow","destinationPortRange":"3389","destinationAddressPrefix":"VirtualNetwork","direction":"Inbound","priority":100,"protocol":"*","sourcePortRange":"*","sourceAddressPrefix":"VirtualNetwork"}}]}]},"sas-key":{"type":"String","value":"se=2019-01-12T18%3A49%3A11Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=dv6ZACuOD3JXj510bAq%2BjbshfXdTw4KtDMrTwM6blqU%3D"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-01-11T18:49:27.855761Z","duration":"PT12.9273889S","correlationId":"5e315331-1602-4a13-80f5-f108148678b5","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"networkSecurityGroups","locations":["centralus"]}]}],"dependencies":[],"outputs":{},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Network/networkSecurityGroups/org-onprem-default-nsg"}]}}'}
     headers:

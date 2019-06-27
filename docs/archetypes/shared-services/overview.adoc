@@ -39,13 +39,42 @@ python3 vdc.py create shared-services -path archetypes/shared-services/archetype
 py vdc.py create shared-services -path archetypes/shared-services/archetype.json --upload-scripts
 ////
 
-== Step 1: Deploy operations and monitoring resources
+== Step 1: Deploy diagnostic storage accounts
 
 *Required role: SysOps*
 
 image:_media/shared-services-step1_la.png[Log Analytics module]
 
-The first required resource deployment is `la` module, which deploys the Azure Log Analytics workspace and puts policy in place requiring virtual machines deployed on the subscriptions to use Azure Monitor.
+The first required resource deployment is `diagnostic-storage-account` module, which deploys the Azure Storage accounts where diagnostic and metrics information will be stored.
+
+Start the `diagnostic-storage-account` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m diagnostic-storage-account
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m diagnostic-storage-account
+
+.Windows
+[source,cmd]
+py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m diagnostic-storage-account
+
+This deployment creates the `{org}-{deployment-name}-la-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `{org}{deployment-name}diag{random-characters}`
+| Storage accounts
+| Storage accounts that stores diagnostic and metrics information.
+|===
+
+== Step 2: Deploy operations and monitoring resources
+
+The next deployment is `la` module, which deploys the Azure Log Analytics workspace and puts policy in place requiring virtual machines deployed on the subscriptions to use Azure Monitor.
 
 Start the `la` deployment by running the following command in the terminal or command-line interface:
 
@@ -61,7 +90,7 @@ python3 vdc.py create shared-services -path archetypes/shared-services/archetype
 [source,cmd]
 py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m la
 
-This deployment creates the `{org}-{deployment-name}-la-rg` resource group that hosts the resources described in the following table.
+This deployment uses the `{org}-{deployment-name}-la-rg` resource group previously created and hosts the resources described in the following table.
 
 [options="header",cols="a,,"]
 |===
@@ -72,46 +101,56 @@ This deployment creates the `{org}-{deployment-name}-la-rg` resource group that 
 | Log Analytics instance for monitoring the shared services network.
 |===
 
-== Step 2: Deploy Key Vault
+== Step 3: Deploy Virtual Machine update management
 
-*Required role: SecOps*
+This step provisions an `automation-account` module, which deploys an Azure Automation Account and links it to a Log Analytics workspace to enable Virtual Machine update management via tags.
 
-The next step is deploying the kv module, which creates a Key Vault resource and stores secrets defined in the `archetype.json` as well as creating encryption keys (used in Azure Disk Encryption extension), that other resources will use in subsequent deployment steps.
-
-These values are stored as secrets in the vault. To modify the default values for these passwords edit the link:../../../modules/kv/1.0/azureDeploy.parameters.json[Key Vault (kv) module parameters file] and update the secrets-object parameter. These passwords will be used throughout the deployment process when provisioning VMs in the shared services environment and accessing on-premises resources.
-
-image:_media/shared-services-step2-kv.png[Key Vault module]
-
-Start the `kv` deployment by running the following command in the terminal or command-line interface:
+Start the `automation-account` deployment by running the following command in the terminal or command-line interface:
 
 .Docker
 [source,bash]
-python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m kv
+python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m automation-account
 
 .Linux/OSX
 [source,bash]
-python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m kv
+python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m automation-account
 
 .Windows
 [source,cmd]
-py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m kv
+py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m automation-account
 
-This deployment creates the `{org}-{deployment-name}-kv-rg` resource group that hosts the resources described in the following table.
+This deployment creates the `{org}-{deployment-name}-la-rg` resource group previously created and hosts the resources described in the following table.
 
 [options="header",cols="a,,"]
 |===
 | Resource | Type | Description
 
-| `{org}-{deployment-name}-kv` 
-| Key Vault
-| Key Vault instance for the shared services. One certificate deployed by default.
-
-| `{org}{deployment-name}kvdiag{random-characters}` (with any dashes removed)
-| Storage account
-| Location of Key Vault audit logs.
+| `{org}-{deployment-name}-automation-account`
+| Automation Account
+| Automation Account for patching shared services Virtual Machines.
 |===
 
-== Step 3: Deploy the virtual network
+== Step 4: Deploy Azure Security Center
+
+This step deploys `security-center` module, which enables Azure Security Center Standard tier on Storage accounts, App Service, SQL servers and Virtual machines and enables Auto Provisioning of Microsoft Monitoring agent (MMA) Virtual machine extension.
+
+Start the `security-center` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m security-center
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m security-center
+
+.Windows
+[source,cmd]
+py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m security-center
+
+This deployment is a subscription deployment, therefore, no resource group gets created.
+
+== Step 5: Deploy the virtual network
 
 *Required role: NetOps*
 
@@ -119,6 +158,7 @@ This step involves two resource deployments in the following order:
 
 - The `nsg` deployment module creates the network security groups (NSGs) and Azure security groups (ASGs) that secure the shared services virtual network.
 - The `shared-services-net` deployment module creates the shared services virtual network, along with setting up the subnets and User Defined Routes (UDRs) used to route traffic coming from on-premises.
+- The `enable-service-endpoint-on-diagnostic-storage-account` deployment module that enables service endpoint on the previously deployed diagnostic storage account, we cannot enable a service endpoint until after a virtual network has been created.
 
 The virtual network is divided into four subnets:
 
@@ -159,15 +199,25 @@ python3 vdc.py create shared-services -path archetypes/shared-services/archetype
 [source,cmd]
 py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m shared-services-net
 
-This deployment creates the `{org}-{deployment-name}-net-rg` resource group that hosts the resources described in the following table.
+Finally start the `enable-service-endpoint-on-diagnostic-storage-account` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m enable-service-endpoint-on-diagnostic-storage-account
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m enable-service-endpoint-on-diagnostic-storage-account
+
+.Windows
+[source,cmd]
+py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m enable-service-endpoint-on-diagnostic-storage-account
+
+`shared-services-net` and `nsg` deployments creates the `{org}-{deployment-name}-net-rg` resource group that hosts the resources described in the following table.
 
 [options="header",cols="a,,a"]
 |===
 | Resource | Type | Description
-
-| `{org}{deployment-name}diag{random-characters}` (with any dashes removed)
-| Storage account
-| Storage account for diagnostic data related to the shared services virtual network.
 
 | `{org}-{deployment-name}-dc-asg`
 | Application security group
@@ -202,7 +252,7 @@ This deployment creates the `{org}-{deployment-name}-net-rg` resource group that
 - Shared-services
 |===
 
-== Step 4: Establish connectivity between the on-premises network and the new virtual network
+== Step 6: Establish connectivity between the on-premises network and the new virtual network
 
 *Required role: NetOps*
 
@@ -283,7 +333,42 @@ python3 vdc.py create shared-services -path archetypes/shared-services/archetype
 [source,cmd]
 py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m onprem-vgw-connection
 
-== Step 5: Deploy Azure Firewall
+== Step 7: Deploy Key Vault
+
+*Required role: SecOps*
+
+The next step is deploying the kv module, which creates a Key Vault resource and stores secrets defined in the `archetype.json` as well as creating encryption keys (used in Azure Disk Encryption extension), that other resources will use in subsequent deployment steps.
+
+These values are stored as secrets in the vault. To modify the default values for these passwords edit the link:../../../modules/kv/1.0/azureDeploy.parameters.json[Key Vault (kv) module parameters file] and update the secrets-object parameter. These passwords will be used throughout the deployment process when provisioning VMs in the shared services environment and accessing on-premises resources.
+
+image:_media/shared-services-step2-kv.png[Key Vault module]
+
+Start the `kv` deployment by running the following command in the terminal or command-line interface:
+
+.Docker
+[source,bash]
+python vdc.py create shared-services -path archetypes/shared-services/archetype.json -m kv
+
+.Linux/OSX
+[source,bash]
+python3 vdc.py create shared-services -path archetypes/shared-services/archetype.json -m kv
+
+.Windows
+[source,cmd]
+py vdc.py create shared-services -path archetypes/shared-services/archetype.json -m kv
+
+This deployment creates the `{org}-{deployment-name}-kv-rg` resource group that hosts the resources described in the following table.
+
+[options="header",cols="a,,"]
+|===
+| Resource | Type | Description
+
+| `{org}-{deployment-name}-kv` 
+| Key Vault
+| Key Vault instance for the shared services. One certificate deployed by default.
+|===
+
+== Step 8: Deploy Azure Firewall
 
 *Required role: SecOps*
 
@@ -320,7 +405,7 @@ This module also deploys resources into the `{org}-{deployment-name}-net-rg` res
 | Public IP address used by the firewall.
 |===
 
-== Step 6: Deploy management jump boxes
+== Step 9: Deploy management jump boxes
 
 *Required role: SysOps*
 
@@ -355,8 +440,8 @@ This deployment creates the `{org}-{deployment-name}-jb-rg` resource group that 
 | Resource | Type | Description
 
 | `{org}{deployment-name}jbdiag{random characters}` (with any dashes removed)
-| Storage account
-| Storage account used to store diagnostic logs related to the jump box virtual machines.
+| Storage accounts
+| Storage accounts used to store diagnostic logs related to the jump box virtual machines.
 
 | `{org}-{deployment-name}-jb-linux-as`
 | Availability set
@@ -391,7 +476,7 @@ This deployment creates the `{org}-{deployment-name}-jb-rg` resource group that 
 | Virtual OS disk used by the Windows jump box virtual machine.
 |===
 
-== Step 7: Deploy ADDS servers
+== Step 10: Deploy ADDS servers
 
 *Required role: NetOps*
 
@@ -450,8 +535,8 @@ This deployment creates the `{org}-{deployment-name}-ad-rg` resource group that 
 | Availability set for ADDS servers.
 
 | `{org}-{deployment-name}addsdiag{random-characters}` (with any dashes removed)
-| Storage account
-| Storage account used to store diagnostic logs related to the ADDS servers.
+| Storage accounts
+| Storage accounts used to store diagnostic logs related to the ADDS servers.
 
 |`{org}-{deployment-name}-adds-vm1`
 | Virtual machine

@@ -101,7 +101,7 @@ interactions:
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg?api-version=2019-05-01
   response:
     body: {string: ''}
     headers:
@@ -127,7 +127,7 @@ interactions:
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg?api-version=2019-05-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg","name":"org-onprem-ad-rg","location":"centralus","properties":{"provisioningState":"Succeeded"}}'}
     headers:
@@ -154,11 +154,11 @@ interactions:
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad?api-version=2019-05-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad","name":"org-on-premises-onprem-deployment-ad","properties":{"templateHash":"8381498053305788296","parameters":{"deployment-prefix":{"type":"String","value":"org-onprem"},"sas-key":{"type":"String","value":"se=2019-01-12T19%3A10%3A18Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=IdkYdE50hKXN1hkjqXnSuoGbwImaXU2iTdiRkpSpPS8%3D"},"output-params-storage-account-name":{"type":"String","value":"storage"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Network/virtualNetworks/org-onprem-vnet"},"default-subnet-name":{"type":"String","value":"default"},"extension-name":{"type":"String","value":"ad"},"admin-username":{"type":"String","value":"org"},"admin-password":{"type":"SecureString"},"virtualMachine-size":{"type":"String","value":"Standard_DS2_v2"},"os-type":{"type":"String","value":"Windows"},"os-image":{"type":"Object","value":{"offer":"WindowsServer","publisher":"MicrosoftWindowsServer","sku":"2016-Datacenter"}},"domain-name":{"type":"String","value":"org.com"},"cloud-zone":{"type":"String","value":"orgcloud.com"},"primaryDC-IP":{"type":"String","value":"192.168.1.4"},"aD-sitename":{"type":"String","value":"Cloud-Site"},"vnet-name":{"type":"String","value":"org-onprem-vnet"},"vnet-resourceGroup":{"type":"String","value":"org-onprem-net-rg"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-01-11T19:10:23.4830409Z","duration":"PT1.0278327S","correlationId":"15850220-0c07-4168-97c2-ce2a60396408","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"publicIPAddresses","locations":["centralus"]},{"resourceType":"networkInterfaces","locations":["centralus"]}]},{"namespace":"Microsoft.Storage","resourceTypes":[{"resourceType":"storageAccounts","locations":["centralus"]}]},{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"virtualMachines","locations":["centralus"]},{"resourceType":"virtualMachines/extensions","locations":["centralus"]}]},{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/publicIPAddresses/org-onprem-ad-vm-nic-pip","resourceType":"Microsoft.Network/publicIPAddresses","resourceName":"org-onprem-ad-vm-nic-pip"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b","apiVersion":"2016-12-01"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSAntimalware"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSDiagnostics"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/NetworkWatcher"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudSiteNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudSiteNestedDeployment"}]}}'}
     headers:
-      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01']
+      azure-asyncoperation: ['https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01']
       cache-control: [no-cache]
       content-length: ['8381']
       content-type: [application/json; charset=utf-8]
@@ -178,7 +178,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -201,7 +201,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -224,7 +224,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -247,7 +247,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -270,7 +270,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -293,7 +293,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -316,7 +316,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -339,7 +339,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -362,7 +362,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -385,7 +385,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -408,7 +408,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -431,7 +431,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -454,7 +454,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -477,7 +477,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -500,7 +500,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -523,7 +523,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -546,7 +546,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -569,7 +569,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -592,7 +592,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -615,7 +615,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -638,7 +638,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -661,7 +661,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -684,7 +684,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -707,7 +707,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -730,7 +730,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -753,7 +753,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -776,7 +776,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -799,7 +799,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -822,7 +822,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -845,7 +845,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -868,7 +868,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -891,7 +891,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -914,7 +914,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -937,7 +937,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -960,7 +960,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -983,7 +983,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1006,7 +1006,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1029,7 +1029,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1052,7 +1052,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1075,7 +1075,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1098,7 +1098,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1121,7 +1121,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1144,7 +1144,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1167,7 +1167,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1190,7 +1190,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1213,7 +1213,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1236,7 +1236,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1259,7 +1259,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1282,7 +1282,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1305,7 +1305,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Running"}'}
     headers:
@@ -1328,7 +1328,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad/operationStatuses/08586543730630224724?api-version=2019-05-01
   response:
     body: {string: '{"status":"Succeeded"}'}
     headers:
@@ -1351,7 +1351,7 @@ interactions:
       User-Agent: [python/3.6.4 (Linux-4.9.125-linuxkit-x86_64-with) msrest/0.6.2
           msrest_azure/0.6.0 resourcemanagementclient/2.0.0 Azure-SDK-For-Python]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad?api-version=2019-05-01
   response:
     body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/org-on-premises-onprem-deployment-ad","name":"org-on-premises-onprem-deployment-ad","properties":{"templateHash":"8381498053305788296","parameters":{"deployment-prefix":{"type":"String","value":"org-onprem"},"sas-key":{"type":"String","value":"se=2019-01-12T19%3A10%3A18Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=IdkYdE50hKXN1hkjqXnSuoGbwImaXU2iTdiRkpSpPS8%3D"},"output-params-storage-account-name":{"type":"String","value":"storage"},"output-params-storage-key":{"type":"String","value":"abhilQXu5bl0SupY1dseiX95b6eBNA6R0Ho0d9FbHpTFC+B1cEUhgWr9oIEagQXGdilU5raOIpH5Pq/XVv7ifA=="},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-net-rg/providers/Microsoft.Network/virtualNetworks/org-onprem-vnet"},"default-subnet-name":{"type":"String","value":"default"},"extension-name":{"type":"String","value":"ad"},"admin-username":{"type":"String","value":"org"},"admin-password":{"type":"SecureString"},"virtualMachine-size":{"type":"String","value":"Standard_DS2_v2"},"os-type":{"type":"String","value":"Windows"},"os-image":{"type":"Object","value":{"offer":"WindowsServer","publisher":"MicrosoftWindowsServer","sku":"2016-Datacenter"}},"domain-name":{"type":"String","value":"org.com"},"cloud-zone":{"type":"String","value":"orgcloud.com"},"primaryDC-IP":{"type":"String","value":"192.168.1.4"},"aD-sitename":{"type":"String","value":"Cloud-Site"},"vnet-name":{"type":"String","value":"org-onprem-vnet"},"vnet-resourceGroup":{"type":"String","value":"org-onprem-net-rg"}},"mode":"Incremental","provisioningState":"Succeeded","timestamp":"2019-01-11T19:36:10.640126Z","duration":"PT25M48.1849178S","correlationId":"15850220-0c07-4168-97c2-ce2a60396408","providers":[{"namespace":"Microsoft.Network","resourceTypes":[{"resourceType":"publicIPAddresses","locations":["centralus"]},{"resourceType":"networkInterfaces","locations":["centralus"]}]},{"namespace":"Microsoft.Storage","resourceTypes":[{"resourceType":"storageAccounts","locations":["centralus"]}]},{"namespace":"Microsoft.Compute","resourceTypes":[{"resourceType":"virtualMachines","locations":["centralus"]},{"resourceType":"virtualMachines/extensions","locations":["centralus"]}]},{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/publicIPAddresses/org-onprem-ad-vm-nic-pip","resourceType":"Microsoft.Network/publicIPAddresses","resourceName":"org-onprem-ad-vm-nic-pip"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic","resourceType":"Microsoft.Network/networkInterfaces","resourceName":"org-onprem-ad-vm-nic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b","resourceType":"Microsoft.Storage/storageAccounts","resourceName":"orgonpremadaddiag5b","apiVersion":"2016-12-01"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSAntimalware","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSAntimalware"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSDiagnostics","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/IaaSDiagnostics"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/NetworkWatcher","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/NetworkWatcher"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS","resourceType":"Microsoft.Compute/virtualMachines/extensions","resourceName":"org-onprem-ad-vm/DSCSetupADDS"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm","resourceType":"Microsoft.Compute/virtualMachines","resourceName":"org-onprem-ad-vm"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"},{"dependsOn":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudZoneNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudZoneNestedDeployment"}],"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Resources/deployments/PSCloudSiteNestedDeployment","resourceType":"Microsoft.Resources/deployments","resourceName":"PSCloudSiteNestedDeployment"}],"outputs":{},"outputResources":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/createNewDnsZone"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/DSCSetupADDS"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSAntimalware"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/IaaSDiagnostics"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Compute/virtualMachines/org-onprem-ad-vm/extensions/NetworkWatcher"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/networkInterfaces/org-onprem-ad-vm-nic"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Network/publicIPAddresses/org-onprem-ad-vm-nic-pip"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-onprem-ad-rg/providers/Microsoft.Storage/storageAccounts/orgonpremadaddiag5b"}]}}'}
     headers:

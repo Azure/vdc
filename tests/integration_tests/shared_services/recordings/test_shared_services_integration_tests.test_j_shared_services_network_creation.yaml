@@ -170,7 +170,7 @@ interactions:
       accept-language:
       - en-US
     method: HEAD
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg?api-version=2019-05-01
   response:
     body:
       string: ''
@@ -271,14 +271,14 @@ interactions:
       accept-language:
       - en-US
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-?api-version=2019-05-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-","name":"cntso-shared-services-ssvcs-deployment-onprem-vgw-","properties":{"templateHash":"16179028145948439045","parameters":{"local-gateway-name":{"type":"String","value":"cntso-onprem-gw"},"local-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"local-vnet-resourceGroup":{"type":"String","value":"cntso-onprem-net-rg"},"vpn-shared-key":{"type":"String","value":"asodgfhjkaw4tu0w9vuijv0qu3409tu"},"local-gateway-location":{"type":"String","value":"West
         US 2"},"remote-gateway-name":{"type":"String","value":"cntso-ssvcs-gw"},"remote-vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"remote-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"enable-bgp":{"type":"Bool","value":false},"remote-connection-name":{"type":"String","value":"ssvcs"},"vnet-id":{"type":"String","value":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Network/virtualNetworks/cntso-ssvcs-vnet"},"vnet-name":{"type":"String","value":"cntso-ssvcs-vnet"},"vnet-resourceGroup":{"type":"String","value":"cntso-ssvcs-net-rg"},"sas-key":{"type":"String","value":"se=2019-05-03T20%3A58%3A59Z&sp=r&spr=https&sv=2018-03-28&ss=b&srt=o&sig=dKNXxNbTtlScI3FcmmHzYhz2EQ33eIQ3s4rlt1qoPXU%3D"},"output-params-storage-key":{"type":"String","value":"0Lxn7MclNOJd0igAwsi3GgU8iKqNo60VCAKsqaXr6qcRq44zjyaLnMSk76/impol61VpH/BhSLneDYkVbyqwbg=="},"output-params-storage-account-name":{"type":"String","value":"storage"}},"mode":"Incremental","provisioningState":"Accepted","timestamp":"2019-05-03T03:59:02.2413289Z","duration":"PT0.101006S","correlationId":"d6238wrklda-3a1d-4356-97c9-b774f7af5963","providers":[{"namespace":"Microsoft.Resources","resourceTypes":[{"resourceType":"deployments","locations":[null]}]}],"dependencies":[]}}'
     headers:
       azure-asyncoperation:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-/operationStatuses/08586447509433373140?api-version=2018-05-01
+      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-/operationStatuses/08586447509433373140?api-version=2019-05-01
       cache-control:
       - no-cache
       content-length:
@@ -313,7 +313,7 @@ interactions:
       - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
         resourcemanagementclient/2.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-/operationStatuses/08586447509433373140?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-/operationStatuses/08586447509433373140?api-version=2019-05-01
   response:
     body:
       string: '{"status":"Succeeded"}'
@@ -352,7 +352,7 @@ interactions:
       - python/3.6.5 (Darwin-18.5.0-x86_64-i386-64bit) msrest/0.6.4 msrest_azure/0.6.0
         resourcemanagementclient/2.1.0 Azure-SDK-For-Python
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-?api-version=2019-05-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntso-ssvcs-net-rg/providers/Microsoft.Resources/deployments/cntso-shared-services-ssvcs-deployment-onprem-vgw-","name":"cntso-shared-services-ssvcs-deployment-onprem-vgw-","properties":{"templateHash":"16179028145948439045","parameters":{"local-gateway-name":{"type":"String","value":"cntso-onprem-gw"},"local-subscription-id":{"type":"String","value":"00000000-0000-0000-0000-000000000000"},"local-vnet-resourceGroup":{"type":"String","value":"cntso-onprem-net-rg"},"vpn-shared-key":{"type":"String","value":"asodgfhjkaw4tu0w9vuijv0qu3409tu"},"local-gateway-location":{"type":"String","value":"West
