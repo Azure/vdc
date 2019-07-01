@@ -2,6 +2,16 @@
     "ModuleConfigurationsPath": "../../modules",
     "ModuleConfigurations": [
         {
+            "Name": "RunAScript",
+            "Comments": "Some Comments",
+            "Script": {
+                "Command": "../../orchestration/Tests/Samples/scripts/sample-script.ps1",
+                "Arguments" : {
+                    "SecondParameter" : "DemoParameter"
+                }
+            }
+        },
+        {
             "Name": "DiagnosticStorageAccount",
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "fabrikam-shrdsvcs-diagnostics-rg",

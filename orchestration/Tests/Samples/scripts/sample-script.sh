@@ -1,0 +1,2 @@
+FIRST_VAR=$1
+echo $FIRST_VAR;

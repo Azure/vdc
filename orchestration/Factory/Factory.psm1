@@ -84,6 +84,9 @@ Class Factory {
         $tokenReplacementService = `
             [TokenReplacementService]::new();
 
+        $customScriptExecutor = `
+            [CustomScriptExecutor]::new();
+
         $this.container = @{
             IStateRepository = $stateRepository
             IAuditRepository = $auditRepository
@@ -93,6 +96,7 @@ Class Factory {
             IModuleStateDataService = $moduleStateDataService
             IDeploymentService = $deploymentService
             ITokenReplacementService = $tokenReplacementService
+            CustomScriptExecutor = $customScriptExecutor
         };
     }
 
