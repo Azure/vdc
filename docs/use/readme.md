@@ -1,4 +1,4 @@
-# Using up the toolkit
+# Usage patterns for the toolkit
 
 This section provides more detail on _deploying_ archetypes and modules with the toolkit.
 

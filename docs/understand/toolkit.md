@@ -30,9 +30,9 @@ A _module_ in the toolkit is a set of Azure Resource Manager templates, paramete
 
 Some of the provided modules include:
 
-- [Log Analytics workspace](../modules/la)
-- [jumpbox VM](../modules/jb)
-- [Azure Key Vault](../modules/kv)
+- [Log Analytics workspace](/modules/LogAnalytics/2.0)
+- [Jumpbox VM](/modules/Jumpbox/2.0)
+- [Azure Key Vault](/modules/KeyVault/2.0)
 
 The parameter files in a module contain tokens that will be replaced based on the configuration of the archetype being deployed. This replacement is handled by the _orchestration engine_.
 

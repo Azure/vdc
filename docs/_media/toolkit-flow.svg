@@ -385,7 +385,7 @@
          y="0">
         <tspan
            style="font-size:12px;text-align:center;text-anchor:middle"
-           id="tspan4948">azureDeploy.json</tspan>
+           id="tspan4948">deploy.json</tspan>
       </text>
     </g>
     <g
@@ -400,7 +400,7 @@
          y="0">
         <tspan
            style="font-size:12px;text-align:center;text-anchor:middle"
-           id="tspan4952">azureDeploy.parameters.json</tspan>
+           id="tspan4952">parameters.json</tspan>
       </text>
     </g>
     <g

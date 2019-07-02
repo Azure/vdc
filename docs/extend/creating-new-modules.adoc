@@ -17,28 +17,30 @@ Modules are defined in the `modules` folder. Each module is a subfolder undernea
 
 The name of the subfolder for a module is used as its ID elsewhere in the toolkit. The files in the module always have the same name:
 
-- `azureDeploy.json` for deployment templates.
-- `azureDeploy.parameters.json` for parameters.
+- `deploy.json` for deployment templates.
+- `parameters.json` for parameters.
 - `arm.policies.json` for policies.
 
 In addition, there are subfolders within each module folder for specifying the version of the of module.
 
 For example, if you were creating a new module to create a Hadoop server, you could use the following file paths:
 
-- `modules/hadoop/v1/azureDeploy.json`
-- `modules/hadoop/v1/azureDeploy.parameters.json`
+- `modules/Jumpbox/2.0/deploy.json`
+- `modules/Jumpbox/2.0/parameters.json`
 
-In this example, `hadoop` is the module ID and `v1` is the version of the module.
+In this example, `Jumpbox` is the module ID and `2.0` is the version of the module.
 
 === Using the output of dependent resource deployments
 
-If a module's templates have outputs defined (using standard Resource Manager template format), the orchestration engine saves these outputs to a shared storage location (storage account). Other modules can integrate these outputs if they've defined a dependency.
+If a module's template (`deploy.json`) outputs defined (using standard Azure Resource Manager template format), the orchestration engine saves these outputs to a shared storage location (storage account). Other modules can integrate these outputs if they've defined a dependency.
 
-These outputs need to be defined as parameters in the dependent module's Resource Manager template. For instance, the link:../../modules/la/1.0/azureDeploy.json[`la` module] generates the following output values:
+These outputs need to be defined as parameters in the dependent module's Resource Manager template. For instance, the link:../../modules/LogAnalytics/2.0/deploy.json[`LogAnalytics` module] generates the following output values:
 
-- `oms-id`
-- `oms-workspace-resourceGroup`
-- `oms-workspace-name`
+- `logAnalyticsWorkspaceResourceId`
+- `logAnalyticsWorkspaceResourceGroup`
+- `logAnalyticsWorkspaceName`
+- `logAnalyticsWorkspaceId`
+- `logAnalyticsPrimarySharedKey`
 
 In addition, dependencies must also be defined in the archetype configuration file where the modules are reference. This includes any items it uses in the parameter definitions of a module's template.
 
@@ -46,14 +48,14 @@ When a module is processed by the orchestration engine, the output variables fro
 
 === Referencing global parameters
 
-In a module's parameters file, the toolkit allows you to make use of values defined in the archetype configuration file. This is done by referencing the global value using the following format: `${parameter JSON variable}`
+In a module's parameters (`parameters.json`) file, the toolkit allows you to make use of values defined in the archetype configuration file. This is done by referencing the global value using the following format: `${parameter JSON variable}`
 
-For example, in a module's parameters file you can pull the organization name and shared services deployment name from an archetype configuration file into a `deployment-prefix` parameter value like this:
+For example, in a module's parameters file you can pull the organization name and shared services deployment name from an archetype configuration file into a parameter value like this:
 
 ```json
-"deployment-prefix": {
-       "value": "${general.organizationName}-${shared-services.deployment-name}"
-   },
+"logAnalyticsWorkspaceName": {
+    "value": "${general.organizationName}-${shared-services.deployment-name}"
+},
 ```
 
 == Next steps

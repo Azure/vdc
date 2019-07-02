@@ -1,4 +1,4 @@
-# Understand
+# Understand the concepts
 
 These articles will help you understand how the Azure Virtual Datacenter Automation Toolkit works and what it is intended to do.
 

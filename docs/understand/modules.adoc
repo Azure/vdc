@@ -4,7 +4,7 @@ Modules are the building blocks of the Azure Virtual Datacenter Automation Toolk
 
 Module versioning is supported using a version subfolder structure inside the main module folder. The toolkit uses a #.# format, such as "1.0". However, the version is a string value, so it can be any alphanumeric value.
 
-A module consists of a Resource Manager template (`azureDeploy.json`) used to deploy resources, a parameter file associated with the deployment file (`azureDeploy.parameters.json`), and an optional policies file (`arm.policies.json`) that can apply Azure Policy rules as part of the deployment. These files are standard Azure Resource Manager template files that have been modified to make use of the link:../archetypes/configuration-files.adoc#referencing-other-parameters[toolkit's custom parameter format].
+A module consists of a Resource Manager template (`deploy.json`) used to deploy resources, a parameter file associated with the deployment file (`parameters.json`), and an optional policies file (`arm.policies.json`) that can apply Azure Policy rules as part of the deployment. These files are standard Azure Resource Manager template files that have been modified to make use of the link:../archetypes/configuration-files.adoc#referencing-other-parameters[toolkit's custom parameter format].
 
 When the toolkit's deployment scripts are run these module files are used to create a Resource Manager deployment. Custom parameters are populated in these templates using values set in the archetype configuration file before being submitted to the Azure Resource Manager API for deployment. For example, a virtual network IP range defined in the archetype configuration file will be inserted into a module's individual resource parameters file where appropriate before submitting that deployment to Azure Resource Manager.
 
@@ -20,39 +20,43 @@ The following resource deployments modules support archetypes that utilized the 
 |===
 | Resource | Role | Description
 
-| `la`
+| `LogAnalytics`
 | SysOps
 | Operations and monitoring resources.
 
-| `kv`
+| `KeyVault`
 | SecOps
 | Central Key Vault deployment and key provisioning.
 
-| `nsg`
+| `NetworkSecurityGroups`
 | NetOps
-| Shared services virtual network NSG and ASG configuration.
+| NSG creation.
 
-| `shared-services-net`
+| `ApplicationSecurityGroups`
 | NetOps
-| Shared services virtual network creation.
+| ASG creation.
 
-| `vgw`
+| `vNet`
 | NetOps
-| Virtual gateway creation.
+| Virtual network creation.
 
-| `jb`
+| `VirtualNetworkGateway`
+| NetOps
+| Virtual network gateway creation.
+
+| `Jumpbox`
 | SysOps
 | Bastion hosts for remote management (jump boxes).
 
-| `adds`
+| `ADDS`
 | NetOps
-| Shared services domain and DNS servers.
+| Active directory domain services and DNS servers.
 
-| `app-gateway`
+| `ApplicationGateway`
 | SecOps
 | Azure Application Gateway used as a central firewall for incoming traffic.
 
-| `azure-fw`
+| `AzureFirewall`
 | SecOps
 | Azure Firewall creation.
 |===
@@ -65,69 +69,58 @@ The following  modules support workload deployments:
 |===
 | Resource | Role | Description
 
-| `la`
+| `LogAnalytics`
 | SysOps
 | Operations and monitoring resources. (used in all workload deployments)
 
-| `nsg`
+| `NetworkSecurityGroups`
 | NetOps
-| Workload virtual network NSG and ASG configuration. (used in all workload deployments)
+| Workload virtual network NSG configuration. (used in all workload deployments)
 
-| `workload-net`
+| `ApplicationSecurityGroups`
 | NetOps
-| Workload virtual network creation. (used in all workload deployments)
+| Workload virtual network ASG configuration. (used in all workload deployments)
 
-| `kv`
+| `vNet`
+| NetOps
+| Virtual network creation. (used in all workload deployments)
+
+| `KeyVault`
 | SecOps
 | Workload Key Vault deployment. (used in all workload deployments)
 
-| `app-gateway`
+| `ApplicationGateway`
 | NetOps
-| Example deployment of an Application Gateway to the Shared Services (used by iaas sample). **Note:** This module deploys the resource in the Shared Services subscription, therefore a NetOps role must have the appropriate deployment permissions on both subscriptions: Shared services and Workload subscription.
+| Example deployment of an Application Gateway to the Shared Services (used by IaaS sample). **Note:** This module deploys the resource in the Shared Services subscription, therefore a NetOps role must have the appropriate deployment permissions on both subscriptions: Shared services and Workload subscription.
 
-| `vmapp-lb`
+| `VMApp`
 | DevOps
-| Example infrastructure as a service (IaaS) workload deployment using dual Windows Server machines with load balancer and availability set. (used by the iaas sample)
+| Example infrastructure as a service (IaaS) workload deployment of a Virtual Machine (either Linux or Windows) with availability set. (used by the IaaS sample)
 
-| `sqlserver-alwayson`
+| `SQLServerAlwaysOn`
 | DevOps
-| Example IaaS workload deployment using dual Windows Server machines running SQL Server with load balancer and availability set. (used by the iaas sample)
+| Example IaaS workload deployment using dual Windows Server machines running SQL Server with load balancer and availability set. (used by the IaaS sample)
 
-| `sqldb`
+| `SQLServer`
 | DevOps
-| Example platform as a service (PaaS) workload deployment using Azure SQL Database. (used by the paas sample)
+| Azure SQL Database Server creation. (used by the PaaS sample)
 
-| `ase`
+| `SQLDatabase`
 | DevOps
-| Example PaaS workload using an App Services Environment deployment. (used by the paas sample)
+| Azure SQL Database creation. (used by the PaaS sample)
 
-| `cb`
+| `AppServiceEnvironments`
 | DevOps
-| Example Hadoop workload. (used by the cloudbreak sample)  
+| App Services Environment creation. (used by the PaaS sample)
 
-| `kdc`
+| `AppServiceEnvironmentsAppServicePlan`
 | DevOps
-| Example Kerberos domain controller deployment. (used by the cloudbreak sample)
+| App Service Plan creation within an App Services Environment. (used by the PaaS sample)
 
-| `iscsi`
+| `AppServiceEnvironmentsWebApp`
 | DevOps
-| Example virtual iSCSI array deployment. (used by the sap-hana sample)
+| App Service Web App creation within an App Services Environment. (used by the PaaS sample)
 
-| `nfs`
-| DevOps
-| Example NFS servers. (used by the sap-hana sample)
-
-| `hana`
-| DevOps
-| Example SAP HANA deployment. (used by the sap-hana sample)
-
-| `ascs`
-| DevOps
-| Example SAP ASCS server deployment. (used by the sap-hana sample)
-
-| `netweaver`
-| DevOps
-| Example SAP NetWeaver deployment. (used by the sap-hana sample)
 |===
 
 === Simulated on-premises modules
@@ -138,19 +131,26 @@ The following modules support deploying a simulated on-premises environment:
 |===
 | Resource | Description
 
-| `nsg`
-| Simulated on-premises virtual network NSG and ASG configuration.
-| `net`
+| `NetworkSecurityGroups`
+| Simulated on-premises virtual network NSG configuration.
+
+| `ApplicationSecurityGroups`
+| Simulated on-premises virtual network ASG configuration.
+
+| `vNet`
 | Simulated on-premises virtual network.
-| `ad`
+
+| `ADDS`
 | Simulated on-premises active directory servers.
-| `vgw`
+
+| `VirtualNetworkGateway`
 | Virtual gateway used to connect the simulated on-premises network with the shared services network.
+
 |===
 
 == Resource dependencies and deployment output
 
-Modules may depend on other resources provisioned earlier in the overall deployment process. For instance, the virtual machines in the `adds` deployment module can't be created without first creating the required on-premises connected virtual network.
+Modules may depend on other resources provisioned earlier in the overall deployment process. For instance, the virtual machines in the `ADDS` deployment module can't be created without first creating the required on-premises connected virtual network.
 
 Modules may need to know the names and settings of resources created by deployments they depend on. To provide this information, the toolkit uses the output generated by Azure Resource Manager from each resource deployment.
 
