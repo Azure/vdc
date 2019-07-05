@@ -1,0 +1,141 @@
+{
+    "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+    "Default": {
+        "Name": "default-nsg",
+        "Rules": [
+            {
+                "name": "allow-management",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "454-455",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "description": "Used to manage ASE",
+                    "priority": 100,
+                    "direction": "Inbound",
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "AppServiceManagement",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-http",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "80",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "description": "Allow HTTP",
+                    "priority": 120,
+                    "direction": "Inbound",
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-https",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "443",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "description": "Allow HTTPS",
+                    "priority": 130,
+                    "direction": "Inbound",
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-ftp",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "21",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "description": "Allow FTP over port 21",
+                    "priority": 140,
+                    "direction": "Inbound",
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-ftps",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "990",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "description": "Allow FTPS",
+                    "priority": 150,
+                    "direction": "Inbound",
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-ftp-data",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "10001-10020",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "description": "allow-ftp-data",
+                    "priority": 160,
+                    "direction": "Inbound",
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-remote-debugging",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "4016-4022",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "description": "Visual Studio remote debugging",
+                    "priority": 170,
+                    "direction": "Inbound",
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            }
+        ]
+    }
+}

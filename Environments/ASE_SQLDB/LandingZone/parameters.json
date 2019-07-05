@@ -1,0 +1,54 @@
+{
+    "Organization": "file(../../_Common/organizationName.txt)",
+    "DeploymentName": "ase-sqldb",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "ASE_SQLDB",
+    "ModuleConfigurationParameters": {
+        "OnPremisesInformation": {
+            "ActiveDirectory": {
+                "PrimaryDomainControllerIP": "192.168.1.4",
+                "DomainName": "fabrikam.com",
+                "ADSitename": "Cloud-Site",
+                "DomainAdminUserName": "fabrikam"
+            },
+            "Network": {
+                "AddressPrefix": "192.168.1.0/28"
+            }
+        },
+        "DiagnosticStorageAccount": {
+            "Name": "${Parameters.Organization}asesqldiag01",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Sku": "Standard_GRS",
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [{
+                    "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                }],
+                "ipRules": []
+            },
+            "Policies": {
+                "Effect": "Audit"
+            }
+        },
+        "LogAnalytics": {
+            "Name": "${Parameters.InstanceName}-la",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.Location}"
+        },
+        "ApplicationSecurityGroups": {},
+        "NetworkSecurityGroups": "file(NetworkParameters/networkSecurityGroups.json)",
+        "RouteTables": "file(NetworkParameters/routeTables.json)",
+        "VirtualNetwork": "file(NetworkParameters/virtualNetwork.json)",
+        "VirtualNetworkPeering": {
+            "LocalPeering": {
+                "Name": "${Parameters.DeploymentName}-to-sharedsvcs"
+            },
+            "RemotePeering": {
+                "Name": "sharedsvcs-to-${Parameters.DeploymentName}",
+                "AllowGatewayTransit": true,
+                "UseRemoteGateways": false
+            }
+        }
+    }
+}

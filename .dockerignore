@@ -8,8 +8,8 @@ __pycache__/
 env.*
 env/
 env*/
-modules/
-archetypes/
+Modules/
+Environments/
 tests/
 roles/
-config/
+Config/

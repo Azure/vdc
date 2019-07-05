@@ -1,0 +1,109 @@
+{
+    "Organization": "file(../../_Common/organizationName.txt)",
+    "DeploymentName": "workload01",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "ASE_SQLDB",
+    "ModuleConfigurationParameters": {
+        "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
+        "OnPremisesInformation": {
+            "ActiveDirectory": {
+                "PrimaryDomainControllerIP": "192.168.1.4",
+                "DomainName": "contoso.com",
+                "ADSitename": "Cloud-Site",
+                "DomainAdminUserName": "contoso"
+            },
+            "Network": {
+                "AddressPrefix": "192.168.1.0/28"
+            }
+        },
+        "Comments": "Adding VirtualNetwork property, because KeyVault references a VirtualNetwork property references NetworkSecurityGroups and RouteTable, this is why these two properties are also included",
+        "RouteTables": "file(../LandingZone/NetworkParameters/routeTables.json)",
+        "NetworkSecurityGroups": "file(../LandingZone/NetworkParameters/networkSecurityGroups.json)",
+        "VirtualNetwork": "file(../LandingZone/NetworkParameters/virtualNetwork.json)",
+        "KeyVault": {
+            "Name": "${Parameters.DeploymentName}-kv03",
+            "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
+            "Sku": "Premium",
+            "EnableVaultForDeployment": true,
+            "EnableVaultForDiskEncryption": true,
+            "EnableVaultForTemplateDeployment": true,
+            "AccessPolicies": [
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                }
+            ],
+            "SecretsObject": {
+                "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
+                "Secrets": [
+                    {
+                        "secretName": "admin-user",
+                        "secretValue": "env(ADMIN_USER_PWD)"
+                    }
+                ]
+            },
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
+        "AppServiceEnvironments": {
+            "Name": "${Parameters.InstanceName}-ase",
+            "ResourceGroup": "${Parameters.InstanceName}-ase-rg",
+            "DnsSuffix": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.DomainName}",
+            "InternalLoadBalancingMode": "Web",
+            "IpSSLAddressCount": 0
+        },
+        "AppServicePlan": {
+            "Name": "${Parameters.InstanceName}-isolated-webapp-plan01",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.ResourceGroup}",
+            "Sku": {
+                "name": "I1",
+                "tier": "Isolated",
+                "size": "I1",
+                "family": "I",
+                "capacity": "1"
+            }
+        },
+        "AppServiceWebApp": {
+            "Name": "${Parameters.InstanceName}-ase-webapp01",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.ResourceGroup}"
+        },
+        "SQLDB": {
+            "ResourceGroup": "${Parameters.InstanceName}-sqldb-rg",
+            "Server": {
+                "Name": "${Parameters.InstanceName}-sqlserver",
+                "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
+                "VirtualNetworkList": [
+                    {
+                        "resourceGroupName": "reference(VirtualNetwork.vNetResourceGroup)",
+                        "vNetName": "reference(VirtualNetwork.vNetName)",
+                        "subnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ]
+            },
+            "Databases": {
+                "Default": {
+                    "Name": "default"
+                }
+            }
+        },
+    }
+}

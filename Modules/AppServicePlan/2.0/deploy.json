@@ -1,0 +1,64 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "2.0.0.0",
+  "parameters": {
+    "appServicePlanName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The Name of the App Service Plan to deploy."
+      }
+    },
+    "appServiceEnvironmentId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The Resource Id of the App Service Environment to use for the App Service Plan."
+      }
+    },
+    "sku": {
+      "type": "object",
+      "metadata": {
+        "description": "Required. Defines the name, tier, size, family and capacity of the App Service Plan."
+      }
+    }
+  },
+  "variables": {
+    "hostingEnvironmentProfile": {
+      "id": "[parameters('appServiceEnvironmentId')]"
+    }
+  },
+  "resources": [{
+    "apiVersion": "2018-02-01",
+    "type": "Microsoft.Web/serverfarms",
+    "location": "[resourceGroup().location]",
+    "name": "[parameters('appServicePlanName')]",
+    "properties": {
+      "name": "[parameters('appServicePlanName')]",
+      "hostingEnvironmentProfile": "[if(empty(parameters('appServiceEnvironmentId')), json('null'), variables('hostingEnvironmentProfile'))]"
+    },
+    "sku": "[parameters('sku')]"
+  }],
+  "outputs": {
+    "appServicePlanResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The Resource Group the App Service Plan was deployed to."
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "value": "[parameters('appServicePlanName')]",
+      "metadata": {
+        "description": "The Name of the App Service Plan that was deployed."
+      }
+    },
+    "appServicePlanResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
+      "metadata": {
+        "description": "The Resource Id of the App Service Plan that was deployed."
+      }
+    }
+  }
+}

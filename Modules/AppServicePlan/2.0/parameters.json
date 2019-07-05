@@ -1,0 +1,18 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanName": {
+            "value": "vdcwebappplan1337"
+        },
+        "sku": {
+            "value": {
+                "name": "S1",
+                "tier": "Standard",
+                "size": "S1",
+                "family": "S",
+                "capacity": "1"
+            }
+        }
+    }
+}

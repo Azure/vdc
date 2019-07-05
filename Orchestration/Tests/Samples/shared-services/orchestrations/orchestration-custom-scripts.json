@@ -1,0 +1,16 @@
+{
+    "ModuleConfigurationsPath": "../../../../../modules",
+    "ModuleConfigurations": [
+        {
+            "Name": "RunAScript",
+            "Comments": "Some Comments",
+            "Script": {
+                "Command": "../../scripts/sample-script.ps1",
+                "Arguments" : {
+                    "SecondParameter" : "DemoParameter"
+                },
+                "UpdatePath": "Subscriptions.SharedServices.SubscriptionId"
+            }
+        }
+    ]
+}

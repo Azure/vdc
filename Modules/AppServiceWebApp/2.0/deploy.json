@@ -1,0 +1,65 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "2.0.0.0",
+  "parameters": {
+    "appServiceWebAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The Name of the Web App to deploy."
+      }
+    },
+    "appServiceEnvironmentId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The Resource Id of the App Service Environment to use for the App Service Plan."
+      }
+    },
+    "appServicePlanId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The Resource Id of the App Service Plan within the App Service to host the Web App."
+      }
+    }
+  },
+  "variables": {
+    "hostingEnvironmentProfile": {
+      "id": "[parameters('appServiceEnvironmentId')]"
+    }
+  },
+  "resources": [{
+    "apiVersion": "2018-11-01",
+    "type": "Microsoft.Web/sites",
+    "location": "[resourceGroup().location]",
+    "name": "[parameters('appServiceWebAppName')]",
+    "properties": {
+      "name": "[parameters('appServiceWebAppName')]",
+      "serverFarmId": "[parameters('appServicePlanId')]",
+      "httpsOnly": true,
+      "hostingEnvironmentProfile": "[if(empty(parameters('appServiceEnvironmentId')), json('null'), variables('hostingEnvironmentProfile'))]"
+    }
+  }],
+  "outputs": {
+    "appServiceWebAppResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The Resource Group the Web App was deployed to."
+      }
+    },
+    "appServiceWebAppName": {
+      "type": "string",
+      "value": "[parameters('appServiceWebAppName')]",
+      "metadata": {
+        "description": "The Name of the Web App that was deployed."
+      }
+    },
+    "appServiceWebAppResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/sites', parameters('appServiceWebAppName'))]",
+      "metadata": {
+        "description": "The Resource Id of the Web App that was deployed."
+      }
+    }
+  }
+}

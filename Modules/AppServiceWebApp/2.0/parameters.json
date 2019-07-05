@@ -1,0 +1,12 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanId": {
+            "value": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Web/serverfarms/{name}"
+        },
+        "appServiceWebAppName": {
+            "value": "vdcwebapp1337"
+        }
+    }
+  }

@@ -1,0 +1,5 @@
+{
+    "Subscriptions": "env(VDC_SUBSCRIPTIONS)",
+    "ArchetypeParameters": "file(./parameters/archetype-parameters.json)",
+    "ArchetypeOrchestration": "file(./orchestrations/orchestration-custom-scripts.json)"
+}

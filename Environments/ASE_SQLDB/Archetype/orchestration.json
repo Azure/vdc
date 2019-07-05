@@ -1,0 +1,157 @@
+{
+    "ModuleConfigurationsPath": "../../../Modules",
+    "ModuleConfigurations": [
+        {
+            "Name": "KeyVault",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
+            "ModuleDefinitionName": "KeyVault",
+            "Deployment": {
+                "OverrideParameters": {
+                    "keyVaultName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Name}"
+                    },
+                    "accessPolicies": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.AccessPolicies}"
+                    },
+                    "secretsObject": {
+                        "value": {
+                            "secrets": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets}"
+                        }
+                    },
+                    "enableVaultForDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDeployment}"
+                    },
+                    "enableVaultForDiskEncryption": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDiskEncryption}"
+                    },
+                    "enableVaultForTemplateDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForTemplateDeployment}"
+                    },
+                    "vaultSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Sku}"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "networkAcls": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.NetworkAcls}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "AppServiceEnvironments",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.ResourceGroup}",
+            "ModuleDefinitionName": "AppServiceEnvironments",
+            "Deployment": {
+                "OverrideParameters": {
+                    "dnsSuffix": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.DnsSuffix}"
+                    },
+                    "appServiceEnvironmentName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.Name}"
+                    },
+                    "internalLoadBalancingMode": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.InternalLoadBalancingMode}"
+                    },
+                    "ipSSLAddressCount": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.IpSSLAddressCount}"
+                    },
+                    "vnetResourceGroup": {
+                        "value": "reference(VirtualNetwork.vNetResourceGroup)"
+                    },
+                    "vnetName": {
+                        "value": "reference(VirtualNetwork.vNetName)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "AppServicePlan",
+            "ModuleDefinitionName": "AppServicePlan",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AppServicePlan.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "appServicePlanName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AppServicePlan.Name}"
+                    },
+                    "AppServiceEnvironmentsId": {
+                        "value": "reference(ASE.AppServiceEnvironmentsResourceId)"
+                    },
+                    "sku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AppServicePlan.Sku}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "AppServiceWebApp",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AppServiceWebApp.ResourceGroup}",
+            "ModuleDefinitionName": "AppServiceWebApp",
+            "Deployment": {
+                "OverrideParameters": {
+                    "appServicePlanId": {
+                        "value": "reference(ASEServicePlan.appServicePlanResourceId)"
+                    },
+                    "AppServiceEnvironmentsId": {
+                        "value": "reference(ASE.AppServiceEnvironmentsResourceId)"
+                    },
+                    "appServiceWebAppName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AppServiceWebApp.Name}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "SQLDBServer",
+            "ModuleDefinitionName": "SQLDBServer",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLDB.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "administratorLogin": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLDB.Server.AdminUsername}"
+                    },
+                    "administratorLoginPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "reference(KeyVault.keyVaultResourceId)"
+                            },
+                            "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
+                        }
+                    },
+                    "serverName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLDB.Server.Name}"
+                    },
+                    "diagnosticStorageAccountPrimaryBlobEndpoint": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountPrimaryBlobEndpoint)"
+                    },
+                    "diagnosticStorageAccountAccessKey": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountAccessKey)"
+                    },
+                    "virtualNetworkList": "${Parameters.ModuleConfigurationParameters.SQLDB.Server.VirtualNetworkList}"
+                }
+            }
+        },
+        {
+            "Name": "SQLDatabase",
+            "ModuleDefinitionName": "SQLDatabase",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLDB.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "databaseName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLDB.Databases.Default.Name}"
+                    },
+                    "serverName": {
+                        "value": "reference(SQLDBServer.sqlServerName)"
+                    }
+                }
+            }
+        }
+    ]
+}
