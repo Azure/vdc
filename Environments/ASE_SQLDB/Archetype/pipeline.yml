@@ -36,7 +36,7 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -46,35 +46,35 @@ stages:
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
   - job: AppServiceEnvironments
-      pool:
-        name: 'vdc-self-hosted'
-      dependsOn: SetupValidationResourceGroup
-      steps:
-      - task: PowerShell@2
-        displayName: "Pester Tests for Module - App Service Environments"
-        inputs:
-          targetType: 'inline'
-          script: '# Write your powershell commands here.
-            
-            Invoke-Pester -Script "./Modules/AppServiceEnvironments/2.0/Tests";
-            
-            # Use the environment variables input below to pass secret variables to this script.'
-          pwsh: true
-      - task: AzurePowerShell@4
-        displayName: "ARM Validation - App Service Environments"
-        inputs:
-          azureSubscription: 'vdc2-spoke1'
-          ScriptType: 'FilePath'
-          ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-          ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AppServiceEnvironments" -Validate'
-          azurePowerShellVersion: 'LatestVersion'
-        env:
-          VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-          VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-          DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-          ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-          DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-          TENANT_ID: $(TENANT_ID)
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - App Service Environments"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/AppServiceEnvironments/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - App Service Environments"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
   - job: AppServicePlan
     pool:
       name: 'vdc-self-hosted'
@@ -96,7 +96,7 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AppServicePlan" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -126,7 +126,7 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AppServiceWebApp" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -156,7 +156,7 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "SQLDBServer" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -186,7 +186,7 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "SQLDatabase" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -210,8 +210,7 @@ stages:
         azurePowerShellVersion: 'LatestVersion'
 - stage: Deploy
   jobs:
-  - job: Deployment
-    timeoutInMinutes: 0
+  - job: KeyVault
     pool:
       name: 'vdc-self-hosted'
     steps:
@@ -221,7 +220,7 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "KeyVault"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -230,13 +229,18 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: AppServiceEnvironments
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    steps:
     - task: AzurePowerShell@4
       displayName: "App Service Environments" 
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AppServiceEnvironments"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -245,13 +249,19 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: AppServicePlan
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: AppServiceEnvironments
+    steps:
     - task: AzurePowerShell@4
       displayName: "App Service Plan" 
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AppServicePlan"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -260,13 +270,18 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: AppServiceWebApp
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: AppServicePlan
+    steps:
     - task: AzurePowerShell@4
       displayName: "App Service WebApp" 
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AppServiceWebApp"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -275,13 +290,19 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: SQLDBServer
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: KeyVault
+    steps:
     - task: AzurePowerShell@4
       displayName: "SQLDB Server" 
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "SQLDBServer"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
@@ -290,13 +311,19 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: SQLDatabase
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: SQLDBServer
+    steps:
     - task: AzurePowerShell@4
-      displayName: "SQL Database" 
+      displayName: "SQLDatabase" 
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "SQLDatabase"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)

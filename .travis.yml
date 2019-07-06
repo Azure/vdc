@@ -15,7 +15,7 @@ matrix:
   fast_finish: true
 
 install:
-  - pwsh -f "${TRAVIS_BUILD_DIR}/installDependencies.ps1"
+  - pwsh -f "${TRAVIS_BUILD_DIR}/InstallDependencies.ps1"
 
 script:
-  - pwsh -f "${TRAVIS_BUILD_DIR}/orchestration/Tests/UnitTests/RunAll.ps1"
+  - pwsh -f "${TRAVIS_BUILD_DIR}/Orchestration/Tests/UnitTests/RunAll.ps1"

@@ -45,21 +45,6 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
-    - task: AzurePowerShell@4
-      displayName: "ARM Validation - Enable Service Endpoint On Diagnostic Storage Account"
-      inputs:
-        azureSubscription: 'vdc2-spoke1'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount" -Validate'
-        azurePowerShellVersion: 'LatestVersion'
-      env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: LogAnalytics
     pool:
       name: 'vdc-self-hosted'
@@ -300,7 +285,7 @@ stages:
         azurePowerShellVersion: 'LatestVersion'
 - stage: Deploy
   jobs:
-  - job: Deployment
+  - job: DiagnosticStorageAccount
     pool:
       name: 'vdc-self-hosted'
     steps:
@@ -319,6 +304,11 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: LogAnalytics
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: DiagnosticStorageAccount
+    steps:
     - task: AzurePowerShell@4
       displayName: "Log Analytics" 
       inputs:
@@ -334,6 +324,10 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: AzureSecurityCenter
+    pool:
+      name: 'vdc-self-hosted'
+    steps:
     - task: AzurePowerShell@4
       displayName: "Azure Security Center" 
       inputs:
@@ -349,6 +343,10 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: NISTControls
+    pool:
+      name: 'vdc-self-hosted'
+    steps:
     - task: AzurePowerShell@4
       displayName: "NIST Controls" 
       inputs:
@@ -364,6 +362,11 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: DefaultNetworkSecurityGroup
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: DiagnosticStorageAccount
+    steps:
     - task: AzurePowerShell@4
       displayName: "Default Network Security Group" 
       inputs:
@@ -379,6 +382,10 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: DefaultRouteTable
+    pool:
+      name: 'vdc-self-hosted'
+    steps:
     - task: AzurePowerShell@4
       displayName: "Default Route Table" 
       inputs:
@@ -394,6 +401,11 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: VirtualNetwork
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [ DefaultNetworkSecurityGroup, DefaultRouteTable ]
+    steps:
     - task: AzurePowerShell@4
       displayName: "Virtual Network" 
       inputs:
@@ -409,6 +421,11 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: WorkloadPeeringToSharedServices
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: 'VirtualNetwork'
+    steps:
     - task: AzurePowerShell@4
       displayName: "Workload Virtual Network Peering to Shared Services" 
       inputs:
@@ -424,6 +441,11 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
+  - job: SharedServicesPeeringToWorkload
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: 'VirtualNetwork'    
+    steps:
     - task: AzurePowerShell@4
       displayName: "Shared Services Virtual Network Peering to Workload" 
       inputs:
@@ -435,21 +457,6 @@ stages:
       env:
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-    - task: AzurePowerShell@4
-      displayName: "Enable Service Endpoint On Diagnostic Storage Account"
-      inputs:
-        azureSubscription: 'vdc2-spoke1'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount"'
-        azurePowerShellVersion: 'LatestVersion'
-      env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
         DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)

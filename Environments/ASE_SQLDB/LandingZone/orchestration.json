@@ -172,7 +172,7 @@
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.LocalPeering.Name}"
                     },
                     "remoteVirtualNetworkId": {
-                        "value": "reference(fabrikam-shrdsvcs.VirtualNetwork.vNetResourceId)"
+                        "value": "reference(nw-shrdsvcs.VirtualNetwork.vNetResourceId)"
                     }
                 }
             }
@@ -181,11 +181,11 @@
             "Name": "RemoteVirtualNetworkPeering",
             "ModuleDefinitionName": "vNetPeering",
             "Subscription": "SharedServices",
-            "ResourceGroupName": "reference(fabrikam-shrdsvcs.VirtualNetwork.vNetResourceGroup)",
+            "ResourceGroupName": "reference(nw-shrdsvcs.VirtualNetwork.vNetResourceGroup)",
             "Deployment": {
                 "OverrideParameters": {
                     "localVnetName": {
-                        "value": "reference(fabrikam-shrdsvcs.VirtualNetwork.vNetName)"
+                        "value": "reference(nw-shrdsvcs.VirtualNetwork.vNetName)"
                     },
                     "peeringName": {
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.RemotePeering.Name}"
@@ -198,22 +198,6 @@
                     },
                     "useRemoteGateways": {
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.RemotePeering.UseRemoteGateways}"
-                    }
-                }
-            }
-        },
-        {
-            "Name": "EnableServiceEndpointOnDiagnosticStorageAccount",
-            "ModuleDefinitionName": "StorageAccounts",
-            "Updates": "DiagnosticStorageAccount",
-            "Comments": "Enables Service endpoint on the Storage Account",
-            "Deployment": {
-                "OverrideParameters": {
-                    "networkAcls": {
-                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.NetworkAcls}"
-                    },
-                    "vNetId": {
-                        "value": "reference(VirtualNetwork.vNetResourceId)"
                     }
                 }
             }

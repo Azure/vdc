@@ -179,7 +179,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
             try
             {  
                 Write-Debug "Invoking ARM REST API with Uri: $uri";
-                Write-Debug "Request Body: $(ConvertTo-Json $requestBody -Depth 50)";
+                Write-Debug "Request Body: $requestBody";
 
                 # Call REST API to start the deployment
                 $deployment = `
@@ -201,9 +201,11 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                     # Only two failures can result:
                     # 1. Template / Parameters Validation failure
                     # 2. Deployment failure
+                    Write-Host "Running a deployment ...";
                     $this.WaitForDeploymentToComplete(
                         $deployment,
                         $this.isSubscriptionDeployment);
+                    Write-Host "Deployment complete";
                 }
                 return $deployment;
             }
@@ -379,11 +381,11 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         $phase = 1;
         do {
             $loop++;
-            Write-Host "Loop #: $loop";
+            Write-Debug "Loop #: $loop";
             # Increment the phase number after
             # 10 loops
             if($loop%10 -eq 0) {
-                Write-Host "Wait phase: $phase, complete";
+                Write-Debug "Wait phase: $phase, complete";
                 # Phase complete
                 # new phase:
                 $phase += 1;
@@ -391,10 +393,10 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                 # let's increate the wait time
                 $wait = ($wait * 2);
                 
-                Write-Host "Moving to next wait phase: $phase";
-                Write-Host "New wait time: $wait seconds";
+                Write-Debug "Moving to next wait phase: $phase";
+                Write-Debug "New wait time: $wait seconds";
             }
-            Write-Host "Waiting for deployment: $($deployment.Name) to complete. Will check in $wait seconds.";
+            Write-Debug "Waiting for deployment: $($deployment.Name) to complete. Will check in $wait seconds.";
             Start-Sleep -s $wait;
             
             # Get-AzResourceGroupDeployment will only return minimal details about the deployment

@@ -81,8 +81,8 @@
                     "appServicePlanName": {
                         "value": "${Parameters.ModuleConfigurationParameters.AppServicePlan.Name}"
                     },
-                    "AppServiceEnvironmentsId": {
-                        "value": "reference(ASE.AppServiceEnvironmentsResourceId)"
+                    "AppServiceEnvironmentId": {
+                        "value": "reference(AppServiceEnvironments.appServiceEnvironmentResourceId)"
                     },
                     "sku": {
                         "value": "${Parameters.ModuleConfigurationParameters.AppServicePlan.Sku}"
@@ -97,10 +97,10 @@
             "Deployment": {
                 "OverrideParameters": {
                     "appServicePlanId": {
-                        "value": "reference(ASEServicePlan.appServicePlanResourceId)"
+                        "value": "reference(AppServicePlan.appServicePlanResourceId)"
                     },
-                    "AppServiceEnvironmentsId": {
-                        "value": "reference(ASE.AppServiceEnvironmentsResourceId)"
+                    "AppServiceEnvironmentId": {
+                        "value": "reference(AppServiceEnvironments.appServiceEnvironmentResourceId)"
                     },
                     "appServiceWebAppName": {
                         "value": "${Parameters.ModuleConfigurationParameters.AppServiceWebApp.Name}"
@@ -134,7 +134,9 @@
                     "diagnosticStorageAccountAccessKey": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountAccessKey)"
                     },
-                    "virtualNetworkList": "${Parameters.ModuleConfigurationParameters.SQLDB.Server.VirtualNetworkList}"
+                    "virtualNetworkList": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLDB.Server.VirtualNetworkList}"
+                    }
                 }
             }
         },

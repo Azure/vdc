@@ -258,7 +258,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2019-03-01",
+            "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "name": "[concat(parameters('virtualMachineName'), copyindex(1))]",
             "tags": {
@@ -327,7 +327,7 @@
                 {
                     "type": "extensions",
                     "name": "[variables('MMAExtensionName')]",
-                    "apiVersion": "2019-03-01",
+                    "apiVersion": "2015-06-15",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]"
@@ -348,7 +348,7 @@
                 {
                     "type": "extensions",
                     "name": "[variables('customAddsExtensionName')]",
-                    "apiVersion": "2019-03-01",
+                    "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
@@ -378,7 +378,7 @@
                 {
                     "type": "extensions",
                     "name": "[variables('antimalwareExtensionName')]",
-                    "apiVersion": "2019-03-01",
+                    "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
@@ -405,7 +405,7 @@
                     "type": "extensions",
                     "name": "[variables('diagnosticsExtensionName')]",
                     "location": "[resourceGroup().location]",
-                    "apiVersion": "2019-03-01",
+                    "apiVersion": "2017-03-30",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
                         "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('customAddsExtensionName'))]"
@@ -697,7 +697,7 @@
                 {
                     "type": "extensions",
                     "name": "[variables('networkWatcherExtensionName')]",
-                    "apiVersion": "2019-03-01",
+                    "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
@@ -713,7 +713,7 @@
                 {
                     "type": "extensions",
                     "name": "[variables('windowsPasswordPoliciesExtensionName')]",
-                    "apiVersion": "2019-03-01",
+                    "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]"
@@ -884,7 +884,7 @@
                 {
                     "type": "extensions",
                     "name": "[variables('azureDiskEncryptionExtensionName')]",
-                    "apiVersion": "2019-03-01",
+                    "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "condition": "[variables('enableDiskEncryption')]",
                     "dependsOn": [
@@ -934,7 +934,7 @@
                     "parameters": {},
                     "resources": [
                         {
-                            "apiVersion": "2019-03-01",
+                            "apiVersion": "2017-03-30",
                             "type": "Microsoft.Compute/virtualMachines",
                             "name": "[concat(parameters('virtualMachineName'), copyindex(1))]",
                             "condition": "[variables('enableDiskEncryption')]",
@@ -985,7 +985,7 @@
                     "parameters": {},
                     "resources": [
                         {
-                            "apiVersion": "2019-03-01",
+                            "apiVersion": "2017-03-30",
                             "type": "Microsoft.Compute/virtualMachines",
                             "name": "[concat(parameters('virtualMachineName'), copyindex(1))]",
                             "location": "[resourceGroup().location]",

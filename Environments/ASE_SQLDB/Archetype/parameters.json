@@ -1,6 +1,6 @@
 {
     "Organization": "file(../../_Common/organizationName.txt)",
-    "DeploymentName": "workload01",
+    "DeploymentName": "ase-sqldb",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "ASE_SQLDB",
     "ModuleConfigurationParameters": {
@@ -8,9 +8,9 @@
         "OnPremisesInformation": {
             "ActiveDirectory": {
                 "PrimaryDomainControllerIP": "192.168.1.4",
-                "DomainName": "contoso.com",
+                "DomainName": "northwind.com",
                 "ADSitename": "Cloud-Site",
-                "DomainAdminUserName": "contoso"
+                "DomainAdminUserName": "northwind"
             },
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"

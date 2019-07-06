@@ -135,7 +135,7 @@
         },
         "databaseResourceId": {
             "type": "string",
-            "value": "[resourceId('Microsoft.Sql/servers/databases', variables('databaseName'))]",
+            "value": "[concat(resourceId('Microsoft.Sql/servers', parameters('serverName')), '/databases/', parameters('databaseName'))]",
             "metadata": {
                 "description": "The Resource Id of the SQL Database deployed."
             }

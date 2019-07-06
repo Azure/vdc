@@ -393,13 +393,13 @@
                 "Comments": "Optional - If no object is specified, no Policies deployment will occur",
                 "OverrideParameters": {
                     "effect": {
-                        "value": "Deny"
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Policies.Effect}"
                     },
                     "resourceGroup": {
-                        "value": "fabrikam-shrdsvcs-diagnostics-rg"
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.ResourceGroup}"
                     },
                     "resourceGroupLocation": {
-                        "value": "West US 2"
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Location}"
                     }
                 }
             },

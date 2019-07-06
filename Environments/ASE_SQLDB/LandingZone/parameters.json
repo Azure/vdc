@@ -7,9 +7,9 @@
         "OnPremisesInformation": {
             "ActiveDirectory": {
                 "PrimaryDomainControllerIP": "192.168.1.4",
-                "DomainName": "fabrikam.com",
+                "DomainName": "northwind.com",
                 "ADSitename": "Cloud-Site",
-                "DomainAdminUserName": "fabrikam"
+                "DomainAdminUserName": "northwind"
             },
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"

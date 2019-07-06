@@ -41,7 +41,7 @@
             }
         },
         "diagnosticStorageAccountAccessKey": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The key of the storage account where the vulnerability assesments scan results will be stored."
             }

@@ -1,5 +1,9 @@
 {
     "Name": "${Parameters.Organization}cstmartfcts01",
     "ResourceGroup": "${Parameters.InstanceName}-artifacts-rg",
-    "Sku": "Standard_GRS"
+    "Sku": "Standard_GRS",
+    "Location": "${Parameters.Location}",
+    "Policies": {
+        "Effect": "Audit"
+    }
 }

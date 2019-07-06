@@ -8,16 +8,16 @@
         "OnPremisesInformation": {
             "ActiveDirectory": {
                 "PrimaryDomainControllerIP": "192.168.1.4",
-                "DomainName": "fabrikam.com",
+                "DomainName": "northwind.com",
                 "ADSitename": "Cloud-Site",
-                "DomainAdminUserName": "fabrikam"
+                "DomainAdminUserName": "northwind"
             },
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"
             },
             "VirtualNetworkGateway": {
-                "Name": "fabrikam-onprem-gw",
-                "ResourceGroup": "fabrikam-onprem-net-rg"
+                "Name": "nw-onprem-gw",
+                "ResourceGroup": "nw-onprem-net-rg"
             },
             "SubscriptionId": "${Subscriptions.OnPremises.SubscriptionId}"
         },
@@ -793,7 +793,7 @@
             }
         },
         "ActiveDirectoryDomainServices": {
-            "Name": "adds-vm",
+            "Name": "addsv2-vm",
             "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
             "Comments": "Windows VM name cannot exceed 13 characters",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
@@ -805,7 +805,7 @@
                 "publisher": "MicrosoftWindowsServer",
                 "sku": "2016-Datacenter"
             },
-            "AddsIPAddressStart": "172.0.0.20",
+            "AddsIPAddressStart": "172.0.0.25",
             "DomainName": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.DomainName}",
             "PrimaryDomainControllerIP": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.PrimaryDomainControllerIP}",
             "ADSitename": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.ADSitename}",
