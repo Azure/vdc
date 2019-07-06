@@ -1,5 +1,7 @@
 variables:
 - group: VDC_SECRETS
+trigger:
+- master
 stages:
 - stage: Validate
   jobs:
