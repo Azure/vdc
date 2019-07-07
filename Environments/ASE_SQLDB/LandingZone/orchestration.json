@@ -172,7 +172,7 @@
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.LocalPeering.Name}"
                     },
                     "remoteVirtualNetworkId": {
-                        "value": "reference(nw-shrdsvcs.VirtualNetwork.vNetResourceId)"
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetResourceId)"
                     }
                 }
             }
@@ -181,11 +181,11 @@
             "Name": "RemoteVirtualNetworkPeering",
             "ModuleDefinitionName": "vNetPeering",
             "Subscription": "SharedServices",
-            "ResourceGroupName": "reference(nw-shrdsvcs.VirtualNetwork.vNetResourceGroup)",
+            "ResourceGroupName": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetResourceGroup)",
             "Deployment": {
                 "OverrideParameters": {
                     "localVnetName": {
-                        "value": "reference(nw-shrdsvcs.VirtualNetwork.vNetName)"
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetName)"
                     },
                     "peeringName": {
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.RemotePeering.Name}"

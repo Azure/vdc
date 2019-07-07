@@ -266,7 +266,7 @@
                 "name": "default",
                 "properties": {
                     "addressPrefix": "0.0.0.0/0",
-                    "nextHopIpAddress": "reference(fabrikam-shrdsvcs.AzureFirewall.azureFirewallPrivateIp)",
+                    "nextHopIpAddress": "reference(${Parameters.Organization}-shrdsvcs.AzureFirewall.azureFirewallPrivateIp)",
                     "nextHopType": "VirtualAppliance"
                 }
             },
