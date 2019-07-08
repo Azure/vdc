@@ -30,14 +30,14 @@
         },
         "enableDdosProtection": {
             "type": "bool",
-            "defaultValue": false,
+            "defaultValue": true,
             "metadata": {
                 "description": "Optional. Indicates if DDoS protection is enabled for all the protected resources in the Virtual Network. A 'true' value requires a DDoS Protection Plan to be specified."
             }
         },
         "enableVmProtection": {
             "type": "bool",
-            "defaultValue": false,
+            "defaultValue": true,
             "metadata": {
                 "description": "Optional. Indicates if VM protection is enabled for all the subnets in the Virtual Network."
             }

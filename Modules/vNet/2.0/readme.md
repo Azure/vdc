@@ -15,8 +15,8 @@ This template deploys a Virtual Network (vNet) with 2 optional Subnets.
 | `vnetAddressPrefix` | | Required. An Array of 1 or more IP Address Prefixes for the Virtual Network.
 | `subnets` | | Required. An Array of subnets to deploy to the Virtual Network.
 | `ddosProtectionPlanResourceId` | *empty* | Optional. The Resource Id of the DDoS Protection Plan.
-| `enableDdosProtection` | `false` | Optional. Indicates if DDoS protection is enabled for all the protected resources in the Virtual Network. A 'true' value requires a DDoS Protection Plan to be specified.
-| `enableVmProtection` | `false` | Optional. Indicates if VM protection is enabled for all the subnets in the Virtual Network.
+| `enableDdosProtection` | `true` | Optional. Indicates if DDoS protection is enabled for all the protected resources in the Virtual Network. A 'true' value requires a DDoS Protection Plan to be specified.
+| `enableVmProtection` | `true` | Optional. Indicates if VM protection is enabled for all the subnets in the Virtual Network.
 
 ### Parameter Usage: `vnetAddressPrefix`
 
