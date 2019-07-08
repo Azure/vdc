@@ -993,7 +993,7 @@
                                 {
                                     "type": "extensions",
                                     "name": "[variables('customAddsExtensionName')]",
-                                    "apiVersion": "2019-03-01",
+                                    "apiVersion": "2017-03-30",
                                     "location": "[resourceGroup().location]",
                                     "dependsOn": [
                                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]"

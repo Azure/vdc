@@ -8,16 +8,16 @@
         "OnPremisesInformation": {
             "ActiveDirectory": {
                 "PrimaryDomainControllerIP": "192.168.1.4",
-                "DomainName": "northwind.com",
+                "DomainName": "fontoso.com",
                 "ADSitename": "Cloud-Site",
-                "DomainAdminUserName": "northwind"
+                "DomainAdminUserName": "fontoso"
             },
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"
             },
             "VirtualNetworkGateway": {
-                "Name": "nw-onprem-gw",
-                "ResourceGroup": "nw-onprem-net-rg"
+                "Name": "fontoso-onprem-gw",
+                "ResourceGroup": "fontoso-onprem-net-rg"
             },
             "SubscriptionId": "${Subscriptions.OnPremises.SubscriptionId}"
         },
@@ -805,7 +805,7 @@
                 "publisher": "MicrosoftWindowsServer",
                 "sku": "2016-Datacenter"
             },
-            "AddsIPAddressStart": "172.0.0.10",
+            "AddsIPAddressStart": "172.0.0.20",
             "DomainName": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.DomainName}",
             "PrimaryDomainControllerIP": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.PrimaryDomainControllerIP}",
             "ADSitename": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.ADSitename}",

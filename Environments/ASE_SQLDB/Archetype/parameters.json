@@ -21,7 +21,7 @@
         "NetworkSecurityGroups": "file(../LandingZone/NetworkParameters/networkSecurityGroups.json)",
         "VirtualNetwork": "file(../LandingZone/NetworkParameters/virtualNetwork.json)",
         "KeyVault": {
-            "Name": "${Parameters.DeploymentName}-kv03",
+            "Name": "${Parameters.InstanceName}-kv",
             "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
             "Sku": "Premium",
             "EnableVaultForDeployment": true,

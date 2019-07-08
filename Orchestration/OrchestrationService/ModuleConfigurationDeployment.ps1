@@ -150,8 +150,7 @@ Function New-Deployment {
 
             Set-SubscriptionContext `
                 -SubscriptionId $subscriptionInformation.SubscriptionId `
-                -TenantId $subscriptionInformation.TenantId `
-                -Validate:$($Validate.IsPresent);
+                -TenantId $subscriptionInformation.TenantId;
         }
 
         # Let's attempt to get the Audit Id from cache
@@ -340,15 +339,14 @@ Function New-Deployment {
         # we are not in Validation mode
         if($null -ne $ModuleConfiguration.Script `
             -and `
-           $null -ne $ModuleConfiguration.Script.Command `
-           -and `
-           -not $Validate.IsPresent) {
+           $null -ne $ModuleConfiguration.Script.Command) {
  
             # Orchestrate the deployment of Custom Scripts
             $result = `
                 Deploy-CustomScripts `
                     -ModuleConfiguration $moduleConfiguration `
-                    -ArchetypeInstanceJson $archetypeInstanceJson;
+                    -ArchetypeInstanceJson $archetypeInstanceJson `
+                    -Validate:$($Validate.IsPresent);
  
             # Retrieve the results from the script deployment
             $resourceState = $result[0];
@@ -367,35 +365,36 @@ Function New-Deployment {
             }     
         }
 
-        if(-not $Validate.IsPresent) {
-            # If there are deployment outputs, cache the values
-            if ($null -ne $resourceState.DeploymentOutputs) {
+        
+        # If there are deployment outputs, cache the values
+        if ($null -ne $resourceState.DeploymentOutputs) {
 
-                Add-OutputsToCache `
-                    -ModuleConfigurationName $moduleConfigurationName `
-                    -Outputs $resourceState.DeploymentOutputs;
-            }
-
-            # Store deployment state information
-            $moduleStateId = `
-                New-DeploymentStateInformation `
-                    -AuditId $auditId `
-                    -DeploymentId $resourceState.DeploymentId `
-                    -DeploymentName $resourceState.DeploymentName `
-                    -ArchetypeInstanceName $ArchetypeInstanceName `
-                    -ModuleConfigurationName $moduleConfigurationName `
-                    -ResourceStates $resourceState.ResourceStates `
-                    -ResourceIds $resourceState.ResourceIds `
-                    -ResourceGroupName $resourceState.ResourceGroupName `
-                    -DeploymentTemplate $resourceState.DeploymentTemplate `
-                    -DeploymentParameters $resourceState.DeploymentParameters `
-                    -DeploymentOutputs $resourceState.DeploymentOutputs `
-                    -TenantId @("", $subscriptionInformation.TenantId)[$null -ne $subscriptionInformation] `
-                    -SubscriptionId @("", $subscriptionInformation.SubscriptionId)[$null -ne $subscriptionInformation] `
-                    -Policies $policyResourceState `
-                    -RBAC $rbacResourceState;
-            Write-Debug "Module state created, Id: $($moduleStateId.ToString())";
+            Add-OutputsToCache `
+                -ModuleConfigurationName $moduleConfigurationName `
+                -Outputs $resourceState.DeploymentOutputs `
+                -Validate:$($Validate.IsPresent);
         }
+
+        # Store deployment state information
+        $moduleStateId = `
+            New-DeploymentStateInformation `
+                -AuditId $auditId `
+                -DeploymentId $resourceState.DeploymentId `
+                -DeploymentName $resourceState.DeploymentName `
+                -ArchetypeInstanceName $ArchetypeInstanceName `
+                -ModuleConfigurationName $moduleConfigurationName `
+                -ResourceStates $resourceState.ResourceStates `
+                -ResourceIds $resourceState.ResourceIds `
+                -ResourceGroupName $resourceState.ResourceGroupName `
+                -DeploymentTemplate $resourceState.DeploymentTemplate `
+                -DeploymentParameters $resourceState.DeploymentParameters `
+                -DeploymentOutputs $resourceState.DeploymentOutputs `
+                -TenantId @("", $subscriptionInformation.TenantId)[$null -ne $subscriptionInformation] `
+                -SubscriptionId @("", $subscriptionInformation.SubscriptionId)[$null -ne $subscriptionInformation] `
+                -Policies $policyResourceState `
+                -RBAC $rbacResourceState `
+                -Validate:$($Validate.IsPresent);
+        Write-Debug "Module state created, Id: $($moduleStateId)";
     }
     catch {
         Write-Host "An error ocurred while running New-Deployment";
@@ -475,67 +474,71 @@ Function Deploy-CustomScripts {
             $ModuleConfiguration,
             [Parameter(Mandatory=$true)]
             [hashtable]
-            $ArchetypeInstanceJson
+            $ArchetypeInstanceJson,
+            [Parameter(Mandatory=$false)]
+            [switch]
+            $Validate
         )
      
         $result = @($null, $null);
-     
-        # Run and retrieve the script output, if any.
-        $scriptOutput = `
-            Start-CustomScript `
-                -ModuleConfiguration $ModuleConfiguration;
-     
-        # Update the archetype instance json
-        if($null -ne $scriptOutput `
-            -and $null -ne $ModuleConfiguration.Script `
-            -and $null -ne $ModuleConfiguration.Script.UpdatePath) {
-     
-                # Update the ArchetypeInstanceJson if UpdatePath is
-                # Present
-                $ArchetypeInstanceJson = `
-                    Update-ArchetypeInstanceConfiguration `
-                        -ArchetypeInstance $ArchetypeInstanceJson `
-                        -PropertyPath $ModuleConfiguration.Script.UpdatePath `
-                        -Output $scriptOutput;
-     
-                # Update the result array with the updated ArchetypeInstanceJson
-                $result[1] = $ArchetypeInstanceJson;
-        }
-       
-        # Returning the minimal resource state object
-        $resourceState += @{
-            DeploymentId = [Guid]::NewGuid()
-            DeploymentName = [Guid]::NewGuid().ToString()
-            ResourceStates = @()
-            ResourceIds = @()
-            ResourceGroupName = $null
-            DeploymentTemplate = $null
-            DeploymentParameters = $null
-            Type = "CustomScript"
-           
-        }
-     
-        $deploymentOutputs = @{};
-        # Proceed only if there is output from script
-        if($null -ne $scriptOutput) {
+        
+        if(-not $Validate.IsPresent) {
+            # Run and retrieve the script output, if any.
+            $scriptOutput = `
+                Start-CustomScript `
+                    -ModuleConfiguration $ModuleConfiguration;
+         
+            # Update the archetype instance json
+            if($null -ne $scriptOutput `
+                -and $null -ne $ModuleConfiguration.Script `
+                -and $null -ne $ModuleConfiguration.Script.UpdatePath) {
+         
+                    # Update the ArchetypeInstanceJson if UpdatePath is
+                    # Present
+                    $ArchetypeInstanceJson = `
+                        Update-ArchetypeInstanceConfiguration `
+                            -ArchetypeInstance $ArchetypeInstanceJson `
+                            -PropertyPath $ModuleConfiguration.Script.UpdatePath `
+                            -Output $scriptOutput;
+         
+                    # Update the result array with the updated ArchetypeInstanceJson
+                    $result[1] = $ArchetypeInstanceJson;
+            }
+           
+            # Returning the minimal resource state object
+            $resourceState += @{
+                DeploymentId = [Guid]::NewGuid()
+                DeploymentName = [Guid]::NewGuid().ToString()
+                ResourceStates = @()
+                ResourceIds = @()
+                ResourceGroupName = $null
+                DeploymentTemplate = $null
+                DeploymentParameters = $null
+                Type = "CustomScript"
+               
+            }
+         
+            $deploymentOutputs = @{};
+            # Proceed only if there is output from script
+            if($null -ne $scriptOutput) {
 
-            $deploymentOutputs = `
-                @{
-                    "Output" = @{
-                        "Value" = $scriptOutput;
-                    }
-                }
-        }
+                $deploymentOutputs = `
+                    @{
+                        "Output" = @{
+                            "Value" = $scriptOutput;
+                        }
+                    }
+            }
 
-        $resourceState += @{       
-            "DeploymentOutputs" = $deploymentOutputs
-        };
-     
-        # Set the resultant resourceState as the first item of
-        # the result array to be returned.
-        $result[0] = $resourceState;
-     
-        # Return the result array
+            $resourceState += @{       
+                "DeploymentOutputs" = $deploymentOutputs
+            };
+         
+            # Set the resultant resourceState as the first item of
+            # the result array to be returned.
+            $result[0] = $resourceState;
+        }
+        # Return the result array
         return $result;
     }
      
@@ -659,18 +662,13 @@ Function Set-SubscriptionContext {
         $SubscriptionId,
         [Parameter(Mandatory=$true)]
         [string]
-        $TenantId,
-        [Parameter(Mandatory=$false)]
-        [switch]
-        $Validate
+        $TenantId
     )
 
     try {
-        if(-not $Validate.IsPresent) {
-            $deploymentService.SetSubscriptionContext(
-                $SubscriptionId,
-                $TenantId);
-        }
+        $deploymentService.SetSubscriptionContext(
+            $SubscriptionId,
+            $TenantId);
     }
     catch {
         Write-Host "An error ocurred while running Set-SubscriptionContext";
@@ -1794,13 +1792,13 @@ Function New-AzureResourceManagerDeployment {
 Function New-DeploymentStateInformation {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [guid]
         $AuditId,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]
         $DeploymentId,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]
         $DeploymentName,
         [Parameter(Mandatory=$true)]
@@ -1809,10 +1807,10 @@ Function New-DeploymentStateInformation {
         [Parameter(Mandatory=$true)]
         [string]
         $ModuleConfigurationName,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [object]
         $ResourceStates,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [object]
         $ResourceIds,
         [Parameter(Mandatory=$false)]
@@ -1827,10 +1825,10 @@ Function New-DeploymentStateInformation {
         [Parameter(Mandatory=$false)]
         [object]
         $DeploymentOutputs,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]
         $TenantId,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]
         $SubscriptionId,
         [Parameter(Mandatory=$false)]
@@ -1838,26 +1836,34 @@ Function New-DeploymentStateInformation {
         $Policies,
         [Parameter(Mandatory=$false)]
         [object]
-        $RBAC
+        $RBAC,
+        [Parameter(Mandatory=$false)]
+        [switch]
+        $Validate
     )
     try {
-        return `
-            $moduleStateDataService.SaveResourceState(
-                $AuditId,
-                $DeploymentId,
-                $DeploymentName,
-                $ArchetypeInstanceName,
-                $ModuleConfigurationName,
-                $ResourceStates,
-                $ResourceIds,
-                $ResourceGroupName,
-                $DeploymentTemplate,
-                $DeploymentParameters,
-                $DeploymentOutputs,
-                $TenantId,
-                $SubscriptionId,
-                $Policies,
-                $RBAC);
+        if(-not $Validate.IsPresent) {
+            return `
+                $moduleStateDataService.SaveResourceState(
+                    $AuditId,
+                    $DeploymentId,
+                    $DeploymentName,
+                    $ArchetypeInstanceName,
+                    $ModuleConfigurationName,
+                    $ResourceStates,
+                    $ResourceIds,
+                    $ResourceGroupName,
+                    $DeploymentTemplate,
+                    $DeploymentParameters,
+                    $DeploymentOutputs,
+                    $TenantId,
+                    $SubscriptionId,
+                    $Policies,
+                    $RBAC);
+        }
+        else {
+            return $null;
+        }
     }
     catch {
         Write-Host "An error ocurred while running New-DeploymentStateInformation";
@@ -1932,7 +1938,7 @@ Function New-DeploymentAuditInformation {
                     $ArchetypeInstanceName);
         }
         else {
-            return $null;
+            return [Guid]::Empty;
         }
     }
     catch {

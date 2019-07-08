@@ -257,21 +257,6 @@ stages:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
         TENANT_ID: $(TENANT_ID)
-    - task: AzurePowerShell@4
-      displayName: "ARM Validation - Remote Virtual Network Peering"
-      inputs:
-        azureSubscription: 'vdc2-spoke1'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "RemoteVirtualNetworkPeering" -Validate'
-        azurePowerShellVersion: 'LatestVersion'
-      env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: TearDownValidationResourceGroup
     pool: 
       name: 'vdc-self-hosted'
@@ -329,6 +314,7 @@ stages:
   - job: AzureSecurityCenter
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: LogAnalytics
     steps:
     - task: AzurePowerShell@4
       displayName: "Azure Security Center" 
@@ -348,6 +334,7 @@ stages:
   - job: NISTControls
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: LogAnalytics
     steps:
     - task: AzurePowerShell@4
       displayName: "NIST Controls" 
@@ -367,7 +354,7 @@ stages:
   - job: DefaultNetworkSecurityGroup
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: DiagnosticStorageAccount
+    dependsOn: [ DiagnosticStorageAccount, LogAnalytics ]
     steps:
     - task: AzurePowerShell@4
       displayName: "Default Network Security Group" 
