@@ -29,21 +29,21 @@ def create_subscription(args):
         
     management_group_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.MANAGEMENT_GROUP_CLIENT,
+            IntegrationType.MANAGEMENT_GROUP_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
 
     subscription_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.SUBSCRIPTION_CLIENT,
+            IntegrationType.SUBSCRIPTION_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
 
     billing_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.BILLING_CLIENT,
+            IntegrationType.BILLING_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
@@ -70,21 +70,21 @@ def create_management_group(args):
         
     management_group_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.MANAGEMENT_GROUP_CLIENT,
+            IntegrationType.MANAGEMENT_GROUP_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
 
     subscription_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.SUBSCRIPTION_CLIENT,
+            IntegrationType.SUBSCRIPTION_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
 
     billing_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.BILLING_CLIENT,
+            IntegrationType.BILLING_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
@@ -110,21 +110,21 @@ def associate_mgmt_group(args):
         
     management_group_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.MANAGEMENT_GROUP_CLIENT,
+            IntegrationType.MANAGEMENT_GROUP_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
 
     subscription_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.SUBSCRIPTION_CLIENT,
+            IntegrationType.SUBSCRIPTION_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
 
     billing_integration_service = \
         object_factory.integration_factory(
-            IntegrationType.BILLING_CLIENT,
+            IntegrationType.BILLING_CLIENT_SDK,
             client_id=args.client_id,
             secret=args.secret,
             tenant_id=args.tenant_id)
@@ -165,7 +165,6 @@ def set_general_arguments(parser):
                 help='Specifies the TenantId')
 
 def main():
-    
     #-----------------------------------------------------------------------------
     # Script argument definitions.
     #-----------------------------------------------------------------------------
@@ -208,13 +207,11 @@ def main():
         help="Billing enrollment guid. If no value is passed, a default billing enrollment account will be used")
     
     set_general_arguments(create_subscription_parser)
-
+    
     create_subscription_parser\
-    .set_defaults(
-        func=create_subscription)
-
-    subparsers = parser.add_subparsers()
-
+        .set_defaults(
+            func=create_subscription)
+    
     create_management_group_parser = subparsers.add_parser(
         'create-management-group',
         help='Creates a new management group')
@@ -247,9 +244,9 @@ def main():
         type=str,
         required=False,                
         help="Subscription Name, if specified, the subscription gets associated to the management group")
-
+    
     set_general_arguments(create_management_group_parser)
-
+    
     create_management_group_parser\
     .set_defaults(
         func=create_management_group)
