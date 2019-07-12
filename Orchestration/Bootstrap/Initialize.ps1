@@ -175,36 +175,48 @@ Class Initialize {
                 }
             }
 
-            $storageAccountAccessKey = `
+            $storageAccountAccessKey = $null;
+
+            $storageAccountAccessKeys = `
                 (Get-AzStorageAccountKey `
                     -ResourceGroupName $this.dataStoreResourceGroupName `
-                    -Name $this.dataStoreName).Value[0];
+                    -Name $this.dataStoreName).Value;
+
+            if($null -ne $storageAccountAccessKeys) {
+                $storageAccountAccessKey = `
+                    $storageAccountAccessKeys[0];
             
-            $storageAccountContext = `
-                New-AzStorageContext `
-                    -StorageAccountName $this.dataStoreName `
-                    -StorageAccountKey $storageAccountAccessKey;
-            
-            # Set SAS Token expiration of 2 hours
-            $twoHoursDuration = New-TimeSpan -Hours 2;
-            $expiryTime = (Get-Date) + $twoHoursDuration;
+                $storageAccountContext = `
+                    New-AzStorageContext `
+                        -StorageAccountName $this.dataStoreName `
+                        -StorageAccountKey $storageAccountAccessKey;
+                
+                # Set SAS Token expiration of 2 hours
+                $twoHoursDuration = New-TimeSpan -Hours 2;
+                $expiryTime = (Get-Date) + $twoHoursDuration;
 
-            # SAS Token permission does not have any delete or update permissions
-            $sasToken = `
-                New-AzStorageAccountSASToken `
-                    -Service Blob,Table `
-                    -ResourceType Service,Container,Object `
-                    -Permission "racwl" `
-                    -Protocol HttpsOnly `
-                    -ExpiryTime $expiryTime `
-                    -Context $storageAccountContext;
+                # SAS Token permission does not have any delete or update permissions
+                $sasToken = `
+                    New-AzStorageAccountSASToken `
+                        -Service Blob,Table `
+                        -ResourceType Service,Container,Object `
+                        -Permission "racwl" `
+                        -Protocol HttpsOnly `
+                        -ExpiryTime $expiryTime `
+                        -Context $storageAccountContext;
 
-            Write-Host "Bootstrap process completed successfully";
+                Write-Host "Bootstrap process completed successfully";
 
-            return @{
-                StorageAccountName = $this.dataStoreName
-                StorageAccountResourceGroup = $this.dataStoreResourceGroupName
-                StorageAccountSasToken = $sasToken
+                return @{
+                    StorageAccountName = $this.dataStoreName
+                    StorageAccountResourceGroup = $this.dataStoreResourceGroupName
+                    StorageAccountSasToken = $sasToken
+                }
+            }
+            else {
+                Throw "Could not retrieve the Storage Account Access Keys. Please `
+                make sure you have logged in using 'Login-AzAccount' and you have
+                the correct subscription and tenant id in the toolkit subscription json";
             }
         }
         catch {

@@ -161,7 +161,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
             );
            
             # Get Access Token
-            $accessToken = $this.GetAccessToken();
+            $accessToken = $this.GetAccessToken($tenantId);
    
             # header will need the access token of the sp or user performing the deployment
             $headers = @{
@@ -349,8 +349,8 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         return $uri;
     }
 
-    hidden [string] GetAccessToken() {
-
+    hidden [string] GetAccessToken([string] $tenantId) {
+      
         # will need to perform Login-AzAccount from the terminal
         $context = Get-AzContext;
         $tokenCache = $context.TokenCache;
@@ -359,14 +359,16 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         $cacheItems | ForEach-Object {
             # Cache Items object's TenantId is null when run in
             # an AzDO Agent
-            if ($_.TenantId `
+            if ($null -ne $_.TenantId `
                 -and $_.TenantId -eq $tenantId `
                 -and $_.ExpiresOn -gt (Get-Date)) {
                 $accessToken = $_.AccessToken;
             }
-            elseif($_.ExpiresOn -gt (Get-Date)) {
-                $accessToken = $_.AccessToken;
-            }
+        }
+        if([string]::IsNullOrEmpty($accessToken)) {
+            Throw "Login to the right tenant. Tenant specified in the `
+            subscription file may be different from the logged in Tenant `
+            or you might have failed to login";
         }
         return $accessToken;
     }
