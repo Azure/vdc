@@ -28,14 +28,17 @@ docker build --rm -f "dockerfile" -t vdc:latest .
 2. Create a container from the Docker image built in the previous step. Mount the `Agent` folder as a volume in your Docker container when creating the container.
 
 ```
-docker run -it -v <path-to-vdc-folder>/Agent:/usr/app/src/Agent vdc:latest
+docker run -it -v <path-to-vdc-folder>/Agent:/usr/src/app/Agent vdc:latest
 ```
 
-2. Update the build.sh file with the service principal's client id, client secret, subscription id and tenant id.
+2. Update the build.sh file under `Agent\Linux` folder with the service principal's client id, client secret, subscription id and tenant id. 
+
+> Note: When saving the build.sh file, save the file in 'LF' mode. If your Operating System is Windows Visutal Studio Code defaults to CRLF. In Visual Studio Code, the option to change from CRLF to LF is available at the bottom left blue bar.
 
 3. Run the command below from PowerShell terminal to build a VM Image
 
 ```
+cd /usr/src/app/Agent/Linux
 bash -c "./build.sh"
 ```
 
