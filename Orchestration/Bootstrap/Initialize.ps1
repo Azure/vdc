@@ -119,11 +119,17 @@ Class Initialize {
             Set-AzContext `
                 -Tenant $this.dataStoreTenantId `
                 -Subscription $this.dataStoreSubscriptionId
-    
-             # Create a storage account resource group
-            New-AzResourceGroup -Name $this.dataStoreResourceGroupName `
-                                 -Location $this.dataStoreLocation `
-                                 -Force;
+
+            $storageResourceGroup = Get-AzResourceGroup `
+                -Name $this.dataStoreResourceGroupName `
+                -ErrorAction SilentlyContinue;
+
+            if($null -eq $storageResourceGroup) {
+                # Create a storage account resource group
+                New-AzResourceGroup -Name $this.dataStoreResourceGroupName `
+                                    -Location $this.dataStoreLocation `
+                                    -Force;
+            }
              
             $storageAccountExists = `
                 !(Get-AzStorageAccountNameAvailability -Name $this.dataStoreName).NameAvailable
@@ -143,18 +149,29 @@ Class Initialize {
             
              # Create containers
              $this.dataStoreSubFolders | ForEach-Object { 
-                New-AzRmStorageContainer `
-                 -Name $_.Name `
-                 -ResourceGroupName $this.dataStoreResourceGroupName `
-                 -StorageAccountName $this.dataStoreName `
-                
-                if ($_.IsImmutable) {
-                    # Enable immutable storage
-                    Add-AzRmStorageContainerLegalHold `
-                        -ResourceGroupName $this.dataStoreResourceGroupName `
-                        -StorageAccountName $this.dataStoreName `
-                        -ContainerName $_.Name `
-                        -Tag "audit";
+
+                # Check if the container exists before attempting
+                # to create one
+                $container = Get-AzRmStorageContainer `
+                    -ResourceGroupName $this.dataStoreResourceGroupName `
+                    -StorageAccountName $this.dataStoreName `
+                    -ContainerName $_.Name `
+                    -ErrorAction SilentlyContinue;
+
+                if($null -eq $container) {
+                    New-AzRmStorageContainer `
+                    -Name $_.Name `
+                    -ResourceGroupName $this.dataStoreResourceGroupName `
+                    -StorageAccountName $this.dataStoreName;
+                    
+                    if ($_.IsImmutable) {
+                        # Enable immutable storage
+                        Add-AzRmStorageContainerLegalHold `
+                            -ResourceGroupName $this.dataStoreResourceGroupName `
+                            -StorageAccountName $this.dataStoreName `
+                            -ContainerName $_.Name `
+                            -Tag "audit";
+                    }
                 }
             }
 
