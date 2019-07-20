@@ -32,8 +32,8 @@ These articles will help you understand how the Azure Virtual Datacenter Automat
 
 We recommend using the Docker image provided in this GitHub repository to run the toolkit. However, you can run the toolkit locally if you choose. After getting the toolkit setup, you'll be ready to make your first deployment with the toolkit.
 
-  - [Run the Docker image](docs/setup/setup-docker.md) *(Recommended)* - How to setup the toolkit using Docker.
-  - [Run on your local machine](docs/setup/setup-local.md) - How to setup the toolkit natively.
+  - [Run the Docker image](Docs/setup/setup-docker.md) *(Recommended)* - How to setup the toolkit using Docker.
+  - [Run on your local machine](Docs/setup/setup-local.md) - How to setup the toolkit natively.
 
 ### [Usage patterns for the toolkit](docs/use/readme.md)
 
