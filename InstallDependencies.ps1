@@ -1,3 +1,1 @@
-Install-Module Az -Force;
-Install-Module Az.ResourceGraph -Force;
-Install-Module Pester -Force;
+Install-Module Az, Az.ResourceGraph, Pester -Force
