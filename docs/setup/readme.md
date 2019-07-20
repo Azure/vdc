@@ -6,6 +6,7 @@ After getting the toolkit setup, you'll be ready to make your first deployment w
 
 1. [Run the Docker image](setup-docker.md)
 1. [Run on your local machine](setup-local.md)
+1. [Create a Service Principal and connect to Azure](setup-SP.md)
 
 ## Next steps
 
