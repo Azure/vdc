@@ -1,45 +1,39 @@
 # Running from your local machine
 
-This option for running the toolkit is typically used when customizing the scripts or extending the functionality of the toolkit.
+The following component are the minimum to edit and execute the VDC toolkit:
 
-The basic steps are:
-
-1. Download the source files for the toolkit
 1. [Install the Azure CLI](https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
-1. [Install Python](https://www.python.org/downloads/release/python-360/)
-1. Configure your local environment
+1. [Install Powershell Core 6.2.1](https://github.com/powershell/powershell)
+1. Import Azure module: Az, ResourceGraph
 
-We recommend that you create a [virtual Python environment](https://docs.python.org/3/tutorial/venv.html) on your local machine to avoid versioning conflicts.
+## Automate Installation using Chocolatey on Windows
 
-How you execute the scripts in the toolkit will vary by operating system:
+Chocolatey is a package manager for Windows to facilitate installation and update of softwware
 
-*[Linux/OSX]*
+Open Powershell as administrator
 
-`python3 some-script.py`
+`Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))`
 
-*[Windows]*
+Close and Open Powershell as Administrator
 
-`py some-script.py`
+`choco install vscode powershell-core azure-cli pester`
 
-## Software requirements
+## Install Azure Module in PowerShell 6
 
-| Prerequisite | Minimum version
-| :-           | :-
-| Azure CLI    | 2.0.34
-| Python       | 3.6 (3.7 not yet supported)
+Open Powershell6 as Administrator
 
-See [../requirements.txt] for Python package dependencies.
+`Install-Module Az; Az.ResourceGraph -Force`
 
-*[Linux/OSX]*
+## Change Powershell Execution Policy
 
-`python3 -m pip install -r requirements.txt`
+Open Powershell6 as Admintrator
 
-*[Windows]*
+`Set-Executionpolicy bypass`
 
-`py -m pip install -r requirements.txt`
+## Known issue
 
-## Next steps
+You may receive a script halted error or tokens issue when you execute the VDC toolkit, reboot your machine to fix it.
 
-> Throughout the remainder of this documentation, be sure to use the commands labelled for your operating system: `[Linux/OSX]` or `[Windows]`.
+# Next Steps
 
 You are now ready to start [your first deployment](../use/your-first-deployment.md).
