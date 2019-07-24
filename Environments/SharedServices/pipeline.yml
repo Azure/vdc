@@ -538,7 +538,7 @@ stages:
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: LogAnalytics
+    dependsOn: [LogAnalytics, AutomationAccounts]
     steps:
     - task: AzurePowerShell@4
       displayName: "Link Log Analytics With Automation Account"
