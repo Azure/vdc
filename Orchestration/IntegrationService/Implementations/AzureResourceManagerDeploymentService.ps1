@@ -359,12 +359,26 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         $cacheItems | ForEach-Object {
             # Cache Items object's TenantId is null when run in
             # an AzDO Agent
-            if ($null -ne $_.TenantId `
-                -and $_.TenantId -eq $tenantId `
-                -and $_.ExpiresOn -gt (Get-Date)) {
-                $accessToken = $_.AccessToken;
+
+            # Note, doing a break; in Powershell, exits the entire
+            # script execution, not only the function.
+            if([string]::IsNullOrEmpty($accessToken))
+            {
+                if ($null -ne $_.TenantId `
+                    -and $_.TenantId -eq $tenantId `
+                    -and $_.ExpiresOn -gt (Get-Date)) {
+                    $accessToken = $_.AccessToken;
+                    Write-Debug "Access token found with tenant id filter";
+                }
+                elseif ($null -eq $_.TenantId `
+                        -and $_.ExpiresOn -gt (Get-Date))
+                {
+                    $accessToken = $_.AccessToken;
+                    Write-Debug "Access token found without tenant id filter";
+                }
             }
         }
+        Write-Debug "Access token is: $(ConvertTo-Json $accessToken)";
         if([string]::IsNullOrEmpty($accessToken)) {
             Throw "Login to the right tenant. Tenant specified in the `
             subscription file may be different from the logged in Tenant `

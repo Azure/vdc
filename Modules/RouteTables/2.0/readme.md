@@ -11,7 +11,7 @@ This template deploys User Defined Route Tables.
 | Parameter Name | Default Value | Description |
 | :-             | :-            | :-          |
 | `routeTableName` | | Required. Name given for the hub route table.
-| `routes` | | Required. An Array of Routes to be established within the hub route table.
+| `routes` | [] | Optional. An Array of Routes to be established within the hub route table.
 
 ### Parameter Usage: ``
 

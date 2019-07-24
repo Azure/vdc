@@ -172,6 +172,9 @@
                 "OverrideParameters": {
                     "routeTableName": {
                         "value": "${Parameters.ModuleConfigurationParameters.RouteTables.SharedServices.Name}"
+                    },
+                    "routes": {
+                        "value": "${Parameters.ModuleConfigurationParameters.RouteTables.SharedServices.Routes}"
                     }
                 }
             }
@@ -187,6 +190,9 @@
                     },
                     "vnetAddressPrefixes": {
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.AddressPrefixes}"
+                    },
+                    "dnsServers": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.DnsServers}"
                     },
                     "subnets": {
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets}"
@@ -217,6 +223,96 @@
             }
         },
         {
+            "Name": "VirtualNetworkGateway",
+            "ModuleDefinitionName": "VirtualNetworkGateway",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "virtualNetworkGatewayName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.Name}"
+                    },
+                    "virtualNetworkGatewayType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.VirtualNetworkGatewayType}"
+                    },
+                    "virtualNetworkGatewaySku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.VirtualNetworkGatewaySku}"
+                    },
+                    "vpnType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.VpnType}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "enableBgp": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.EnableBgp}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "LocalVirtualNetworkGatewayConnection",
+            "Comments": "Connect Shared Services Virtual Network Gateway to a Simulated On-Premises Virtual Network Gateway",
+            "ModuleDefinitionName": "VirtualNetworkGatewayConnection",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "localVirtualNetworkGatewayName": {
+                        "value": "reference(VirtualNetworkGateway.virtualNetworkGatewayName)"
+                    },
+                    "remoteVirtualNetworkGatewayName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.VirtualNetworkGateway.Name}"
+                    },
+                    "remoteVirtualNetworkResourceGroup": {
+                        "value": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.VirtualNetworkGateway.ResourceGroup}"
+                    },
+                    "remoteVirtualNetworkGatewaySubscriptionId": {
+                        "value": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.SubscriptionId}"
+                    },
+                    "enableBgp": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.EnableBgp}"
+                    },
+                    "vpnSharedKey": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.VpnSharedKey}"
+                    },
+                    "remoteConnectionName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.LocalConnection.Name}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "RemoteVirtualNetworkGatewayConnection",
+            "Comments": "Connect On-Premises Virtual Network Gateway to a Simulated Shared Services Virtual Network Gateway",
+            "ModuleDefinitionName": "VirtualNetworkGatewayConnection",
+            "Subscription": "OnPremises",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.VirtualNetworkGateway.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "localVirtualNetworkGatewayName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.VirtualNetworkGateway.Name}"
+                    },
+                    "remoteVirtualNetworkGatewayName": {
+                        "value": "reference(VirtualNetworkGateway.virtualNetworkGatewayName)"
+                    },
+                    "remoteVirtualNetworkResourceGroup": {
+                        "value": "reference(VirtualNetworkGateway.virtualNetworkGatewayResourceGroup)"
+                    },
+                    "remoteVirtualNetworkGatewaySubscriptionId": {
+                        "value": "${Subscriptions.SharedServices.SubscriptionId}"
+                    },
+                    "enableBgp": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.EnableBgp}"
+                    },
+                    "vpnSharedKey": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.VpnSharedKey}"
+                    },
+                    "remoteConnectionName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.RemoteConnection.Name}"
+                    }
+                }
+            }
+        },
+        {
             "Name": "AzureFirewall",
             "ModuleDefinitionName": "AzureFirewall",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AzureFirewall.ResourceGroup}",
@@ -239,19 +335,6 @@
                     },
                     "workspaceId": {
                         "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
-                    }
-                }
-            }
-        },
-        {
-            "Name": "AddRoutesToSharedServicesRouteTable",
-            "ModuleDefinitionName": "RouteTables",
-            "Updates": "SharedServicesRouteTable",
-            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.RouteTables.ResourceGroup}",
-            "Deployment": {
-                "OverrideParameters": {
-                    "routes": {
-                        "value": "${Parameters.ModuleConfigurationParameters.RouteTables.SharedServices.Routes}"
                     }
                 }
             }
@@ -399,86 +482,6 @@
                     },
                     "diagnosticsStorageAccountSasToken": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
-                    }
-                }
-            }
-        },
-        {
-            "Name": "ActiveDirectory",
-            "ModuleDefinitionName": "ActiveDirectory",
-            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ResourceGroup}",
-            "Comments": "Creates Active Directory Domain Services VMs",
-            "Deployment": {
-                "OverrideParameters": {
-                    "virtualMachineName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.Name}"
-                    },
-                    "virtualMachineSize": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.VMSize}"
-                    },
-                    "virtualMachineOSImage": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.OSImage}"
-                    },
-                    "artifactsStorageAccountSasKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountSasToken)"
-                    },
-                    "artifactsStorageAccountName": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountName)"
-                    },
-                    "artifactsStorageAccountKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountAccessKey)"
-                    },
-                    "workspaceId": {
-                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
-                    },
-                    "logAnalyticsWorkspacePrimarySharedKey": {
-                        "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
-                    },
-                    "diagnosticsStorageAccountName": {
-                        "value": "reference(DiagnosticStorageAccount.storageAccountName)"
-                    },
-                    "diagnosticsStorageAccountSasToken": {
-                        "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
-                    },
-                    "adIpAddress": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}"
-                    },
-                    "vNetId": {
-                        "value": "reference(VirtualNetwork.vNetResourceId)"
-                    },
-                    "domainControllerAsgId": {
-                        "value": "reference(DomainControllerASG.applicationSecurityGroupResourceId)"
-                    },
-                    "subnetName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.SubnetName}"
-                    },
-                    "cloudZone": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.CloudZone}"
-                    },
-                    "domainName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainName}"
-                    },
-                    "adSitename": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ADSitename}"
-                    },
-                    "domainAdminUsername": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUsername}"
-                    },
-                    "domainAdminPassword": {
-                        "reference": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminPassword}"
-                    }
-                }
-            }
-        },
-        {
-            "Name": "EnableDnsServersOnVirtualNetwork",
-            "ModuleDefinitionName": "vNet",
-            "Updates": "VirtualNetwork",
-            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
-            "Deployment": {
-                "OverrideParameters": {
-                    "dnsServers": {
-                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.DnsServers}"
                     }
                 }
             }

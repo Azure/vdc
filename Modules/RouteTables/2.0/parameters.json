@@ -4,39 +4,6 @@
   "parameters": {
     "routeTableName": {
       "value": "route-table"
-    },
-    "routes": {
-      "value": [
-        {
-          "name": "tojumpboxes",
-          "properties": {
-            "addressPrefix": "172.16.0.48/28",
-            "nextHopType": "VnetLocal"
-          }
-        },
-        {
-          "name": "tosharedservices",
-          "properties": {
-            "addressPrefix": "172.16.0.64/27",
-            "nextHopType": "VnetLocal"
-          }
-        },
-        {
-          "name": "toonprem",
-          "properties": {
-            "addressPrefix": "10.0.0.0/8",
-            "nextHopType": "VirtualNetworkGateway"
-          }
-        },
-        {
-          "name": "tonva",
-          "properties": {
-            "addressPrefix": "172.16.0.0/18",
-            "nextHopType": "VirtualAppliance",
-            "nextHopIpAddress": "172.16.0.20"
-          }
-        }
-      ]
     }
   }
 }

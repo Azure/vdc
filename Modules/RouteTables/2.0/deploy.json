@@ -10,9 +10,9 @@
     },
     "routes": {
       "type": "array",
-      "minLength": 1,
+      "defaultValue": [],
       "metadata": {
-        "description": "Required. An Array of Routes to be established within the hub route table."
+        "description": "Optional. An Array of Routes to be established within the hub route table."
       }
     }
   },

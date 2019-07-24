@@ -23,9 +23,9 @@
         },
         "dnsServers": {
             "type": "array",
-            "minLength": 1,
+            "defaultValue": [],
             "metadata": {
-                "description": "Required. DNS Servers associated to the Virtual Network."
+                "description": "Optional. DNS Servers associated to the Virtual Network."
             }
         },
         "enableDdosProtection": {
@@ -62,7 +62,10 @@
                 }
             ]
         },
-        "ddosProtectionPlanName": "[concat(parameters('vNetName'), '-ddos')]"
+        "ddosProtectionPlanName": "[concat(parameters('vNetName'), '-ddos')]",
+        "dnsServers": {
+            "dnsServers": "[parameters('dnsServers')]"
+        }
     },
     "resources": [
         {
@@ -83,9 +86,7 @@
                     "addressPrefixes": "[parameters('vNetAddressPrefixes')]"
                 },
                 "ddosProtectionPlan": "[if(equals(parameters('enableDdosProtection'), bool('false')), json('null'), json(concat('{\"id\":\"', resourceId('Microsoft.Network/ddosProtectionPlans', variables('ddosProtectionPlanName')),'\"}')))]",
-                "dhcpOptions": {
-                    "dnsServers": "[parameters('dnsServers')]"
-                },
+                "dhcpOptions": "[if(empty(parameters('dnsServers')), json('null'), variables('dnsServers'))]",
                 "enableDdosProtection": "[parameters('enableDdosProtection')]",
                 "enableVmProtection": "[parameters('enableVmProtection')]",
                 "copy": [

@@ -5,6 +5,22 @@
     "Subscription": "SharedServices",
     "ModuleConfigurationParameters": {
         "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
+        "OnPremisesInformation": {
+            "ActiveDirectory": {
+                "PrimaryDomainControllerIP": "192.168.1.4",
+                "DomainName": "fontoso.com",
+                "ADSitename": "Cloud-Site",
+                "DomainAdminUserName": "fontoso"
+            },
+            "Network": {
+                "AddressPrefix": "192.168.1.0/28"
+            },
+            "VirtualNetworkGateway": {
+                "Name": "fontoso-onprem-gw",
+                "ResourceGroup": "fontoso-onprem-net-rg"
+            },
+            "SubscriptionId": "${Subscriptions.OnPremises.SubscriptionId}"
+        },
         "DiagnosticStorageAccount": {
             "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
             "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
@@ -197,7 +213,7 @@
                             "direction": "Inbound",
                             "priority": 120,
                             "protocol": "Tcp",
-                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",
+                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.PrimaryDomainControllerIP}",
                             "sourcePortRange": "*",
                             "sourcePortRanges": [],
                             "destinationApplicationSecurityGroups": [
@@ -229,7 +245,7 @@
                             "direction": "Inbound",
                             "priority": 130,
                             "protocol": "Udp",
-                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",
+                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.PrimaryDomainControllerIP}",
                             "sourcePortRange": "*",
                             "sourcePortRanges": [],
                             "destinationApplicationSecurityGroups": [
@@ -280,7 +296,7 @@
                             "direction": "Inbound",
                             "priority": 150,
                             "protocol": "TCP",
-                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.Network.AddressPrefix}",
                             "sourcePortRange": "*",
                             "sourcePortRanges": [],
                             "destinationApplicationSecurityGroups": [
@@ -432,8 +448,15 @@
                         "name": "default",
                         "properties": {
                             "addressPrefix": "0.0.0.0/0",
-                            "nextHopIpAddress": "reference(AzureFirewall.azureFirewallPrivateIp)",
+                            "nextHopIpAddress": "172.0.3.4",
                             "nextHopType": "VirtualAppliance"
+                        }
+                    },
+                    {
+                        "name": "to-on-premises",
+                        "properties": {
+                            "addressPrefix": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.Network.AddressPrefix}",
+                            "nextHopType": "VirtualNetworkGateway"
                         }
                     }
                 ]
@@ -498,7 +521,7 @@
                 }
             ],
             "DnsServers": [
-                "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}"
+                "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.PrimaryDomainControllerIP}"
             ]
         },
         "VirtualNetworkGateway": {
@@ -724,7 +747,7 @@
                         "secretValue": "env(ADMIN_USER_PWD)"
                     },
                     {
-                        "secretName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUserName}",
+                        "secretName": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.DomainAdminUserName}",
                         "secretValue": "env(DOMAIN_ADMIN_USER_PWD)"
                     }
                 ]
@@ -769,33 +792,10 @@
                 }
             }
         },
-        "ActiveDirectory": {
-            "Name": "primary-ad",
-            "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
-            "Comments": "Windows VM name cannot exceed 13 characters.",
-            "PrimaryDomainControllerIP": "172.0.0.10",
-            "DomainName": "fontoso.com",
-            "ADSitename": "Cloud-Site",
-            "CloudZone": "fontosocloud.com",
-            "DomainAdminUsername": "fontoso",
-            "DomainAdminPassword": {
-                "keyVault": {
-                    "id": "reference(KeyVault.keyVaultResourceId)"
-                },
-                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}"
-            },
-            "VMSize": "Standard_DS3_v2",
-            "OSImage": {
-                "offer": "WindowsServer",
-                "publisher": "MicrosoftWindowsServer",
-                "sku": "2016-Datacenter"
-            },
-            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
-        },
         "ActiveDirectoryDomainServices": {
             "Name": "adds-vm",
-            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ResourceGroup}",
-            "Comments": "Windows VM name cannot exceed 13 characters. Additionally, Make sure that AddsIPAddressStart and ActiveDirectory.PrimaryDomainControllerIP are in the same subnet address prefix and they don't overlap",
+            "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
+            "Comments": "Windows VM name cannot exceed 13 characters",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
             "AdminPassword": {
                 "keyVault": {
@@ -803,8 +803,13 @@
                 },
                 "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
             },
-            "DomainAdminUsername": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUsername}",
-            "DomainAdminPassword": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminPassword}",
+            "DomainAdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}",
+            "DomainAdminPassword": {
+                "keyVault": {
+                    "id": "reference(KeyVault.keyVaultResourceId)"
+                },
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}"
+            },
             "VMCount": 2,
             "VMSize": "Standard_DS3_v2",
             "OSImage": {
@@ -813,9 +818,9 @@
                 "sku": "2016-Datacenter"
             },
             "AddsIPAddressStart": "172.0.0.20",
-            "DomainName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainName}",
-            "PrimaryDomainControllerIP": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",
-            "ADSitename": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ADSitename}",
+            "DomainName": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.DomainName}",
+            "PrimaryDomainControllerIP": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.PrimaryDomainControllerIP}",
+            "ADSitename": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.ActiveDirectory.ADSitename}",
             "DomaincontrollerDriveLetter": "F",
             "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
         }

@@ -10,13 +10,6 @@
                 "description": "Required. Name for the ADDS VMs"
             }
         },
-        "virtualMachineCount": {
-            "type": "int",
-            "defaultValue": 2,
-            "metadata": {
-                "description": "Optional. Number of VMs to create"
-            }
-        },
         "virtualMachineSize": {
             "type": "string",
             "defaultValue": "Standard_DS2_v2",
@@ -72,7 +65,7 @@
                 "description": "Required. Diagnostic Storage Account SAS token"
             }
         },
-        "addsAddressStart": {
+        "adIpAddress": {
             "type": "string",
             "metadata": {
                 "description": "Required. IP address used as initial Active Directory Domain Services IP"
@@ -92,11 +85,11 @@
                 "description": "Optional. AKV URL"
             }
         },
-        "addsKeyEncryptionURL": {
+        "adKeyEncryptionURL": {
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
-                "description": "Optional. Active Directory Domain Services AKV encryption key"
+                "description": "Optional. Active Directory AKV encryption key"
             }
         },
         "vNetId": {
@@ -117,16 +110,10 @@
                 "description": "Required. Name of Shared Services Subnet, this name is used to get the SubnetId"
             }
         },
-        "adminUsername": {
-            "type": "securestring",
+        "cloudZone": {
+            "type": "string",
             "metadata": {
-                "description": "Required. The Username used to establish ADDS VMs"
-            }
-        },
-        "adminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Required. The password given to the admin user"
+                "description": "Required. Cloud AD zone name, this zone is used to establish one way trust relationship"
             }
         },
         "domainName": {
@@ -135,28 +122,16 @@
                 "description": "Required. AD domain name"
             }
         },
-        "primaryDCIP": {
+        "adSitename": {
             "type": "string",
             "metadata": {
-                "description": "Required. On-premises domain IP"
-            }
-        },
-        "ADSitename": {
-            "type": "string",
-            "metadata": {
-                "description": "Required. On-premises Active Directory site name"
-            }
-        },
-        "domaincontrollerDriveLetter": {
-            "type": "string",
-            "metadata": {
-                "description": "Required. Drive letter to install ADDS"
+                "description": "Required. Active Directory site name, this site is used to place all Active Directory Domain Services Virtual Machines."
             }
         },
         "domainAdminUsername": {
             "type": "securestring",
             "metadata": {
-                "description": "Domain user that has privileges to join a VM into a Domain"
+                "description": "Required. Domain user that has privileges to join a VM into a Domain"
             }
         },
         "domainAdminPassword": {
@@ -167,9 +142,8 @@
         }
     },
     "variables": {
-        "enableDiskEncryption": "[not(or(or(empty(parameters('keyVaultURL')), empty(parameters('keyVaultId'))), empty(parameters('addsKeyEncryptionURL'))))]",
+        "enableDiskEncryption": "[not(or(or(empty(parameters('keyVaultURL')), empty(parameters('keyVaultId'))), empty(parameters('adKeyEncryptionURL'))))]",
         "uniqueString": "[uniqueString(subscription().id, resourceGroup().id, concat(parameters('virtualMachineName'), '-adds'))]",
-        "configurationUrlSasToken": "[concat('?', parameters('artifactsStorageAccountSasKey'))]",
         "subnetName": "[parameters('subnetName')]",
         "availabilitySetName": "[concat(parameters('virtualMachineName'), '-as')]",
         "subnetId": "[concat(parameters('vNetId'), '/subnets/', variables('subnetName'))]",
@@ -197,16 +171,7 @@
         "pwdWithoutReversibleEncryptionConfigName": "StorePasswordsUsingReversibleEncryption",
         "pwdMaxAgeConfigName": "MaximumPasswordAge",
         "pwdComplexityConfigName": "PasswordMustMeetComplexityRequirements",
-        "webServerWithTls1.1ConfigName": "AuditSecureProtocol",
-        "dnsServers": {
-            "copy": [
-                {
-                    "name": "dnsServers",
-                    "count": "[parameters('virtualMachineCount')]",
-                    "input": "[vdc.nextIP(parameters('addsAddressStart'), copyIndex('dnsServers'))]"
-                }
-            ]
-        }
+        "webServerWithTls1.1ConfigName": "AuditSecureProtocol"
     },
     "resources": [
         {
@@ -230,18 +195,14 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2017-09-01",
             "location": "[resourceGroup().location]",
-            "name": "[concat(parameters('virtualMachineName'), copyindex(1), '-nic')]",
-            "copy": {
-                "name": "nicLoop",
-                "count": "[parameters('virtualMachineCount')]"
-            },
+            "name": "[concat(parameters('virtualMachineName'), '-nic')]",
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[vdc.nextIP(parameters('addsAddressStart'), copyIndex())]",
+                            "privateIPAddress": "[parameters('adIpAddress')]",
                             "subnet": {
                                 "id": "[variables('subnetId')]"
                             },
@@ -259,28 +220,23 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
-            "name": "[concat(parameters('virtualMachineName'), copyindex(1))]",
+            "name": "[parameters('virtualMachineName')]",
             "tags": {
                 "layer": "Identity",
-                "computerName": "[concat(parameters('virtualMachineName'), copyindex(1))]",
+                "computerName": "[parameters('virtualMachineName')]",
                 "UpdateManagement": "[variables('tagPatching')]"
             },
-            "copy": {
-                "name": "vmLoop",
-                "count": "[parameters('virtualMachineCount')]"
-            },
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineName'), copyindex(1), '-nic'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineName'), '-nic'))]"
             ],
             "properties": {
                 "availabilitySet": {
                     "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
                 },
                 "osProfile": {
-                    "computerName": "[concat(parameters('virtualMachineName'), copyindex(1))]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "computerName": "[parameters('virtualMachineName')]",
+                    "adminUsername": "[parameters('domainAdminUsername')]",
+                    "adminPassword": "[parameters('domainAdminPassword')]"
                 },
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
@@ -293,25 +249,16 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[replace(toLower(substring(concat(parameters('virtualMachineName'), copyindex(1), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]",
+                        "name": "[replace(toLower(substring(concat(parameters('virtualMachineName'), '-osdisk', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]",
                         "osType": "Windows",
                         "createOption": "FromImage",
                         "diskSizeGB": 256
-                    },
-                    "dataDisks": [
-                        {
-                            "lun": 0,
-                            "name": "[replace(toLower(substring(concat(parameters('virtualMachineName'), copyindex(1), '-dsk1', '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]",
-                            "diskSizeGB": 127,
-                            "createOption": "Empty",
-                            "caching": "None"
-                        }
-                    ]
+                    }
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineName'), copyindex(1), '-nic'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachineName'), '-nic'))]"
                         }
                     ]
                 },
@@ -329,7 +276,7 @@
                     "apiVersion": "2015-06-15",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
@@ -346,42 +293,12 @@
                 },
                 {
                     "type": "extensions",
-                    "name": "[variables('customAddsExtensionName')]",
-                    "apiVersion": "2017-03-30",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
-                        "[variables('MMAExtensionName')]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Powershell",
-                        "type": "DSC",
-                        "typeHandlerVersion": "2.9",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "configuration": {
-                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/formatDisk.zip')]",
-                                "script": "formatDisk.ps1",
-                                "function": "FormatDisk"
-                            },
-                            "configurationArguments": {
-                                "DriveLetter": "[parameters('domaincontrollerDriveLetter')]",
-                                "DiskId": 2
-                            }
-                        },
-                        "protectedSettings": {
-                            "configurationUrlSasToken": "[variables('configurationUrlSasToken')]"
-                        }
-                    }
-                },
-                {
-                    "type": "extensions",
                     "name": "[variables('antimalwareExtensionName')]",
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('customAddsExtensionName'))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), variables('customAddsExtensionName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.Security",
@@ -406,8 +323,8 @@
                     "location": "[resourceGroup().location]",
                     "apiVersion": "2017-03-30",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('customAddsExtensionName'))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), variables('customAddsExtensionName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.Diagnostics",
@@ -421,7 +338,7 @@
                                 "DiagnosticMonitorConfiguration": {
                                     "overallQuotaInMB": 5120,
                                     "Metrics": {
-                                        "resourceId": "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                                        "resourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                                         "MetricAggregation": [
                                             {
                                                 "scheduledTransferPeriod": "PT1H"
@@ -699,8 +616,8 @@
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('customAddsExtensionName'))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), variables('customAddsExtensionName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Azure.NetworkWatcher",
@@ -711,11 +628,48 @@
                 },
                 {
                     "type": "extensions",
+                    "name": "[variables('customAddsExtensionName')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.9",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "configuration": {
+                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/newADDomain.zip?', parameters('artifactsStorageAccountSasKey'))]",
+                                "script": "newDomain.ps1",
+                                "function": "NewDomain"
+                            },
+                            "configurationArguments": {
+                                "DomainName": "[parameters('domainName')]"
+                            }
+                        },
+                        "protectedSettings": {
+                            "configurationArguments": {
+                                "AdminCreds": {
+                                    "UserName": "[parameters('domainAdminUsername')]",
+                                    "Password": "[parameters('domainAdminPassword')]"
+                                },
+                                "SafeModeAdminCreds": {
+                                    "UserName": "[parameters('domainAdminUsername')]",
+                                    "Password": "[parameters('domainAdminPassword')]"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "extensions",
                     "name": "[variables('windowsPasswordPoliciesExtensionName')]",
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Compute",
@@ -740,7 +694,7 @@
                     "apiVersion": "2018-06-01",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsPasswordPoliciesExtensionName')]"
                     ],
                     "properties": {
@@ -753,10 +707,10 @@
                 {
                     "apiVersion": "2018-06-30-preview",
                     "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                    "name": "[concat(parameters('virtualMachineName'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwdMinLengthConfigName'))]",
+                    "name": "[concat(parameters('virtualMachineName'), '/Microsoft.GuestConfiguration/', variables('pwdMinLengthConfigName'))]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -769,10 +723,10 @@
                 {
                     "apiVersion": "2018-06-30-preview",
                     "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                    "name": "[concat(parameters('virtualMachineName'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwdMinAgeConfigName'))]",
+                    "name": "[concat(parameters('virtualMachineName'), '/Microsoft.GuestConfiguration/', variables('pwdMinAgeConfigName'))]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -785,10 +739,10 @@
                 {
                     "apiVersion": "2018-06-30-preview",
                     "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                    "name": "[concat(parameters('virtualMachineName'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwdNotLast24ConfigMName'))]",
+                    "name": "[concat(parameters('virtualMachineName'), '/Microsoft.GuestConfiguration/', variables('pwdNotLast24ConfigMName'))]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -801,10 +755,10 @@
                 {
                     "apiVersion": "2018-06-30-preview",
                     "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                    "name": "[concat(parameters('virtualMachineName'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwdWithoutReversibleEncryptionConfigName'))]",
+                    "name": "[concat(parameters('virtualMachineName'), '/Microsoft.GuestConfiguration/', variables('pwdWithoutReversibleEncryptionConfigName'))]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -817,10 +771,10 @@
                 {
                     "apiVersion": "2018-06-30-preview",
                     "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                    "name": "[concat(parameters('virtualMachineName'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('webServerWithTls1.1ConfigName'))]",
+                    "name": "[concat(parameters('virtualMachineName'), '/Microsoft.GuestConfiguration/', variables('webServerWithTls1.1ConfigName'))]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -833,10 +787,10 @@
                 {
                     "apiVersion": "2018-06-30-preview",
                     "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                    "name": "[concat(parameters('virtualMachineName'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwdMaxAgeConfigName'))]",
+                    "name": "[concat(parameters('virtualMachineName'), '/Microsoft.GuestConfiguration/', variables('pwdMaxAgeConfigName'))]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -849,10 +803,10 @@
                 {
                     "apiVersion": "2018-06-30-preview",
                     "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
-                    "name": "[concat(parameters('virtualMachineName'), copyindex(1), '/Microsoft.GuestConfiguration/', variables('pwdComplexityConfigName'))]",
+                    "name": "[concat(parameters('virtualMachineName'), '/Microsoft.GuestConfiguration/', variables('pwdComplexityConfigName'))]",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -868,7 +822,7 @@
                     "type": "extensions",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
                         "[variables('windowsDependencyExtensionName')]"
                     ],
                     "properties": {
@@ -887,12 +841,12 @@
                     "location": "[resourceGroup().location]",
                     "condition": "[variables('enableDiskEncryption')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('customAddsExtensionName'))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('antimalwareExtensionName'))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('diagnosticsExtensionName'))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), variables('networkWatcherExtensionName'))]",
-                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', concat(parameters('virtualMachineName'), copyindex(1)), 'AzurePolicyforWindows')]"
+                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), variables('customAddsExtensionName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), variables('antimalwareExtensionName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), variables('diagnosticsExtensionName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), variables('networkWatcherExtensionName'))]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachineName'), 'AzurePolicyforWindows')]"
                     ],
                     "properties": {
                       "publisher": "Microsoft.Azure.Security",
@@ -904,7 +858,7 @@
                         "EncryptionOperation": "[variables('encryptionOperation')]",
                         "KeyVaultURL": "[parameters('keyVaultURL')]",
                         "KeyVaultResourceId": "[parameters('keyVaultId')]",
-                        "KeyEncryptionKeyURL": "[parameters('addsKeyEncryptionURL')]",
+                        "KeyEncryptionKeyURL": "[parameters('adKeyEncryptionURL')]",
                         "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
                         "VolumeType": "All",
                         "ResizeOSDisk": false
@@ -914,17 +868,13 @@
             ]
         },
         {
-            "name": "[concat('vm', copyindex(1), 'OSEncryptionNestedDeployment')]",
+            "name": "vmOSEncryptionNestedDeployment",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "condition": "[variables('enableDiskEncryption')]",
             "dependsOn": [
-                "vmLoop"
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
             ],
-            "copy": {
-                "name": "vmUpdateLoop",
-                "count": "[parameters('virtualMachineCount')]"
-            },
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -953,7 +903,7 @@
                                                 "sourceVault": {
                                                     "id": "[parameters('keyVaultId')]"
                                                 },
-                                                "keyUrl": "[parameters('addsKeyEncryptionURL')]"
+                                                "keyUrl": "[parameters('adKeyEncryptionURL')]"
                                             }
                                         }
                                     }
@@ -966,16 +916,12 @@
             }
         },
         {
-            "name": "[concat('vm', copyindex(1), 'DSCInstallADDSNestedDeployment')]",
+            "name": "PSCloudZoneNestedDeployment",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "dependsOn": [
-                "vmLoop"
+                "vmOSEncryptionNestedDeployment"
             ],
-            "copy": {
-                "name": "vmInstallADDSLoop",
-                "count": "[parameters('virtualMachineCount')]"
-            },
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -986,48 +932,83 @@
                         {
                             "apiVersion": "2017-03-30",
                             "type": "Microsoft.Compute/virtualMachines",
-                            "name": "[concat(parameters('virtualMachineName'), copyindex(1))]",
+                            "name": "[parameters('virtualMachineName')]",
                             "location": "[resourceGroup().location]",
                             "resources": [
                                 {
                                     "type": "extensions",
-                                    "name": "[variables('customAddsExtensionName')]",
+                                    "name": "[variables('windowsPasswordPoliciesExtensionName')]",
                                     "apiVersion": "2017-03-30",
                                     "location": "[resourceGroup().location]",
                                     "dependsOn": [
-                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]"
+                                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
                                     ],
                                     "properties": {
-                                        "publisher": "Microsoft.Powershell",
-                                        "type": "DSC",
-                                        "typeHandlerVersion": "2.9",
+                                        "publisher": "Microsoft.Compute",
+                                        "type": "CustomScriptExtension",
+                                        "typeHandlerVersion": "1.8",
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
-                                            "configuration": {
-                                                "url": "[if(equals(variables('enableDiskEncryption'), bool('false')), concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/adds_with_format.zip'), concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/adds_wait_for_bitlocker.zip'))]",
-                                                "script": "azure.ps1",
-                                                "function": "CreateDomainController"
-                                            },
-                                            "configurationArguments": {
-                                                "DomainName": "[parameters('domainName')]",
-                                                "PrimaryDcIpAddress": "[parameters('primaryDCIP')]",
-                                                "SiteName": "[parameters('ADSitename')]",
-                                                "DriveLetter": "[parameters('domaincontrollerDriveLetter')]",
-                                                "DiskId": 2
-                                            }
+                                            "fileUris": [
+                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/new-dns-zone.ps1')]"
+                                            ]
                                         },
                                         "protectedSettings": {
-                                            "configurationUrlSasToken": "[variables('configurationUrlSasToken')]",
-                                            "configurationArguments": {
-                                                "AdminCreds": {
-                                                    "Username": "[parameters('domainAdminUsername')]",
-                                                    "Password": "[parameters('domainAdminPassword')]"
-                                                },
-                                                "SafeModeAdminCreds": {
-                                                    "Username": "[parameters('domainAdminUsername')]",
-                                                    "Password": "[parameters('domainAdminPassword')]"
-                                                }
-                                            }
+                                            "storageAccountName": "[parameters('artifactsStorageAccountName')]",
+                                            "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
+                                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./windows/new-dns-zone.ps1 -DnsZone ', parameters('cloudZone'))]"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "PSCloudSiteNestedDeployment",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "PSCloudZoneNestedDeployment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[parameters('virtualMachineName')]",
+                            "location": "[resourceGroup().location]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "[variables('windowsPasswordPoliciesExtensionName')]",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Compute",
+                                        "type": "CustomScriptExtension",
+                                        "typeHandlerVersion": "1.8",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "fileUris": [
+                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/create-new-cloud-ad-site.ps1')]"
+                                            ]
+                                        },
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('artifactsStorageAccountName')]",
+                                            "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
+                                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./windows/create-new-cloud-ad-site.ps1 -CloudSite ', parameters('adSitename'))]"
                                         }
                                     }
                                 }
@@ -1039,43 +1020,8 @@
             }
         }
     ],
-    "functions": [
-        {
-            "namespace": "vdc",
-            "members": {
-                "nextIP": {
-                    "parameters": [
-                        {
-                            "name": "ip",
-                            "type": "string"
-                        },
-                        {
-                            "name": "operand",
-                            "type": "int"
-                        }
-                    ],
-                    "output": {
-                        "type": "string",
-                        "value": "[concat(split(parameters('ip'), '.')[0], '.' ,split(parameters('ip'), '.')[1], '.' ,split(parameters('ip'), '.')[2], '.', add(int(split(parameters('ip'), '.')[3]), parameters('operand')))]"
-                    }
-                },
-                "splitIP": {
-                    "parameters": [
-                        {
-                            "name": "initialIP",
-                            "type": "string"
-                        }
-                    ],
-                    "output": {
-                        "type": "array",
-                        "value": "[split(parameters('initialIP'), '.')]"
-                    }
-                }
-            }
-        }
-    ],
     "outputs": {
-        "aadsResourceGroup": {
+        "adResourceGroup": {
             "type": "string",
             "value": "[resourceGroup().name]",
             "metadata": {
@@ -1083,10 +1029,10 @@
             }
         },
         "dnsServers": {
-            "type": "array",
-            "value": "[variables('dnsServers').dnsServers]",
+            "type": "string",
+            "value": "[parameters('adIpAddress')]",
             "metadata": {
-                "description": "List of ADDS IPs that will serve as DNS Server List on a Virtual Network"
+                "description": "Static IP of the primary domain controller."
             }
         }
     }
