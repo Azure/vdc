@@ -1031,6 +1031,32 @@
                                             }
                                         }
                                     }
+                                },
+                                {
+                                    "type": "extensions",
+                                    "name": "[variables('windowsPasswordPoliciesExtensionName')]",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[resourceGroup().location]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyindex(1)))]",
+                                        "[variables('customAddsExtensionName')]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Compute",
+                                        "type": "CustomScriptExtension",
+                                        "typeHandlerVersion": "1.8",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "fileUris": [
+                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/sleep.ps1')]"
+                                            ]
+                                        },
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('artifactsStorageAccountName')]",
+                                            "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
+                                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./Windows/sleep.ps1 -Sleep 180')]"
+                                        }
+                                    }
                                 }
                             ]
                         }
