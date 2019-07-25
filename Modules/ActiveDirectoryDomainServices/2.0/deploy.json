@@ -974,6 +974,7 @@
             ],
             "copy": {
                 "name": "vmInstallADDSLoop",
+                "mode": "serial",
                 "count": "[parameters('virtualMachineCount')]"
             },
             "properties": {
