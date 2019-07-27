@@ -840,7 +840,7 @@ stages:
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, KeyVault, ArtifactsStorageAccount]
+    dependsOn: [VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, ActiveDirectory, EnableDNSServerOnVirtualNetwork, KeyVault, ArtifactsStorageAccount]
     steps:
     - task: AzurePowerShell@4
       displayName: "Jumpbox"
