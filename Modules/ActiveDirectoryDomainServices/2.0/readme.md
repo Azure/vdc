@@ -18,7 +18,7 @@ This template deploys Active Directory Domain Services.
 | `virtualMachineCount` | `2` | Optional. Number of VMs to create
 | `virtualMachineSize` | `Standard_DS2_v2` | Optional. Size of the ADDS VMs
 | `virtualMachineOSImage` | | Required. OS image used for the ADDS VMs
-| `availabilitySetId` | `""` | Optional. Availability Set resource identifier
+| `availabilitySetId` | `""` | Optional. Availability Set resource identifier, if a value is passed, these VMs will join the existing Availability Set.
 | `artifactsStorageAccountSasKey` | | Required. Shared Access Signature Key used to download custom scripts
 | `artifactsStorageAccountName` | | Required. Default storage account name. Storage account that contains output parameters and common scripts
 | `artifactsStorageAccountKey` | | Required. Default storage account Key. Storage account that contains output parameters and common scripts
