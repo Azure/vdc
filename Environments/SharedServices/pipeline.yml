@@ -861,7 +861,7 @@ stages:
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ActiveDirectory, EnableDNSServerOnVirtualNetwork, VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, KeyVault, ArtifactsStorageAccount]
+    dependsOn: [ActiveDirectory, EnableDNSServerOnVirtualNetwork, Jumpbox, VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, KeyVault, ArtifactsStorageAccount]
     steps:
     - task: AzurePowerShell@4
       displayName: "Active Directory Domain Services"
