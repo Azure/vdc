@@ -34,7 +34,7 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Availability Set resource identifier."
+                "description": "Optional. Availability Set resource identifier"
             }
         },
         "artifactsStorageAccountSasKey": {

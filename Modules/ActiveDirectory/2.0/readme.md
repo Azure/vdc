@@ -1,4 +1,4 @@
-# ADDS
+# Active Directory
 
 This template deploys Active Directory Domain Services.
 
@@ -14,36 +14,35 @@ This template deploys Active Directory Domain Services.
 
 | Parameter Name | Default Value | Description |
 | :-             | :-            | :-          |
-| `virtualMachineName` | | Required. Name for the ADDS VMs
-| `virtualMachineCount` | `2` | Optional. Number of VMs to create
-| `virtualMachineSize` | `Standard_DS2_v2` | Optional. Size of the ADDS VMs
-| `virtualMachineOSImage` | | Required. OS image used for the ADDS VMs| `artifactsStorageAccountSasKey` | | Required. Shared Access Signature Key used to download custom scripts
+| `virtualMachineName` | | Required. Name for the Active Directory VMs
+| `virtualMachineSize` | `Standard_DS2_v2` | Optional. Size of the Active Directory VMs
+| `virtualMachineOSImage` | | Required. OS image used for the Active Directory VMs| `artifactsStorageAccountSasKey` | | Required. Shared Access Signature Key used to download custom scripts
 | `artifactsStorageAccountName` | | Required. Default storage account name. Storage account that contains output parameters and common scripts
 | `artifactsStorageAccountKey` | | Required. Default storage account Key. Storage account that contains output parameters and common scripts
 | `workspaceId` | | Required. WorkspaceId or CustomerId value of OMS. This value is referenced in OMS VM Extension
 | `logAnalyticsWorkspacePrimarySharedKey` | | Required. WorkspaceKey value of OMS. This value is referenced in OMS VM Extension
 | `diagnosticsStorageAccountName` | | Required. Storage account used to store diagnostic information
 | `diagnosticsStorageAccountSasToken` | | Required. Diagnostic Storage Account SAS token
-| `addsAddressStart` | | Required. IP address used as initial Active Directory Domain Services IP
-| `keyVaultId` | `""` | Optional. AKV Resource Id
-| `keyVaultURL` | `""` | Optional. AKV URL
-| `addsKeyEncryptionURL` | `""` | Optional. Active Directory Domain Services AKV encryption key 
+| `adIpAddress` | | Required. IP address used as primary Domain Controller IP
 | `vNetId` | | Required. Shared services Virtual Network resource identifier
 | `domainControllerAsgId` | | Required. ASG associated to Domain Controllers
 | `subnetName` | | Required. Name of Shared Services Subnet, this name is used to get the SubnetId
-| `adminUsername` | | Required. The username used to establish ADDS VMs
-| `adminPassword` | | Required. The password given to the admin user
+| `cloudZone` | | Required. Cloud Zone to be created, this is useful when using one way  trust relationship
 | `domainName` | | Required. AD domain name
-| `primaryDCIP` | | Required. On-premises domain IP
-| `ADSitename` | | Required. On-premises Active Directory site name
-| `domaincontrollerDriveLetter` | | Required. Drive letter to install ADDS
+| `adSitename` | | Required. On-premises Active Directory site name
+| `keyVaultId` | `""` | Optional. AKV Resource Id
+| `keyVaultURL` | `""` | Optional. AKV URL
+| `adKeyEncryptionURL` | `""` | Optional. Active Directory AKV encryption key 
+| `domainAdminUsername` | | Required. Domain user that has privileges to join a VM into a Domain
 | `domainAdminPassword` | | Required. Domain user that has privileges to join a VM into a Domain
 
 ## Outputs
 
 | Output Name | Description |
 | :-          | :-          |
-| `aadsResourceGroup` | The Resource Group that was deployed to.
+| `adResourceGroup` | The Resource Group that was deployed to.
+| `dnsServers` | DNS Server IP
+| `adAvailabilitySetResourceId` | Active Directory Availability Set Resource Identifier
 
 ## Considerations
 
