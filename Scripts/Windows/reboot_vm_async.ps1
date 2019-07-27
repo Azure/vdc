@@ -1,0 +1,1 @@
+Start-Job -ScriptBlock { Sleep -Seconds 20; Restart-Computer; }

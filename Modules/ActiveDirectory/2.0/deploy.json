@@ -145,7 +145,7 @@
         "enableDiskEncryption": "[not(or(or(empty(parameters('keyVaultURL')), empty(parameters('keyVaultId'))), empty(parameters('adKeyEncryptionURL'))))]",
         "uniqueString": "[uniqueString(subscription().id, resourceGroup().id, concat(parameters('virtualMachineName'), '-adds'))]",
         "subnetName": "[parameters('subnetName')]",
-        "availabilitySetName": "[concat(parameters('virtualMachineName'), '-as')]",
+        "availabilitySetName": "ad-availability-set",
         "subnetId": "[concat(parameters('vNetId'), '/subnets/', variables('subnetName'))]",
         "antimalwareExtensionName": "IaaSAntimalware",
         "diagnosticsExtensionName": "IaaSDiagnostics",
@@ -1026,6 +1026,13 @@
             "value": "[resourceGroup().name]",
             "metadata": {
                 "description": "The Resource Group that was deployed to."
+            }
+        },
+        "adAvailabilitySetResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]",
+            "metadata": {
+                "description": "Availability Set resource identifier."
             }
         },
         "dnsServers": {

@@ -502,6 +502,9 @@
                     "virtualMachineSize": {
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.VMSize}"
                     },
+                    "availabilitySetId": {
+                        "value": "reference(ActiveDirectory.adAvailabilitySetResourceId)"
+                    },
                     "artifactsStorageAccountSasKey": {
                         "value": "reference(ArtifactsStorageAccount.storageAccountSasToken)"
                     },

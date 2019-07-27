@@ -30,6 +30,13 @@
                 "description": "Required. OS image used for the ADDS VMs"
             }
         },
+        "availabilitySetId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Availability Set resource identifier."
+            }
+        },
         "artifactsStorageAccountSasKey": {
             "type": "securestring",
             "metadata": {
@@ -212,6 +219,7 @@
         {
             "type": "Microsoft.Compute/availabilitySets",
             "apiVersion": "2016-04-30-preview",
+            "condition": "[empty(parameters('availabilitySetId'))]",
             "location": "[resourceGroup().location]",
             "name": "[variables('availabilitySetName')]",
             "tags": {
@@ -275,7 +283,7 @@
             ],
             "properties": {
                 "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+                    "id": "[if(not(empty(parameters('availabilitySetId'))), parameters('availabilitySetId'), resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName')))]"
                 },
                 "osProfile": {
                     "computerName": "[concat(parameters('virtualMachineName'), copyindex(1))]",
@@ -1005,7 +1013,7 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "configuration": {
-                                                "url": "[if(equals(variables('enableDiskEncryption'), bool('false')), concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/adds_with_format.zip'), concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/adds_wait_for_bitlocker.zip'))]",
+                                                "url": "[if(equals(variables('enableDiskEncryption'), bool('false')), concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/adds_without_reboot.zip'), concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/adds_wait_for_bitlocker.zip'))]",
                                                 "script": "azure.ps1",
                                                 "function": "CreateDomainController"
                                             },
@@ -1048,13 +1056,13 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "fileUris": [
-                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/sleep.ps1')]"
+                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/reboot_vm_async.ps1')]"
                                             ]
                                         },
                                         "protectedSettings": {
                                             "storageAccountName": "[parameters('artifactsStorageAccountName')]",
                                             "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
-                                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./Windows/sleep.ps1 -Sleep 180')]"
+                                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ./Windows/reboot_vm_async.ps1')]"
                                         }
                                     }
                                 }
