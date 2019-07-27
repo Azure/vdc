@@ -89,6 +89,7 @@
         },
         "NetworkSecurityGroups": {
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "Comments": "Virtual Network (TCP and UDP) to Application Security Group rules are required for DNS resolution",
             "SharedServices": {
                 "Name": "${Parameters.DeploymentName}-nsg",
                 "Rules": [
@@ -216,6 +217,76 @@
                             "destinationApplicationSecurityGroups": [
                                 {
                                     "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Jumpbox.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-tcp-vnet-adds",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "389",
+                                "42",
+                                "88",
+                                "636",
+                                "3268",
+                                "3269",
+                                "445",
+                                "25",
+                                "135",
+                                "5722",
+                                "464",
+                                "9389",
+                                "139",
+                                "53",
+                                "49152-65535"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 160,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-udp-vnet-adds",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "389",
+                                "88",
+                                "445",
+                                "123",
+                                "464",
+                                "138",
+                                "137",
+                                "53",
+                                "49152-65535"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 170,
+                            "protocol": "UDP",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
                                 }
                             ],
                             "sourceApplicationSecurityGroups": []
