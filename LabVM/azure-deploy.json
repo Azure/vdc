@@ -1,0 +1,170 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "LABVMDnsName": {
+      "type": "string",
+      "defaultValue": "labvmdnsnameupdateme",
+      "minLength": 1
+    }
+  },
+  "variables": {
+    "LABVMVNETPrefix": "192.168.0.0/24",
+    "LABVMVNETSubnet1Name": "LABVM",
+    "LABVMVNETSubnet1Prefix": "192.168.0.0/24",
+    "LABVMName": "LABVM",
+    "LABVMAdminUserName": "vdcadmin",
+    "LABVMAdminPassword": "Password.1!!",
+    "LABVMImagePublisher": "MicrosoftWindowsDesktop",
+    "LABVMImageOffer": "Windows-10",
+    "LABVMWindowsOSVersion": "RS3-Pro",
+    "LABVMVmSize": "Standard_D2s_v3",
+    "LABVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'LABVMVNET')]",
+    "LABVMSubnetRef": "[concat(variables('LABVMVnetID'), '/subnets/', variables('LABVMVNETSubnet1Name'))]",
+    "LABVMNicName": "[concat(variables('LABVMName'), '-NIC')]",
+    "LABVM-PUBIPName": "[concat(variables('LABVMName'), '-PIP')]",
+    "LABVMInstallHyperVScriptFolder": ".",
+    "LABVMInstallHyperVScriptFileName": "InstallLabVM.ps1",
+    "LABVMInstallHyperVURL": "https://raw.githubusercontent.com/Azure/vdc/vnext/labvm/InstallLabVM.ps1"
+  },
+  "resources": [
+    {
+      "name": "LABVMVNET",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "LABVMVNET"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('LABVMVNETPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('LABVMVNETSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('LABVMVNETSubnet1Prefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('LABVM-PUBIPName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-10-01",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "LABVM-PUBIP"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('LABVMDnsName')]"
+        }
+      }
+    },
+    {
+      "name": "[variables('LABVMNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-10-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', 'LABVMVNET')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('LABVM-PUBIPName'))]"
+      ],
+      "tags": {
+        "displayName": "LABVMNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('LABVMSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('LABVM-PUBIPName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('LABVMName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2017-12-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('LABVMNicName'))]"
+      ],
+      "tags": {
+        "displayName": "LABVM"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('LABVMVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('LABVMName')]",
+          "adminUsername": "[variables('LABVMAdminUsername')]",
+          "adminPassword": "[variables('LABVMAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('LABVMImagePublisher')]",
+            "offer": "[variables('LABVMImageOffer')]",
+            "sku": "[variables('LABVMWindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "FromImage",
+            "diskSizeGB": 1023
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('LABVMNicName'))]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "name": "InstallLabVMApps",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2017-12-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines', variables('LABVMName'))]"
+           ],
+          "tags": {
+            "displayName": "Install LabVM Applications"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.4",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "fileUris": [
+                "[variables('LABVMInstallHyperVURL')]"
+              ],
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('LABVMInstallHyperVScriptFolder'), '/', variables('LABVMInstallHyperVScriptFileName'))]"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}
