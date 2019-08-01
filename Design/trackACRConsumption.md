@@ -87,7 +87,7 @@ The proposed change impacts the following Powershell module: _ModuleConfiguratio
 Merge-Parameters function will analyze the Archetype parameters and will look for the parameter called: _usageAttributionId_.
 
 - If the parameter does not exist, do not pass _usageAttributionId_ to the Azure Resource Manager deployment
-- If the parameters exists, pass _usageAttributionId_ to the Azure Resource Manager deployment by injecting this parameter to the parameter hashtable already generated
+- If the parameter exists, pass _usageAttributionId_ to the Azure Resource Manager deployment by injecting this parameter to the parameter hashtable already generated
 
 ## References:
 - https://docs.microsoft.com/en-us/azure/marketplace/azure-partner-customer-usage-attribution
