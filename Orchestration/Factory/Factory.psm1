@@ -25,7 +25,9 @@ Class Factory {
         $auditRepository = $null;
         $cacheRepository = $null;
         $cacheDataService = $null;
-
+        
+        # check for invariant when audit storage type is:
+        # storage account.
         if (![string]::IsNullOrEmpty($auditStorageType) -and `
             $auditStorageType.ToLower() -eq "storageaccount" `
             -and `
