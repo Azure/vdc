@@ -2,6 +2,32 @@
     "ModuleConfigurationsPath": "../../Modules",
     "ModuleConfigurations": [
         {
+            "Name": "DiagnosticStorageAccountTerraform",
+            "ModuleDefinitionName": "StorageAccounts",
+            "ResourceGroupName": "testrg",
+            "Comments": "Storage Account that is used for ...",
+            "Version": "2.0",
+            "Policies": {
+                "Comments": "Optional - If no object is specified, no Policies deployment will occur",
+                "OverrideParameters": {
+                    "effect": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Policies.Effect}"
+                    },
+                    "resourceGroup": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}"
+                    },
+                    "resourceGroupLocation": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Location}"
+                    }
+                }
+            },
+            "Deployment": {
+                "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
+                "TemplatePath": "../../Modules/StorageAccounts/2.0/Terraform/deploy.tf",
+                "OverrideParameters": {}
+            }
+        },
+        {
             "Name": "DiagnosticStorageAccount",
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}",

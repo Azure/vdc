@@ -14,4 +14,9 @@ Class IDeploymentService {
                         [string] $location) {
         Throw "Method Not Implemented";
     } 
+
+    [void] SetSubscriptionContext([guid] $subscriptionId,
+                                  [guid] $tenantId) {
+        Throw "Method Not Implemented";
+    }
 }

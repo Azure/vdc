@@ -81,6 +81,8 @@ Function New-Deployment {
         $deploymentService = `
             $factory.GetInstance('IDeploymentService');
 
+        Write-Debug "Deployment service type: $($deploymentService.GetType())"
+
         $cacheDataService = `
             $factory.GetInstance('ICacheDataService');
 
@@ -836,6 +838,12 @@ Function Invoke-Bootstrap {
 
         Write-Debug "Audit storage information is: $(ConvertTo-Json $auditStorageInformation -Depth 100)";
 
+        $deploymentServiceInformation = `
+            Get-DeploymentServiceInformation `
+                -ToolkitConfigurationJson $toolkitConfigurationJson;
+        
+        Write-Debug "Deployment service information is: $(ConvertTo-Json $deploymentServiceInformation -Depth 100)";
+
         # Let's create a new instance of Bootstrap
         $bootstrap = [Initialize]::new();
                 
@@ -855,7 +863,8 @@ Function Invoke-Bootstrap {
                     -AuditStorageType $auditStorageInformation.StorageType `
                     -AuditStorageAccountName $bootstrapResults.StorageAccountName `
                     -AuditStorageAccountSasToken $bootstrapResults.StorageAccountSasToken `
-                    -CacheStorageType $cacheStorageInformation.StorageType;
+                    -CacheStorageType $cacheStorageInformation.StorageType `
+                    -DeploymentService $deploymentServiceInformation.Service;
             
             Write-Debug "Bootstrap type: storage account, result is: $(ConvertTo-Json $bootstrapResults -Depth 100)";
         }
@@ -870,7 +879,8 @@ Function Invoke-Bootstrap {
                 New-FactoryInstance `
                     -AuditStorageType $auditStorageInformation.StorageType `
                     -CacheStorageType $cacheStorageInformation.StorageType `
-                    -AuditStoragePath $bootstrapAuditStoragePath;
+                    -AuditStoragePath $bootstrapAuditStoragePath `
+                    -DeploymentService $deploymentServiceInformation.Service;
             
             Write-Debug "Bootstrap type: local storage, result is: $(ConvertTo-Json $bootstrapResults -Depth 100)";
         }
@@ -988,20 +998,18 @@ Function Get-CacheStorageInformation {
             StorageType = ''
         };
 
-        if ($ToolkitConfigurationJson.Configuration.Cache -and
-            $ToolkitConfigurationJson.Configuration.Cache.StorageType.ToLower() -eq "azuredevops") {
+        if($null -eq $ToolkitConfigurationJson -or `
+            $null -eq $ToolkitConfigurationJson.Configuration -or `
+            $null -eq $ToolkitConfigurationJson.Configuration.Cache -or `
+            $null -eq $ToolkitConfigurationJson.Configuration.Cache.StorageType -or `
+            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Cache.StorageType)) {
+            $cacheStorageInformation.StorageType = 'local';
+        }
+        elseif (![string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Cache.StorageType) -and `
+            $ToolkitConfigurationJson.Configuration.Cache.StorageType.Equals("azuredevops", [System.StringComparison]::InvariantCultureIgnoreCase)) {
             
             # Let's get the Storage Type information
             $cacheStorageInformation.StorageType = 'azuredevops';
-        }
-        # Let's get audit local storage information
-        elseif(($ToolkitConfigurationJson.Configuration.Cache -and
-            $ToolkitConfigurationJson.Configuration.Cache.StorageType.ToLower() -eq "local") -or
-            $null -ne $ToolkitConfigurationJson -or 
-            $null -eq $ToolkitConfigurationJson.Configuration -or
-            $null -eq $ToolkitConfigurationJson.Configuration.Cache -or
-            $null -eq $ToolkitConfigurationJson.Configuration.Cache.StorageType) {
-            $cacheStorageInformation.StorageType = 'local';
         }
         # Not supported error
         else {
@@ -1037,8 +1045,29 @@ Function Get-AuditStorageInformation {
             LocalPath = ''
         };
 
-        if ($ToolkitConfigurationJson.Configuration.Audit -and
-        $ToolkitConfigurationJson.Configuration.Audit.StorageType.ToLower() -eq "storageaccount"){
+        # Use local audit storage type by default
+        if ($null -eq $ToolkitConfigurationJson -or `
+            $null -eq $ToolkitConfigurationJson.Configuration -or `
+            $null -eq $ToolkitConfigurationJson.Configuration.Audit -or `
+            $null -eq $ToolkitConfigurationJson.Configuration.Audit.StorageType -or `
+            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Audit.StorageType)) {
+            
+            $auditStorageInformation.StorageType = 'local';
+            if($null -ne $ToolkitConfigurationJson.Configuration.Audit.LocalPath) {
+                # This path is optional, you can provide a specific path where all the audit information will get
+                # saved.
+                $auditStorageInformation.LocalPath = `
+                    $ToolkitConfigurationJson.Configuration.Audit.LocalPath;
+            }
+            else {
+                # This path is optional, you can provide a specific path where all the audit information will get
+                # saved.
+                $auditStorageInformation.LocalPath = `
+                    $WorkingDirectory;
+            }
+        }
+        elseif (![string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Audit.StorageType) -and `
+            $ToolkitConfigurationJson.Configuration.Audit.StorageType.Equals("storageaccount", [System.StringComparison]::InvariantCultureIgnoreCase)){
             
             # Let's get the Storage Account information, this information will be used
             # when provisioning an Audit Storage Account.
@@ -1062,28 +1091,6 @@ Function Get-AuditStorageInformation {
                     throw "TenantId, SubscriptionId, ResourceGroup and Location are required values when using a Audit.StorageType equals to StorageAccount."
                 }
         }
-        # Let's get audit local storage information
-        elseif (($ToolkitConfigurationJson.Configuration.Audit -and
-                $ToolkitConfigurationJson.Configuration.Audit.StorageType.ToLower() -eq "local") -or
-                $null -ne $ToolkitConfigurationJson -or 
-                $null -ne $ToolkitConfigurationJson.Configuration -or 
-                $null -ne $ToolkitConfigurationJson.Configuration.Audit -or 
-                $null -ne $ToolkitConfigurationJson.Configuration.Audit.StorageType) {
-            
-            $auditStorageInformation.StorageType = 'local';
-            if($null -ne $ToolkitConfigurationJson.Configuration.Audit.LocalPath) {
-                # This path is optional, you can provide a specific path where all the audit information will get
-                # saved.
-                $auditStorageInformation.LocalPath = `
-                    $ToolkitConfigurationJson.Configuration.Audit.LocalPath;
-            }
-            else {
-                # This path is optional, you can provide a specific path where all the audit information will get
-                # saved.
-                $auditStorageInformation.LocalPath = `
-                    $WorkingDirectory;
-            }
-        }
         # Not supported error
         else {
             throw "Configuration.Audit object not present or Audit.StorageType not supported, currently supported types are: StorageAccount and Local";
@@ -1092,6 +1099,44 @@ Function Get-AuditStorageInformation {
     }
     catch {
         Write-Host "An error ocurred while running Get-AuditStorageInformation";
+        Write-Host $_;
+        throw $_;
+    }
+}
+
+Function Get-DeploymentServiceInformation {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [hashtable] 
+        $ToolkitConfigurationJson
+    )
+
+    try {
+        $deploymentServiceInformation = @{
+            Service = ''
+        };
+
+        if( $null -eq $ToolkitConfigurationJson -or `
+            $null -eq $ToolkitConfigurationJson.Configuration -or `
+            $null -eq $ToolkitConfigurationJson.Configuration.Deployment -or `
+            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Deployment.Service)) {
+            
+            $deploymentServiceInformation.Service = 'azureresourcemanager';
+        }
+        elseif (![string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Deployment.Service) -and `
+            $ToolkitConfigurationJson.Configuration.Deployment.Service.Equals("terraform", [System.StringComparison]::InvariantCultureIgnoreCase)) {
+            
+            $deploymentServiceInformation.Service = 'terraform';
+        }
+        # Not supported error
+        else {
+            throw "Deployment.Service object not present or Deployment.Service not supported, currently supported types are: AzureResourceManager and Terraform";
+        }
+        return $deploymentServiceInformation;
+    }
+    catch {
+        Write-Host "An error ocurred while running Get-CacheStorageInformation";
         Write-Host $_;
         throw $_;
     }

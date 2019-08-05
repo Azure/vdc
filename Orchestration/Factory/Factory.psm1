@@ -9,22 +9,25 @@ Class Factory {
             $auditStorageType,
             $null,
             $null,
+            $auditStoragePath,
             $cacheStorageType,
-            $auditStoragePath);
+            $null);
     }
 
     Factory([string]$auditStorageType,
             [string]$auditStorageAccountName, 
             [string]$auditStorageAccountSasToken,
+            [string]$auditStoragePath,
             [string]$cacheStorageType,
-            [string]$auditStoragePath) {
+            [string]$deploymentServiceType) {
         
         $stateRepository = $null;
         $auditRepository = $null;
         $cacheRepository = $null;
         $cacheDataService = $null;
 
-        if ($auditStorageType.ToLower() -eq "storageaccount" `
+        if (![string]::IsNullOrEmpty($auditStorageType) -and `
+            $auditStorageType.ToLower() -eq "storageaccount" `
             -and `
             ([string]::IsNullOrEmpty($auditStorageAccountName) -or `
              [string]::IsNullOrEmpty($auditStorageAccountSasToken)
@@ -33,18 +36,7 @@ Class Factory {
             throw "Storage Account Name and Sas Token values required when Audit Storage Type is Storage Account";
         }
 
-        if($auditStorageType.ToLower() -eq "storageaccount") {
-            $stateRepository = `
-                [BlobContainerStateRepository]::new(
-                    $auditStorageAccountName, 
-                    $auditStorageAccountSasToken);
-
-            $auditRepository = `
-                [BlobContainerAuditRepository]::new(
-                    $auditStorageAccountName, 
-                    $auditStorageAccountSasToken);
-        }
-        else {
+        if([string]::IsNullOrEmpty($auditStorageType)) {
             # Assumes local storage for now.
             if ([string]::IsNullOrEmpty($auditStoragePath)) {
                 throw "Audit storage path is empty for local audit storage type, please provide a valid local storage path";
@@ -56,15 +48,31 @@ Class Factory {
             $auditRepository = `
                 [LocalStorageAuditRepository]::new($auditStoragePath);
         }
+        elseif($auditStorageType.ToLower().Equals("storageaccount", [StringComparison]::InvariantCultureIgnoreCase)) {
+            $stateRepository = `
+                [BlobContainerStateRepository]::new(
+                    $auditStorageAccountName, 
+                    $auditStorageAccountSasToken);
 
-        if($cacheStorageType.ToLower() -eq "azuredevops") {
+            $auditRepository = `
+                [BlobContainerAuditRepository]::new(
+                    $auditStorageAccountName, 
+                    $auditStorageAccountSasToken);
+        }
+        else {
+            throw "Not supported deployment service: $auditStorageType";
+        }
+
+        if([string]::IsNullOrEmpty($cacheStorageType)) {
+            $cacheRepository = `
+                [LocalCacheRepository]::new();
+        }
+        elseif($cacheStorageType.ToLower().Equals("azuredevops", [StringComparison]::InvariantCultureIgnoreCase)) {
             $cacheRepository = `
                 [AzureDevOpsCacheRepository]::new();
         }
-        elseif ($cacheStorageType.ToLower() -eq "local" `
-            -or [string]::IsNullOrEmpty($cacheStorageType) ) {
-            $cacheRepository = `
-                [LocalCacheRepository]::new();
+        else {
+            throw "Not supported deployment service: $cacheStorageType";
         }
 
         $cacheDataService = `
@@ -78,8 +86,20 @@ Class Factory {
             [DeploymentAuditDataService]::new(
                 $auditRepository);
 
-        $deploymentService = `
-            [AzureResourceManagerDeploymentService]::new();
+        if ([string]::IsNullOrEmpty($deploymentServiceType)){
+            $deploymentService = `
+                [AzureResourceManagerDeploymentService]::new();
+        }
+        elseif($deploymentServiceType.ToLower().Equals("terraform", [StringComparison]::InvariantCultureIgnoreCase)) {
+            Write-Debug "Deployment service found: $deploymentServiceType";
+            $deploymentService = `
+                [TerraformDeploymentService]::new();
+
+            Write-Debug "Deployment service type is: "
+        }
+        else {
+            throw "Not supported deployment service: $deploymentServiceType";
+        }
 
         $tokenReplacementService = `
             [TokenReplacementService]::new();
@@ -119,17 +139,21 @@ Function New-FactoryInstance() {
         [Parameter(Mandatory=$false)]
         [string] 
         $AuditStorageAccountSasToken,
+        [Parameter(Mandatory=$false)]
+        [string]
+        $AuditStoragePath,
         [Parameter(Mandatory=$true)]
         [string] 
         $CacheStorageType,
-        [Parameter(Mandatory=$false)]
-        [string]
-        $AuditStoragePath
+        [Parameter(Mandatory=$true)]
+        [string] 
+        $DeploymentService
     )
     return [Factory]::new(
         $AuditStorageType,
         $AuditStorageAccountName, 
         $AuditStorageAccountSasToken,
+        $AuditStoragePath,
         $CacheStorageType,
-        $AuditStoragePath);
+        $DeploymentService);
 }

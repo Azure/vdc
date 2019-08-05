@@ -11,6 +11,9 @@
         "Cache": {
             "Comments": "Caching service",
             "StorageType": "AzureDevOps"
+        },
+        "Deployment": {
+            "Service": "Terraform"
         }
     }
 }

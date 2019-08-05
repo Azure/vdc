@@ -87,3 +87,7 @@ mappings/**
 mappings
 deployments/**
 deployments
+
+terraform.tfstate
+.terraform
+.terraform/**

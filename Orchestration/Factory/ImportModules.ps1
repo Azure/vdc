@@ -67,6 +67,10 @@ $modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('Integr
 $scriptBlock = ". $modulePath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
+$modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('IntegrationService', 'Implementations', 'TerraformDeploymentService.ps1');
+$scriptBlock = ". $modulePath";
+$script = [scriptblock]::Create($scriptBlock);
+. $script;
 
 $modulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('TokenReplacementService', 'Interface', 'ITokenReplacementService.ps1');
 $scriptBlock = ". $modulePath";
