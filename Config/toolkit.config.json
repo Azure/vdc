@@ -13,7 +13,7 @@
             "StorageType": "AzureDevOps"
         },
         "Deployment": {
-            "Service": "Terraform"
+            "Service": "AzureResourceManager"
         }
     }
 }

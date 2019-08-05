@@ -36,7 +36,8 @@ Class Factory {
             throw "Storage Account Name and Sas Token values required when Audit Storage Type is Storage Account";
         }
 
-        if([string]::IsNullOrEmpty($auditStorageType)) {
+        if([string]::IsNullOrEmpty($auditStorageType) -or `
+            $auditStorageType.Equals("local", [System.StringComparison]::InvariantCultureIgnoreCase)) {
             # Assumes local storage for now.
             if ([string]::IsNullOrEmpty($auditStoragePath)) {
                 throw "Audit storage path is empty for local audit storage type, please provide a valid local storage path";
@@ -63,7 +64,8 @@ Class Factory {
             throw "Not supported deployment service: $auditStorageType";
         }
 
-        if([string]::IsNullOrEmpty($cacheStorageType)) {
+        if([string]::IsNullOrEmpty($cacheStorageType) -or `
+            $cacheStorageType.Equals("local", [System.StringComparison]::InvariantCultureIgnoreCase)) {
             $cacheRepository = `
                 [LocalCacheRepository]::new();
         }
@@ -86,16 +88,14 @@ Class Factory {
             [DeploymentAuditDataService]::new(
                 $auditRepository);
 
-        if ([string]::IsNullOrEmpty($deploymentServiceType)){
+        if ([string]::IsNullOrEmpty($deploymentServiceType) -or `
+            $deploymentServiceType.Equals("azureresourcemanager", [System.StringComparison]::InvariantCultureIgnoreCase)){
             $deploymentService = `
                 [AzureResourceManagerDeploymentService]::new();
         }
         elseif($deploymentServiceType.ToLower().Equals("terraform", [StringComparison]::InvariantCultureIgnoreCase)) {
-            Write-Debug "Deployment service found: $deploymentServiceType";
             $deploymentService = `
                 [TerraformDeploymentService]::new();
-
-            Write-Debug "Deployment service type is: "
         }
         else {
             throw "Not supported deployment service: $deploymentServiceType";

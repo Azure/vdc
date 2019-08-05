@@ -1002,7 +1002,8 @@ Function Get-CacheStorageInformation {
             $null -eq $ToolkitConfigurationJson.Configuration -or `
             $null -eq $ToolkitConfigurationJson.Configuration.Cache -or `
             $null -eq $ToolkitConfigurationJson.Configuration.Cache.StorageType -or `
-            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Cache.StorageType)) {
+            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Cache.StorageType) -or `
+            $ToolkitConfigurationJson.Configuration.Cache.StorageType.Equals("local", [System.StringComparison]::InvariantCultureIgnoreCase)) {
             $cacheStorageInformation.StorageType = 'local';
         }
         elseif (![string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Cache.StorageType) -and `
@@ -1050,7 +1051,8 @@ Function Get-AuditStorageInformation {
             $null -eq $ToolkitConfigurationJson.Configuration -or `
             $null -eq $ToolkitConfigurationJson.Configuration.Audit -or `
             $null -eq $ToolkitConfigurationJson.Configuration.Audit.StorageType -or `
-            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Audit.StorageType)) {
+            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Audit.StorageType) -or `
+            $ToolkitConfigurationJson.Configuration.Audit.StorageType.Equals("local", [System.StringComparison]::InvariantCultureIgnoreCase)) {
             
             $auditStorageInformation.StorageType = 'local';
             if($null -ne $ToolkitConfigurationJson.Configuration.Audit.LocalPath) {
@@ -1120,7 +1122,8 @@ Function Get-DeploymentServiceInformation {
         if( $null -eq $ToolkitConfigurationJson -or `
             $null -eq $ToolkitConfigurationJson.Configuration -or `
             $null -eq $ToolkitConfigurationJson.Configuration.Deployment -or `
-            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Deployment.Service)) {
+            [string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.Deployment.Service) -or 
+            $ToolkitConfigurationJson.Configuration.Deployment.Service.Equals("azureresourcemanager", [System.StringComparison]::InvariantCultureIgnoreCase)) {
             
             $deploymentServiceInformation.Service = 'azureresourcemanager';
         }
@@ -1131,7 +1134,7 @@ Function Get-DeploymentServiceInformation {
         }
         # Not supported error
         else {
-            throw "Deployment.Service object not present or Deployment.Service not supported, currently supported types are: AzureResourceManager and Terraform";
+            throw "Deployment.Service object not present or Deployment.Service not supported, currently supported types are: AzureResourceManager and Terraform, received: $($ToolkitConfigurationJson.Configuration.Deployment.Service)";
         }
         return $deploymentServiceInformation;
     }
