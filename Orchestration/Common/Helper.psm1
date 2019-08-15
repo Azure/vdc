@@ -154,6 +154,56 @@ Function ConvertTo-HashTable() {
     }
 }
 
+Function ConvertTo-Object() {
+    [CmdletBinding()] 
+    Param(
+        [Parameter(Mandatory=$false)]
+        $InputObject
+    )
+
+    if($InputObject) {
+        # Convert to string prior to converting to 
+        # hashtable
+        $objectString = `
+            ConvertTo-Json `
+                -InputObject $InputObject `
+                -Depth 100;
+
+        # Convert string to hashtable and return it
+        return `
+            ConvertFrom-Json `
+                -InputObject $objectString;
+    }
+    else {
+        return $null;
+    }
+
+}
+
+Function Resolve-Tokens() {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$false)]
+        [string]$Archetype,
+        [Parameter(Mandatory=$true)]
+        [System.Object]$TokenizedObject,
+        [Parameter(Mandatory=$true)]
+        [System.Object]$TokenValue
+    )
+
+    # create an instance of TokenReplacementService
+    $tokenReplacement = [TokenReplacementService]::new();
+
+    # call ReplaceAllTokens method to replace the tokens
+    # Reference values and token
+    return `
+        $tokenReplacement.ReplaceAllTokens(
+            $Archetype, 
+            $TokenizedObject,
+            $TokenValue
+        );
+}
+
 Function Get-AzureDevOpsAuditEnvironmentVariables {
     try {
         return @{

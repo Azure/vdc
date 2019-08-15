@@ -224,6 +224,7 @@ Function New-Deployment {
                 Get-DeploymentParametersFileContents `
                     -DeploymentConfiguration $moduleConfiguration.Deployment `
                     -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
+                    -ArchetypeInstance $archetypeInstanceJson `
                     -WorkingDirectory $defaultWorkingDirectory;
         }
 
@@ -1406,6 +1407,9 @@ Function Get-DeploymentParametersFileContents {
         [hashtable] 
         $DeploymentConfiguration,
         [Parameter(Mandatory=$false)]
+        [hashtable] 
+        $ArchetypeInstance,
+        [Parameter(Mandatory=$false)]
         [string] 
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
@@ -1416,13 +1420,25 @@ Function Get-DeploymentParametersFileContents {
     try {
         Write-Debug "Getting Deployment parameters contents";
 
-        return `
+        $deploymentParametersFileContents = `
             Get-DeploymentFileContents `
                 -DeploymentConfiguration $DeploymentConfiguration `
                 -DeploymentType "ARM" `
                 -DeploymentFileType "parameters" `
                 -ModuleConfigurationsPath $ModuleConfigurationsPath `
                 -WorkingDirectory $WorkingDirectory;
+
+        Write-Debug "Replacing the parameters contents to resolve any tokens";
+        Write-Debug "Old Content is $(ConvertTo-Json $deploymentParametersFileContents)";
+        Write-Debug "Tokens Value is $(ConvertTo-Json $($ArchetypeInstance) -Depth 50)";
+
+        $newContent = `
+            Resolve-Tokens `
+                -TokenizedObject $deploymentParametersFileContents `
+                -TokenValue $(ConvertTo-Object -InputObject $ArchetypeInstance);
+
+        Write-Debug "New Content is $(ConvertTo-Json $newContent)";
+        return $newContent;
     }
     catch {
         Write-Host "An error ocurred while running Get-DeploymentParametersFileContents";

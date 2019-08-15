@@ -438,22 +438,10 @@ Class ConfigurationBuilder {
 
     hidden [object] ReplaceTokens([object] $configurationInstance) {
 
-        # this variable will hold the processed configuration instance
-        # that will have all the tokens replaced with values
-        $configurationInstanceWithoutTokens = $null;
-
-        # create an instance of TokenReplacementService
-        $tokenReplacement = [TokenReplacementService]::new();
-
-        # call ReplaceAllTokens method to replace the tokens
-        # Reference values and token
-        $configurationInstanceWithoutTokens = $tokenReplacement.ReplaceAllTokens(
-            $this.configurationInstanceName, 
-            $configurationInstance,
-            $configurationInstance
-        );
-
-        # return the token replaced configuration instance
-        return $configurationInstanceWithoutTokens;
+        return `
+            Resolve-Tokens `
+                -Archetype $this.configurationInstanceName `
+                -TokenizedObject $configurationInstance `
+                -TokenValue $configurationInstance;
     }
 }
