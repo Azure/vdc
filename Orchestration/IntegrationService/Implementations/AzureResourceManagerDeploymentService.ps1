@@ -530,20 +530,18 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         $resourceStates = @();
 
         $allResourceIds = @();
-
-        if ($resourceIds.Count > 1) {
-            # Adding single quotes to resource ids
-            $resourceIds | % { $allResourceIds += "'$_'" }
-
-            # Adding comma in between array items
-            $formattedResourceIds = $allResourceIds -join ",";
-        }
-        else {
-            $formattedResourceIds = "'$resourceIds'";
+        
+        # Adding single quotes to resource ids
+        $resourceIds | ForEach-Object {
+            $allResourceIds += "'$_'" 
         }
 
+        # Adding comma in between array items
+        $formattedResourceIds = $allResourceIds -join ",";
+        
         $resourceStates = `
-                Search-AzGraph -Query "where id in ($formattedResourceIds)";
+                Start-ExponentialBackoff `
+                    -Expression { Search-AzGraph -Query "where id in ($formattedResourceIds)"; }
        
         $dataToReturn.ResourceStates = $resourceStates;
        
@@ -588,9 +586,10 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                     -ErrorAction SilentlyContinue;
             
             if($null -eq $resourceGroupFound) {
-                New-AzResourceGroup `
-                    -Name $resourceGroupName `
-                    -Location $location -Force;
+                Start-ExponentialBackoff `
+                    - Expression { New-AzResourceGroup `
+                                    -Name $resourceGroupName `
+                                    -Location $location -Force; }
             }
         }
         catch {
@@ -603,9 +602,10 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
     [void] SetSubscriptionContext([guid] $subscriptionId,
                                   [guid] $tenantId) {
         try {
-            Select-AzSubscription `
-                -Subscription $subscriptionId `
-                -Tenant $tenantId;
+            Start-ExponentialBackoff `
+            - Expression { Select-AzSubscription `
+                            -Subscription $subscriptionId `
+                            -Tenant $tenantId; }
         }
         catch {
             Write-Host "An error ocurred while running SetSubscriptionContext";
