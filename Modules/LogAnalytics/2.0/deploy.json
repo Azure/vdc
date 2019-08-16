@@ -117,6 +117,10 @@
             {
                 "name": "[concat('KeyVaultAnalytics', '(', parameters('LogAnalyticsWorkspaceName'), ')')]",
                 "galleryName": "KeyVaultAnalytics"
+            },
+            {
+                "name": "[concat('AzureSQLAnalytics', '(', parameters('LogAnalyticsWorkspaceName'), ')')]",
+                "galleryName": "AzureSQLAnalytics"
             }
         ]
     },
@@ -135,7 +139,7 @@
                 },
                 "retentionInDays": "[parameters('dataRetention')]"
             },
-            "resources": [
+            "resources": [  
                 {
                     "apiVersion": "2017-03-15-preview",
                     "name": "VMSSQueries",
@@ -148,6 +152,20 @@
                         "DisplayName": "VMSS Instance Count",
                         "Category": "VDC Saved Searches",
                         "Query": "Event | where Source == \"ServiceFabricNodeBootstrapAgent\" | summarize AggregatedValue = count() by Computer"
+                    }
+                },
+                {
+                    "apiVersion": "2017-03-15-preview",
+                    "name": "AzureFirewallThreatDeny",
+                    "type": "savedSearches",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
+                    ],
+                    "properties": {
+                        "etag": "*",
+                        "DisplayName": "Azure Threat Deny",
+                        "Category": "VDC Saved Searches",
+                        "Query": "AzureDiagnostics | where ResourceType == 'AZUREFIREWALLS' and msg_s contains 'Deny'"
                     }
                 },
                 {

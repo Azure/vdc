@@ -31,6 +31,23 @@ Function Get-PathFromFileFunction() {
     }
 }
 
+Function Test-JsonContent() {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$true)]
+        $Content
+    )
+
+    try {
+        return `
+            Test-Json $Content `
+                -ErrorAction SilentlyContinue;
+    }
+    catch {
+        return $false;
+    }
+}
+
 Function ConvertTo-AbsolutePath() {
     [CmdletBinding()]
     Param(
@@ -153,6 +170,8 @@ Function ConvertTo-HashTable() {
         return $null;
     }
 }
+
+
 
 Function Get-AzureDevOpsAuditEnvironmentVariables {
     try {

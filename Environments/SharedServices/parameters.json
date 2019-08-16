@@ -1,10 +1,12 @@
 {
-    "Organization": "file(../_Common/organizationName.txt)",
+    "Organization": "env(ORGANIZATION_NAME)",
     "DeploymentName": "shrdsvcs",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "SharedServices",
     "ModuleConfigurationParameters": {
         "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
+        "DeploymentAppId": "env(DEPLOYMENT_APP_ID)",
+        "Comments": "Deployment UserId corresponds to the AAD Object Id of the user that wants to manage Key Vault through the Portal. DeploymentAppId corresponds the service principal (SPN) - Object Id - of your service connection from Azure DevOps pipeline, to get this value run the following az cli command: az ad sp show --id YOUR_APP_ID --query 'objectId'",
         "DiagnosticStorageAccount": {
             "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
             "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
@@ -645,6 +647,21 @@
                             "All"
                         ]
                     }
+                },
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
                 }
             ],
             "SecretsObject": {
@@ -657,6 +674,10 @@
                     {
                         "secretName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUserName}",
                         "secretValue": "env(DOMAIN_ADMIN_USER_PWD)"
+                    },
+                    {
+                        "secretName": "admin-user-ssh",
+                        "secretValue": "env(ADMIN_USER_SSH)"
                     }
                 ]
             },
@@ -672,6 +693,10 @@
             }
         },
         "ArtifactsStorageAccount": "file(../_Common/artifactsStorageAccount.json)",
+        "AzureBastion": {
+            "Name": "sharedsvcs-bastion",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}"
+        },
         "Jumpbox": {
             "ResourceGroup": "${Parameters.InstanceName}-jumpbox-rg",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
@@ -680,23 +705,35 @@
                 "Comments": "Windows VM name cannot exceed 13 characters",
                 "Name": "win-jb-vm",
                 "VMCount": 1,
+                "OSType": "Windows",
                 "VMSize": "Standard_DS2_v2",
                 "OSImage": {
                     "offer": "WindowsServer",
                     "publisher": "MicrosoftWindowsServer",
                     "sku": "2016-Datacenter"
+                },
+                "Kek": {
+                    "Name": "WindowsJumpboxKey",
+                    "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                    "Destination": "HSM"
                 }
             },
             "Linux": {
                 "Comments": "Linux VM name cannot exceed 63 characters",
                 "Name": "linux-jb-vm",
                 "VMCount": 1,
+                "OSType": "Linux",
                 "VMSize": "Standard_D2s_v3",
                 "OSImage": {
                     "publisher": "Canonical",
                     "offer": "UbuntuServer",
                     "sku": "18.04-LTS",
                     "version": "latest"
+                },
+                "Kek": {
+                    "Name": "LinuxJumpboxKey",
+                    "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                    "Destination": "HSM"
                 }
             }
         },
@@ -721,6 +758,12 @@
                 "publisher": "MicrosoftWindowsServer",
                 "sku": "2016-Datacenter"
             },
+            "OSType": "Windows",
+            "Kek": {
+                "Name": "AdKey",
+                "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                "Destination": "HSM"
+            },
             "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
         },
         "ActiveDirectoryDomainServices": {
@@ -734,10 +777,16 @@
                 },
                 "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
             },
+            "Kek": {
+                "Name": "AddsKey",
+                "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                "Destination": "HSM"
+            },
             "DomainAdminUsername": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUsername}",
             "DomainAdminPassword": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminPassword}",
             "VMCount": 2,
             "VMSize": "Standard_DS3_v2",
+            "OSType": "Windows",
             "OSImage": {
                 "offer": "WindowsServer",
                 "publisher": "MicrosoftWindowsServer",
@@ -748,7 +797,14 @@
             "PrimaryDomainControllerIP": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",
             "ADSitename": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ADSitename}",
             "DomaincontrollerDriveLetter": "F",
-            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}",
+            "DataDisks": [
+                {
+                    "size": 127,
+                    "driveLetter": "F",
+                    "diskId": 2
+                }
+            ]
         }
     }
 }

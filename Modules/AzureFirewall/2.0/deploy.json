@@ -68,7 +68,7 @@
             }
         },
         {
-            "apiVersion": "2018-08-01",
+            "apiVersion": "2019-06-01",
             "type": "Microsoft.Network/azureFirewalls",
             "name": "[parameters('azureFirewallName')]",
             "location": "[resourceGroup().location]",
@@ -76,6 +76,7 @@
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('azureFirewallPipName'))]"
             ],
             "properties": {
+                "threatIntelMode": "Deny",
                 "ipConfigurations": [
                     {
                         "name": "IpConf",

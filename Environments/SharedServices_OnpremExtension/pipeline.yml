@@ -1,0 +1,1115 @@
+# VDC Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+# Set variables once
+variables:
+- group: VDC_SECRETS
+- name: bootstrap_initialized
+  value: 'sample'    # this is available to all jobs
+trigger:
+- master
+stages:
+- stage: Validate
+  jobs:
+  - job: SetupValidationResourceGroup
+    pool: 
+      name: 'vdc-self-hosted'
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Setup Validation Resource Group"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
+        ScriptArguments: '-ResourceGroupName vdc-validation-rg -SetupResourceGroup'
+        azurePowerShellVersion: 'LatestVersion'
+  - job: StorageAccounts
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: SetupValidationResourceGroup
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Storage Accounts"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/StorageAccounts/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Diagnostic Storage Account"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Enable Service Endpoint On Diagnostic Storage Account"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Artifacts Storage Account"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "ArtifactsStorageAccount" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
+  - job: LogAnalytics
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Log Analytics"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/LogAnalytics/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Log Analytics"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Link Log Analytics With Automation Account"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: AutomationAccounts
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Automation Accounts"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/AutomationAccounts/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Automation Accounts"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "AutomationAccounts" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: ApplicationSecurityGroups
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Application Security Groups"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/ApplicationSecurityGroups/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Jumpbox ASG"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "JumpboxASG" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Domain Controller ASG"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "DomainControllerASG" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: NetworkSecurityGroups
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Network Security Groups"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/NetworkSecurityGroups/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Shared Services NSG"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "SharedServicesNSG" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - DMZ NSG"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "DMZNSG" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: RouteTables
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Route Tables"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/RouteTables/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Shared Services Route Table"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "SharedServicesRouteTable" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: VirtualNetwork
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - VirtualNetwork"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/VirtualNetwork/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Virtual Network"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: VirtualNetworkGateway
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Virtual Network Gateway"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/VirtualNetworkGateway/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Virtual Network Gateway"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "VirtualNetworkGateway" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: VirtualNetworkGatewayConnection
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Virtual Network Gateway Connection"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/VirtualNetworkGatewayConnection/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Local Virtual Network Gateway Connection"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: AzureFirewall
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Azure Firewall"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/AzureFirewall/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Azure Firewall"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "AzureFirewall" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: KeyVault
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Key Vault"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/KeyVault/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Key Vault"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: VirtualMachines
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - Virtual Machines"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/VirtualMachines/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Windows Jumpbox"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "WindowsJumpbox" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Linux Jumpbox"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LinuxJumpbox" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Active Directory Domain Services"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "ActiveDirectoryDomainServicesVMs" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: ActiveDirectoryDomainServices
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, StorageAccounts]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - ActiveDirectoryDomainServices"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/ActiveDirectoryDomainServices/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - ActiveDirectoryDomainServices"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "InstallActiveDirectoryDomainServices" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: TearDownValidationResourceGroup
+    pool: 
+      name: 'vdc-self-hosted'
+    dependsOn: [ StorageAccounts, LogAnalytics, AutomationAccounts, ApplicationSecurityGroups, NetworkSecurityGroups, RouteTables, VirtualNetwork, AzureFirewall, VirtualMachines, ActiveDirectoryDomainServices ]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Teardown Validation Resource Group"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
+        ScriptArguments: '-TearDownResourceGroup'
+        azurePowerShellVersion: 'LatestVersion'
+- stage: Deploy
+  jobs:
+  - job: DiagnosticStorageAccount
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Diagnostic Storage Account" 
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
+  - job: LogAnalytics
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: DiagnosticStorageAccount
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Log Analytics"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LogAnalytics"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: AutomationAccounts
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [LogAnalytics, DiagnosticStorageAccount]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Automation Accounts"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "AutomationAccounts"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Link Log Analytics With Automation Account"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LinkLogAnalyticsWithAutomationAccount"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: ApplicationSecurityGroups
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: DiagnosticStorageAccount
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "JumpboxASG"
+      inputs: 
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "JumpboxASG"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Domain Controller ASG"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "DomainControllerASG"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: NetworkSecurityGroups
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [ApplicationSecurityGroups, LogAnalytics, DiagnosticStorageAccount]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Shared Services NSG"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "SharedServicesNSG"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "DMZ NSG"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "DMZNSG"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: RouteTables
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: DiagnosticStorageAccount
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Shared Services Route Table"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "SharedServicesRouteTable"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: VirtualNetwork
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted' 
+    dependsOn: [NetworkSecurityGroups, RouteTables, DiagnosticStorageAccount]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Virtual Network"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "VirtualNetwork"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Enable Service Endpoint On Diagnostic Storage Account"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnDiagnosticStorageAccount"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: VirtualNetworkGateway
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [VirtualNetwork, NetworkSecurityGroups, RouteTables, DiagnosticStorageAccount]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Virtual Network Gateway"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "VirtualNetworkGateway"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Local Virtual Network Gateway Connection"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LocalVirtualNetworkGatewayConnection"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Remote Virtual Network Gateway Connection"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "RemoteVirtualNetworkGatewayConnection"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: AzureFirewall
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, RouteTables]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Azure Firewall"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "AzureFirewall"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Add default route to Shared Services Route Table"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "AddRoutesToSharedServicesRouteTable"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: KeyVault
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [VirtualNetwork, DiagnosticStorageAccount, LogAnalytics]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Key Vault"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "KeyVault"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Creates Windows Jumpbox KEK"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "WindowsJumpboxKek"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Creates Linux Jumpbox KEK"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LinuxJumpboxKek"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Creates Active Directory Domain Services Kek"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "ActiveDirectoryDomainServicesKek"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Enables Service Endpoint on Key Vault"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnKeyVault"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: ArtifactsStorageAccount
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: DiagnosticStorageAccount
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Artifacts Storage Account"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "ArtifactsStorageAccount"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: turtlesystems-azure-storage@1
+      displayName: "Upload Scripts to Artifacts Storage"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        action: 'create'
+        resourceGroupName: $(vdc_cache_ArtifactsStorageAccount_StorageAccountResourceGroup)
+        location: $(vdc_cache_ArtifactsStorageAccount_StorageAccountRegion)
+        storageAccountName: $(vdc_cache_ArtifactsStorageAccount_StorageAccountName)
+        containerName: 'scripts'
+        uploadDirectory: 'Scripts'
+        sasTokenStartTime: '1m'
+        sasTokenExpiryTime: '1h'
+  - job: Jumpboxes
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [VirtualNetwork, AzureFirewall, DiagnosticStorageAccount, LogAnalytics, KeyVault, ArtifactsStorageAccount]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Windows Jumpbox"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "WindowsJumpbox"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Linux Jumpbox"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "LinuxJumpbox"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+  - job: ActiveDirectoryDomainServices
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [VirtualNetworkGateway, Jumpboxes, VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, KeyVault, ArtifactsStorageAccount, AzureFirewall]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Create Active Directory Domain Services Virtual Machines"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "ActiveDirectoryDomainServicesVMs"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Encrypt Active Directory Domain Services Virtual Machines"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "EncryptActiveDirectoryDomainServices"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Install Active Directory Domain Services"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "InstallActiveDirectoryDomainServices"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)
+    - task: AzurePowerShell@4
+      displayName: "Enable DNS Server on Virtual Network"
+      inputs:
+        azureSubscription: 'vdc2-testsub'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/SharedServices_OnpremExtension/definition.json" -ModuleConfigurationName "EnableDnsServersOnVirtualNetwork"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        TENANT_ID: $(TENANT_ID)

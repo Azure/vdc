@@ -107,9 +107,9 @@
             "copy": [
                 {
                     "name": "virtualNetworkRules",
-                    "count": "[if(empty(parameters('networkAcls')), 1, if(equals(length(parameters('networkAcls').virtualNetworkRules), 0), 1, length(parameters('networkAcls').virtualNetworkRules)))]",
+                    "count": "[if(empty(parameters('networkAcls')), 0, length(parameters('networkAcls').virtualNetworkRules))]",
                     "input": {
-                        "id": "[if(empty(parameters('networkAcls')), json('null'), if(equals(length(parameters('networkAcls').virtualNetworkRules), 0), json('null'), concat(parameters('vNetId'), '/subnets/', parameters('networkAcls').virtualNetworkRules[copyIndex('virtualNetworkRules')].subnet)))]"
+                        "id": "[concat(parameters('vNetId'), '/subnets/', parameters('networkAcls').virtualNetworkRules[copyIndex('virtualNetworkRules')].subnet)]"
                     }
                 }
             ]

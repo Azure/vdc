@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "azureBastionName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Name of the Azure Bastion resource"
+            }
+        },
+        "vNetId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Shared services Virtual Network resource identifier"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Optional. Location for all resources."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2018-08-01",
+            "name": "[concat(parameters('azureBastionName'), '-pip')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        },
+        {
+            "type": "Microsoft.Network/bastionHosts",
+            "name": "[parameters('azureBastionName')]",
+            "apiVersion": "2019-04-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat(parameters('azureBastionName'), '-pip')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "properties": {
+                            "subnet": {
+                                "id": "[concat(parameters('vNetId'), '/subnets/AzureBastionSubnet')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('azureBastionName'), '-pip'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}
