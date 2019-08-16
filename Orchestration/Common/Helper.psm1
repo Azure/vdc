@@ -326,6 +326,48 @@ Function Format-DeploymentOutputs {
     }
 }
 
+
+Function Get-Exception {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$false)]
+        [object]
+        $ErrorObject
+    )
+
+    # Print out stack trace information of the outer error first
+    # Example Inheritance chain for TaskCanceledException
+    # Object --> Exception --> SystemException --> OperationCanceledException --> TaskCanceledException
+    if($errorObject -is [System.Exception]) {
+        Write-Debug "Stack Trace - $($errorObject.StackTrace)";
+    }
+    # Inheritance chain for ErrorRecord
+    # Object --> ErrorRecord
+    elseif($errorObject -is [System.Management.Automation.ErrorRecord]) {
+        Write-Debug "Stack Trace - $($errorObject.ScriptStackTrace)";
+    }
+
+    # Get Inner Exception Message from the error object
+    if($errorObject -is [System.Management.Automation.ErrorRecord] `
+        -and $null -ne $errorObject.details `
+        -and $errorObject.details.Count -gt 0) {
+            return $($errorObject.details[0]);
+    }
+    elseif($errorObject -is [System.Management.Automation.ErrorRecord] `
+        -and $null -ne $errorObject.Exception) {
+            return `
+                GetException $errorObject.Exception;
+    }
+    elseif($errorObject -is [System.Exception] `
+        -and $null -ne $errorObject.ErrorRecord) {
+            return `
+                GetException $errorObject.ErrorRecord;
+    }
+    else {
+        return $errorObject.Message;
+    }
+}
+
 Function Start-ExponentialBackoff () {
     param (
         [Parameter(Mandatory)]
@@ -336,20 +378,28 @@ Function Start-ExponentialBackoff () {
         [Parameter(Mandatory=$false)]
         [int] $MaxRetries = 3
     )
-
-    For($i = 1; $i -le $MaxRetries; $i++) {
+    $innerException = "";
+    While($MaxRetries -gt 0) {
         try {
             return `
                 Invoke-Command `
                     -ScriptBlock $Expression `
                     -ArgumentList $Arguments;
         }
-        catch {
+        catch [System.Threading.Tasks.TaskCanceledException] {
             $newWait = ($i * 60);
             Write-Debug "Sleeping for: $newWait seconds";
             Start-Sleep -Seconds ($i * 60);
+            $MaxRetries--;
+            if($MaxRetries -eq 0) {
+                $innerException = Get-Exeption -ErrorObject $_;
+            }
+        }
+        catch {
+            Throw `
+                $(Get-Exeption -ErrorObject $_);
         }
     }
 
-    throw "Maximum number of retries reached. Number of retries: $MaxRetries";
+    throw "Maximum number of retries reached. Number of retries: $MaxRetries. InnerException: $innerException";
 }
