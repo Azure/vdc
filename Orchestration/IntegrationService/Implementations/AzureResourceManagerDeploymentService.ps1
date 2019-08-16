@@ -587,7 +587,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
             
             if($null -eq $resourceGroupFound) {
                 Start-ExponentialBackoff `
-                    - Expression { New-AzResourceGroup `
+                    -Expression { New-AzResourceGroup `
                                     -Name $resourceGroupName `
                                     -Location $location -Force; }
             }
@@ -603,7 +603,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                                   [guid] $tenantId) {
         try {
             Start-ExponentialBackoff `
-            - Expression { Select-AzSubscription `
+            -Expression { Select-AzSubscription `
                             -Subscription $subscriptionId `
                             -Tenant $tenantId; }
         }
