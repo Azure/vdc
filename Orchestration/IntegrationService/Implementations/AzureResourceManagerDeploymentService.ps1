@@ -392,7 +392,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
        
         $currentDeployment = $null;
         # loop until the deployment succeeds or fails
-        $wait = 6;
+        $wait = 10;
         $loop = 0;
         $phase = 1;
         do {
@@ -528,27 +528,17 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         $dataToReturn.ResourceIds = $resourceIds;
  
         $resourceStates = @();
- 
-        # Let's use Azure Resource Graph to retrieve the
-        # latest resource state
-        $resourceIds | ForEach-Object {
-            $latestState = `
-                Search-AzGraph -Query "where id == '$_'";
-           
-            if($latestState) {
-                # Let's initialize a new object
-                $resourceState = @{
-                    ResourceId = $null
-                    State = $null
-                };
 
-                $resourceState.ResourceId = $_;
-                # Convert to JSON latestState object
-                $resourceState.State = $latestState;
- 
-                $resourceStates += $resourceState;
-            }
-        }
+        $allResourceIds = @();
+
+        # Adding single quotes to resource ids
+        $resourceIds | % { $allResourceIds += "'$_'" }
+
+        # Adding comma in between array items
+        $formattedResourceIds = $allResourceIds -join ",";
+
+        $resourceStates = `
+                Search-AzGraph -Query "where id in ($formattedResourceIds)";
        
         $dataToReturn.ResourceStates = $resourceStates;
        
@@ -588,9 +578,15 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
     [void] CreateResourceGroup([string] $resourceGroupName,
                                [string] $location) {
         try {
-            New-AzResourceGroup `
-                -Name $resourceGroupName `
-                -Location $location -Force;
+            $resourceGroupFound = `
+                Get-AzResourceGroup $resourceGroupName `
+                    -ErrorAction SilentlyContinue;
+            
+            if($null -eq $resourceGroupFound) {
+                New-AzResourceGroup `
+                    -Name $resourceGroupName `
+                    -Location $location -Force;
+            }
         }
         catch {
             Write-Host "An error ocurred while running CreateResourceGroup";

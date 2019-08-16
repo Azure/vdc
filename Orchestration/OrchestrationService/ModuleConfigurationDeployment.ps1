@@ -139,6 +139,9 @@ Function New-Deployment {
         if ($null -eq $subscriptionInformation) {
             throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
         }
+
+        # Let's get the current subscription context
+        $sub = Get-AzContext | Select-Object Subscription 
         
         # Do not change the subscription context if the operation is validate.
         # This is because the script will expect the validation resource 
@@ -149,7 +152,8 @@ Function New-Deployment {
            [Guid]::TryParse($subscriptionInformation.SubscriptionId, [ref]$subscriptionCheck) -and `
            [Guid]::TryParse($subscriptionInformation.TenantId, [ref]$tenantIdCheck) -and `
            $subscriptionCheck -ne [Guid]::Empty -and `
-           $tenantIdCheck -ne [Guid]::Empty) {
+           $tenantIdCheck -ne [Guid]::Empty -and
+           $subscriptionCheck -ne $sub.Subscription.Id) {
             Write-Debug "Setting subscription context";
 
             Set-SubscriptionContext `
