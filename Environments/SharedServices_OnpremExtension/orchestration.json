@@ -232,25 +232,6 @@
             }
         },
         {
-            "Name": "EnableDnsServersOnVirtualNetwork",
-            "ModuleDefinitionName": "VirtualNetwork",
-            "Updates": "VirtualNetwork",
-            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
-            "DependsOn": [
-                "InstallActiveDirectoryDomainServices",
-                "ActiveDirectoryDomainServicesVMs",
-                "EncryptActiveDirectoryDomainServices",
-                "VirtualNetwork"
-            ],
-            "Deployment": {
-                "OverrideParameters": {
-                    "dnsServers": {
-                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.DnsServers}"
-                    }
-                }
-            }
-        },
-        {
             "Name": "EnableServiceEndpointOnDiagnosticStorageAccount",
             "ModuleDefinitionName": "StorageAccounts",
             "Updates": "DiagnosticStorageAccount",
