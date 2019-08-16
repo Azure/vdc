@@ -410,7 +410,8 @@ Class ConfigurationBuilder {
         $matches = [regex]::Matches($fileContentString, $pathExtractionRegex, $options);
         $matches | ForEach-Object { 
             $match = $_.Groups[1].Value;
-            if(-not $fileFunctionExtracts.Contains($match)) {
+            if(-not $pathExtracts.Contains($match) `
+                -and $match -notlike '/subscription*') {
                 $pathExtracts += $match;
             }
         }
