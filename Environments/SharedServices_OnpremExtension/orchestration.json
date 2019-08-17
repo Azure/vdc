@@ -227,6 +227,9 @@
                     },
                     "enableVmProtection": {
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.EnableVmProtection}"
+                    },
+                    "dnsServers": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.DnsServers}"
                     }
                 }
             }
@@ -564,25 +567,6 @@
             }
         },
         {
-            "Name": "EnableDnsServersOnVirtualNetwork",
-            "ModuleDefinitionName": "VirtualNetwork",
-            "Updates": "VirtualNetwork",
-            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
-            "DependsOn": [
-                "VirtualNetwork",
-                "ActiveDirectoryDomainServicesVMs",
-                "EncryptActiveDirectoryDomainServices",
-                "InstallActiveDirectoryDomainServices"
-            ],
-            "Deployment": {
-                "OverrideParameters": {
-                    "dnsServers": {
-                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.DnsServers}"
-                    }
-                }
-            }
-        },
-        {
             "Name": "AzureBastion",
             "ModuleDefinitionName": "AzureBastion",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AzureBastion.ResourceGroup}",
@@ -611,7 +595,6 @@
                 "ActiveDirectoryDomainServicesVMs",
                 "EncryptActiveDirectoryDomainServices",
                 "InstallActiveDirectoryDomainServices",
-                "EnableDnsServersOnVirtualNetwork",
                 "KeyVault",
                 "ArtifactsStorageAccount"
             ],
@@ -691,7 +674,6 @@
                 "VirtualNetwork",
                 "DiagnosticStorageAccount",
                 "LogAnalytics",
-                "EnableDnsServersOnVirtualNetwork",
                 "KeyVault",
                 "ArtifactsStorageAccount",
                 "ActiveDirectoryDomainServicesVMs",
@@ -728,7 +710,6 @@
                 "VirtualNetwork",
                 "DiagnosticStorageAccount",
                 "LogAnalytics",
-                "EnableDnsServersOnVirtualNetwork",
                 "KeyVault",
                 "ArtifactsStorageAccount",
                 "ActiveDirectoryDomainServicesVMs",
@@ -811,7 +792,6 @@
                 "VirtualNetwork",
                 "DiagnosticStorageAccount",
                 "LogAnalytics",
-                "EnableDnsServersOnVirtualNetwork",
                 "KeyVault",
                 "ArtifactsStorageAccount",
                 "LinuxJumpbox",
