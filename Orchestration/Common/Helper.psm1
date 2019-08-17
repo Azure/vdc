@@ -373,8 +373,8 @@ Function Start-ExponentialBackoff () {
         [Parameter(Mandatory)]
         #[ValidateScript({ $_.Ast.ParamBlock.Parameters.Count -eq 1 })]
         [Scriptblock] $Expression,
-        [Parameter(Mandatory)]
-        [Object[]] $Arguments,
+        [Parameter(Mandatory=$false)]
+        [Object[]] $Arguments = @(),
         [Parameter(Mandatory=$false)]
         [int] $MaxRetries = 3
     )
