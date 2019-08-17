@@ -421,7 +421,7 @@ Function New-Deployment {
     catch {
         Write-Host "An error ocurred while running New-Deployment";
         $errorMessage = `
-            $(Get-Exeption -ErrorObject $_);
+            $(Get-Exception -ErrorObject $_);
         Write-Host $errorMessage;
         throw $errorMessage;
     }

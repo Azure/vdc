@@ -829,7 +829,7 @@
             }
         },
         "ActiveDirectoryDomainServices": {
-            "Name": "adds-vm",
+            "Name": "adds-vms",
             "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
             "Comments": "Windows VM name cannot exceed 13 characters. Additionally, Make sure that AddsIPAddressStart and ActiveDirectory.PrimaryDomainControllerIP are in the same subnet address prefix and they don't overlap",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",

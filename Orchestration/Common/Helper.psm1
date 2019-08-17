@@ -392,12 +392,12 @@ Function Start-ExponentialBackoff () {
             Start-Sleep -Seconds ($i * 60);
             $MaxRetries--;
             if($MaxRetries -eq 0) {
-                $innerException = Get-Exeption -ErrorObject $_;
+                $innerException = Get-Exception -ErrorObject $_;
             }
         }
         catch {
             Throw `
-                $(Get-Exeption -ErrorObject $_);
+                $(Get-Exception -ErrorObject $_);
         }
     }
 

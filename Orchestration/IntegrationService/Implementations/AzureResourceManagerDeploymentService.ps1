@@ -48,7 +48,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
             return $resourceState;
         }
         catch {
-            throw $(Get-Exeption -ErrorObject $_);
+            throw $(Get-Exception -ErrorObject $_);
         }
     }
 
@@ -97,7 +97,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
             }
         }
         catch {
-            throw $(Get-Exeption -ErrorObject $_);
+            throw $(Get-Exception -ErrorObject $_);
         }
     }
  
