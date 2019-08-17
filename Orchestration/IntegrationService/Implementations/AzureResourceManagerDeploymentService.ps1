@@ -223,8 +223,7 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                 # For deploy operation, the error is due malformed or incorrect inputs
                 if($operation -eq "deploy") {
                     Write-Host "An Exception Occurred While Invoking the Deployment. Please see the error below:";
-                    Write-Host $_.ErrorDetails.Message;
-                    throw $_.ErrorDetails.Message;
+                    throw $(Get-Exception $_);
                 }
                 # For validate operation, the error is due to validation failure
                 else {
