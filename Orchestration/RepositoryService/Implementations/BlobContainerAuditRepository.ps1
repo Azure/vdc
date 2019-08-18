@@ -57,7 +57,7 @@ Class BlobContainerAuditRepository: IAuditRepository {
         $temporalFileName = [Guid]::NewGuid();
         $temporalFilePath = `
             Join-Path $this.temporalRootPath "$temporalFileName.json"
-        Write-Host "TemporalFilePath is: $temporalFilePath";
+        Write-Debug "TemporalFilePath is: $temporalFilePath";
         try {
 
              # Let's create the file contents temporally
@@ -121,7 +121,7 @@ Class BlobContainerAuditRepository: IAuditRepository {
                 $this.mappingsBlobContainerName, 
                 $blobName);
 
-            Write-Host "Container name: $($this.mappingsBlobContainerName) and blob name: $blobName";
+            Write-Debug "Container name: $($this.mappingsBlobContainerName) and blob name: $blobName";
             
             # Set the initial value equals to the 
             # mappingsContent from above, this allows
@@ -287,7 +287,7 @@ Class BlobContainerAuditRepository: IAuditRepository {
         $temporalFileName = [Guid]::NewGuid();
         $temporalFilePath = `
             Join-Path $this.temporalRootPath "$temporalFileName.json";
-        Write-Host "Temporal File Path is $temporalFilePath";
+        Write-Debug "Temporal File Path is $temporalFilePath";
         
         try {
             $blobFound = Get-AzStorageBlobContent `
@@ -298,14 +298,14 @@ Class BlobContainerAuditRepository: IAuditRepository {
                 -ErrorAction SilentlyContinue;
             
             if ($blobFound -eq $null) {
-                Write-Host "Blob not found";
+                Write-Debug "Blob not found. Blob: $blob, Container: $container";
                 return "";
             }
             else {
                 $contentJson = `
                     Get-Content $temporalFilePath `
                         -Raw;
-                Write-Host "Content Json is $contentJson";
+                Write-Debug "Content Json is $contentJson";
                 return $contentJson;
             }
         }

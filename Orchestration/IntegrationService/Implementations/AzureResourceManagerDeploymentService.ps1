@@ -548,10 +548,13 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         # Adding comma in between array items
         $formattedResourceIds = $allResourceIds -join ",";
         
+        Write-Debug "Query to execute is: where id in ($formattedResourceIds)";
+        
         $resourceStates = `
                 Start-ExponentialBackoff `
                     -Expression { Search-AzGraph -Query "where id in ($formattedResourceIds)"; }
-       
+        
+        Write-Debug "Resource states from Resource Graph: $(ConvertTo-Json $resourceStates -Depth 10)"
         $dataToReturn.ResourceStates = $resourceStates;
        
         # Let's retrieve deployment outputs

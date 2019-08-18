@@ -127,7 +127,7 @@ Class BlobContainerStateRepository: IStateRepository {
             $blobExists = $this.BlobExists(
                 $this.mappingsBlobContainerName, 
                 $blobName);
-            Write-Host "Container name: $($this.mappingsBlobContainerName) and blob name: $blobName";
+            Write-Debug "Container name: $($this.mappingsBlobContainerName) and blob name: $blobName";
             # Set the initial value equals to the 
             # mappingsContent from above, this allows
             # us to save the initial contents when a 
@@ -228,7 +228,7 @@ Class BlobContainerStateRepository: IStateRepository {
                     $this.stateBlobContainerName, 
                     $blobName);
                 
-                Write-Host "Blob container: $($this.stateBlobContainerName), Blob Name: $blobName";
+                Write-Debug "Blob container: $($this.stateBlobContainerName), Blob Name: $blobName";
             
                 # A non-empty value indicates that a blob exists
                 if (![string]::IsNullOrEmpty($blobFound)) {
@@ -270,12 +270,12 @@ Class BlobContainerStateRepository: IStateRepository {
                     $filters[0];
                 $moduleInstanceName = `
                     $filters[1];
-                Write-Host "archetypeInstanceName: $archetypeInstanceName, moduleInstanceName: $moduleInstanceName";
+                Write-Debug "archetypeInstanceName: $archetypeInstanceName, moduleInstanceName: $moduleInstanceName";
                 
                 $blobName = $this.mappingsBlobPath -F `
                     $archetypeInstanceName;
                 
-                Write-Host "Blob container: $($this.mappingsBlobContainerName), Blob Name: $blobName";
+                Write-Debug "Blob container: $($this.mappingsBlobContainerName), Blob Name: $blobName";
             
                 # Let's check if the blob exists, if it does,
                 # this function will return the blob contents

@@ -83,7 +83,7 @@ Class ModuleStateDataService: IModuleStateDataService {
             
             # If deploymentMapping is null, it means that there is no mapping found
             if (!$deploymentMapping) {
-                Write-Host "No state information found";
+                Write-Debug "No state information found";
                 return $null;
             }
             else {
@@ -92,7 +92,7 @@ Class ModuleStateDataService: IModuleStateDataService {
                         $deploymentMapping.DeploymentName,
                         $deploymentMapping.StateId
                     );
-                Write-Host "Filters: $(ConvertTo-Json $filters)";
+                Write-Debug "Filters: $(ConvertTo-Json $filters)";
                 $resourceState = `
                     $this.stateRepository.GetResourceStateByFilters($filters);
 

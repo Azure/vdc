@@ -265,10 +265,9 @@
             ]
         },
         {
-            "name": "[concat('nestedDeploymentUM-Win',variables('tagPatching')[copyindex()].name)]",
-            "type": "Microsoft.Resources/deployments",
-            "comments": "Using nested deployment because a nested resource cannot have a copy function",
-            "apiVersion": "2017-05-10",
+            "name": "[concat(parameters('automationAccountName'), '/windows-um-',subscription().displayName,'-',variables('tagPatching')[copyindex()].name)]",
+            "type": "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations",
+            "apiVersion": "2017-05-15-preview",
             "copy": {
                 "count": "[length(variables('tagPatching'))]",
                 "name": "patchingWinTagLoop"
@@ -277,108 +276,74 @@
                 "[parameters('automationAccountName')]"
             ],
             "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "name": "[concat(parameters('automationAccountName'), '/windows-um-',subscription().displayName,'-',variables('tagPatching')[copyindex()].name)]",
-                            "type": "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations",
-                            "apiVersion": "2017-05-15-preview",
-                            "properties": {
-                                "updateConfiguration": {
-                                    "operatingSystem": "Windows",
-                                    "windows": {
-                                        "includedUpdateClassifications": "Unclassified, Critical, Security, UpdateRollup, FeaturePack, ServicePack, Definition, Tools, Updates",
-                                        "rebootSetting": "Always"
-                                    },
-                                    "duration": "PT3H",
-                                    "targets": {
-                                        "azureQueries": [
-                                            {
-                                                "scope": [
-                                                    "[subscription().id]"
-                                                ],
-                                                "locations": [],
-                                                "tagSettings": {
-                                                    "tags": {
-                                                        "UpdateManagement": [
-                                                            "[variables('tagPatching')[copyindex()].name]"
-                                                        ]
-                                                    },
-                                                    "filterOperator": "Any"
-                                                }
-                                            }
+                "updateConfiguration": {
+                    "operatingSystem": "Windows",
+                    "windows": {
+                        "includedUpdateClassifications": "Unclassified, Critical, Security, UpdateRollup, FeaturePack, ServicePack, Definition, Tools, Updates",
+                        "rebootSetting": "Always"
+                    },
+                    "duration": "PT3H",
+                    "targets": {
+                        "azureQueries": [
+                            {
+                                "scope": [
+                                    "[subscription().id]"
+                                ],
+                                "locations": [],
+                                "tagSettings": {
+                                    "tags": {
+                                        "UpdateManagement": [
+                                            "[variables('tagPatching')[copyindex()].name]"
                                         ]
-                                    }
-                                },
-                                "scheduleInfo": "[variables('tagPatching')[copyindex()].schedule]"
+                                    },
+                                    "filterOperator": "Any"
+                                }
                             }
-                        }
-                    ]
-                }
+                        ]
+                    }
+                },
+                "scheduleInfo": "[variables('tagPatching')[copyindex()].schedule]"
             }
         },
         {
-            "name": "[concat('nestedDeploymentUM-Linux',variables('tagPatching')[copyindex()].name)]",
-            "type": "Microsoft.Resources/deployments",
-            "comments": "Using nested deployment because a nested resource cannot have a copy function",
-            "apiVersion": "2017-05-10",
+            "name": "[concat(parameters('automationAccountName'), '/linux-um-',subscription().displayName,'-',variables('tagPatching')[copyindex()].name)]",
+            "type": "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations",
+            "apiVersion": "2017-05-15-preview",
             "copy": {
                 "count": "[length(variables('tagPatching'))]",
                 "name": "patchingLinuxTagLoop"
             },
             "dependsOn": [
-                "[parameters('automationAccountName')]",
                 "patchingWinTagLoop"
             ],
             "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "name": "[concat(parameters('automationAccountName'), '/linux-um-',subscription().displayName,'-',variables('tagPatching')[copyindex()].name)]",
-                            "type": "Microsoft.Automation/automationAccounts/softwareUpdateConfigurations",
-                            "apiVersion": "2017-05-15-preview",
-                            "properties": {
-                                "updateConfiguration": {
-                                    "operatingSystem": "Linux",
-                                    "linux": {
-                                        "includedPackageClassifications": "Unclassified, Critical, Security, Other",
-                                        "rebootSetting": "Always"
-                                    },
-                                    "duration": "PT3H",
-                                    "targets": {
-                                        "azureQueries": [
-                                            {
-                                                "scope": [
-                                                    "[subscription().id]"
-                                                ],
-                                                "locations": [],
-                                                "tagSettings": {
-                                                    "tags": {
-                                                        "UpdateManagement": [
-                                                            "[variables('tagPatching')[copyindex()].name]"
-                                                        ]
-                                                    },
-                                                    "filterOperator": "Any"
-                                                }
-                                            }
+                "updateConfiguration": {
+                    "operatingSystem": "Linux",
+                    "linux": {
+                        "includedPackageClassifications": "Unclassified, Critical, Security, Other",
+                        "rebootSetting": "Always"
+                    },
+                    "duration": "PT3H",
+                    "targets": {
+                        "azureQueries": [
+                            {
+                                "scope": [
+                                    "[subscription().id]"
+                                ],
+                                "locations": [],
+                                "tagSettings": {
+                                    "tags": {
+                                        "UpdateManagement": [
+                                            "[variables('tagPatching')[copyindex()].name]"
                                         ]
-                                    }
-                                },
-                                "scheduleInfo": "[variables('tagPatching')[copyindex()].schedule]"
+                                    },
+                                    "filterOperator": "Any"
+                                }
                             }
-                        }
-                    ]
-                }
+                        ]
+                    }
+                },
+                "scheduleInfo": "[variables('tagPatching')[copyindex()].schedule]"
             }
         }
     ],

@@ -356,12 +356,12 @@ Function Get-Exception {
     elseif($errorObject -is [System.Management.Automation.ErrorRecord] `
         -and $null -ne $errorObject.Exception) {
             return `
-                GetException $errorObject.Exception;
+                Get-Exception $errorObject.Exception;
     }
     elseif($errorObject -is [System.Exception] `
         -and $null -ne $errorObject.ErrorRecord) {
             return `
-                GetException $errorObject.ErrorRecord;
+                Get-Exception $errorObject.ErrorRecord;
     }
     else {
         return $errorObject.Message;
