@@ -135,9 +135,12 @@ Class Initialize {
             if ([string]::IsNullOrEmpty($cachedStorageAccountDetails) -or 
                 !$validJson) {
                 Write-Debug "No valid JSON found, running Storage Account bootstrap";
+                
+                # Setting context in order to create / verify the toolkit
+                # resource group and storage account resource
                 Set-AzContext `
                     -Tenant $this.dataStoreTenantId `
-                    -Subscription $this.dataStoreSubscriptionId
+                    -Subscription $this.dataStoreSubscriptionId;
 
                 $storageResourceGroup = Get-AzResourceGroup `
                     -Name $this.dataStoreResourceGroupName `
@@ -217,6 +220,15 @@ Class Initialize {
                 # if it does, let's get a new sas token
                 if($storageAccountDetails.ExpiryTime -le `
                    ((Get-Date) - $oneHourDuration)) {
+                    
+                    # Setting AZ context to be able to retrieve the proper
+                    # SAS token, there are situations where the toolkit
+                    # subscription is different than the one from the
+                    # archetype deployment 
+                    Set-AzContext `
+                        -Tenant $this.dataStoreTenantId `
+                        -Subscription $this.dataStoreSubscriptionId;
+                    
                     $sasToken = `
                         $this.GetSASToken(
                             $this.dataStoreName,
@@ -262,6 +274,7 @@ Class Initialize {
         [string] $storageAccountName,
         [string] $storageAccountResourceGroup) {
         try {
+
             $storageAccountAccessKey = $null;
 
             $storageAccountAccessKeys = `
