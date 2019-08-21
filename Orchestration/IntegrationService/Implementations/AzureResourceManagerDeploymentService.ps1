@@ -466,7 +466,8 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                 # Iterate until you find an object that does not contain details property of type array.
                 # If not found, try to parse the message into a Json.
                 # If you cannot parse the message into a Json, that is the innermost exception we are looking for.
-                if($message.PSObject.Properties.Name -match "details"){
+                if($message.PSObject.Properties.Name -match "details" -and `
+                   $message.details.Count -gt 0){
                     $message = $message.details[0];
                 }
                 elseif($message.PSObject.Properties.Name -match "error"){
