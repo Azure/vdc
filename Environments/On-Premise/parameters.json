@@ -1,0 +1,234 @@
+{
+    "Organization": "file(../_Common/organizationName.txt)",
+    "DeploymentName": "onprem",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "OnPremises",
+    "Location": "West US 2",
+    "TenantId": "${Subscriptions.OnPremises.TenantId}",
+    "ModuleConfigurationParameters": {
+        "DeploymentUserId": "env(Deployment_User_Id)",
+        "DeploymentAppId": "env(Deployment_App_Id)",
+        "SharedServices": {
+            "DeploymentName": "shrdsvcs"
+        },
+        "DiagnosticStorageAccount": {
+            "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.Location}",
+            "Sku": "Standard_GRS",
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.Network.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            },
+            "Policies": {
+                "Effect": "Audit"
+            }
+        },
+        "LogAnalytics": {
+            "Name": "${Parameters.InstanceName}-la",
+            "Comments": "Log Analytics and Diagnostic Storage Account must be deployed in the same region",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Location}",
+            "ListOfAllowedRegions": [
+                "Australia Central",
+                "Australia East",
+                "Australia Southeast",
+                "Canada Central",
+                "Central India",
+                "Central US",
+                "East Asia",
+                "East US",
+                "East US 2",
+                "France Central",
+                "Japan East",
+                "Korea Central",
+                "North Europe",
+                "South Central US",
+                "Southeast Asia",
+                "UK South",
+                "West Europe",
+                "West US",
+                "West US 2"
+            ]
+        },
+        "KeyVault": {
+            "Name": "${Parameters.InstanceName}-kv",
+            "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
+            "Sku": "Premium",
+            "EnableVaultForDeployment": true,
+            "EnableVaultForDiskEncryption": true,
+            "EnableVaultForTemplateDeployment": true,
+            "AccessPolicies": [
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                },
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                }
+            ],
+            "SecretsObject": {
+                "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
+                "Secrets": [
+                    {
+                        "secretName": "DomainAdminPassword",
+                        "secretValue": "P@ssword2019$123"
+                    }
+                ]
+            },
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.Network.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
+        "ArtifactsStorageAccount": "file(../_Common/artifactsStorageAccount.json)",
+        "ActiveDirectory": {
+            "Name": "primary-ad",
+            "VMSize": "Standard_DS3_v2",
+            "OSImage": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            },
+            "OSType": "Windows",
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.Network.Subnets[0].name}",
+            "ResourceGroup": "${Parameters.InstanceName}-ad-rg",
+            "ADSitename": "Cloud-Site",
+            "CloudZone": "contosocloud.com",
+            "DomainAdminUsername": "contoso",
+            "DomainAdminPassword": {
+                "keyVault": {
+                    "id": "reference(KeyVault.keyVaultResourceId)"
+                },
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
+            },
+            "DomainName": "contoso.com",
+            "PrimaryDomainControllerIP": "192.168.1.4"
+        },
+        "ApplicationSecurityGroups": {
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.Network.ResourceGroup}",
+            "DomainController": {
+                "Name": "dc-asg"
+            }
+        },
+        "Network": {
+            "Name": "${Parameters.InstanceName}-vnet",
+            "ResourceGroup": "${Parameters.InstanceName}-network-rg",
+            "AddressPrefix": [ "192.168.1.0/27" ],
+            "VirtualGateway": {
+                "Name": "${Parameters.InstanceName}-vgw",
+                "GatewayType": "vpn",
+                "GatewaySku": "VpnGw1",
+                "VpnType": "RouteBased",
+                "VpnClientConfiguration": {
+                    "VpnClientRootCertificateData": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "reference(KeyVault.keyVaultResourceId)"
+                            },
+                            "secretName": "CACert"
+                        }
+                    },
+                    "VpnClientRevokedCertificateThumbprint": ""
+                }
+            },
+            "ApplicationSecurityGroups": [],
+            "NetworkSecurityGroups": [
+                {
+                    "Name": "default",
+                    "Rules": [
+                        {
+                            "name": "allow-rdp",
+                            "properties": {
+                                "access": "Allow",
+                                "destinationAddressPrefixes": [],
+                                "destinationPortRange": "3389",
+                                "destinationPortRanges": [],
+                                "destinationAddressPrefix": "VirtualNetwork",
+                                "direction": "Inbound",
+                                "priority": 100,
+                                "protocol": "*",
+                                "sourcePortRange": "*",
+                                "sourcePortRanges": [],
+                                "sourceAddressPrefix": "VirtualNetwork",
+                                "destinationApplicationSecurityGroups": [],
+                                "sourceApplicationSecurityGroups": []
+                            }
+                        }
+                    ]
+                }
+            ],
+            "UserDefinedRoutes": [],
+            "Subnets": [
+                {
+                    "name": "default",
+                    "addressPrefix": "192.168.1.0/28",
+                    "networkSecurityGroupName": "default",
+                    "routeTableName": "",
+                    "serviceEndpoints": [
+                        {
+                            "service": "Microsoft.EventHub"
+                        },
+                        {
+                            "service": "Microsoft.Sql"
+                        },
+                        {
+                            "service": "Microsoft.Storage"
+                        },
+                        {
+                            "service": "Microsoft.KeyVault"
+                        }
+                    ]
+                },
+                {
+                    "name": "GatewaySubnet",
+                    "addressPrefix": "192.168.1.16/28",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": ""
+                }
+            ],
+            "EnableDdosProtection": true,
+            "EnableVmProtection": false,
+            "DnsServers": [
+                "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",
+                "168.63.129.16"
+            ]
+        }
+    }
+}

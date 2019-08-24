@@ -16,7 +16,7 @@
             }
         },
         "virtualMachineOSType": {
-            "value": "Linux"
+            "value": "Windows"
         },
         "workspaceId": {
             "value": "00000000-0000-0000-0000-000000000000"
@@ -54,7 +54,7 @@
         "adminUsername": {
             "value": "contoso"
         },
-        "sshPublicKey": {
+        "adminPassword": {
             "value": "password"
         }
     }

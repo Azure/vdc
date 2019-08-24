@@ -192,8 +192,8 @@ Class CustomScriptExecution {
         # there is no way to verify the order in bash.
         # We are only converting the hashtable to an 
         # array
-        $arguments.Keys | ForEach-Object {
-            $argumentName = $_;
+        $arguments.GetEnumerator() | Sort-Object -Property Name | Select-Object -Property Name | ForEach-Object {
+            $argumentName = $_.Name;
             $orderedArguments += $arguments[$argumentName];
         }
 

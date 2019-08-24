@@ -402,7 +402,7 @@ Class ConfigurationBuilder {
         # "TemplatePath": "modules/2.0/deploy.json",
         # "TemplatePath": "modules.json",
         # TODO: Include the above two cases
-        $pathExtractionRegex = "[`"\']([\.\/]+.*[.]?)[`"\']";
+        $pathExtractionRegex = "[`"\']([\.\/]+.*?[.]?)[`"\']";
 
         # Check if the path matches the regex pattern specified,
         # extract and return the path

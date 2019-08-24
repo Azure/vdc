@@ -45,13 +45,62 @@
             "metadata": {
                 "description": "Optional. ASN value"
             }
+        },
+        "vpnClientAddressPoolPrefix": {
+            "type": "string",
+            "metadata": {
+              "description": "The IP address range from which VPN clients will receive an IP address when connected. Range specified must not overlap with on-premise network."
+            }
+        },
+        "clientRootCertData": {
+            "type": "string",
+            "metadata": {
+              "description": "Client root certificate data used to authenticate VPN clients."
+            }
+        },
+        "clientRevokedCertThumbprint": {
+            "type": "string",
+            "metadata": {
+              "description": "Thumbprint of the revoked certificate. This would revoke VPN client certificates matching this thumbprint from connecting to the VNet."
+            }
+        },
+        "enablePip": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Optional. Value to specify if BGP is enabled or not"
+            }
         }
     },
     "variables": {
         "gatewayPipName": "[concat(parameters('virtualNetworkGatewayName'), '-pip')]",
         "gatewayPipResourceName": "[concat('Microsoft.Network/publicIpAddresses/',variables('gatewayPipName'))]",
         "gatewaySubnetId": "[concat(parameters('vNetId'), '/subnets/GatewaySubnet')]",
-        "gatewayPipId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('gatewayPipName'))]"
+        "gatewayPipId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('gatewayPipName'))]",
+        "gatewayPip": {
+            "id": "[variables('gatewayPipId')]"
+        },
+        "vpnClientRootCertificates": [{
+            "name": "RootCert1",
+            "properties": {
+                "PublicCertData": "[parameters('clientRootCertData')]"
+            }
+        }],
+        "vpmClientRevokedCertificates": [{
+            "name": "RevokedCert1",
+            "properties": {
+                "Thumbprint": "[parameters('clientRevokedCertThumbprint')]"
+            }
+        }],
+        "vpnClientConfiguration": {
+            "vpnClientAddressPool": {
+              "addressPrefixes": [
+                "[parameters('vpnClientAddressPoolPrefix')]"
+              ]
+            },
+            "vpnClientRootCertificates": "[if(empty(parameters('clientRootCertData')), json('null'), variables('vpnClientRootCertificates'))]",
+            "vpnClientRevokedCertificates": "[if(empty(parameters('clientRevokedCertThumbprint')), json('null'), variables('vpmClientRevokedCertificates'))]"
+        }
     },
     "resources": [
         {
@@ -80,9 +129,7 @@
                             "subnet": {
                                 "id": "[variables('gatewaySubnetId')]"
                             },
-                            "publicIPAddress": {
-                                "id": "[variables('gatewayPipId')]"
-                            }
+                            "publicIPAddress": "[variables('gatewayPip')]"
                         },
                         "name": "vNetGatewayConfig"
                     }
@@ -96,7 +143,8 @@
                     "tier": "[parameters('virtualNetworkGatewaySku')]"
                 },
                 "gatewayType": "[parameters('virtualNetworkGatewayType')]",
-                "vpnType": "[parameters('vpnType')]"
+                "vpnType": "[parameters('vpnType')]",
+                "vpnClientConfiguration": "[if(empty(parameters('vpnClientAddressPoolPrefix')), json('null'), variables('vpnClientConfiguration'))]"
             }
         }
     ],

@@ -64,9 +64,9 @@
         {
             "type": "shell",
             "inline": [
-                "pwsh -Command \"Save-Module -Name Az -LiteralPath /opt/microsoft/powershell/6/Modules/az_1.6.0 -RequiredVersion 1.6.0 -Force\" ",
-                "pwsh -Command \"Save-Module -Name Pester -LiteralPath /opt/microsoft/powershell/6/Modules/pester -RequiredVersion 4.3.1 -Force\" ",
-                "pwsh -Command \"Save-Module -Name Az.ResourceGraph -LiteralPath /opt/microsoft/powershell/6/Modules/az_resourcegraph_0.7.3 -RequiredVersion 0.7.3 -Force\" "
+                "pwsh -Command \"Save-Module -Name Az -LiteralPath /opt/microsoft/powershell/6/Modules -RequiredVersion 1.6.0 -Force\" ",
+                "pwsh -Command \"Save-Module -Name Pester -LiteralPath /opt/microsoft/powershell/6/Modules -RequiredVersion 4.3.1 -Force\" ",
+                "pwsh -Command \"Save-Module -Name Az.ResourceGraph -LiteralPath /opt/microsoft/powershell/6/Modules -RequiredVersion 0.7.3 -Force\" "
             ],
             "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'"
         },

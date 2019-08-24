@@ -378,7 +378,7 @@
                         {
                             "name": "dataDisks",
                             "count": "[length(parameters('virtualMachineDataDisks'))]",
-                            "input": 
+                            "input":
                             {
                                 "lun": "[copyIndex('dataDisks')]",
                                 "name": "[replace(toLower(substring(concat(parameters('virtualMachineName'), copyIndex('vmLoop', parameters('virtualMachineOffset')), '-dsk', copyindex('dataDisks', parameters('virtualMachineOffset')), '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]",
@@ -1800,7 +1800,6 @@
                 }
             ]
         },
-
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset')), '/', variables('DSCExtensionName'))]",

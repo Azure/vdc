@@ -16,6 +16,15 @@
         },
         "vNetId": {
             "value": "subscriptions/0000000000/resourceGroups/resourceGroup"
+        },
+        "vpnClientAddressPoolPrefix": {
+            "value": "10.10.8.0/24"
+        },
+        "clientRootCertData": {
+            "value": "certData"
+        },
+        "clientRevokedCertThumbprint": {
+            "value": "thumbprint"
         }
     }
 }
