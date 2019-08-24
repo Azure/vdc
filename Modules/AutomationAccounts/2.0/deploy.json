@@ -28,7 +28,8 @@
                 "UK South",
                 "West Central US",
                 "West Europe",
-                "West US 2"
+                "West US 2",
+                "West US"
             ],
             "metadata": {
                 "description": "Required. Specifies the region for your Automation Account"

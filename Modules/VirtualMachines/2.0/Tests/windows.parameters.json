@@ -3,59 +3,74 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualMachineName": {
-            "value": "adds"
-        },
-        "virtualMachineSize": {
-            "value": "Standard_DS2_v2"
-        },
-        "virtualMachineOSImage": {
-            "value": {
-                "offer": "WindowsServer",
-                "publisher": "MicrosoftWindowsServer",
-                "sku": "2016-Datacenter"
-            }
-        },
-        "virtualMachineOSType": {
-            "value": "Windows"
-        },
-        "workspaceId": {
-            "value": "00000000-0000-0000-0000-000000000000"
-        },
-        "logAnalyticsWorkspaceId": {
-            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.OperationalInsights/workspaces/contoso-example"
+            "value": "joined"
         },
         "logAnalyticsWorkspacePrimarySharedKey": {
             "value": ""
         },
-        "diagnosticsStorageAccountId": {
-            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Storage/storageAccounts/contosostrgexmpl"
+        "workspaceId": {
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "domainName": {
+            "value": "fontoso.com"
+        },
+        "virtualMachineOSType": {
+            "value": "Windows"
+        },
+        "logAnalyticsWorkspaceId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cntsrg/providers/Microsoft.OperationalInsights/workspaces/shrdsvcs-la"
+        },
+        "adminUsername": {
+            "value": "admin-user"
+        },
+        "virtualMachineOSImage": {
+            "value": {
+                "sku": "2016-Datacenter",
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer"
+            }
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/shrdsvcs-network-rg/providers/Microsoft.Network/virtualNetworks/shrdsvcs-vnet"
         },
         "diagnosticsStorageAccountName": {
-            "value": "contoso-diag-storage"
-        },
-        "diagnosticsStorageAccountSasToken": {
-            "value": ""
-        },
-        "artifactsStorageAccountName": {
-            "value": "vdcstorage"
+            "value": "shrdsvcsdiag01"
         },
         "artifactsStorageAccountKey": {
             "value": ""
         },
+        "artifactsStorageAccountName": {
+            "value": "cstmartfcts01"
+        },
         "artifactsStorageAccountSasKey": {
             "value": ""
         },
-        "vNetId": {
-            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Network/virtualNetworks/contoso-vnet-example"
+        "applicationSecurityGroupId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/shrdsvcs-network-rg/providers/Microsoft.Network/applicationSecurityGroups/jumpbox-asg"
+        },
+        "domainAdminPassword": {
+            "value": "foo"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "diagnosticsStorageAccountSasToken": {
+            "value": ""
         },
         "subnetName": {
-            "value": "sharedsvcs"
+            "value": "shrdsvcs"
         },
-        "adminUsername": {
-            "value": "contoso"
+        "domainAdminUsername": {
+            "value": "fontoso"
+        },
+        "virtualMachineCount": {
+            "value": 1
+        },
+        "diagnosticsStorageAccountId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/shrdsvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/shrdsvcsdiag01"
         },
         "adminPassword": {
-            "value": "password"
+            "value": "foo"
         }
     }
 }

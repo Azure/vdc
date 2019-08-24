@@ -1,0 +1,414 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 13,
+            "metadata": {
+                "description": "Required. Name for the VMs"
+            }
+        },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Optional. Number of VMs to create"
+            }
+        },
+        "virtualMachineOffset": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Optional. This value will be used as start VM count. Specify a value if you want to create VMs starting at a specific number, this is useful when you want to append more VMs."
+            }
+        },
+        "adminUsername": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Administrator username"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. When specifying a Windows Virtual Machine, this value should be passed"
+            }
+        },
+        "clusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. SQL Server AlwaysOn Cluster name"
+            }
+        },
+        "artifactsStorageAccountName": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "artifactsStorageAccountKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Default storage account Key. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "artifactsStorageAccountSasKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Shared Access Signature Key used to download custom scripts"
+            }
+        },
+        "cloudWitnessStorageAccountName": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "cloudWitnessStorageAccountKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Default storage account Key. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "sqlServerILB_IPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. SQL Server Internal Load Balancer IP Address"
+            }
+        },
+        "domainName": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. AD domain name. If joinToDomain is set to true, this value becomes required."
+            }
+        },
+        "domainAdminUsername": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Domain user that has privileges to join a VM into a Domain. If joinToDomain is set to true, this value becomes required."
+            }
+        },
+        "domainAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Domain user that has privileges to join a VM into a Domain. If joinToDomain is set to true, this value becomes required."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Optional. Location for all resources."
+            }
+        }
+    },
+    "variables": {
+        "DSCExtensionName": "DSCExtension",
+        "PwshExtensionName": "PwshExtension",
+        "artifactsStorageAccountSasToken": "[concat('?', parameters('artifactsStorageAccountSasKey'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-03-30",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset')))]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "vmInstallDSCModulesLoop",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[variables('PwshExtensionName')]",
+                    "apiVersion": "2017-03-30",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset'))))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.8",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/PrepareSQLServer_Install_Modules.ps1')]"
+                            ]
+                        },
+                        "protectedSettings": {
+                            "storageAccountName": "[parameters('artifactsStorageAccountName')]",
+                            "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
+                            "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File ./windows/PrepareSQLServer_Install_Modules.ps1"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "vm1NestedDeploymentSetupSQL",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "vmInstallDSCModulesLoop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(parameters('virtualMachineName'), '1')]",
+                            "location": "[parameters('location')]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "[variables('DSCExtensionName')]",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[parameters('location')]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), '1'))]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Powershell",
+                                        "type": "DSC",
+                                        "typeHandlerVersion": "2.7",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "configuration": {
+                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/windows/PrepareSQLServer.ps1.zip')]",
+                                                "script": "PrepareSqlServer.ps1",
+                                                "function": "SqlServerPrepareDsc"
+                                            },
+                                            "configurationArguments": {
+                                                "DomainName": "[parameters('domainName')]",
+                                                "ClusterName": "[parameters('clusterName')]",
+                                                "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
+                                                "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
+                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
+                                                "witnessStorageAccountKey": "[parameters('cloudWitnessStorageAccountKey')]"
+                                            }
+                                        },
+                                        "protectedSettings": {
+                                            "configurationUrlSasToken": "[variables('artifactsStorageAccountSasToken')]",
+                                            "configurationArguments": {
+                                                "AdminCreds": {
+                                                    "UserName": "[parameters('domainAdminUsername')]",
+                                                    "Password": "[parameters('domainAdminPassword')]"
+                                                },
+                                                "sqlServiceCreds": {
+                                                    "UserName": "[parameters('adminUsername')]",
+                                                    "Password": "[parameters('adminPassword')]"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "NestedDeploymentSleep",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "vm1NestedDeploymentSetupSQL"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(parameters('virtualMachineName'), '1')]",
+                            "location": "[parameters('location')]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "[variables('PwshExtensionName')]",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[parameters('location')]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), '1'))]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Compute",
+                                        "type": "CustomScriptExtension",
+                                        "typeHandlerVersion": "1.8",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "fileUris": [
+                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/sleep.ps1')]"
+                                            ]
+                                        },
+                                        "protectedSettings": {
+                                            "storageAccountName": "[parameters('artifactsStorageAccountName')]",
+                                            "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
+                                            "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File ./windows/sleep.ps1 -Sleep 600"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "vm2NestedDeploymentSetupSQL",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "NestedDeploymentSleep"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(parameters('virtualMachineName'), '2')]",
+                            "location": "[parameters('location')]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "[variables('DSCExtensionName')]",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[parameters('location')]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), '2'))]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Powershell",
+                                        "type": "DSC",
+                                        "typeHandlerVersion": "2.7",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "configuration": {
+                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/PrepareSQLServer.ps1.zip')]",
+                                                "script": "PrepareSqlServer.ps1",
+                                                "function": "SqlServerPrepareDsc"
+                                            },
+                                            "configurationArguments": {
+                                                "DomainName": "[parameters('domainName')]",
+                                                "ClusterName": "[parameters('clusterName')]",
+                                                "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
+                                                "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
+                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
+                                                "witnessStorageAccountKey": "[parameters('cloudWitnessStorageAccountKey')]"
+                                            }
+                                        },
+                                        "protectedSettings": {
+                                            "configurationUrlSasToken": "[variables('artifactsStorageAccountSasToken')]",
+                                            "configurationArguments": {
+                                                "AdminCreds": {
+                                                    "UserName": "[parameters('domainAdminUsername')]",
+                                                    "Password": "[parameters('domainAdminPassword')]"
+                                                },
+                                                "sqlServiceCreds": {
+                                                    "UserName": "[parameters('adminUsername')]",
+                                                    "Password": "[parameters('adminPassword')]"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "vm1NestedDeploymentSetupSQLAG",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "vm2NestedDeploymentSetupSQL"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-03-30",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "name": "[concat(parameters('virtualMachineName'), '1')]",
+                            "location": "[parameters('location')]",
+                            "resources": [
+                                {
+                                    "type": "extensions",
+                                    "name": "[variables('DSCExtensionName')]",
+                                    "apiVersion": "2017-03-30",
+                                    "location": "[parameters('location')]",
+                                    "dependsOn": [
+                                        "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), '1'))]"
+                                    ],
+                                    "properties": {
+                                        "publisher": "Microsoft.Powershell",
+                                        "type": "DSC",
+                                        "typeHandlerVersion": "2.7",
+                                        "autoUpgradeMinorVersion": true,
+                                        "settings": {
+                                            "configuration": {
+                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/CreateHADB.ps1.zip')]",
+                                                "script": "agdb.ps1",
+                                                "function": "SQLServerDBDsc"
+                                            },
+                                            "configurationArguments": {
+                                                "DomainName": "[parameters('domainName')]",
+                                                "ClusterName": "[parameters('clusterName')]",
+                                                "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
+                                                "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
+                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
+                                                "witnessStorageAccountKey": "[parameters('cloudWitnessStorageAccountKey')]"
+                                            }
+                                        },
+                                        "protectedSettings": {
+                                            "configurationUrlSasToken": "[variables('artifactsStorageAccountSasToken')]",
+                                            "configurationArguments": {
+                                                "AdminCreds": {
+                                                    "UserName": "[parameters('domainAdminUsername')]",
+                                                    "Password": "[parameters('domainAdminPassword')]"
+                                                },
+                                                "sqlServiceCreds": {
+                                                    "UserName": "[parameters('adminUsername')]",
+                                                    "Password": "[parameters('adminPassword')]"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "parameters": {}
+            }
+        }
+    ],
+    "outputs": {}
+}

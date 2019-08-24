@@ -1,0 +1,118 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineName": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 13,
+            "metadata": {
+                "description": "Optional. Name for the VMs. Required if virtualMachineScaleSetsName is empty"
+            }
+        },
+        "virtualMachineCount": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Optional. Number of VMs to create"
+            }
+        },
+        "virtualMachineOffset": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Optional. This value will be used as start VM count. Specify a value if you want to create VMs starting at a specific number, this is useful when you want to append more VMs."
+            }
+        },
+        "virtualMachineScaleSetsName": {
+            "type": "string",
+            "defaultValue": "",
+            "maxLength": 13,
+            "metadata": {
+                "description": "Optional. Name for VMSS. Required if virtualMachineName is empty"
+            }
+        },
+        "artifactsStorageAccountName": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Default storage account name. Storage account that contains output parameters and common scripts"
+            }
+        },
+        "artifactsStorageAccountSasKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Shared Access Signature Key used to download custom scripts"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Optional. Location for all resources."
+            }
+        }
+    },
+    "variables": {
+        "isVMSS": "[not(empty(parameters('virtualMachineScaleSetsName')))]",
+        "DSCExtensionName": "DSCExtension",
+        "artifactsStorageAccountSasToken": "[concat('?', parameters('artifactsStorageAccountSasKey'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualMachineName'), copyindex(parameters('virtualMachineOffset')), '/', variables('DSCExtensionName'))]",
+            "condition": "[not(variables('isVMSS'))]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "vmInstallIIS",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "configuration": {
+                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/iisaspnet.zip')]",
+                        "script": "iisaspnet.ps1",
+                        "function": "IISASPNET"
+                    }
+                },
+                "protectedSettings": {
+                    "configurationUrlSasToken": "[variables('artifactsStorageAccountSasToken')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
+            "apiVersion": "2019-03-01",
+            "name": "[concat(parameters('virtualMachineScaleSetsName'), '/', variables('DSCExtensionName'))]",
+            "condition": "[variables('isVMSS')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.9",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "configuration": {
+                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/iisaspnet.zip')]",
+                        "script": "iisaspnet.ps1",
+                        "function": "IISASPNET"
+                    }
+                },
+                "protectedSettings": {
+                    "configurationUrlSasToken": "[variables('artifactsStorageAccountSasToken')]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "IISResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        }
+    }
+}

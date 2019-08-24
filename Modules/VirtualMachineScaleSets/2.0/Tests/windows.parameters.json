@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineScaleSetsName": {
+            "value": "adds"
+        },
+        "virtualMachineScaleSetsSku": {
+            "value": { 
+                "name": "SKUName", 
+                "tier": "Standard", 
+                "capacity": 5 
+            }
+        },
+        "virtualMachineScaleSetsOSImage": {
+            "value": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            }
+        },
+        "virtualMachineScaleSetsOSType": {
+            "value": "Windows"
+        },
+        "workspaceId": {
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "logAnalyticsWorkspacePrimarySharedKey": {
+            "value": ""
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "contoso-diag-storage"
+        },
+        "diagnosticsStorageAccountSasToken": {
+            "value": ""
+        },
+        "artifactsStorageAccountName": {
+            "value": "contoso-diag-storage"
+        },
+        "artifactsStorageAccountSasKey": {
+            "value": ""
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Network/virtualNetworks/contoso-vnet-example"
+        },
+        "subnetName": {
+            "value": "sharedsvcs"
+        },
+        "adminUsername": {
+            "value": "contoso"
+        },
+        "adminPassword": {
+            "value": "password"
+        }
+    }
+}

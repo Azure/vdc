@@ -14,14 +14,17 @@
         "artifactsStorageAccountKey": {
             "value": ""
         },
-        "addsAddressStart": {
-            "value": "11.4.0.46"
-        },
         "domainName": {
             "value": "contoso.com"
         },
         "primaryDCIP": {
             "value": "192.168.1.4"
+        },
+        "addsAddressStart": {
+            "value": "11.4.0.46"
+        },
+        "addsInstallDriveLetter": {
+            "value": "F:"
         },
         "ADSitename": {
             "value": "Cloud-Site"

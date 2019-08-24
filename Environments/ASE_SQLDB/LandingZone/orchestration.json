@@ -3,6 +3,7 @@
     "ModuleConfigurations": [
         {
             "Name": "SubscriptionCreation",
+            "Enabled": false,
             "Script": {
                 "Command": "../../../Scripts/Subscription/NewSubscription.ps1",
                 "Arguments": {
@@ -51,6 +52,9 @@
             "Name": "LogAnalytics",
             "ModuleDefinitionName": "LogAnalytics",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.LogAnalytics.ResourceGroup}",
+            "DependsOn": [
+                "DiagnosticStorageAccount"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "logAnalyticsWorkspaceName": {
@@ -74,6 +78,9 @@
         {
             "Name": "AzureSecurityCenter",
             "ModuleDefinitionName": "AzureSecurityCenter",
+            "DependsOn": [
+                "LogAnalytics"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "workspaceId": {
@@ -85,6 +92,9 @@
         {
             "Name": "NISTControls",
             "ModuleDefinitionName": "NISTControls",
+            "DependsOn": [
+                "LogAnalytics"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "workspaceId": {
@@ -100,6 +110,10 @@
             "Name": "DefaultNSG",
             "ModuleDefinitionName": "NetworkSecurityGroups",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.ResourceGroup}",
+            "DependsOn": [
+                "DiagnosticStorageAccount",
+                "LogAnalytics"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "workspaceId": {
@@ -121,6 +135,7 @@
             "Name": "DefaultRouteTable",
             "ModuleDefinitionName": "RouteTables",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.RouteTables.ResourceGroup}",
+            "DependsOn": [],
             "Deployment": {
                 "OverrideParameters": {
                     "routeTableName": {
@@ -134,8 +149,12 @@
         },
         {
             "Name": "VirtualNetwork",
-            "ModuleDefinitionName": "vNet",
+            "ModuleDefinitionName": "VirtualNetwork",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "DependsOn": [
+                "DefaultNSG",
+                "DefaultRouteTable"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "vnetName": {
@@ -161,8 +180,11 @@
         },
         {
             "Name": "LocalVirtualNetworkPeering",
-            "ModuleDefinitionName": "vNetPeering",
+            "ModuleDefinitionName": "VirtualNetworkPeering",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "DependsOn": [
+                "VirtualNetwork"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "localVnetName": {
@@ -179,9 +201,12 @@
         },
         {
             "Name": "RemoteVirtualNetworkPeering",
-            "ModuleDefinitionName": "vNetPeering",
+            "ModuleDefinitionName": "VirtualNetworkPeering",
             "Subscription": "SharedServices",
             "ResourceGroupName": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetResourceGroup)",
+            "DependsOn": [
+                "VirtualNetwork"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "localVnetName": {

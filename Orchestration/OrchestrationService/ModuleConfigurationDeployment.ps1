@@ -6,7 +6,7 @@
     [Parameter(Mandatory=$true)]
     [string] 
     $DefinitionPath,
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory=$false)]
     [string] 
     $ModuleConfigurationName,
     [Parameter(Mandatory=$false)]
@@ -49,7 +49,7 @@ Function New-Deployment {
         [Parameter(Mandatory=$true)]
         [string] 
         $DefinitionPath,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string] 
         $ModuleConfigurationName,
         [Parameter(Mandatory=$false)]
@@ -108,322 +108,350 @@ Function New-Deployment {
                 -ArchetypeInstance $archetypeInstanceJson `
                 -ArchetypeInstanceName $ArchetypeInstanceName;
 
-        $moduleConfiguration = `
-            Get-ModuleConfiguration `
-                -ArchetypeInstanceJson $archetypeInstanceJson `
-                -ModuleConfigurationName $moduleConfigurationName `
-                -ArchetypeInstanceName $ArchetypeInstanceName `
-                -Operation @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];;
+        $allModules = @()
 
-        if ($null -eq $moduleConfiguration) {
-            throw "Module configuration not found for module name: $moduleConfigurationName";
-        }
-
-        Write-Debug "Module instance is: $(ConvertTo-Json $moduleConfiguration)";
-        
-        # Let's make sure we use the updated name
-        # There are instances when we have a module configuration updating an existing
-        # module configuration that was already deployed, in this case, let's use
-        # the name of the existing module configuration. 
-        Write-Debug "Updating module instance name from $ModuleConfigurationName to $($moduleConfiguration.Name)";
-        $ModuleConfigurationName = `
-            $moduleConfiguration.Name;
-
-        $subscriptionInformation = $null;
-        $subscriptionInformation = `
-            Get-SubscriptionInformation `
-                -ArchetypeInstanceJson $archetypeInstanceJson `
-                -SubscriptionName $archetypeInstanceJson.Parameters.Subscription `
-                -ModuleConfiguration $moduleConfiguration;
-
-        if ($null -eq $subscriptionInformation) {
-            throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
-        }
-
-        # Let's get the current subscription context
-        $sub = Get-AzContext | Select-Object Subscription 
-        
-        # Do not change the subscription context if the operation is validate.
-        # This is because the script will expect the validation resource 
-        # group to be present in all the subscriptions we are deploying.
-        [Guid]$subscriptionCheck = [Guid]::Empty;
-        [Guid]$tenantIdCheck = [Guid]::Empty;
-        if($null -ne $subscriptionInformation -and `
-           [Guid]::TryParse($subscriptionInformation.SubscriptionId, [ref]$subscriptionCheck) -and `
-           [Guid]::TryParse($subscriptionInformation.TenantId, [ref]$tenantIdCheck) -and `
-           $subscriptionCheck -ne [Guid]::Empty -and `
-           $tenantIdCheck -ne [Guid]::Empty -and
-           $subscriptionCheck -ne $sub.Subscription.Id) {
-            Write-Debug "Setting subscription context";
-
-            Set-SubscriptionContext `
-                -SubscriptionId $subscriptionInformation.SubscriptionId `
-                -TenantId $subscriptionInformation.TenantId;
-        }
-
-        # Let's attempt to get the Audit Id from cache
-        $auditCacheKey = `
-                "{0}_AuditId" -f `
-                $ArchetypeInstanceName;
-
-        Write-Debug "Audit Id cache key is: $auditCacheKey";
-
-        $auditId = `
-            Get-ItemFromCache `
-                -Key $auditCacheKey;
-        
-        Write-Debug "Audit Id from cache is: $auditId"
-        
-        # If no value is found, let's create 
-        # deployment audit information and cache
-        # the auditId value
-        if ($null -eq $auditId) {
-            # Store deployment audit information
-
-            $auditInformation = `
-                Get-AzureDevOpsAuditEnvironmentVariables;
-
-            $auditId = `
-                New-DeploymentAuditInformation `
-                    -BuildId $auditInformation.BuildId `
-                    -BuildName $auditInformation.BuildName `
-                    -CommitId $auditInformation.CommitId `
-                    -CommitMessage $auditInformation.CommitMessage `
-                    -CommitUsername $auditInformation.CommitUsername `
-                    -BuildQueuedBy $auditInformation.BuildQueuedBy `
-                    -ReleaseId $auditInformation.ReleaseId `
-                    -ReleaseName $auditInformation.ReleaseName `
-                    -ReleaseRequestedFor $auditInformation.ReleaseRequestedFor `
-                    -TenantId @("",$subscriptionInformation.TenantId)[$null -ne $subscriptionInformation] `
-                    -SubscriptionId @("", $subscriptionInformation.SubscriptionId)[$null -ne $subscriptionInformation] `
-                    -ArchetypeInstance $archetypeInstanceJson `
-                    -ArchetypeInstanceName $ArchetypeInstanceName `
-                    -Validate:$($Validate.IsPresent);
-            Write-Debug "Audit trail created, Id: $auditId";
+        if ([string]::IsNullOrEmpty($ModuleConfigurationName)) {
             
-            Add-ItemToCache `
-                -Key $auditCacheKey `
-                -Value $auditId `
-                -Validate:$($Validate.IsPresent);
-            Write-Debug "Audit Id succesfully cached.";
-        }
+            $topologicalSortRootPath = `
+                Join-Path $rootPath -ChildPath 'TopologicalSort';
+            
+            Invoke-Command -ScriptBlock { dotnet build $topologicalSortRootPath --configuration Release --output ./ }
 
-        # Runs a custom script only if Script property is present and
-        # we are not in Validation mode
-        if($null -ne $ModuleConfiguration.Script `
-            -and `
-           $null -ne $ModuleConfiguration.Script.Command) {
- 
-            # Orchestrate the deployment of Custom Scripts
-            $result = `
-                New-CustomScripts `
-                    -ModuleConfiguration $moduleConfiguration `
-                    -ArchetypeInstanceJson $archetypeInstanceJson `
-                    -Validate:$($Validate.IsPresent);
- 
-            # Retrieve the results from the script deployment
-            $resourceState = $result[0];
- 
-            # Did the ArchetypeInstanceJson change?
-            if($null -ne $result[1]) {
-                # Set the ArchetypeInstanceJson only if it is
-                # modified by the custom script deployment
-                $archetypeInstanceJson = $result[1];
- 
-                # Re-cache the ArchetypeInstanceJson
-                Add-ItemToCache `
-                    -Key $ArchetypeInstanceName `
-                    -Value $archetypeInstanceJson `
-                    -Validate:$($Validate.IsPresent);
-            }     
+            $topologicalSortAssemblyPath = `
+                Join-Path $topologicalSortRootPath "TopologicalSort.dll"
+
+            Add-Type -Path $topologicalSortAssemblyPath
+            
+            $graph = [VDC.Core.DirectedGraph]::new()
+            $orchestrationJson = `
+                ConvertTo-Json $archetypeInstanceJson.Orchestration.ModuleConfigurations
+            $graph.Generate($orchestrationJson)
+            $graph.DFS()
+            $graph.TopologicalSort | ForEach-Object { $allModules += $_.Name }
         }
         else {
+            $allModules += $ModuleConfigurationName
+        }
+        
+        foreach($ModuleConfigurationName in $allModules) {
+            Write-Host "Deploying Module: $ModuleConfigurationName"
+            $moduleConfiguration = `
+                Get-ModuleConfiguration `
+                    -ArchetypeInstanceJson $archetypeInstanceJson `
+                    -ModuleConfigurationName $moduleConfigurationName `
+                    -ArchetypeInstanceName $ArchetypeInstanceName `
+                    -Operation @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];;
 
-            # Let's get the module's template information first,
-            # this template will dictate if is a resource group or
-            # subscription deployment based on the template's schema
-            $moduleConfigurationDeploymentInformation = `
-                Get-DeploymentTemplateFileContents `
-                    -DeploymentConfiguration $moduleConfiguration.Deployment `
-                    -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
-                    -WorkingDirectory $defaultWorkingDirectory;
+            if ($null -eq $moduleConfiguration) {
+                throw "Module configuration not found for module name: $moduleConfigurationName";
+            }
 
-            $moduleConfigurationDeploymentParameters = $null;
+            Write-Debug "Module instance is: $(ConvertTo-Json $moduleConfiguration)";
             
-            $isSubscriptionDeployment = $false;
+            # Let's make sure we use the updated name
+            # There are instances when we have a module configuration updating an existing
+            # module configuration that was already deployed, in this case, let's use
+            # the name of the existing module configuration. 
+            Write-Debug "Updating module instance name from $ModuleConfigurationName to $($moduleConfiguration.Name)";
+            $ModuleConfigurationName = `
+                $moduleConfiguration.Name;
 
-            if($null -ne $moduleConfigurationDeploymentInformation) {
+            $subscriptionInformation = $null;
+            $subscriptionInformation = `
+                Get-SubscriptionInformation `
+                    -ArchetypeInstanceJson $archetypeInstanceJson `
+                    -SubscriptionName $archetypeInstanceJson.Parameters.Subscription `
+                    -ModuleConfiguration $moduleConfiguration;
+
+            if ($null -eq $subscriptionInformation) {
+                throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
+            }
+
+            # Let's get the current subscription context
+            $sub = Get-AzContext | Select-Object Subscription 
+            
+            # Do not change the subscription context if the operation is validate.
+            # This is because the script will expect the validation resource 
+            # group to be present in all the subscriptions we are deploying.
+            [Guid]$subscriptionCheck = [Guid]::Empty;
+            [Guid]$tenantIdCheck = [Guid]::Empty;
+            if($null -ne $subscriptionInformation -and `
+                [Guid]::TryParse($subscriptionInformation.SubscriptionId, [ref]$subscriptionCheck) -and `
+                [Guid]::TryParse($subscriptionInformation.TenantId, [ref]$tenantIdCheck) -and `
+                $subscriptionCheck -ne [Guid]::Empty -and `
+                $tenantIdCheck -ne [Guid]::Empty -and
+                $subscriptionCheck -ne $sub.Subscription.Id) {
                 
-                $moduleConfigurationDeploymentTemplate = `
-                    $moduleConfigurationDeploymentInformation.Template;
+                Write-Debug "Setting subscription context";
+
+                Set-SubscriptionContext `
+                    -SubscriptionId $subscriptionInformation.SubscriptionId `
+                    -TenantId $subscriptionInformation.TenantId;
+            }
+
+            # Let's attempt to get the Audit Id from cache
+            $auditCacheKey = `
+                    "{0}_AuditId" -f `
+                    $ArchetypeInstanceName;
+
+            Write-Debug "Audit Id cache key is: $auditCacheKey";
+
+            $auditId = `
+                Get-ItemFromCache `
+                    -Key $auditCacheKey;
+            
+            Write-Debug "Audit Id from cache is: $auditId"
+            
+            # If no value is found, let's create 
+            # deployment audit information and cache
+            # the auditId value
+            if ($null -eq $auditId) {
+                # Store deployment audit information
+
+                $auditInformation = `
+                    Get-AzureDevOpsAuditEnvironmentVariables;
+
+                $auditId = `
+                    New-DeploymentAuditInformation `
+                        -BuildId $auditInformation.BuildId `
+                        -BuildName $auditInformation.BuildName `
+                        -CommitId $auditInformation.CommitId `
+                        -CommitMessage $auditInformation.CommitMessage `
+                        -CommitUsername $auditInformation.CommitUsername `
+                        -BuildQueuedBy $auditInformation.BuildQueuedBy `
+                        -ReleaseId $auditInformation.ReleaseId `
+                        -ReleaseName $auditInformation.ReleaseName `
+                        -ReleaseRequestedFor $auditInformation.ReleaseRequestedFor `
+                        -TenantId @("",$subscriptionInformation.TenantId)[$null -ne $subscriptionInformation] `
+                        -SubscriptionId @("", $subscriptionInformation.SubscriptionId)[$null -ne $subscriptionInformation] `
+                        -ArchetypeInstance $archetypeInstanceJson `
+                        -ArchetypeInstanceName $ArchetypeInstanceName `
+                        -Validate:$($Validate.IsPresent);
+                Write-Debug "Audit trail created, Id: $auditId";
                 
-                # Let's get the information if is a subscription
-                # level deployment or resource group level deployment
-                $isSubscriptionDeployment = `
-                    $moduleConfigurationDeploymentInformation.IsSubscriptionDeployment;
+                Add-ItemToCache `
+                    -Key $auditCacheKey `
+                    -Value $auditId `
+                    -Validate:$($Validate.IsPresent);
+                Write-Debug "Audit Id succesfully cached.";
+            }
 
-                Write-Debug "Deployment template contents is: $moduleConfigurationDeploymentTemplate";
+            # Runs a custom script only if Script property is present and
+            # we are not in Validation mode
+            if($null -ne $ModuleConfiguration.Script `
+                -and `
+               $null -ne $ModuleConfiguration.Script.Command) {
+     
+                # Orchestrate the deployment of Custom Scripts
+                $result = `
+                    New-CustomScripts `
+                        -ModuleConfiguration $moduleConfiguration `
+                        -ArchetypeInstanceJson $archetypeInstanceJson `
+                        -Validate:$($Validate.IsPresent);
+     
+                # Retrieve the results from the script deployment
+                $resourceState = $result[0];
+     
+                # Did the ArchetypeInstanceJson change?
+                if($null -ne $result[1]) {
+                    # Set the ArchetypeInstanceJson only if it is
+                    # modified by the custom script deployment
+                    $archetypeInstanceJson = $result[1];
+     
+                    # Re-cache the ArchetypeInstanceJson
+                    Add-ItemToCache `
+                        -Key $ArchetypeInstanceName `
+                        -Value $archetypeInstanceJson `
+                        -Validate:$($Validate.IsPresent);
+                }     
+            }
+            else {
 
-                # If a module deployment template exists,
-                # let's get the deployment parameters.
-                $moduleConfigurationDeploymentParameters = `
-                    Get-DeploymentParametersFileContents `
+                # Let's get the module's template information first,
+                # this template will dictate if is a resource group or
+                # subscription deployment based on the template's schema
+                $moduleConfigurationDeploymentInformation = `
+                    Get-DeploymentTemplateFileContents `
                         -DeploymentConfiguration $moduleConfiguration.Deployment `
                         -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
                         -WorkingDirectory $defaultWorkingDirectory;
-            }
-            else {
-                throw "No Resource Manager template found under Deployment.";
-            }
 
-            Write-Debug "Is a subscription deployment: $isSubscriptionDeployment";
+                $moduleConfigurationDeploymentParameters = $null;
+                
+                $isSubscriptionDeployment = $false;
 
-            $moduleConfigurationResourceGroupName = "";
+                if($null -ne $moduleConfigurationDeploymentInformation) {
+                    
+                    $moduleConfigurationDeploymentTemplate = `
+                        $moduleConfigurationDeploymentInformation.Template;
+                    
+                    # Let's get the information if is a subscription
+                    # level deployment or resource group level deployment
+                    $isSubscriptionDeployment = `
+                        $moduleConfigurationDeploymentInformation.IsSubscriptionDeployment;
 
-            # If we are not in a subscription deployment
-            # proceed to create a resource group
-            if ($null -ne $subscriptionInformation -and `
-                -not $isSubscriptionDeployment) {
-                $moduleConfigurationResourceGroupName = `
-                    Get-ResourceGroupName `
-                        -ArchetypeInstanceName $ArchetypeInstanceName `
-                        -ModuleConfiguration $moduleConfiguration;
-                    Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
-            
-                New-ResourceGroup `
-                    -ResourceGroupName $moduleConfigurationResourceGroupName `
-                    -ResourceGroupLocation $subscriptionInformation.Location `
-                    -Validate:$($Validate.IsPresent);
-                Write-Debug "Resource Group successfully created";
-            }
+                    Write-Debug "Deployment template contents is: $moduleConfigurationDeploymentTemplate";
 
-            # Now continue deploying Policies, RBAC and finally
-            # the module template
-            $moduleConfigurationPolicyDeploymentTemplate = `
-                Get-PolicyDeploymentTemplateFileContents `
-                    -DeploymentConfiguration $moduleConfiguration.Policies `
-                    -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
-                    -WorkingDirectory $defaultWorkingDirectory;
-            Write-Debug "Policy Deployment template contents is: $moduleConfigurationPolicyDeploymentTemplate";
+                    # If a module deployment template exists,
+                    # let's get the deployment parameters.
+                    $moduleConfigurationDeploymentParameters = `
+                        Get-DeploymentParametersFileContents `
+                            -DeploymentConfiguration $moduleConfiguration.Deployment `
+                            -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
+                            -WorkingDirectory $defaultWorkingDirectory;
+                }
+                else {
+                    throw "No Resource Manager template found under Deployment.";
+                }
 
-            $moduleConfigurationPolicyDeploymentParameters = `
-                Get-PolicyDeploymentParametersFileContents `
-                    -DeploymentConfiguration $moduleConfiguration.Policies `
-                    -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
-                    -WorkingDirectory $defaultWorkingDirectory;
-            Write-Debug "Policy Deployment parameters contents is: $moduleConfigurationPolicyDeploymentParameters";
+                Write-Debug "Is a subscription deployment: $isSubscriptionDeployment";
 
-            $policyResourceState = @{};
+                $moduleConfigurationResourceGroupName = "";
 
-            if ($null -ne $moduleConfigurationPolicyDeploymentTemplate) {
+                # If we are not in a subscription deployment
+                # proceed to create a resource group
+                if ($null -ne $subscriptionInformation -and `
+                    -not $isSubscriptionDeployment) {
+                    $moduleConfigurationResourceGroupName = `
+                        Get-ResourceGroupName `
+                            -ArchetypeInstanceName $ArchetypeInstanceName `
+                            -ModuleConfiguration $moduleConfiguration;
+                        Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
+                
+                    New-ResourceGroup `
+                        -ResourceGroupName $moduleConfigurationResourceGroupName `
+                        -ResourceGroupLocation $subscriptionInformation.Location `
+                        -Validate:$($Validate.IsPresent);
+                    Write-Debug "Resource Group successfully created";
+                }
+
+                # Now continue deploying Policies, RBAC and finally
+                # the module template
+                $moduleConfigurationPolicyDeploymentTemplate = `
+                    Get-PolicyDeploymentTemplateFileContents `
+                        -DeploymentConfiguration $moduleConfiguration.Policies `
+                        -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
+                        -WorkingDirectory $defaultWorkingDirectory;
+                Write-Debug "Policy Deployment template contents is: $moduleConfigurationPolicyDeploymentTemplate";
+
+                $moduleConfigurationPolicyDeploymentParameters = `
+                    Get-PolicyDeploymentParametersFileContents `
+                        -DeploymentConfiguration $moduleConfiguration.Policies `
+                        -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
+                        -WorkingDirectory $defaultWorkingDirectory;
+                Write-Debug "Policy Deployment parameters contents is: $moduleConfigurationPolicyDeploymentParameters";
+
+                $policyResourceState = @{};
+
+                if ($null -ne $moduleConfigurationPolicyDeploymentTemplate) {
+                        Write-Debug "About to trigger a deployment";
+                        $policyResourceState = `
+                        New-AzureResourceManagerDeployment `
+                            -TenantId $subscriptionInformation.TenantId `
+                            -SubscriptionId $subscriptionInformation.SubscriptionId `
+                            -ResourceGroupName $moduleConfigurationResourceGroupName `
+                            -DeploymentTemplate $moduleConfigurationPolicyDeploymentTemplate `
+                            -DeploymentParameters $moduleConfigurationPolicyDeploymentParameters `
+                            -ModuleConfiguration $moduleConfiguration.Policies `
+                            -ArchetypeInstanceName $ArchetypeInstanceName `
+                            -Location $subscriptionInformation.Location `
+                            -Validate:$($Validate.IsPresent);
+                        Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $policyResourceState)";
+                }
+                else {
+                    Write-Debug "No Policy deployment";
+                }
+
+                $moduleConfigurationRBACDeploymentTemplate = `
+                    Get-RbacDeploymentTemplateFileContents `
+                        -DeploymentConfiguration $moduleConfiguration.RBAC `
+                        -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
+                        -WorkingDirectory $defaultWorkingDirectory;
+                Write-Debug "RBAC Deployment template contents is: $moduleConfigurationRBACDeploymentTemplate";
+
+                $moduleConfigurationRBACDeploymentParameters = `
+                    Get-RbacDeploymentParametersFileContents `
+                        -DeploymentConfiguration $moduleConfiguration.RBAC `
+                        -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
+                        -WorkingDirectory $defaultWorkingDirectory;
+                Write-Debug "RBAC Deployment parameters contents is: $moduleConfigurationRBACDeploymentParameters";
+
+                $rbacResourceState = @{};
+
+                if ($null -ne $moduleConfigurationRBACDeploymentTemplate) {
                     Write-Debug "About to trigger a deployment";
-                    $policyResourceState = `
-                    New-AzureResourceManagerDeployment `
-                        -TenantId $subscriptionInformation.TenantId `
-                        -SubscriptionId $subscriptionInformation.SubscriptionId `
-                        -ResourceGroupName $moduleConfigurationResourceGroupName `
-                        -DeploymentTemplate $moduleConfigurationPolicyDeploymentTemplate `
-                        -DeploymentParameters $moduleConfigurationPolicyDeploymentParameters `
-                        -ModuleConfiguration $moduleConfiguration.Policies `
-                        -ArchetypeInstanceName $ArchetypeInstanceName `
-                        -Location $subscriptionInformation.Location `
-                        -Validate:$($Validate.IsPresent);
-                    Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $policyResourceState)";
+                    $rbacResourceState = `
+                        New-AzureResourceManagerDeployment `
+                            -TenantId $subscriptionInformation.TenantId `
+                            -SubscriptionId $subscriptionInformation.SubscriptionId `
+                            -ResourceGroupName $moduleConfigurationResourceGroupName `
+                            -DeploymentTemplate $moduleConfigurationRBACDeploymentTemplate `
+                            -DeploymentParameters $moduleConfigurationRBACDeploymentParameters `
+                            -ModuleConfiguration $moduleConfiguration.RBAC `
+                            -ArchetypeInstanceName $ArchetypeInstanceName `
+                            -Location $subscriptionInformation.Location `
+                            -Validate:$($Validate.IsPresent);
+                    Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $rbacResourceState)";
+                }
+                else {
+                    Write-Debug "No RBAC deployment";
+                }
+
+                # This deployment runs last because it could be
+                # a Subscription or Resource Group level deployment
+                if ($null -ne $moduleConfigurationDeploymentTemplate) {
+                    Write-Debug "About to trigger a deployment";
+                    $resourceState = `
+                        New-AzureResourceManagerDeployment `
+                            -TenantId $subscriptionInformation.TenantId `
+                            -SubscriptionId $subscriptionInformation.SubscriptionId `
+                            -ResourceGroupName $moduleConfigurationResourceGroupName `
+                            -DeploymentTemplate $moduleConfigurationDeploymentTemplate `
+                            -DeploymentParameters $moduleConfigurationDeploymentParameters `
+                            -ModuleConfiguration $moduleConfiguration.Deployment `
+                            -ArchetypeInstanceName $ArchetypeInstanceName `
+                            -Location $subscriptionInformation.Location `
+                            -Validate:$($Validate.IsPresent);
+                    Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $resourceState)";
+                }
             }
-            else {
-                Write-Debug "No Policy deployment";
-            }
+            
+            # If there are deployment outputs, cache the values
+            if ($null -ne $resourceState.DeploymentOutputs) {
 
-            $moduleConfigurationRBACDeploymentTemplate = `
-                Get-RbacDeploymentTemplateFileContents `
-                    -DeploymentConfiguration $moduleConfiguration.RBAC `
-                    -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
-                    -WorkingDirectory $defaultWorkingDirectory;
-            Write-Debug "RBAC Deployment template contents is: $moduleConfigurationRBACDeploymentTemplate";
-
-            $moduleConfigurationRBACDeploymentParameters = `
-                Get-RbacDeploymentParametersFileContents `
-                    -DeploymentConfiguration $moduleConfiguration.RBAC `
-                    -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
-                    -WorkingDirectory $defaultWorkingDirectory;
-            Write-Debug "RBAC Deployment parameters contents is: $moduleConfigurationRBACDeploymentParameters";
-
-            $rbacResourceState = @{};
-
-            if ($null -ne $moduleConfigurationRBACDeploymentTemplate) {
-                Write-Debug "About to trigger a deployment";
-                $rbacResourceState = `
-                    New-AzureResourceManagerDeployment `
-                        -TenantId $subscriptionInformation.TenantId `
-                        -SubscriptionId $subscriptionInformation.SubscriptionId `
-                        -ResourceGroupName $moduleConfigurationResourceGroupName `
-                        -DeploymentTemplate $moduleConfigurationRBACDeploymentTemplate `
-                        -DeploymentParameters $moduleConfigurationRBACDeploymentParameters `
-                        -ModuleConfiguration $moduleConfiguration.RBAC `
-                        -ArchetypeInstanceName $ArchetypeInstanceName `
-                        -Location $subscriptionInformation.Location `
-                        -Validate:$($Validate.IsPresent);
-                Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $rbacResourceState)";
-            }
-            else {
-                Write-Debug "No RBAC deployment";
+                Add-OutputsToCache `
+                    -ModuleConfigurationName $moduleConfigurationName `
+                    -Outputs $resourceState.DeploymentOutputs `
+                    -Validate:$($Validate.IsPresent);
             }
 
-            # This deployment runs last because it could be
-            # a Subscription or Resource Group level deployment
-            if ($null -ne $moduleConfigurationDeploymentTemplate) {
-                Write-Debug "About to trigger a deployment";
-                $resourceState = `
-                    New-AzureResourceManagerDeployment `
-                        -TenantId $subscriptionInformation.TenantId `
-                        -SubscriptionId $subscriptionInformation.SubscriptionId `
-                        -ResourceGroupName $moduleConfigurationResourceGroupName `
-                        -DeploymentTemplate $moduleConfigurationDeploymentTemplate `
-                        -DeploymentParameters $moduleConfigurationDeploymentParameters `
-                        -ModuleConfiguration $moduleConfiguration.Deployment `
-                        -ArchetypeInstanceName $ArchetypeInstanceName `
-                        -Location $subscriptionInformation.Location `
-                        -Validate:$($Validate.IsPresent);
-                Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $resourceState)";
-            }
+            # Store deployment state information
+            $moduleStateId = `
+                New-DeploymentStateInformation `
+                    -AuditId $auditId `
+                    -DeploymentId $resourceState.DeploymentId `
+                    -DeploymentName $resourceState.DeploymentName `
+                    -ArchetypeInstanceName $ArchetypeInstanceName `
+                    -ModuleConfigurationName $moduleConfigurationName `
+                    -ResourceStates $resourceState.ResourceStates `
+                    -ResourceIds $resourceState.ResourceIds `
+                    -ResourceGroupName $resourceState.ResourceGroupName `
+                    -DeploymentTemplate $resourceState.DeploymentTemplate `
+                    -DeploymentParameters $resourceState.DeploymentParameters `
+                    -DeploymentOutputs $resourceState.DeploymentOutputs `
+                    -TenantId @("", $subscriptionInformation.TenantId)[$null -ne $subscriptionInformation] `
+                    -SubscriptionId @("", $subscriptionInformation.SubscriptionId)[$null -ne $subscriptionInformation] `
+                    -Policies $policyResourceState `
+                    -RBAC $rbacResourceState `
+                    -Validate:$($Validate.IsPresent);
+            Write-Debug "Module state created, Id: $($moduleStateId)";
         }
-        
-        # If there are deployment outputs, cache the values
-        if ($null -ne $resourceState.DeploymentOutputs) {
-
-            Add-OutputsToCache `
-                -ModuleConfigurationName $moduleConfigurationName `
-                -Outputs $resourceState.DeploymentOutputs `
-                -Validate:$($Validate.IsPresent);
-        }
-
-        # Store deployment state information
-        $moduleStateId = `
-            New-DeploymentStateInformation `
-                -AuditId $auditId `
-                -DeploymentId $resourceState.DeploymentId `
-                -DeploymentName $resourceState.DeploymentName `
-                -ArchetypeInstanceName $ArchetypeInstanceName `
-                -ModuleConfigurationName $moduleConfigurationName `
-                -ResourceStates $resourceState.ResourceStates `
-                -ResourceIds $resourceState.ResourceIds `
-                -ResourceGroupName $resourceState.ResourceGroupName `
-                -DeploymentTemplate $resourceState.DeploymentTemplate `
-                -DeploymentParameters $resourceState.DeploymentParameters `
-                -DeploymentOutputs $resourceState.DeploymentOutputs `
-                -TenantId @("", $subscriptionInformation.TenantId)[$null -ne $subscriptionInformation] `
-                -SubscriptionId @("", $subscriptionInformation.SubscriptionId)[$null -ne $subscriptionInformation] `
-                -Policies $policyResourceState `
-                -RBAC $rbacResourceState `
-                -Validate:$($Validate.IsPresent);
-        Write-Debug "Module state created, Id: $($moduleStateId)";
     }
     catch {
         Write-Host "An error ocurred while running New-Deployment";
         $errorMessage = `
             $(Get-Exception -ErrorObject $_);
-        Write-Host $errorMessage;
-        throw $errorMessage;
+        Write-Error $errorMessage;
     }
 }
 
@@ -986,8 +1014,8 @@ Function Get-SubscriptionInformation {
             $subscriptionNameMatch = `
                 $ArchetypeInstanceJson.$archetypeInstanceSubscriptions.Keys `
                     -match $SubscriptionName;
-            if($archetypeInstanceSubscriptions `
-                -and $subscriptionNameMatch) {
+            if($null -ne $archetypeInstanceSubscriptions `
+                -and $null -ne $subscriptionNameMatch) {
                 # Retrieve case-sensitive key name from case-insensitive key name using match operation
                 $SubscriptionName = $subscriptionNameMatch[0];
                 $subscriptionInformation = `

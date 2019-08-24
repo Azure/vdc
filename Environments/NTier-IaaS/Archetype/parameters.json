@@ -1,0 +1,268 @@
+{
+    "Organization": "env(ORGANIZATION_NAME)",
+    "DeploymentName": "ntier-iaas",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "NTier_IaaS",
+    "ModuleConfigurationParameters": {
+        "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
+        "OnPremisesInformation": {
+            "ActiveDirectory": {
+                "PrimaryDomainControllerIP": "192.168.1.4",
+                "DomainName": "fontoso.com",
+                "ADSitename": "Cloud-Site",
+                "DomainAdminUserName": "fontoso"
+            },
+            "Network": {
+                "AddressPrefix": "192.168.1.0/28"
+            }
+        },
+        "Comments": "Adding VirtualNetwork property, because KeyVault references a VirtualNetwork property references NetworkSecurityGroups and RouteTable, this is why these two properties are also included",
+        "RouteTables": "file(../LandingZone/NetworkParameters/routeTables.json)",
+        "NetworkSecurityGroups": "file(../LandingZone/NetworkParameters/networkSecurityGroups.json)",
+        "VirtualNetwork": "file(../LandingZone/NetworkParameters/virtualNetwork.json)",
+        "KeyVault": {
+            "Name": "${Parameters.InstanceName}-kv",
+            "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
+            "Sku": "Premium",
+            "EnableVaultForDeployment": true,
+            "EnableVaultForDiskEncryption": true,
+            "EnableVaultForTemplateDeployment": true,
+            "AccessPolicies": [
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                }
+            ],
+            "SecretsObject": {
+                "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
+                "Secrets": [
+                    {
+                        "secretName": "admin-user",
+                        "secretValue": "env(ADMIN_USER_PWD)"
+                    }
+                ]
+            },
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
+        "WebApp": {
+            "Name": "web-vmss",
+            "ResourceGroup": "${Parameters.InstanceName}-webapp-rg",
+            "VMSKU": {
+                "name": "Standard_DS3_v2", 
+                "tier": "Standard", 
+                "capacity": 5
+            },
+            "OSImage": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            },
+            "OSType": "Windows",
+            "Kek": {
+                "Name": "WebAppKey",
+                "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                "Destination": "HSM"
+            },
+            "DomainName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainName}",
+            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
+            "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
+            "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
+            "AdminPassword": {
+                "keyVault": {
+                    "id": "reference(KeyVault.keyVaultResourceId)"
+                },
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
+            },
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+        },
+        "WebAppLoadBalancer": {
+            "Name": "web-lb",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.WebApp.ResourceGroup}",
+            "LoadBalancingRules": [
+                {
+                    "name": "LBRule",
+                    "properties": {
+                        "frontendPort": 80,
+                        "backendPort": 80,
+                        "enableFloatingIP": false,
+                        "idleTimeoutInMinutes": 3,
+                        "protocol": "TCP",
+                        "enableTcpReset": false,
+                        "loadDistribution": false,
+                        "disableOutboundSnat": false,
+                        "probeName": "tcpProbe"
+                    }
+                }
+            ],
+            "Probes": [
+                {
+                    "name": "probe",
+                    "properties": {
+                        "protocol": "TCP",
+                        "port": 80,
+                        "requestPath": "/",
+                        "intervalInSeconds": 10,
+                        "numberOfProbes": 5
+                    }
+                }
+            ],
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+        },
+        "BusinessApp": {
+            "Name": "biz-vmss",
+            "ResourceGroup": "${Parameters.InstanceName}-biz-rg",
+            "VMSKU": {
+                "name": "Standard_DS3_v2", 
+                "tier": "Standard", 
+                "capacity": 5
+            },
+            "OSImage": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            },
+            "OSType": "Windows",
+            "Kek": {
+                "Name": "WebAppKey",
+                "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                "Destination": "HSM"
+            },
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+        },
+        "BusinessAppLoadBalancer": {
+            "Name": "${Parameters.InstanceName}-biz-lb",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.BusinessApp.ResourceGroup}",
+            "LoadBalancingRules": [
+                {
+                    "name": "LBRule",
+                    "properties": {
+                        "frontendPort": 80,
+                        "backendPort": 80,
+                        "enableFloatingIP": false,
+                        "idleTimeoutInMinutes": 3,
+                        "protocol": "TCP",
+                        "enableTcpReset": false,
+                        "loadDistribution": false,
+                        "disableOutboundSnat": false,
+                        "probeName": "tcpProbe"
+                    }
+                }
+            ],
+            "Probes": [
+                {
+                    "name": "probe",
+                    "properties": {
+                        "protocol": "TCP",
+                        "port": 80,
+                        "requestPath": "/",
+                        "intervalInSeconds": 10,
+                        "numberOfProbes": 5
+                    }
+                }
+            ],
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+        },
+        "SQLServerAlwaysOn": {
+            "Name": "sql-vm",
+            "ResourceGroup": "${Parameters.InstanceName}-data-rg",
+            "VMCount": 2,
+            "VMSize": "Standard_DS14_v2",
+            "OSType": "Windows",
+            "OSImage": {
+                "offer": "SQL2017-WS2016",
+                "publisher": "MicrosoftSQLServer",
+                "sku": "Enterprise"
+            },
+            "IPAddressStart": "172.2.0.20",
+            "DomainName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainName}",
+            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
+            "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
+            "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
+            "AdminPassword": {
+                "keyVault": {
+                    "id": "reference(KeyVault.keyVaultResourceId)"
+                },
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
+            },
+            "DataDisks": [
+                {
+                    "size": 1023
+                },
+                {
+                    "size": 1023
+                }
+            ]
+        },
+        "SQLServerAlwaysOnCloudWitness": {
+            "Name": "${Parameters.InstanceName}cwntierstrg",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ResourceGroup}",
+            "Sku": "Standard_GRS",
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            },
+            "Policies": {
+                "Effect": "Audit"
+            }
+        },
+        "SQLServerAlwaysOnLoadBalancer": {
+            "Name": "${Parameters.InstanceName}-data-lb",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ResourceGroup}",
+            "IPAddressStart": "172.2.0.22",
+            "LoadBalancingRules": [
+                {
+                    "name": "LBRule",
+                    "properties": {
+                        "frontendPort": 1433,
+                        "backendPort": 1433,
+                        "enableFloatingIP": false,
+                        "idleTimeoutInMinutes": 5,
+                        "protocol": "TCP",
+                        "enableTcpReset": false,
+                        "loadDistribution": false,
+                        "disableOutboundSnat": false,
+                        "probeName": "tcpProbe"
+                    }
+                }
+            ],
+            "Probes": [
+                {
+                    "name": "probe",
+                    "properties": {
+                        "protocol": "TCP",
+                        "port": 1433,
+                        "intervalInSeconds": 5,
+                        "numberOfProbes": 2
+                    }
+                }
+            ],
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+        }
+    }
+}

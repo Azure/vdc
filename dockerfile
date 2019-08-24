@@ -21,5 +21,7 @@ RUN  apt-get update \
   && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | tee /etc/apt/sources.list.d/azure-cli.list \
   && apt-get install apt-transport-https \
   && apt-get update \
-  && apt-get install azure-cli
+  && apt-get install azure-cli \
+  && apt-get install -y dotnet-sdk-2.2 \
+  && dotnet build Orchestration/OrchestrationService/TopologicalSort/TopologicalSort.csproj --configuration Release
 ENTRYPOINT [ "pwsh" ]

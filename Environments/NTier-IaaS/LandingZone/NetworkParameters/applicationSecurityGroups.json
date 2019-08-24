@@ -1,0 +1,12 @@
+{
+    "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+    "Web": {
+        "Name": "web-asg"
+    },
+    "Business": {
+        "Name": "business-asg"
+    },
+    "Data": {
+        "Name": "data-asg"
+    }
+}

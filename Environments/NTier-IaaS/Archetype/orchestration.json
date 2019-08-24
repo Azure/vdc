@@ -1,0 +1,483 @@
+{
+    "ModuleConfigurationsPath": "../../../Modules",
+    "ModuleConfigurations": [
+        {
+            "Name": "KeyVault",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
+            "ModuleDefinitionName": "KeyVault",
+            "Deployment": {
+                "OverrideParameters": {
+                    "keyVaultName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Name}"
+                    },
+                    "accessPolicies": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.AccessPolicies}"
+                    },
+                    "secretsObject": {
+                        "value": {
+                            "secrets": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets}"
+                        }
+                    },
+                    "enableVaultForDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDeployment}"
+                    },
+                    "enableVaultForDiskEncryption": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDiskEncryption}"
+                    },
+                    "enableVaultForTemplateDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForTemplateDeployment}"
+                    },
+                    "vaultSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Sku}"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "networkAcls": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.NetworkAcls}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "WebAppLoadBalancer",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.WebAppLoadBalancer.ResourceGroup}",
+            "ModuleDefinitionName": "LoadBalancers",
+            "Deployment": {
+                "OverrideParameters": {
+                    "loadBalancerName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebAppLoadBalancer.Name}"
+                    },
+                    "loadBalancingRules": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebAppLoadBalancer.LoadBalancingRules}"
+                    },
+                    "probes": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebAppLoadBalancer.Probes}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "subnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebAppLoadBalancer.SubnetName}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "WebAppVMSS",
+            "ModuleDefinitionName": "VirtualMachineScaleSets",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.WebApp.ResourceGroup}",
+            "DependsOn": [
+                "WebAppLoadBalancer",
+                "KeyVault"
+            ],
+            "Comments": "Creates Active Directory Domain Services VMs",
+            "Deployment": {
+                "OverrideParameters": {
+                    "virtualMachineScaleSetsName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.Name}"
+                    },
+                    "virtualMachineScaleSetsSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.VMSKU}"
+                    },
+                    "virtualMachineScaleSetsOSImage": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.OSImage}"
+                    },
+                    "virtualMachineScaleSetsOSType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.OSType}"
+                    },
+                    "virtualMachineScaleSetsDataDisks": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DataDisks}"
+                    },
+                    "loadBalancerBackendPoolId": {
+                        "value": "reference(WebLoadBalancer.loadBalancerResourceBackendPoolId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
+                    },
+                    "logAnalyticsWorkspacePrimarySharedKey": {
+                        "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
+                    },
+                    "diagnosticsStorageAccountName": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountName)"
+                    },
+                    "diagnosticsStorageAccountSasToken": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
+                    },
+                    "artifactsStorageAccountName": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                    },
+                    "artifactsStorageAccountSasKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "subnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.SubnetName}"
+                    },
+                    "vmIPAddress": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.AddsIPAddressStart}"
+                    },
+                    "applicationSecurityGroupId": {
+                        "value": "reference(WebASG.applicationSecurityGroupResourceId)"
+                    },
+                    "adminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.AdminUsername}"
+                    },
+                    "adminPassword": {
+                        "reference": "${Parameters.ModuleConfigurationParameters.WebApp.AdminPassword}"
+                    },
+                    "domainAdminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DomainAdminUsername}"
+                    },
+                    "domainAdminPassword": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DomainAdminPassword}"
+                    },
+                    "domainName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DomainName}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "IISOnWebVMSS",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.WebApp.ResourceGroup}",
+            "ModuleDefinitionName": "InternetInformationServices",
+            "DependsOn":[
+                "WebAppVMSS"
+            ],
+            "Deployment":{
+                "OverrideParameters":{
+                    "virtualMachineScaleSetsName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.Name}"
+                    },
+                    "artifactsStorageAccountName": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                    },
+                    "artifactsStorageAccountSasKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "BusinessAppLoadBalancer",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.BusinessAppLoadBalancer.ResourceGroup}",
+            "ModuleDefinitionName": "LoadBalancers",
+            "Deployment": {
+                "OverrideParameters": {
+                    "loadBalancerName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessAppLoadBalancer.Name}"
+                    },
+                    "loadBalancingRules": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessAppLoadBalancer.LoadBalancingRules}"
+                    },
+                    "probes": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessAppLoadBalancer.Probes}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "subnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessAppLoadBalancer.SubnetName}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "BusinessAppVMSS",
+            "ModuleDefinitionName": "VirtualMachineScaleSets",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.BusinessApp.ResourceGroup}",
+            "DependsOn": [
+                "BusinessAppLoadBalancer",
+                "KeyVault"
+            ],
+            "Comments": "Creates Active Directory Domain Services VMs",
+            "Deployment": {
+                "OverrideParameters": {
+                    "virtualMachineScaleSetsName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.Name}"
+                    },
+                    "virtualMachineScaleSetsSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.VMSKU}"
+                    },
+                    "virtualMachineScaleSetsOSImage": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.OSImage}"
+                    },
+                    "virtualMachineScaleSetsOSType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.OSType}"
+                    },
+                    "virtualMachineScaleSetsDataDisks": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DataDisks}"
+                    },
+                    "loadBalancerBackendPoolId": {
+                        "value": "reference(WebLoadBalancer.loadBalancerResourceBackendPoolId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
+                    },
+                    "logAnalyticsWorkspacePrimarySharedKey": {
+                        "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
+                    },
+                    "diagnosticsStorageAccountName": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountName)"
+                    },
+                    "diagnosticsStorageAccountSasToken": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
+                    },
+                    "artifactsStorageAccountName": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                    },
+                    "artifactsStorageAccountSasKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "subnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.SubnetName}"
+                    },
+                    "vmIPAddress": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.AddsIPAddressStart}"
+                    },
+                    "applicationSecurityGroupId": {
+                        "value": "reference(BusinessASG.applicationSecurityGroupResourceId)"
+                    },
+                    "adminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.AdminUsername}"
+                    },
+                    "adminPassword": {
+                        "reference": "${Parameters.ModuleConfigurationParameters.BusinessApp.AdminPassword}"
+                    },
+                    "domainAdminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DomainAdminUsername}"
+                    },
+                    "domainAdminPassword": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DomainAdminPassword}"
+                    },
+                    "domainName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DomainName}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "IISOnBusinessVMSS",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.BusinessApp.ResourceGroup}",
+            "ModuleDefinitionName": "InternetInformationServices",
+            "DependsOn":[
+                "BusinessAppVMSS"
+            ],
+            "Deployment":{
+                "OverrideParameters":{
+                    "virtualMachineScaleSetsName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.Name}"
+                    },
+                    "artifactsStorageAccountName": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                    },
+                    "artifactsStorageAccountSasKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "SQLServerAlwaysOnLoadBalancer",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.ResourceGroup}",
+            "ModuleDefinitionName": "LoadBalancers",
+            "Deployment": {
+                "OverrideParameters": {
+                    "loadBalancerName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.Name}"
+                    },
+                    "loadBalancingRules": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.LoadBalancingRules}"
+                    },
+                    "probes": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.Probes}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "loadBalancerIPAddress": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.IPAddressStart}"
+                    },
+                    "subnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.SubnetName}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "SQLServerAlwaysOnVMs",
+            "ModuleDefinitionName": "VirtualMachines",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ResourceGroup}",
+            "DependsOn": [
+                "KeyVault",
+                "SQLServerAlwaysOnLoadBalancer"
+            ],
+            "Comments": "Creates Active Directory Domain Services VMs",
+            "Deployment": {
+                "OverrideParameters": {
+                    "virtualMachineName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "virtualMachineSize": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.VMSize}"
+                    },
+                    "virtualMachineOSImage": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.OSImage}"
+                    },
+                    "virtualMachineOSType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.OSType}"
+                    },
+                    "virtualMachineCount": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.VMCount}"
+                    },
+                    "virtualMachineDataDisks": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DataDisks}"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "logAnalyticsWorkspacePrimarySharedKey": {
+                        "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
+                    },
+                    "diagnosticsStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "diagnosticsStorageAccountName": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountName)"
+                    },
+                    "diagnosticsStorageAccountSasToken": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
+                    },
+                    "artifactsStorageAccountName": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                    },
+                    "artifactsStorageAccountKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountAccessKey)"
+                    },
+                    "artifactsStorageAccountSasKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "subnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.SubnetName}"
+                    },
+                    "vmIPAddress": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.IPAddressStart}"
+                    },
+                    "applicationSecurityGroupId": {
+                        "value": "reference(DataASG.applicationSecurityGroupResourceId)"
+                    },
+                    "adminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.AdminUsername}"
+                    },
+                    "adminPassword": {
+                        "reference": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.AdminPassword}"
+                    },
+                    "domainAdminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminUsername}"
+                    },
+                    "domainAdminPassword": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminPassword}"
+                    },
+                    "domainName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainName}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "CloudWitnessStorageAccount",
+            "ModuleDefinitionName": "StorageAccounts",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnCloudWitness.ResourceGroup}",
+            "Comments": "Storage Account that is used as a Cloud Witness",
+            "Deployment": {
+                "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
+                "OverrideParameters": {
+                    "storageAccountName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnCloudWitness.Name}"
+                    },
+                    "storageAccountSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnCloudWitness.Sku}"
+                    },
+                    "networkAcls": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnCloudWitness.NetworkAcls}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "InstallSQLServerAlwaysOn",
+            "ModuleDefinitionName": "VirtualMachines",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ResourceGroup}",
+            "DependsOn": [
+                "KeyVault",
+                "SQLServerAlwaysOnLoadBalancer",
+                "CloudWitnessStorageAccount"
+            ],
+            "Comments": "Creates Active Directory Domain Services VMs",
+            "Deployment": {
+                "OverrideParameters": {
+                    "virtualMachineName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "adminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "adminPassword": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "clusterName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "artifactsStorageAccountName": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                    },
+                    "artifactsStorageAccountKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountAccessKey)"
+                    },
+                    "artifactsStorageAccountSasKey": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                    },
+                    "cloudWitnessStorageAccountName": {
+                        "value": "reference(CloudWitnessStorageAccount.storageAccountName)"
+                    },
+                    "cloudWitnessStorageAccountKey": {
+                        "value": "reference(CloudWitnessStorageAccount.storageAccountName)"
+                    },
+                    "sqlServerILB_IPAddress": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "domainName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "domainAdminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    },
+                    "domainAdminPassword": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -218,9 +218,10 @@ Class Initialize {
 
                 # Let's check if the life of the sas token expires within an hour
                 # if it does, let's get a new sas token
-                if($storageAccountDetails.ExpiryTime -le `
-                   ((Get-Date) - $oneHourDuration)) {
+                if(($storageAccountDetails.ExpiryTime - (Get-Date)) -le $oneHourDuration) {
                     
+                    Write-Debug "Obtaining new SAS Token, previous expired"
+
                     # Setting AZ context to be able to retrieve the proper
                     # SAS token, there are situations where the toolkit
                     # subscription is different than the one from the
@@ -234,6 +235,7 @@ Class Initialize {
                             $this.dataStoreName,
                             $this.dataStoreResourceGroupName);
 
+                    Write-Debug "Sas token acquired, new expiriy time is: $($storageAccountDetails.ExpiryTime)"
                     $storageAccountDetails.StorageAccountSasToken = `
                         $sasToken.SASToken;
                     $storageAccountDetails.ExpiryTime = `
@@ -275,17 +277,20 @@ Class Initialize {
         [string] $storageAccountResourceGroup) {
         try {
 
+            Write-Host "Creating a storage account: $storageAccountName in resource group: $storageAccountResourceGroup"
             $storageAccountAccessKey = $null;
 
             $storageAccountAccessKeys = `
                 (Get-AzStorageAccountKey `
                     -ResourceGroupName $this.dataStoreResourceGroupName `
                     -Name $this.dataStoreName).Value;
+
             # Set SAS Token expiration of 2 hours
             $twoHoursDuration = New-TimeSpan -Hours 3;
             $expiryTime = (Get-Date) + $twoHoursDuration;
 
             if($null -ne $storageAccountAccessKeys) {
+                Write-Host "Keys acquired successfully"
                 $storageAccountAccessKey = `
                     $storageAccountAccessKeys[0];
             

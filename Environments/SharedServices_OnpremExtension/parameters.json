@@ -11,14 +11,14 @@
                 "PrimaryDomainControllerIP": "192.168.1.4",
                 "DomainName": "contoso.com",
                 "ADSitename": "Cloud-Site",
-                "DomainAdminUserName": "contoso"
+                "DomainAdminUserName": "env(DOMAIN_ADMIN_USERNAME)"
             },
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"
             },
             "VirtualNetworkGateway": {
-                "Name": "jch-onprem-gw",
-                "ResourceGroup": "jch-onprem-net-rg"
+                "Name": "cnts-onprem-gw",
+                "ResourceGroup": "cnts-onprem-net-rg"
             },
             "SubscriptionId": "${Subscriptions.OnPremises.SubscriptionId}"
         },
@@ -93,6 +93,19 @@
                 "West Central US",
                 "West Europe",
                 "West US 2"
+            ]
+        },
+        "AzureBastion": {
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "Name": "${Parameters.InstanceName}-bastion",
+            "Location": "West US",
+            "ListOfAllowedRegions": [
+                "West US",
+                "East US",
+                "West Europe",
+                "South Central US",
+                "Australia East",
+                "Japan East"
             ]
         },
         "ApplicationSecurityGroups": {
@@ -473,7 +486,7 @@
             "EnableVmProtection": false,
             "Subnets": [
                 {
-                    "name": "${Parameters.DeploymentName}",
+                    "name": "shrdsvcs",
                     "addressPrefix": "172.0.0.0/24",
                     "networkSecurityGroupName": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.SharedServices.Name}",
                     "routeTableName": "${Parameters.ModuleConfigurationParameters.RouteTables.SharedServices.Name}",
@@ -516,6 +529,13 @@
                 {
                     "name": "GatewaySubnet",
                     "addressPrefix": "172.0.4.0/24",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": []
+                },
+                {
+                    "name": "AzureBastionSubnet",
+                    "addressPrefix": "172.0.5.0/24",
                     "networkSecurityGroupName": "",
                     "routeTableName": "",
                     "serviceEndpoints": []
@@ -784,10 +804,6 @@
             }
         },
         "ArtifactsStorageAccount": "file(../_Common/artifactsStorageAccount.json)",
-        "AzureBastion": {
-            "Name": "sharedsvcs-bastion",
-            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}"
-        },
         "Jumpbox": {
             "ResourceGroup": "${Parameters.InstanceName}-jumpbox-rg",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",

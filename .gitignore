@@ -49,7 +49,9 @@ app_creds_real.py
 *.sln.docstates
 .vs/
 .vscode
-
+*.dll
+*.pdb
+*.deps.json
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

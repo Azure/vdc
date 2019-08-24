@@ -5,6 +5,7 @@
             "Name": "DiagnosticStorageAccount",
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}",
+            "DependsOn": [],
             "Comments": "Storage Account that is used to store diagnostic information as raw logs",
             "Version": "2.0",
             "Policies": {
@@ -354,10 +355,7 @@
         {
             "Name": "WindowsJumpboxKek",
             "DependsOn": [
-                "KeyVault",
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics"
+                "KeyVault"
             ],
             "Script": {
                 "Command": "../../Modules/KeyVault/2.0/Scripts/create.keys.ps1",
@@ -372,10 +370,7 @@
         {
             "Name": "LinuxJumpboxKek",
             "DependsOn": [
-                "KeyVault",
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics"
+                "KeyVault"
             ],
             "Script": {
                 "Command": "../../Modules/KeyVault/2.0/Scripts/create.keys.ps1",
@@ -390,10 +385,7 @@
         {
             "Name": "ActiveDirectoryKek",
             "DependsOn": [
-                "KeyVault",
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics"
+                "KeyVault"
             ],
             "Script": {
                 "Command": "../../Modules/KeyVault/2.0/Scripts/create.keys.ps1",
@@ -408,10 +400,7 @@
         {
             "Name": "ActiveDirectoryDomainServicesKek",
             "DependsOn": [
-                "KeyVault",
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics"
+                "KeyVault"
             ],
             "Script": {
                 "Command": "../../Modules/KeyVault/2.0/Scripts/create.keys.ps1",
@@ -429,20 +418,16 @@
             "Updates": "KeyVault",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
             "DependsOn": [
+                "VirtualNetwork",
                 "KeyVault", 
                 "WindowsJumpbox", 
                 "LinuxJumpbox", 
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
                 "InstallActiveDirectory",
-                "ActiveDirectoryDomainServicesVMs",
-                "EncryptActiveDirectoryDomainServices",
                 "InstallActiveDirectoryDomainServices",
                 "ActiveDirectoryDomainServicesKek", 
                 "WindowsJumpboxKek", 
                 "LinuxJumpboxKek", 
-                "ActiveDirectoryKek",
-                "VirtualNetwork"
+                "ActiveDirectoryKek"
             ],
             "Deployment": {
                 "OverrideParameters": {
@@ -496,7 +481,8 @@
                 "DiagnosticStorageAccount",
                 "LogAnalytics",
                 "KeyVault",
-                "ArtifactsStorageAccount"
+                "ArtifactsStorageAccount",
+                "WindowsJumpbox"
             ],
             "Comments": "Creates Active Directory Domain Services VMs",
             "Deployment": {
@@ -566,13 +552,8 @@
             "ModuleDefinitionName": "VirtualMachineKeyEncryptionKey",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ResourceGroup}",
             "DependsOn": [
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics",
-                "EnableDnsServersOnVirtualNetwork",
-                "KeyVault",
-                "ArtifactsStorageAccount",
-                "ActiveDirectoryVM"
+                "ActiveDirectoryVM",
+                "ActiveDirectoryKek"
             ],
             "Comments": "Encrypts VMs using bitlocker",
             "Deployment": {
@@ -600,12 +581,6 @@
             "ModuleDefinitionName": "ActiveDirectory",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ResourceGroup}",
             "DependsOn": [
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics",
-                "KeyVault",
-                "ArtifactsStorageAccount",
-                "ActiveDirectoryVM",
                 "EncryptActiveDirectory"
             ],
             "Comments": "Creates Active Directory Domain Services VMs",
@@ -651,8 +626,6 @@
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
             "DependsOn": [
                 "InstallActiveDirectory",
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
                 "VirtualNetwork"
             ],
             "Deployment": {
@@ -664,16 +637,29 @@
             }
         },
         {
+            "Name": "RegisterAzureBastionFeature",
+            "Enabled": false,
+            "Script": {
+                "Command": "../../Modules/AzureBastion/2.0/Scripts/RegisterProviderFeature.ps1",
+                "Arguments": {}
+            }
+        },
+        {
             "Name": "AzureBastion",
+            "Enabled": false,
             "ModuleDefinitionName": "AzureBastion",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AzureBastion.ResourceGroup}",
             "DependsOn": [
+                "RegisterAzureBastionFeature",
                 "VirtualNetwork"
             ],
             "Deployment": {
                 "OverrideParameters": {
                     "azureBastionName": {
                         "value": "${Parameters.ModuleConfigurationParameters.AzureBastion.Name}"
+                    },
+                    "location": {
+                        "value": "${Parameters.ModuleConfigurationParameters.AzureBastion.Location}"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -689,12 +675,9 @@
                 "VirtualNetwork",
                 "DiagnosticStorageAccount",
                 "LogAnalytics",
-                "InstallActiveDirectory",
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
-                "EnableDnsServersOnVirtualNetwork",
                 "KeyVault",
-                "ArtifactsStorageAccount"
+                "ArtifactsStorageAccount",
+                "JumpboxASG"
             ],
             "Comments": "Creates Windows Jumpbox",
             "Deployment": {
@@ -766,20 +749,12 @@
         },
         {
             "Name": "EncryptWindowsJumpbox",
+            "Enabled": false,
             "ModuleDefinitionName": "VirtualMachineKeyEncryptionKey",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Jumpbox.ResourceGroup}",
             "DependsOn": [
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics",
-                "InstallActiveDirectory",
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
-                "EnableDnsServersOnVirtualNetwork",
-                "KeyVault",
-                "ArtifactsStorageAccount",
-                "ActiveDirectoryDomainServicesVMs",
-                "WindowsJumpbox"
+                "WindowsJumpbox",
+                "WindowsJumpboxKek"
             ],
             "Comments": "Encrypts VMs using bitlocker",
             "Deployment": {
@@ -810,13 +785,9 @@
                 "VirtualNetwork",
                 "DiagnosticStorageAccount",
                 "LogAnalytics",
-                "InstallActiveDirectory",
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
-                "EnableDnsServersOnVirtualNetwork",
                 "KeyVault",
                 "ArtifactsStorageAccount",
-                "AzureBastion"
+                "JumpboxASG"
             ],
             "Comments": "Creates Linux Jumpbox",
             "Deployment": {
@@ -889,18 +860,11 @@
         {
             "Name": "EncryptLinuxJumpbox",
             "ModuleDefinitionName": "VirtualMachineKeyEncryptionKey",
+            "Enabled": false,
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Jumpbox.ResourceGroup}",
             "DependsOn": [
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics",
-                "InstallActiveDirectory",
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
-                "EnableDnsServersOnVirtualNetwork",
-                "KeyVault",
-                "ArtifactsStorageAccount",
-                "LinuxJumpbox"
+                "LinuxJumpbox",
+                "LinuxJumpboxKek"
             ],
             "Comments": "Encrypts VMs using bitlocker",
             "Deployment": {
@@ -932,9 +896,10 @@
                 "DiagnosticStorageAccount",
                 "LogAnalytics",
                 "WindowsJumpbox",
-                "EnableDnsServersOnVirtualNetwork",
                 "KeyVault",
-                "ArtifactsStorageAccount"
+                "ArtifactsStorageAccount",
+                "DomainControllerASG",
+                "EnableDnsServersOnVirtualNetwork"
             ],
             "Comments": "Creates Active Directory Domain Services VMs",
             "Deployment": {
@@ -994,7 +959,7 @@
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.AddsIPAddressStart}"
                     },
                     "applicationSecurityGroupId": {
-                        "value": "reference(JumpboxASG.applicationSecurityGroupResourceId)"
+                        "value": "reference(DomainControllerASG.applicationSecurityGroupResourceId)"
                     },
                     "adminUsername": {
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.AdminUsername}"
@@ -1010,17 +975,8 @@
             "ModuleDefinitionName": "VirtualMachineKeyEncryptionKey",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.ResourceGroup}",
             "DependsOn": [
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics",
-                "InstallActiveDirectory",
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
-                "WindowsJumpbox",
-                "EnableDnsServersOnVirtualNetwork",
-                "KeyVault",
-                "ArtifactsStorageAccount",
-                "ActiveDirectoryDomainServicesVMs"
+                "ActiveDirectoryDomainServicesVMs",
+                "ActiveDirectoryDomainServicesKek"
             ],
             "Comments": "Encrypts Active Directory Domain Services VMs using bitlocker",
             "Deployment": {
@@ -1051,18 +1007,7 @@
             "ModuleDefinitionName": "ActiveDirectoryDomainServices",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.ResourceGroup}",
             "DependsOn": [
-                "InstallActiveDirectory",
-                "ActiveDirectoryVM",
-                "EncryptActiveDirectory",
-                "EnableDnsServersOnVirtualNetwork",
-                "WindowsJumpbox",
-                "VirtualNetwork",
-                "DiagnosticStorageAccount",
-                "LogAnalytics",
-                "KeyVault",
-                "ArtifactsStorageAccount",
-                "EncryptActiveDirectoryDomainServices",
-                "ActiveDirectoryDomainServicesVMs"
+                "EncryptActiveDirectoryDomainServices"
             ],
             "Comments": "Installs Active Directory Domain Services",
             "Deployment": {

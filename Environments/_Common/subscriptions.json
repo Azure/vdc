@@ -18,6 +18,12 @@
         "SubscriptionId": "00000000000000000000000",
         "Location": "West US 2"
     },
+    "NTier_IaaS": {
+        "Comments": "Workload subscription and tenant information",
+        "TenantId": "00000000000000000000000",
+        "SubscriptionId": "00000000000000000000000",
+        "Location": "West US 2"
+    },
     "Artifacts": {
         "Comments": "Subscription and tenant information where the Artifacts Storage Account will reside",
         "TenantId": "00000000000000000000000",

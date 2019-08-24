@@ -1,0 +1,273 @@
+{
+    "ModuleConfigurationsPath": "../../../Modules",
+    "ModuleConfigurations": [
+        {
+            "Name": "SubscriptionCreation",
+            "Enabled": false,
+            "Script": {
+                "Command": "../../../Scripts/Subscription/NewSubscription.ps1",
+                "Arguments": {
+                    "SubscriptionName": "vdc2-nist-workload10",
+                    "Location": "West US 2",
+                    "TenantId": "env(TENANT_ID)",
+                    "OfferType": "MS-AZR-0017P"
+                },
+                "UpdatePath": "Subscriptions.ASE_SQLDB"
+            }
+        },
+        {
+            "Name": "DiagnosticStorageAccount",
+            "ModuleDefinitionName": "StorageAccounts",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}",
+            "Comments": "Storage Account that is used to store Diagnostic information of VMs and Non-VM resources",
+            "Version": "2.0",
+            "Policies": {
+                "Comments": "Policies is Optional - If no object is specified, no Policies deployment will occur",
+                "OverrideParameters": {
+                    "effect": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Policies.Effect}"
+                    },
+                    "resourceGroup": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}"
+                    },
+                    "resourceGroupLocation": {
+                        "value": "${Parameters.Location}"
+                    }
+                }
+            },
+            "Deployment": {
+                "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
+                "TemplatePath": "../../../Modules/StorageAccounts/2.0/deploy.json",
+                "OverrideParameters": {
+                    "storageAccountName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Name}"
+                    },
+                    "storageAccountSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Sku}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "LogAnalytics",
+            "ModuleDefinitionName": "LogAnalytics",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.LogAnalytics.ResourceGroup}",
+            "DependsOn": [
+                "DiagnosticStorageAccount"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "logAnalyticsWorkspaceName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Name}"
+                    },
+                    "diagnosticStorageAccountName": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountName)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "diagnosticStorageAccountAccessKey": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountAccessKey)"
+                    },
+                    "location": {
+                        "value": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "AzureSecurityCenter",
+            "ModuleDefinitionName": "AzureSecurityCenter",
+            "DependsOn": [
+                "LogAnalytics"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "NISTControls",
+            "ModuleDefinitionName": "NISTControls",
+            "DependsOn": [
+                "LogAnalytics"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
+                    },
+                    "location": {
+                        "value": "${Parameters.Location}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "WebASG",
+            "ModuleDefinitionName": "ApplicationSecurityGroups",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.ResourceGroup}",
+            "DependsOn": [],
+            "Deployment": {
+                "OverrideParameters": {
+                    "applicationSecurityGroupName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Web.Name}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "BusinessASG",
+            "ModuleDefinitionName": "ApplicationSecurityGroups",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.ResourceGroup}",
+            "DependsOn": [],
+            "Deployment": {
+                "OverrideParameters": {
+                    "applicationSecurityGroupName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Business.Name}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "DataASG",
+            "ModuleDefinitionName": "ApplicationSecurityGroups",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.ResourceGroup}",
+            "DependsOn": [],
+            "Deployment": {
+                "OverrideParameters": {
+                    "applicationSecurityGroupName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Data.Name}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "DefaultNSG",
+            "ModuleDefinitionName": "NetworkSecurityGroups",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.ResourceGroup}",
+            "DependsOn": [
+                "WebASG",
+                "BusinessASG",
+                "DataASG",
+                "DiagnosticStorageAccount",
+                "LogAnalytics"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "networkSecurityGroupName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.Default.Name}"
+                    },
+                    "networkSecurityGroupSecurityRules": {
+                        "value": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.Default.Rules}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "DefaultRouteTable",
+            "ModuleDefinitionName": "RouteTables",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.RouteTables.ResourceGroup}",
+            "DependsOn": [],
+            "Deployment": {
+                "OverrideParameters": {
+                    "routeTableName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.RouteTables.Default.Name}"
+                    },
+                    "routes": {
+                        "value": "${Parameters.ModuleConfigurationParameters.RouteTables.Default.Routes}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "VirtualNetwork",
+            "ModuleDefinitionName": "VirtualNetwork",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "DependsOn": [
+                "DefaultNSG",
+                "DefaultRouteTable"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "vnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Name}"
+                    },
+                    "vnetAddressPrefixes": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.AddressPrefixes}"
+                    },
+                    "dnsServers": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.DnsServers}"
+                    },
+                    "subnets": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets}"
+                    },
+                    "enableDdosProtection": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.EnableDdosProtection}"
+                    },
+                    "enableVmProtection": {
+                        "value": false
+                    }
+                }
+            }
+        },
+        {
+            "Name": "LocalVirtualNetworkPeering",
+            "ModuleDefinitionName": "VirtualNetworkPeering",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "DependsOn": [
+                "VirtualNetwork"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "localVnetName": {
+                        "value": "reference(VirtualNetwork.vNetName)"
+                    },
+                    "peeringName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.LocalPeering.Name}"
+                    },
+                    "remoteVirtualNetworkId": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetResourceId)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "RemoteVirtualNetworkPeering",
+            "ModuleDefinitionName": "VirtualNetworkPeering",
+            "Subscription": "SharedServices",
+            "ResourceGroupName": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetResourceGroup)",
+            "DependsOn": [
+                "VirtualNetwork"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "localVnetName": {
+                        "value": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetName)"
+                    },
+                    "peeringName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.RemotePeering.Name}"
+                    },
+                    "remoteVirtualNetworkId": {
+                        "value": "reference(${Parameters.InstanceName}.VirtualNetwork.vNetResourceId)"
+                    },
+                    "allowGatewayTransit": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.RemotePeering.AllowGatewayTransit}"
+                    },
+                    "useRemoteGateways": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.RemotePeering.UseRemoteGateways}"
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachineName": {
+            "value": "adds"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "virtualMachineOSImage": {
+            "value": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            }
+        },
+        "virtualMachineOSType": {
+            "value": "Windows"
+        },
+        "workspaceId": {
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "logAnalyticsWorkspaceId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.OperationalInsights/workspaces/contoso-example"
+        },
+        "logAnalyticsWorkspacePrimarySharedKey": {
+            "value": ""
+        },
+        "diagnosticsStorageAccountId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Storage/storageAccounts/contosostrgexmpl"
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "contoso-diag-storage"
+        },
+        "diagnosticsStorageAccountSasToken": {
+            "value": ""
+        },
+        "artifactsStorageAccountName": {
+            "value": "vdcstorage"
+        },
+        "artifactsStorageAccountKey": {
+            "value": ""
+        },
+        "artifactsStorageAccountSasKey": {
+            "value": ""
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Network/virtualNetworks/contoso-vnet-example"
+        },
+        "subnetName": {
+            "value": "sharedsvcs"
+        },
+        "adminUsername": {
+            "value": "contoso"
+        },
+        "adminPassword": {
+            "value": "password"
+        },
+        "enablePublicIP": {
+            "value": true
+        }
+    }
+}

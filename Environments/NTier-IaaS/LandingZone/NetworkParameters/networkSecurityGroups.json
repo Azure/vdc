@@ -1,0 +1,178 @@
+{
+    "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+    "Default": {
+        "Name": "default-nsg",
+        "Rules": [
+            {
+                "name": "allow-azure-loadbalancer",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "*",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "direction": "Inbound",
+                    "priority": 100,
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "AzureLoadBalancer",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-vnet-to-web",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "",
+                    "destinationPortRange": "",
+                    "destinationPortRanges": [
+                        "80",
+                        "443"
+                    ],
+                    "destinationApplicationSecurityGroups": [
+                        {
+                            "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Web.Name}"
+                        }
+                    ],
+                    "direction": "Inbound",
+                    "priority": 110,
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-web-to-business",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "",
+                    "destinationPortRange": "",
+                    "destinationPortRanges": [
+                        "80",
+                        "443"
+                    ],
+                    "destinationApplicationSecurityGroups": [
+                        {
+                            "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Business.Name}"
+                        }
+                    ],
+                    "direction": "Inbound",
+                    "priority": 120,
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "",
+                    "sourceApplicationSecurityGroups": [
+                        {
+                            "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Web.Name}"
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "allow-business-to-data",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "",
+                    "destinationPortRange": "1433",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [
+                        {
+                            "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Data.Name}"
+                        }
+                    ],
+                    "direction": "Inbound",
+                    "priority": 130,
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "",
+                    "sourceApplicationSecurityGroups": [
+                        {
+                            "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Business.Name}"
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "allow-rdp",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "3389",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "direction": "Inbound",
+                    "priority": 200,
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.SharedServices.Jumpbox_SubnetAddressPrefix}",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "allow-ssh",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "22",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "direction": "Inbound",
+                    "priority": 210,
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.SharedServices.Jumpbox_SubnetAddressPrefix}",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "deny-internet",
+                "properties": {
+                    "access": "Deny",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "*",
+                    "destinationPortRange": "*",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "direction": "Inbound",
+                    "priority": 4095,
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "Internet",
+                    "sourceApplicationSecurityGroups": []
+                }
+            },
+            {
+                "name": "deny-vnet",
+                "properties": {
+                    "access": "Deny",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "VirtualNetwork",
+                    "destinationPortRange": "*",
+                    "destinationPortRanges": [],
+                    "destinationApplicationSecurityGroups": [],
+                    "direction": "Inbound",
+                    "priority": 4096,
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "VirtualNetwork",
+                    "sourceApplicationSecurityGroups": []
+                }
+            }
+        ]
+    }
+}

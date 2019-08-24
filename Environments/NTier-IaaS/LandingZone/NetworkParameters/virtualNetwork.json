@@ -1,0 +1,30 @@
+{
+    "Name": "${Parameters.InstanceName}-vnet",
+    "ResourceGroup": "${Parameters.InstanceName}-network-rg",
+    "AddressPrefixes": [
+        "172.2.0.0/16"
+    ],
+    "EnableDdosProtection": false,
+    "Subnets": [
+        {
+            "name": "default",
+            "addressPrefix": "172.2.0.0/24",
+            "networkSecurityGroupName": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.Default.Name}",
+            "routeTableName": "${Parameters.ModuleConfigurationParameters.RouteTables.Default.Name}",
+            "serviceEndpoints": [{
+                    "service": "Microsoft.EventHub"
+                },
+                {
+                    "service": "Microsoft.Sql"
+                },
+                {
+                    "service": "Microsoft.Storage"
+                },
+                {
+                    "service": "Microsoft.KeyVault"
+                }
+            ]
+        }
+    ],
+    "DnsServers": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.dnsServers)"
+}

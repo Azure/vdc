@@ -26,5 +26,5 @@
             ]
         }
     ],
-    "DnsServers": "reference(${Parameters.Organization}-shrdsvcs.ActiveDirectoryDomainServices.dnsServers)"
+    "DnsServers": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.dnsServers)"
 }

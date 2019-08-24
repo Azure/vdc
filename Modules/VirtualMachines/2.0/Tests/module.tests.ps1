@@ -133,7 +133,11 @@ Describe "Template: $template - Virtual Machine" -Tags Unit {
 								| Sort-Object -Property Name `
 								| ForEach-Object Name
 				$result = @($allParametersInParametersFile| Where-Object {$allParametersInTemplateFile -notcontains $_});
-				Write-Host "Invalid parameters: $(ConvertTo-Json $result)";
+				
+				if ($result.Count -gt 0) {
+					Write-Host "Invalid parameters: $(ConvertTo-Json $result)"
+				}
+				
 				@($allParametersInParametersFile| Where-Object {$allParametersInTemplateFile -notcontains $_}).Count | Should Be 0;
 			}
 		}
@@ -153,7 +157,14 @@ Describe "Template: $template - Virtual Machine" -Tags Unit {
 								| Sort-Object -Property Name `
 								| ForEach-Object Name
 				
-				@($requiredParametersInTemplateFile | Where-Object {$allParametersInParametersFile -notcontains $_}).Count | Should Be 0;
+				$invalidParameters = `
+					$requiredParametersInTemplateFile | Where-Object {$allParametersInParametersFile -notcontains $_}
+				
+				if ($invalidParameters.Count -gt 0) {
+					Write-Host "Parameters not found: $(ConvertTo-Json $invalidParameters)"
+				}
+
+				$invalidParameters.Count | Should Be 0
 			}
 		}
 	}

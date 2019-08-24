@@ -290,6 +290,7 @@ Class BlobContainerStateRepository: IStateRepository {
                             -AsHashTable).$moduleInstanceName;
                 }
                 else {
+                    Write-Debug "Blob not found"
                     # blob was not found
                     return $null;
                 }
@@ -310,11 +311,12 @@ Class BlobContainerStateRepository: IStateRepository {
 
     hidden [string] BlobExists([string] $container, 
                                [string] $blob) {
-        
+                                
+        Write-Debug "About to retrieve Container: $container and Blob: $blob"
         $temporalFileName = [Guid]::NewGuid();
         $temporalFilePath = `
             Join-Path $this.temporalRootPath "$temporalFileName.json";
-        
+        Write-Debug "Temporal file path: $temporalFilePath"
         try {
             $blobFound = Get-AzStorageBlobContent `
                 -Container $container `
@@ -323,13 +325,15 @@ Class BlobContainerStateRepository: IStateRepository {
                 -Context $this.storageAccountContext `
                 -ErrorAction SilentlyContinue
             
-            if ($blobFound -eq $null) {
+            if ($null -eq $blobFound) {
+                Write-Debug "No blob found"
                 return "";
             }
             else {
                 $contentJson = `
                     Get-Content $temporalFilePath `
                         -Raw;
+                Write-Debug "Blob found: $contentJson"
                 return $contentJson;
             }
         }

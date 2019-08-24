@@ -5,12 +5,6 @@
     "Subscription": "ASE_SQLDB",
     "ModuleConfigurationParameters": {
         "OnPremisesInformation": {
-            "ActiveDirectory": {
-                "PrimaryDomainControllerIP": "192.168.1.4",
-                "DomainName": "fontoso.com",
-                "ADSitename": "Cloud-Site",
-                "DomainAdminUserName": "fontoso"
-            },
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"
             }

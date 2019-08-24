@@ -365,6 +365,13 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         $tokenCache = $context.TokenCache;
         $cacheItems = $tokenCache.ReadItems();
         $accessToken = '';
+
+        # Let's filter based on management endpoint (resource
+        # management)
+        $cacheItems = 
+            $cacheItems | `
+            Where-Object -Property "Resource" -Like "*management*"
+
         $cacheItems | ForEach-Object {
             # Cache Items object's TenantId is null when run in
             # an AzDO Agent

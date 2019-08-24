@@ -1,0 +1,51 @@
+{
+    "Organization": "env(ORGANIZATION_NAME)",
+    "DeploymentName": "ntier-iaas",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "NTier_IaaS",
+    "ModuleConfigurationParameters": {
+        "OnPremisesInformation": {
+            "Network": {
+                "AddressPrefix": "192.168.1.0/28"
+            }
+        },
+        "SharedServices": {
+            "Jumpbox_SubnetAddressPrefix": "172.0.0.0/24"
+        },
+        "DiagnosticStorageAccount": {
+            "Name": "${Parameters.Organization}asesqldiag01",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Sku": "Standard_GRS",
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [{
+                    "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                }],
+                "ipRules": []
+            },
+            "Policies": {
+                "Effect": "Audit"
+            }
+        },
+        "LogAnalytics": {
+            "Name": "${Parameters.InstanceName}-la",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.Location}"
+        },
+        "ApplicationSecurityGroups": "file(NetworkParameters/applicationSecurityGroups.json)",
+        "NetworkSecurityGroups": "file(NetworkParameters/networkSecurityGroups.json)",
+        "RouteTables": "file(NetworkParameters/routeTables.json)",
+        "VirtualNetwork": "file(NetworkParameters/virtualNetwork.json)",
+        "VirtualNetworkPeering": {
+            "LocalPeering": {
+                "Name": "${Parameters.DeploymentName}-to-sharedsvcs"
+            },
+            "RemotePeering": {
+                "Name": "sharedsvcs-to-${Parameters.DeploymentName}",
+                "AllowGatewayTransit": true,
+                "UseRemoteGateways": false
+            }
+        }
+    }
+}

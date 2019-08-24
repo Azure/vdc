@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "loadBalancerName": {
+            "value": "contoso-lb"
+        },
+        "loadBalancingRules": {
+            "value": [
+                {
+                    "name": "load-balancing-1",
+                    "properties": {
+                        "frontendPort": 80,
+                        "backendPort": 80,
+                        "enableFloatingIP": false,
+                        "idleTimeoutInMinutes": 3,
+                        "protocol": "TCP",
+                        "enableTcpReset": false,
+                        "loadDistribution": false,
+                        "disableOutboundSnat": false,
+                        "probeName": "bar"
+                    }
+                }
+            ]
+        },
+        "probes": {
+            "value": [
+                {
+                    "name": "probe",
+                    "properties": {
+                        "protocol": "TCP",
+                        "port": 80,
+                        "requestPath": "/",
+                        "intervalInSeconds": 10,
+                        "numberOfProbes": 5
+                    }
+                }
+            ]
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Network/virtualNetworks/contoso-vnet-example"
+        },
+        "subnetName": {
+            "value": "sharedsvcs"
+        }
+    }
+}

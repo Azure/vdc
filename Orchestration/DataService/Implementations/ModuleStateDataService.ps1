@@ -82,9 +82,8 @@ Class ModuleStateDataService: IModuleStateDataService {
                 $this.stateRepository.GetLatestDeploymentMapping($filters);
             
             # If deploymentMapping is null, it means that there is no mapping found
-            if (!$deploymentMapping) {
-                Write-Debug "No state information found";
-                return $null;
+            if ($null -eq $deploymentMapping) {
+                throw "No state information found, make sure that the module definition: $moduleInstanceName in the deployment instance: $archetypeInstanceName was deployed.";
             }
             else {
                 # deployment mapping found, let's get the deployment outputs

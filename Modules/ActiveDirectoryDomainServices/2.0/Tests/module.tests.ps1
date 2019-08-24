@@ -115,6 +115,11 @@ Describe "Template: $template - Active Directory Domain Services" -Tags Unit {
 							| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
 							| Sort-Object -Property Name `
 							| ForEach-Object Name
+				if ($requiredParametersInTemplateFile.Count -gt $allParametersInParametersFile.Count) {
+					Write-Host "Mismatch found, parameters from parameter file are more than the expected in the template"
+					Write-Host "Required parameters are: $(ConvertTo-Json $requiredParametersInTemplateFile)"
+					Write-Host "Parameters from parameter file are: $(ConvertTo-Json $allParametersInParametersFile)"
+				}
 				$requiredParametersInTemplateFile.Count | Should Not BeGreaterThan $allParametersInParametersFile.Count;
 			}
 		}

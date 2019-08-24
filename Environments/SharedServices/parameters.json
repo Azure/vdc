@@ -77,7 +77,21 @@
                 "UK South",
                 "West Central US",
                 "West Europe",
-                "West US 2"
+                "West US 2",
+                "West US"
+            ]
+        },
+        "AzureBastion": {
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "Name": "${Parameters.InstanceName}-bastion",
+            "Location": "West US",
+            "ListOfAllowedRegions": [
+                "West US",
+                "East US",
+                "West Europe",
+                "South Central US",
+                "Australia East",
+                "Japan East"
             ]
         },
         "ApplicationSecurityGroups": {
@@ -382,7 +396,7 @@
             "EnableVmProtection": false,
             "Subnets": [
                 {
-                    "name": "${Parameters.DeploymentName}",
+                    "name": "shrdsvcs",
                     "addressPrefix": "172.0.0.0/24",
                     "networkSecurityGroupName": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.SharedServices.Name}",
                     "routeTableName": "${Parameters.ModuleConfigurationParameters.RouteTables.SharedServices.Name}",
@@ -425,6 +439,13 @@
                 {
                     "name": "GatewaySubnet",
                     "addressPrefix": "172.0.4.0/24",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": []
+                },
+                {
+                    "name": "AzureBastionSubnet",
+                    "addressPrefix": "172.0.5.0/24",
                     "networkSecurityGroupName": "",
                     "routeTableName": "",
                     "serviceEndpoints": []
@@ -626,7 +647,7 @@
             ]
         },
         "KeyVault": {
-            "Name": "${Parameters.InstanceName}-kv03",
+            "Name": "${Parameters.InstanceName}-kv",
             "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
             "Sku": "Premium",
             "EnableVaultForDeployment": true,
@@ -672,7 +693,7 @@
                         "secretValue": "env(ADMIN_USER_PWD)"
                     },
                     {
-                        "secretName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUserName}",
+                        "secretName": "env(DOMAIN_ADMIN_USERNAME)",
                         "secretValue": "env(DOMAIN_ADMIN_USER_PWD)"
                     },
                     {
@@ -693,10 +714,6 @@
             }
         },
         "ArtifactsStorageAccount": "file(../_Common/artifactsStorageAccount.json)",
-        "AzureBastion": {
-            "Name": "sharedsvcs-bastion",
-            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}"
-        },
         "Jumpbox": {
             "ResourceGroup": "${Parameters.InstanceName}-jumpbox-rg",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
@@ -742,10 +759,10 @@
             "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
             "Comments": "Windows VM name cannot exceed 13 characters.",
             "PrimaryDomainControllerIP": "172.0.0.10",
-            "DomainName": "fontoso.com",
+            "DomainName": "contoso.com",
             "ADSitename": "Cloud-Site",
-            "CloudZone": "fontosocloud.com",
-            "DomainAdminUsername": "fontoso",
+            "CloudZone": "contosocloud.com",
+            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
             "DomainAdminPassword": {
                 "keyVault": {
                     "id": "reference(KeyVault.keyVaultResourceId)"

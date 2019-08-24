@@ -1,0 +1,23 @@
+{
+    "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+    "Default": {
+        "Name": "default-udr",
+        "Routes": [
+            {
+                "name": "default",
+                "properties": {
+                    "addressPrefix": "0.0.0.0/0",
+                    "nextHopIpAddress": "reference(${Parameters.Organization}-shrdsvcs.AzureFirewall.azureFirewallPrivateIp)",
+                    "nextHopType": "VirtualAppliance"
+                }
+            },
+            {
+                "name": "to-on-premises",
+                "properties": {
+                    "addressPrefix": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.Network.AddressPrefix}",
+                    "nextHopType": "VirtualNetworkGateway"
+                }
+            }
+        ]
+    }
+}

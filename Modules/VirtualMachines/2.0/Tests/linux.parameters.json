@@ -10,9 +10,9 @@
         },
         "virtualMachineOSImage": {
             "value": {
-                "offer": "WindowsServer",
-                "publisher": "MicrosoftWindowsServer",
-                "sku": "2016-Datacenter"
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS"
             }
         },
         "virtualMachineOSType": {
