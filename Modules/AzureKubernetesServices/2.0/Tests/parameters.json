@@ -38,9 +38,6 @@
         "enableRBAC": {
             "value": true
         },
-        "vNetSubnetId": {
-            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-network-rg/providers/Microsoft.Network/virtualNetworks/org-aks-vnet/subnets/default"
-        },
         "serviceCIDR": {
             "value": "10.0.0.0/16"
         },
@@ -51,28 +48,34 @@
             "value": "172.17.0.1/16"
         },
         "logAnalyticsResourceId": {
-        "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/org-aks-la"
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.OperationalInsights/workspaces/org-aks-la"
         },
         "diagnosticsEventHubName": {
-        "value": "org-diagnostics-eventhub"
+            "value": "org-diagnostics-eventhub"
         },
         "diagnosticsEventHubAuthRuleId": {
-        "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.EventHub/namespaces/orgeventhubnamespace/AuthorizationRules/RootManageSharedAccessKey"
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.EventHub/namespaces/orgeventhubnamespace/AuthorizationRules/RootManageSharedAccessKey"
         },
         "diagnosticsStorageId": {
-        "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/orgaksdiag01"
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/org-aks-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/orgaksdiag01"
         },
         "rbacServerAppId": {
-            "value":"00000000-0000-0000-0000-000000000000"
+            "value": "00000000-0000-0000-0000-000000000000"
         },
         "rbacServerSecret": {
-            "value":"secret"
+            "value": "secret"
         },
         "rbacClientAppId": {
-            "value":"00000000-0000-0000-0000-000000000000"
+            "value": "00000000-0000-0000-0000-000000000000"
         },
         "rbacTenant": {
-            "value":"00000000-0000-0000-0000-000000000000"
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups"
+        },
+        "subnetName": {
+            "value": ""
         }
     }
 }

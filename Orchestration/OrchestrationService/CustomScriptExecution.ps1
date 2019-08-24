@@ -303,10 +303,13 @@ Class CustomScriptExecution {
 
                     Write-Host "$(ConvertTo-Json $childJob)";
 
-                    (Get-Job -Name $job.Name).ChildJobs | ForEach-Object {
+                    $childJob | ForEach-Object {
                         # Set the result only if there is an output
                         if($_.Output.Count -ge 1) {
-                            $result = $_.Output | Select-Object -Property * -ExcludeProperty PSComputerName,RunspaceID,PSShowComputerName;
+                            # TODO: To verify
+                            #$result = $_.Output | Select-Object -Property * -ExcludeProperty PSComputerName,RunspaceID,PSShowComputerName;
+                            $result = (ConvertTo-Json $_.Output | ConvertFrom-Json -AsHashtable).value
+
                         }
                         else {
                             $result = $null;

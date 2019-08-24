@@ -5,19 +5,6 @@
         "virtualMachineName": {
             "value": "adds"
         },
-        "virtualMachineCount": {
-            "value": 2
-        },
-        "virtualMachineSize": {
-            "value": "Standard_DS2_v2"
-        },
-        "virtualMachineOSImage": {
-            "value": {
-                "offer": "WindowsServer",
-                "publisher": "MicrosoftWindowsServer",
-                "sku": "2016-Datacenter"
-            }
-        },
         "artifactsStorageAccountSasKey": {
             "value": ""
         },
@@ -41,9 +28,6 @@
         },
         "ADSitename": {
             "value": "Cloud-Site"
-        },
-        "domaincontrollerDriveLetter": {
-            "value": "F"
         },
         "domainAdminUsername": {
             "value": "contoso"
