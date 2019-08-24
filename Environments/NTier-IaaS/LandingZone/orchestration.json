@@ -237,7 +237,10 @@
                     },
                     "remoteVirtualNetworkId": {
                         "value": "reference(${Parameters.Organization}-shrdsvcs.VirtualNetwork.vNetResourceId)"
-                    }
+                    },
+                    "useRemoteGateways": {
+                        "value": false
+                      }
                 }
             }
         },
