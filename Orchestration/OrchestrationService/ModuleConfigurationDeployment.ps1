@@ -1,13 +1,13 @@
 [CmdletBinding()]
     param (
     [Parameter(Mandatory=$false)]
-    [string] 
+    [string]
     $ArchetypeInstanceName,
     [Parameter(Mandatory=$true)]
-    [string] 
+    [string]
     $DefinitionPath,
     [Parameter(Mandatory=$false)]
-    [string] 
+    [string]
     $ModuleConfigurationName,
     [Parameter(Mandatory=$false)]
     [string]
@@ -44,13 +44,13 @@ Function New-Deployment {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ArchetypeInstanceName,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $DefinitionPath,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationName,
         [Parameter(Mandatory=$false)]
         [string]
@@ -67,7 +67,7 @@ Function New-Deployment {
         # from a local computer.
     )
     try {
-        
+
         $defaultWorkingDirectory = `
             Get-WorkingDirectory `
                 -WorkingDirectory $WorkingDirectory;
@@ -77,7 +77,7 @@ Function New-Deployment {
         $factory = `
             Invoke-Bootstrap `
                 -WorkingDirectory $defaultWorkingDirectory;
-        
+
         $deploymentService = `
             $factory.GetInstance('IDeploymentService');
 
@@ -92,7 +92,7 @@ Function New-Deployment {
 
         $customScriptExecution = `
             $factory.GetInstance('CustomScriptExecution');
-        
+
         # Contruct the archetype instance object only if it is not already
         # cached
         $archetypeInstanceJson = `
@@ -100,7 +100,7 @@ Function New-Deployment {
                 -FilePath $DefinitionPath `
                 -WorkingDirectory $defaultWorkingDirectory `
                 -CacheKey $ArchetypeInstanceName;
-                
+
         # Retrieve the Archetype instance name if not already passed
         # to this function
         $ArchetypeInstanceName = `
@@ -111,17 +111,17 @@ Function New-Deployment {
         $allModules = @()
 
         if ([string]::IsNullOrEmpty($ModuleConfigurationName)) {
-            
+
             $topologicalSortRootPath = `
                 Join-Path $rootPath -ChildPath 'TopologicalSort';
-            
+
             Invoke-Command -ScriptBlock { dotnet build $topologicalSortRootPath --configuration Release --output ./ }
 
             $topologicalSortAssemblyPath = `
                 Join-Path $topologicalSortRootPath "TopologicalSort.dll"
 
             Add-Type -Path $topologicalSortAssemblyPath
-            
+
             $graph = [VDC.Core.DirectedGraph]::new()
             $orchestrationJson = `
                 ConvertTo-Json $archetypeInstanceJson.Orchestration.ModuleConfigurations
@@ -132,7 +132,7 @@ Function New-Deployment {
         else {
             $allModules += $ModuleConfigurationName
         }
-        
+
         foreach($ModuleConfigurationName in $allModules) {
             Write-Host "Deploying Module: $ModuleConfigurationName"
             $moduleConfiguration = `
@@ -147,11 +147,11 @@ Function New-Deployment {
             }
 
             Write-Debug "Module instance is: $(ConvertTo-Json $moduleConfiguration)";
-            
+
             # Let's make sure we use the updated name
             # There are instances when we have a module configuration updating an existing
             # module configuration that was already deployed, in this case, let's use
-            # the name of the existing module configuration. 
+            # the name of the existing module configuration.
             Write-Debug "Updating module instance name from $ModuleConfigurationName to $($moduleConfiguration.Name)";
             $ModuleConfigurationName = `
                 $moduleConfiguration.Name;
@@ -168,10 +168,10 @@ Function New-Deployment {
             }
 
             # Let's get the current subscription context
-            $sub = Get-AzContext | Select-Object Subscription 
-            
+            $sub = Get-AzContext | Select-Object Subscription
+
             # Do not change the subscription context if the operation is validate.
-            # This is because the script will expect the validation resource 
+            # This is because the script will expect the validation resource
             # group to be present in all the subscriptions we are deploying.
             [Guid]$subscriptionCheck = [Guid]::Empty;
             [Guid]$tenantIdCheck = [Guid]::Empty;
@@ -181,7 +181,7 @@ Function New-Deployment {
                 $subscriptionCheck -ne [Guid]::Empty -and `
                 $tenantIdCheck -ne [Guid]::Empty -and
                 $subscriptionCheck -ne $sub.Subscription.Id) {
-                
+
                 Write-Debug "Setting subscription context";
 
                 Set-SubscriptionContext `
@@ -199,10 +199,10 @@ Function New-Deployment {
             $auditId = `
                 Get-ItemFromCache `
                     -Key $auditCacheKey;
-            
+
             Write-Debug "Audit Id from cache is: $auditId"
-            
-            # If no value is found, let's create 
+
+            # If no value is found, let's create
             # deployment audit information and cache
             # the auditId value
             if ($null -eq $auditId) {
@@ -228,7 +228,7 @@ Function New-Deployment {
                         -ArchetypeInstanceName $ArchetypeInstanceName `
                         -Validate:$($Validate.IsPresent);
                 Write-Debug "Audit trail created, Id: $auditId";
-                
+
                 Add-ItemToCache `
                     -Key $auditCacheKey `
                     -Value $auditId `
@@ -277,14 +277,14 @@ Function New-Deployment {
                         -WorkingDirectory $defaultWorkingDirectory;
 
                 $moduleConfigurationDeploymentParameters = $null;
-                
+
                 $isSubscriptionDeployment = $false;
 
                 if($null -ne $moduleConfigurationDeploymentInformation) {
-                    
+
                     $moduleConfigurationDeploymentTemplate = `
                         $moduleConfigurationDeploymentInformation.Template;
-                    
+
                     # Let's get the information if is a subscription
                     # level deployment or resource group level deployment
                     $isSubscriptionDeployment = `
@@ -317,7 +317,7 @@ Function New-Deployment {
                             -ArchetypeInstanceName $ArchetypeInstanceName `
                             -ModuleConfiguration $moduleConfiguration;
                         Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
-                
+
                     New-ResourceGroup `
                         -ResourceGroupName $moduleConfigurationResourceGroupName `
                         -ResourceGroupLocation $subscriptionInformation.Location `
@@ -415,7 +415,7 @@ Function New-Deployment {
                     Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $resourceState)";
                 }
             }
-            
+
             # If there are deployment outputs, cache the values
             if ($null -ne $resourceState.DeploymentOutputs) {
 
@@ -485,14 +485,14 @@ Function Get-WorkingDirectory {
             $defaultWorkingDirectory = $WorkingDirectory;
         }
         elseif ($hostType -eq "build") {
-            # If the environment is build environment, use the 
+            # If the environment is build environment, use the
             # system_defaultworkingdirectory that is available in the pipeline
 
             $defaultWorkingDirectory = $systemDefaultWorkingDirectory;
         }
         # This is true when the running the script from Azure DevOps - release pipeline
         elseif ($hostType -eq "release"){
-            # If the environment is release environment, use a combination of 
+            # If the environment is release environment, use a combination of
             # system_defaukltWorkingDirectory and the release_primaryArtifactSourceAlias
 
             $releasePrimaryArtifactSourceAlias = `
@@ -533,7 +533,7 @@ Function New-CustomScripts {
         )
      
         $result = @($null, $null);
-        
+     
         if(-not $Validate.IsPresent) {
             # Run and retrieve the script output, if any.
             $scriptOutput = `
@@ -570,23 +570,24 @@ Function New-CustomScripts {
                
             }
          
-            
+
             $deploymentOutputs = @{};
-            
+           
             # Proceed only if there is output from script
-            
+
             $tmpOutput = $null;
             $type = '';
 
-            # We have to do a .ToString() to force Powershell to set the original returned 
-            # value otherwise Powershell detects that $scriptOutput is an object and 
+            # We have to do a .ToString() to force Powershell to set the original returned
+            # value otherwise Powershell detects that $scriptOutput is an object and
             # will preserve it which results in having a $deploymentOutputs.Output
             # equals to an object instead of the desired returned string
-            if ($scriptOutput.GetType().ToString().ToLower() -like "*string") {
+            if ($null -ne $scriptOutput -and `
+                $scriptOutput.GetType().ToString().ToLower() -like "*string") {
                 $tmpOutput = $scriptOutput.ToString();
                 $type = "String";
             }
-            else {
+            elseif($null -ne $scriptOutput){
                 # TODO: Analyze other types.
                 $type = "Object";
                 $tmpOutput = $scriptOutput;
@@ -746,7 +747,7 @@ Function Set-SubscriptionContext {
         Write-Host $_;
         throw $_;
     }
-    
+
 }
 Function New-ConfigurationInstance {
     [CmdletBinding()]
@@ -772,10 +773,10 @@ Function New-ConfigurationInstance {
             $configurationInstance = $cacheDataService.GetByKey($CacheKey);
         }
         Write-Debug "Configuration instance found: $($null -ne $configurationInstance)";
-        
+
         if($null -eq $configurationInstance) {
             Write-Debug "No configuration instance found in the cache, generating one";
-            
+
             # Let's get the absolute path, if an absolute path is passed
             # as part of FilePath, then this function
             # returns the value as is.
@@ -783,20 +784,20 @@ Function New-ConfigurationInstance {
                 ConvertTo-AbsolutePath `
                     -Path $FilePath `
                     -RootPath $WorkingDirectory;
-            
+
             Write-Debug "File path is: $FilePath";
 
             $configurationBuilder = `
                 [ConfigurationBuilder]::new(
                     $null,
                     $FilePath);
-            
-            # Generate archetype Instance from archetype 
+
+            # Generate archetype Instance from archetype
             # definition.
-            # Additionally pass a callback function to 
+            # Additionally pass a callback function to
             # configuration builder, this callback will
             # add subscription and tenant ids to the configuration
-            # instance. 
+            # instance.
             # Since configuration builder is agnostic
             # on the configuration being created, adding code
             # to add subscription and tenant ids does not belong
@@ -832,12 +833,12 @@ Function Add-SubscriptionAndTenantIds {
         [object]
         $ConfigurationInstance
     )
-    
+
     try {
         if($null -ne $ConfigurationInstance.Parameters) {
             $subscriptionName = `
                 $ConfigurationInstance.Parameters.Subscription;
-            
+
             $additionalInformation = @{
                 SubscriptionId = $ConfigurationInstance.Subscriptions.$subscriptionName.SubscriptionId
                 TenantId = $ConfigurationInstance.Subscriptions.$subscriptionName.TenantId
@@ -909,7 +910,7 @@ Function Invoke-Bootstrap {
 
         # Let's create a new instance of Bootstrap
         $bootstrap = [Initialize]::new();
-                
+
         # Let's initialize the appropriate storage type
         if ($auditStorageInformation.StorageType.ToLower() `
             -eq "storageaccount") {
@@ -927,7 +928,7 @@ Function Invoke-Bootstrap {
                     -AuditStorageAccountName $bootstrapResults.StorageAccountName `
                     -AuditStorageAccountSasToken $bootstrapResults.StorageAccountSasToken `
                     -CacheStorageType $cacheStorageInformation.StorageType;
-            
+
             Write-Debug "Bootstrap type: storage account, result is: $(ConvertTo-Json $bootstrapResults -Depth 100)";
         }
         elseif ($auditStorageInformation.StorageType.ToLower() `
@@ -942,7 +943,7 @@ Function Invoke-Bootstrap {
                     -AuditStorageType $auditStorageInformation.StorageType `
                     -CacheStorageType $cacheStorageInformation.StorageType `
                     -AuditStoragePath $bootstrapAuditStoragePath;
-            
+
             Write-Debug "Bootstrap type: local storage, result is: $(ConvertTo-Json $bootstrapResults -Depth 100)";
         }
         # Not supported, throw an error
@@ -963,10 +964,10 @@ Function Get-SubscriptionInformation {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
-        [hashtable] 
+        [hashtable]
         $ArchetypeInstanceJson,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $SubscriptionName,
         [Parameter(Mandatory=$false)]
         [hashtable]
@@ -984,7 +985,7 @@ Function Get-SubscriptionInformation {
         else {
             # Hashtables ArchetypeInstanceJson and ModuleConfiguration are case-sensitive.
             # To retrieve the properties without having to pass the exact case-sensitive value,
-            # we pass the case-insensitive key, match it with the set of available keys in the 
+            # we pass the case-insensitive key, match it with the set of available keys in the
             # Hashtable and return a case-sensitive version of that same key to be used later to
             # retrieve the Subscription Information.
             if($ArchetypeInstanceJson.Keys -match "subscriptions") {
@@ -997,7 +998,7 @@ Function Get-SubscriptionInformation {
                 # The retrieved item represents the case-sensitive version of the key.
                 $subscriptionKey = ($ModuleConfiguration.Keys -match "subscription")[0];
             }
-            
+
             $subscriptionInformation = $null;
 
             Write-Debug "Let's check if module configuration is not null and has a Subscription property with a value different than null or empty.";
@@ -1050,7 +1051,7 @@ Function Get-CacheStorageInformation {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
-        [hashtable] 
+        [hashtable]
         $ToolkitConfigurationJson
     )
 
@@ -1061,14 +1062,14 @@ Function Get-CacheStorageInformation {
 
         if ($ToolkitConfigurationJson.Configuration.Cache -and
             $ToolkitConfigurationJson.Configuration.Cache.StorageType.ToLower() -eq "azuredevops") {
-            
+
             # Let's get the Storage Type information
             $cacheStorageInformation.StorageType = 'azuredevops';
         }
         # Let's get audit local storage information
         elseif(($ToolkitConfigurationJson.Configuration.Cache -and
             $ToolkitConfigurationJson.Configuration.Cache.StorageType.ToLower() -eq "local") -or
-            $null -ne $ToolkitConfigurationJson -or 
+            $null -ne $ToolkitConfigurationJson -or
             $null -eq $ToolkitConfigurationJson.Configuration -or
             $null -eq $ToolkitConfigurationJson.Configuration.Cache -or
             $null -eq $ToolkitConfigurationJson.Configuration.Cache.StorageType) {
@@ -1091,10 +1092,10 @@ Function Get-AuditStorageInformation {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
-        [hashtable] 
+        [hashtable]
         $ToolkitConfigurationJson,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
     try {
@@ -1110,7 +1111,7 @@ Function Get-AuditStorageInformation {
 
         if ($ToolkitConfigurationJson.Configuration.Audit -and
         $ToolkitConfigurationJson.Configuration.Audit.StorageType.ToLower() -eq "storageaccount"){
-            
+
             # Let's get the Storage Account information, this information will be used
             # when provisioning an Audit Storage Account.
             $auditStorageInformation.StorageType = 'storageaccount';
@@ -1124,11 +1125,11 @@ Function Get-AuditStorageInformation {
                 $ToolkitConfigurationJson.Subscription.Location;
             $auditStorageInformation.StorageAccountName = `
                 $ToolkitConfigurationJson.Configuration.Audit.StorageAccountName;
-            
+
             # Let's check for invariant information.
-            if ([string]::IsNullOrEmpty($auditStorageInformation.TenantId) -or 
-                [string]::IsNullOrEmpty($auditStorageInformation.SubscriptionId) -or 
-                [string]::IsNullOrEmpty($auditStorageInformation.ResourceGroup) -or 
+            if ([string]::IsNullOrEmpty($auditStorageInformation.TenantId) -or
+                [string]::IsNullOrEmpty($auditStorageInformation.SubscriptionId) -or
+                [string]::IsNullOrEmpty($auditStorageInformation.ResourceGroup) -or
                 [string]::IsNullOrEmpty($auditStorageInformation.Location)) {
                     throw "TenantId, SubscriptionId, ResourceGroup and Location are required values when using a Audit.StorageType equals to StorageAccount."
                 }
@@ -1136,11 +1137,11 @@ Function Get-AuditStorageInformation {
         # Let's get audit local storage information
         elseif (($ToolkitConfigurationJson.Configuration.Audit -and
                 $ToolkitConfigurationJson.Configuration.Audit.StorageType.ToLower() -eq "local") -or
-                $null -ne $ToolkitConfigurationJson -or 
-                $null -ne $ToolkitConfigurationJson.Configuration -or 
-                $null -ne $ToolkitConfigurationJson.Configuration.Audit -or 
+                $null -ne $ToolkitConfigurationJson -or
+                $null -ne $ToolkitConfigurationJson.Configuration -or
+                $null -ne $ToolkitConfigurationJson.Configuration.Audit -or
                 $null -ne $ToolkitConfigurationJson.Configuration.Audit.StorageType) {
-            
+
             $auditStorageInformation.StorageType = 'local';
             if($null -ne $ToolkitConfigurationJson.Configuration.Audit.LocalPath) {
                 # This path is optional, you can provide a specific path where all the audit information will get
@@ -1172,16 +1173,16 @@ Function Get-ModuleConfiguration {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
-        [hashtable] 
+        [hashtable]
         $ArchetypeInstanceJson,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $ModuleConfigurationName,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $ArchetypeInstanceName,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $Operation
     )
 
@@ -1195,7 +1196,7 @@ Function Get-ModuleConfiguration {
 
             # Let's check if we are updating an existing module
             if ($null -ne $moduleConfiguration.Updates) {
-                
+
                 $existingModuleConfigurationName = `
                     $moduleConfiguration.Updates;
 
@@ -1204,7 +1205,7 @@ Function Get-ModuleConfiguration {
                 # Let's check if the existing module exists:
                 $existingModuleConfiguration = `
                     $ArchetypeInstanceJson.Orchestration.ModuleConfigurations | Where-Object -Property 'Name' -EQ $existingModuleConfigurationName;
-                
+
                 if ($null -eq $existingModuleConfiguration) {
                     throw "Existing module not found";
                 }
@@ -1263,7 +1264,7 @@ Function Merge-ExistingModuleWithUpdatesModule {
 
         $overrideParameters = `
             $ModuleConfiguration.Deployment.OverrideParameters;
-        
+
         Write-Debug "Checking for override parameters";
 
         foreach($key in $overrideParameters.Keys) {
@@ -1294,13 +1295,13 @@ Function Get-PolicyDeploymentTemplateFileContents {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$false)]
-        [hashtable] 
+        [hashtable]
         $DeploymentConfiguration,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
 
@@ -1326,13 +1327,13 @@ Function Get-PolicyDeploymentParametersFileContents {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$false)]
-        [hashtable] 
+        [hashtable]
         $DeploymentConfiguration,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
 
@@ -1358,16 +1359,16 @@ Function Get-RbacDeploymentTemplateFileContents {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$false)]
-        [hashtable] 
+        [hashtable]
         $DeploymentConfiguration,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
-    
+
     try {
         Write-Debug "Getting RBAC template contents";
 
@@ -1390,13 +1391,13 @@ Function Get-RbacDeploymentParametersFileContents {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$false)]
-        [hashtable] 
+        [hashtable]
         $DeploymentConfiguration,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
 
@@ -1423,13 +1424,13 @@ Function Get-DeploymentTemplateFileContents {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$false)]
-        [hashtable] 
+        [hashtable]
         $DeploymentConfiguration,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
 
@@ -1451,8 +1452,8 @@ Function Get-DeploymentTemplateFileContents {
         if($null -ne $deploymentTemplate -and `
             $deploymentTemplate.`
             Contains("subscriptionDeploymentTemplate")) {
-            # If template schema contains the schema for 
-            # subscription, then the scope is set to 
+            # If template schema contains the schema for
+            # subscription, then the scope is set to
             # subscription
             $isSubscriptionDeployment = $true;
         }
@@ -1473,13 +1474,13 @@ Function Get-DeploymentParametersFileContents {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$false)]
-        [hashtable] 
+        [hashtable]
         $DeploymentConfiguration,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
 
@@ -1505,7 +1506,7 @@ Function Get-ModuleConfigurationsRootPath {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [hashtable] 
+        [hashtable]
         $ModuleConfigurations,
         [Parameter(Mandatory=$true)]
         [string]
@@ -1530,19 +1531,19 @@ Function Get-DeploymentFileContents {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$false)]
-        [hashtable] 
+        [hashtable]
         $DeploymentConfiguration,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $DeploymentType, # Possible values are ARM, Policies, RBAC
         [Parameter(Mandatory=$true)]
         [string]
         $DeploymentFileType, # Possible values are TemplatePath or ParametersPath
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ModuleConfigurationsPath,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $WorkingDirectory
     )
 
@@ -1563,7 +1564,7 @@ Function Get-DeploymentFileContents {
                 ParametersPath = $null
             }
         }
-        
+
         if ([string]::IsNullOrEmpty($ModuleConfigurationsPath)) {
             Write-Debug "Module configurations path not passed, creating a default one";
             $ModuleConfigurationsPath = `
@@ -1574,7 +1575,7 @@ Function Get-DeploymentFileContents {
 
         $deploymentFilePath = '';
 
-        # There are only 2 options, $DeploymentFileType can be either a 
+        # There are only 2 options, $DeploymentFileType can be either a
         # template or parameters
         if ($DeploymentFileType.ToLower() -eq "template") {
             Write-Debug "Retrieving Template information."
@@ -1610,13 +1611,13 @@ Function Get-DeploymentFileContents {
                 Get-ModuleConfigurationVersion `
                     -ModuleConfiguration $ModuleConfiguration `
                     -ModuleConfigurationsPath $ModuleConfigurationsPath;
-            
+
             # Let's create a relative path using forward slash delimiter
             $moduleConfigurationRelativePath = `
                 "$($ModuleConfiguration.ModuleDefinitionName)/$moduleConfigurationVersion";
 
             Write-Debug "New module configuration relative path, including version is: $moduleConfigurationRelativePath";
-            
+
             if ($DeploymentType.ToLower() -eq "arm") {
                 $moduleConfigurationRelativePath += "/$fileName";
             }
@@ -1644,7 +1645,7 @@ Function Get-DeploymentFileContents {
 
             $absoluteTemplatePath = `
                 Join-Path $ModuleConfigurationsPath $normalizedRelativeFilePath;
-            
+
             Write-Debug "Absolute path: $absoluteTemplatePath";
 
             # Check if the file exists
@@ -1691,7 +1692,7 @@ Function Get-ModuleConfigurationVersion {
             $absolutePath = `
                 Join-Path $ModuleConfigurationsPath $ModuleConfiguration.ModuleDefinitionName
             Write-Debug "Attempting to get all folders from: $absolutePath";
-            
+
             $currentVersionFolder = `
                 (Get-ChildItem `
                     -Path $absolutePath `
@@ -1717,7 +1718,7 @@ Function Get-ModuleConfigurationVersion {
         if ($currentVersion -le $defaultSupportedVersion) {
             throw "Not supported version, version retrieved is: $currentVersion. Supported versions are $defaultSupportedVersion and up.";
         }
-        
+
         return $currentVersion;
     }
     catch {
@@ -1731,10 +1732,10 @@ Function Get-ResourceGroupName {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $ArchetypeInstanceName,
         [Parameter(Mandatory=$true)]
-        [hashtable] 
+        [hashtable]
         $ModuleConfiguration
     )
 
@@ -1761,13 +1762,13 @@ Function New-ResourceGroup {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ResourceGroupName,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ResourceGroupLocation,
         [Parameter(Mandatory=$true)]
-        [switch] 
+        [switch]
         $Validate
     )
 
@@ -1789,32 +1790,32 @@ Function New-AzureResourceManagerDeployment {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $TenantId,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $SubscriptionId,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $ResourceGroupName,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $DeploymentTemplate,
         [Parameter(Mandatory=$false)]
-        [string] 
+        [string]
         $DeploymentParameters,
         [Parameter(Mandatory=$true)]
         $ModuleConfiguration,
         [Parameter(Mandatory=$true)]
         $ArchetypeInstanceName,
         [Parameter(Mandatory=$true)]
-        [string] 
+        [string]
         $Location,
         [Parameter(Mandatory=$true)]
-        [switch] 
+        [switch]
         $Validate
     )
-    
+
     try {
 
         # Merge the template's parameters json file with
@@ -1828,7 +1829,7 @@ Function New-AzureResourceManagerDeployment {
 
         Write-Debug "Overridden parameters are: $DeploymentParameters";
 
-        if($Validate.IsPresent) { 
+        if($Validate.IsPresent) {
             Write-Debug "Validating the template";
 
             return `
@@ -1959,10 +1960,10 @@ Function New-DeploymentAuditInformation {
         $CommitMessage,
         [Parameter(Mandatory=$false)]
         [string]
-        $CommitUsername, 
+        $CommitUsername,
         [Parameter(Mandatory=$false)]
         [string]
-        $BuildQueuedBy, 
+        $BuildQueuedBy,
         [Parameter(Mandatory=$false)]
         [string]
         $ReleaseId,
@@ -2030,7 +2031,7 @@ Function New-NormalizePath {
         $normalizedFilePath = '';
 
        $FilePaths `
-            | ForEach-Object { 
+            | ForEach-Object {
                 $normalizedFilePath = `
                     [IO.Path]::Combine($normalizedFilePath, $_);
             };
@@ -2107,7 +2108,7 @@ Function Add-ItemToCache {
         if(-not $Validate.IsPresent) {
             $cacheDataService.SetByKey(
                 $Key,
-                $Value); 
+                $Value);
         }
     }
     catch {
@@ -2127,7 +2128,7 @@ Function Get-ItemFromCache {
 
     try {
         return `
-            $cacheDataService.GetByKey($Key); 
+            $cacheDataService.GetByKey($Key);
     }
     catch {
         Write-Host "An error ocurred while running Get-ItemFromCache";
@@ -2174,7 +2175,7 @@ Function Merge-Parameters {
         $overrideParameters = $moduleConfiguration.OverrideParameters;
     }
 
-    # Check if the template parameters file has 
+    # Check if the template parameters file has
     # parameters at the top level and branch accordingly
     if($deploymentParametersJson.Keys -eq "parameters") {
         $parametersFromDeploymentParameters = $deploymentParametersJson.parameters;
@@ -2205,7 +2206,7 @@ Function Merge-Parameters {
     # Parameters
     elseif($parametersFromDeploymentParameters.Count -gt 0) {
 
-        # DeploymentParameters should not have any reference to other 
+        # DeploymentParameters should not have any reference to other
         # deployment outputs. So return as is.
         return $DeploymentParameters;
     }
@@ -2222,7 +2223,7 @@ Function Merge-Parameters {
                 -TargetParameterSet $parametersFromDeploymentParameters;
 
     }
-    # Finally, we have Case 4 - No Parameter file and No Override 
+    # Finally, we have Case 4 - No Parameter file and No Override
     # Parameters
     else {
         # No additional steps needed for this case
@@ -2296,7 +2297,7 @@ Function Resolve-ReferenceFunctionsInModuleConfiguration() {
             -InputObject $ModuleConfiguration `
             -Depth 50;
 
-    # Resolve only during deploy operation and if reference function is 
+    # Resolve only during deploy operation and if reference function is
     # found
     if($Operation -eq "deploy" -and `
         $ModuleConfigurationContent -match $fullReferenceFunctionMatchRegex) {
@@ -2356,8 +2357,8 @@ Function Get-OutputReferenceValue() {
     $options = [Text.RegularExpressions.RegexOptions]::IgnoreCase;
     $referenceFunctionMatches = `
         [regex]::Matches(
-            $parameterValueString, 
-            $fullReferenceFunctionMatchRegex, 
+            $parameterValueString,
+            $fullReferenceFunctionMatchRegex,
             $options
         );
 
@@ -2381,20 +2382,20 @@ Function Get-OutputReferenceValue() {
         $fullReferenceFunctionString = $referenceFunctionMatch.Groups[1].Value;
 
         Write-Debug "Reference function found is: $fullReferenceFunctionString";
-        
+
         # From the full string including reference function captured in the previous step,
-        # Extract only the inner string (i.e output path) of the function. Continuing the 
+        # Extract only the inner string (i.e output path) of the function. Continuing the
         # previous example, this regex will extract - archetypeInstanceA.moduleConfigurationA.OutputA
         $outputPathStringMatch = `
             [regex]::Match(
-                $fullReferenceFunctionString, 
-                $outputPathMatchRegex, 
+                $fullReferenceFunctionString,
+                $outputPathMatchRegex,
                 $options
             );
         $outputPathString = $outputPathStringMatch.Groups[1].Value;
 
         Write-Debug "Reference function content is: $outputPathString";
-        
+
         # Array does not allow operations like Remove, RemoveAt and so on. We need arraylist to
         # be able to perform these operations. Remove operation will be used to remove the last item
         #  (parameter name) in the array.
@@ -2407,7 +2408,7 @@ Function Get-OutputReferenceValue() {
                 -Key $outputPathString;
 
         # Check if the cache value was retrieval successfully (i.e it returns a value)
-        if($cacheValue) 
+        if($cacheValue)
         {
             Write-Debug "Output found in cache";
             $resolvedOutput = $cacheValue;
@@ -2425,12 +2426,12 @@ Function Get-OutputReferenceValue() {
 
         Write-Debug "Output is: $(ConvertTo-Json $resolvedOutput)";
         Write-Debug "Output type is $($resolvedOutput.GetType())";
-        
+
         # Did we resolve the output?
         if ($resolvedOutput `
             -and $resolvedOutput -is [object[]]){
             Write-Debug "Replacing an array";
-            
+
             # Since is an array, let's replace the reference function
             # including double quotes or single quotes
             $tempfullReferenceFunctionString1 = `
@@ -2447,7 +2448,7 @@ Function Get-OutputReferenceValue() {
 
             $parameterValueString = `
                 $parameterValueString.Replace(
-                    $tempfullReferenceFunctionString1, 
+                    $tempfullReferenceFunctionString1,
                     $resolvedOutputString
                 ).Replace(
                     $tempfullReferenceFunctionString2,
@@ -2456,7 +2457,7 @@ Function Get-OutputReferenceValue() {
         }
         elseif($resolvedOutput `
             -and $resolvedOutput -isnot [string]) {
-            
+
             Write-Debug "Converting object into a JSON string";
             # If the resolved output is not already a string, convert it to string before
             # continuing to replace the reference function with the string contents.
@@ -2468,7 +2469,7 @@ Function Get-OutputReferenceValue() {
 
             $parameterValueString = `
                 $parameterValueString.Replace(
-                    $fullReferenceFunctionString, 
+                    $fullReferenceFunctionString,
                     $resolvedOutputString
                 );
         }
@@ -2478,7 +2479,7 @@ Function Get-OutputReferenceValue() {
             # function with the string contents
             $parameterValueString = `
                 $parameterValueString.Replace(
-                    $fullReferenceFunctionString, 
+                    $fullReferenceFunctionString,
                     $resolvedOutput
                 );
         }
@@ -2531,7 +2532,7 @@ Function Format-ResolvedOutput() {
     }
 }
 
-Function Get-OutputFromStateStore() { 
+Function Get-OutputFromStateStore() {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
@@ -2543,7 +2544,7 @@ Function Get-OutputFromStateStore() {
     )
     Write-Debug "All filters: $(ConvertTo-Json $Filters)";
 
-    # Start by retrieving all the outputs for the archetype and/or module 
+    # Start by retrieving all the outputs for the archetype and/or module
     # instance combination
 
     $crossArchetypeOutputs = $false;
@@ -2606,7 +2607,7 @@ Function Get-OutputFromStateStore() {
                 $cacheKey = `
                     "$moduleConfigurationName.$parameterName";
             }
-            
+
             Write-Debug "Cache Key: $cacheKey";
             Write-Debug "Cache Value is: $(ConvertTo-Json $parameterValue)";
             # Cache the retrieved value by calling set method on cache data service with key and value
@@ -2615,7 +2616,7 @@ Function Get-OutputFromStateStore() {
                 $parameterValue);
         }
 
-        # Find the specific output 
+        # Find the specific output
         if($allOutputs.Keys -eq $outputParameterName) {
             $output = $allOutputs.$outputParameterName.Value;
 

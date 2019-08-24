@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "azureFirewallName": {
+            "value": "org-shrdsvcs-azfw"
+        },
+        "azureFirewallResourceGroupName": {
+            "value": "org-shrdsvcs-network-rg"
+        },
+        "azureFirewallSubscriptionId": {
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "azureFirewallNatRuleCollection": {
+            "value": []
+        },
+        "azureFirewallApplicationRuleCollection": {
+            "value": [
+                {
+                    "name":"aks-cluster-01",
+                    "properties":
+                        {
+                            "rules": [
+                                {
+                                    "name":"cluster",
+                                    "protocols": [
+                                        {
+                                            "protocolType":"Http",
+                                            "port":80
+                                        },
+                                        {
+                                            "protocolType":"Https",
+                                            "port":443
+                                        }
+                                    ],
+                                    "targetFqdns": [ "*" ], 
+                                    "fqdnTags": [],
+                                    "sourceAddresses": [ "10.2.0.0/17" ] 
+                                }
+                            ],
+                            "priority":500,
+                            "action": 
+                                {
+                                    "type":"Allow"
+                                }
+                        }
+                }
+            ]
+        },
+        "azureFirewallNetworkRuleCollection": {
+            "value": [
+                {
+                    "name":"aks-cluster-nrc-01",
+                    "properties":
+                        {
+                            "rules": [
+                                {
+                                    "sourceAddresses": [ "10.2.0.0/17" ],
+                                    "name":"allow-ssh-access",
+                                    "destinationAddresses": [ "*" ],
+                                    "protocols": [ "TCP" ],
+                                    "description": "Allows outbound SSH access",
+                                    "destinationPorts": [ "22" ] 
+                                }
+                            ],
+                            "priority":"500",
+                            "action":
+                                {
+                                    "type":"Allow"
+                                }
+                        }
+                }
+            ]
+        }
+    }
+}

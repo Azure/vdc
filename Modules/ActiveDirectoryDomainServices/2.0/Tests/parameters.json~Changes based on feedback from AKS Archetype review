@@ -27,17 +27,41 @@
         "artifactsStorageAccountKey": {
             "value": ""
         },
+        "workspaceId": {
+            "value": "00000000-0000-0000-0000-000000000000"
+        },
+        "logAnalyticsWorkspacePrimarySharedKey": {
+            "value": ""
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "contoso-diag-storage"
+        },
+        "diagnosticsStorageAccountSasToken": {
+            "value": ""
+        },
+        "addsAddressStart": {
+            "value": "11.4.0.46"
+        },
+        "vNetId": {
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Network/virtualNetworks/contoso-vnet-example"
+        },
+        "domainControllerAsgId": {
+            "value": "dc"
+        },
+        "subnetName": {
+            "value": "sharedsvcs"
+        },
+        "adminUsername": {
+            "value": "admin-user"
+        },
+        "adminPassword": {
+            "value": "password"
+        },
         "domainName": {
             "value": "contoso.com"
         },
         "primaryDCIP": {
             "value": "192.168.1.4"
-        },
-        "addsAddressStart": {
-            "value": "11.4.0.46"
-        },
-        "addsInstallDriveLetter": {
-            "value": "F:"
         },
         "ADSitename": {
             "value": "Cloud-Site"

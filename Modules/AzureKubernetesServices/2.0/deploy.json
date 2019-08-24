@@ -1,0 +1,331 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "aksClusterName": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 31,
+            "metadata": {
+                "description": "Required. AKS Cluster Name."
+            }
+        },
+        "dnsPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. DNS prefix to use with hosted Kubernetes API server FQDN."
+            }
+        },
+        "osDiskSizeGb": {
+            "defaultValue": 0,
+            "minValue": 0,
+            "maxValue": 1023,
+            "type": "int",
+            "metadata": {
+                "description": "Optional. Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
+            }
+        },
+        "osType": {
+            "defaultValue": "Linux",
+            "allowedValues": [
+                "Linux"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Optional. The type of operating system."
+            }
+        },
+        "agentCount": {
+            "defaultValue": 3,
+            "minValue": 1,
+            "maxValue": 50,
+            "type": "int",
+            "metadata": {
+                "description": "Optional. The number of agent nodes for the cluster."
+            }
+        },
+        "agentVMSize": {
+            "defaultValue": "Standard_D2_v2",
+            "type": "string",
+            "metadata": {
+                "description": "Optional. The size of the Virtual Machine."
+            }
+        },
+        "servicePrincipalClientId": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. Client ID (used by cloudprovider)."
+            }
+        },
+        "servicePrincipalClientSecret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. The Service Principal Client Secret."
+            }
+        },
+        "kubernetesVersion": {
+            "defaultValue": "1.7.7",
+            "type": "string",
+            "metadata": {
+                "description": "Optional. The version of Kubernetes."
+            }
+        },
+        "networkPlugin": {
+            "allowedValues": [
+                "azure",
+                "kubenet"
+            ],
+            "type": "string",
+            "metadata": {
+                "description": "Required. Network plugin used for building Kubernetes network."
+            }
+        },
+        "enableRBAC": {
+            "defaultValue": true,
+            "type": "bool",
+            "metadata": {
+                "description": "Optional. Boolean flag to turn on and off of RBAC."
+            }
+        },
+        "vNetId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource ID of virtual network used for nodes and/or pods IP assignment."
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource Name of subnet used for nodes and/or pods IP assignment."
+            }
+        },
+        "serviceCIDR": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. A CIDR notation IP range from which to assign service cluster IPs."
+            }
+        },
+        "dnsServiceIp": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Containers DNS server IP address."
+            }
+        },
+        "dockerBridgeCIDR": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. A CIDR notation IP for Docker bridge."
+            }
+        },
+        "logAnalyticsResourceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource ID containing the insights"
+            }
+        },
+        "diagnosticsEventHubName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. Event Hub Name for the diagnostics events"
+            }
+        },
+        "diagnosticsEventHubAuthRuleId": {
+            "type": "string",
+            "metadata": {
+              "description": "Required. Resource ID of the event hub authorization rule for the Event Hubs namespace in which the event hub should be created or streamed to."
+            }
+        },
+        "diagnosticsStorageId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Storage account for the diagnostics events"
+            }
+        },
+        "rbacServerAppId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. RBAC server app id"
+            }
+        },
+        "rbacServerSecret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Required. RBAC server app secret"
+            }
+        },
+        "rbacClientAppId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. RBAC client app id"
+            }
+        },
+        "rbacTenant": {
+            "type": "string",
+            "defaultValue": "[subscription().tenantId]",
+            "metadata": {
+                "description": "Optional. RBAC tenant"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Optional. The location of AKS resource."
+            }
+        }
+    },
+    "variables": {
+        "authRuleResourceId": "[parameters('diagnosticsEventHubAuthRuleId')]",
+        "emptyContent": {},
+        "omsAgentConfig": {
+            "omsagent": {
+                "enabled": true,
+                "config": {
+                    "logAnalyticsWorkspaceResourceID": "[parameters('logAnalyticsResourceId')]"
+                }
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ContainerService/managedClusters",
+            "name": "[parameters('aksClusterName')]",
+            "apiVersion": "2018-03-31",
+            "location": "[parameters('location')]",
+            "tags": {
+                "displayName": "[concat(parameters('aksClusterName'))]"
+              },
+            "properties": {
+                "kubernetesVersion": "[parameters('kubernetesVersion')]",
+                "enableRBAC": "[parameters('enableRBAC')]",
+                "dnsPrefix": "[parameters('dnsPrefix')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "osDiskSizeGB": "[parameters('osDiskSizeGb')]",
+                        "count": "[parameters('agentCount')]",
+                        "vmSize": "[parameters('agentVMSize')]",
+                        "osType": "[parameters('osType')]",
+                        "storageProfile": "ManagedDisks",
+                        "vnetSubnetID": "[concat(parameters('vNetId'), '/subnets/', parameters('subnetName'))]"
+                    }
+                ],
+                "servicePrincipalProfile": {
+                    "clientId": "[parameters('servicePrincipalClientId')]",
+                    "Secret": "[parameters('servicePrincipalClientSecret')]"
+                },
+                "networkProfile": {
+                    "networkPlugin": "[parameters('networkPlugin')]",
+                    "serviceCidr": "[parameters('serviceCIDR')]",
+                    "dnsServiceIP": "[parameters('dnsServiceIP')]",
+                    "dockerBridgeCidr": "[parameters('dockerBridgeCIDR')]"
+                },
+                "aadProfile": {
+                    "clientAppID": "[parameters('rbacClientAppId')]",
+                    "serverAppID": "[parameters('rbacServerAppId')]",
+                    "serverAppSecret": "[parameters('rbacServerSecret')]",
+                    "tenantID": "[parameters('rbacTenant')]"
+                },
+                "addonProfiles": "[if( empty(parameters('logAnalyticsResourceId')) , variables('emptyContent'), variables('omsAgentConfig'))]"
+                
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.ContainerService/managedClusters/providers/diagnosticSettings",
+                    "name": "[concat(parameters('aksClusterName'), '/Microsoft.Insights/service')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]"
+                    ],
+                    "apiVersion": "2017-05-01-preview",
+                    "properties": {
+                        "workspaceId": "[parameters('logAnalyticsResourceId')]",
+                        "storageAccountId": "[parameters('diagnosticsStorageId')]",
+                        "eventHubName": "[parameters('diagnosticsEventHubName')]",
+                        "eventHubAuthorizationRuleId": "[parameters('diagnosticsEventHubAuthRuleId')]",
+                        "logs": [
+                            {
+                                "category": "kube-apiserver",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-controller-manager",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "cluster-autoscaler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-scheduler",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "kube-audit",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "PT1M",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "dependsOn": [
+            ]
+        }
+    ],
+    "outputs": {
+        "aksClusterId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]"
+        },
+        "aksClusterResourceGroup": {
+            "type": "string",
+            "value": "[resourceGroup().name]"
+        },
+        "aksClusterName": {
+            "type": "string",
+            "value": "[parameters('aksClusterName')]"
+        },
+        "nodeResourceGroupId": {
+            "type": "string",
+            "value": "[concat('/subscriptions/', resourceGroup().id, '/resourceGroups/', reference(concat('Microsoft.ContainerService/managedClusters/', parameters('aksClusterName'))).nodeResourceGroup)]"
+        },
+        "nodeResourceGroup": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('aksClusterName'))).nodeResourceGroup]"
+        },
+        "controlPlaneFQDN": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('aksClusterName'))).fqdn]"
+        }
+    }
+}

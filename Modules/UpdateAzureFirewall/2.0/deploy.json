@@ -1,0 +1,81 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "azureFirewallName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Azure Firewall Name."
+            }
+        },
+        "azureFirewallResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Azure Firewall Resource Group Name."
+            }
+        },
+        "azureFirewallSubscriptionId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Azure Firewall Subscription Id."
+            }
+        },
+        "azureFirewallNatRuleCollection": {
+            "type": "array",
+            "metadata": {
+                "description": "Required. Array containing Azure Firewall Nat rule collections"
+            }
+        },
+        "azureFirewallApplicationRuleCollection": {
+            "type": "array",
+            "metadata": {
+                "description": "Required. Array containing Azure Firewall application rule collections"
+            }
+        },
+        "azureFirewallNetworkRuleCollection": {
+            "type": "array",
+            "metadata": {
+                "description": "Required. Array containing Firewall network rule collections"
+            }
+        }
+    },
+    "variables": {
+        "azureFirewallPipName": "[concat(parameters('azureFirewallName'), '-pip')]",
+        "azureFirewallPipId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('azureFirewallPipName'))]"
+    },
+    "resources": [
+        {
+             "apiVersion": "2019-06-01",
+             "name": "nestedDeployCreateAzureApplicationRules",
+             "type": "Microsoft.Resources/deployments",
+             "resourceGroup": "[parameters('azureFirewallResourceGroupName')]",
+             "subscriptionId": "[parameters('azureFirewallSubscriptionId')]",
+             "dependsOn": [],
+             "properties": {
+               "mode": "Incremental",
+               "template": {
+                 "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                 "contentVersion": "1.0.0.0",
+                 "parameters": {},
+                 "variables": {},
+                 "resources": [
+                   {
+                     "type": "Microsoft.Network/azureFirewalls",
+                     "apiVersion": "2019-06-01",
+                     "location": "[resourceGroup().location]",
+                     "name": "[parameters('azureFirewallName')]",
+                     "properties": {
+                         "ipConfigurations": "[reference(resourceId(parameters('azureFirewallSubscriptionId'), parameters('azureFirewallResourceGroupName'), 'Microsoft.Network/azureFirewalls', parameters('azureFirewallName')), '2018-08-01').ipConfigurations]",
+                         "natRuleCollections": "[parameters('azureFirewallNatRuleCollection')]",
+                         "applicationRuleCollections": "[parameters('azureFirewallApplicationRuleCollection')]",
+                         "networkRuleCollections": "[parameters('azureFirewallNetworkRuleCollection')]"
+                     }
+                   }
+                 ]
+               }
+             }
+        }
+    ],
+    "outputs": {
+    }
+}

@@ -1,0 +1,107 @@
+{
+    "Organization": "file(../../_Common/organizationName.txt)",
+    "DeploymentName": "aks",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "AKS",
+    "ModuleConfigurationParameters": {
+        "ResourceGroupPrefix": "${Parameters.Organization}-${Parameters.DeploymentName}",
+        "Region": "westus2",
+        "DnsPrefix": "aks",
+        "Kubernetes": {
+            "KubernetesVersion": "1.13.9",
+            "ResourceGroup": "${Parameters.InstanceName}-aks-rg",
+            "OsType": "Linux",
+            "NetworkPlugin": "azure",
+            "MaxPods": 30,
+            "OsDiskSizeGb": 60,
+            "AgentCount": 2,
+            "AgentVmSize": "Standard_DS3_v2",
+            "EnableRbac": true,
+            "EnableHttpApplicationRouting": false,
+            "EnableOmsAgent": true,
+            "CaCertKeyName": "${Parameters.Organization}-${Parameters.DeploymentName}-ca",
+            "CaName": "${Parameters.Organization}-${Parameters.DeploymentName}-ca",
+            "ClusterName": "${Parameters.Organization}-${Parameters.DeploymentName}-k8s",
+            "ClusterResourceGroupName": "${Parameters.Organization}-${Parameters.DeploymentName}-aks-rg",
+            "TillerNamespace": "tiller",
+            "ServicePrincipalClientId": "env(SERVICE_PRINCIPAL_CLIENT_ID)",
+            "ServicePrincipalClientSecret": "env(SERVICE_PRINCIPAL_CLIENT_SECRET)",
+            "RbacServerAppid": "env(RBAC_SERVER_APP_ID)",
+            "RbacServerSecret": "env(RBAC_SERVER_SECRET)",
+            "RbacClientAppId": "env(RBAC_CLIENT_APP_ID)",
+            "RbacTenant": "env(RBAC_TENANT)",
+            "ServiceCIDR": "10.0.0.0/16",
+            "DnsServiceIp": "10.0.0.10",
+            "DockerBridgeCIDR": "172.17.0.1/16",
+            "AksClusterAdminRbacRoleId": "0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8",
+            "AksClusterUserRbacRoleId": "4abbcc35-e782-43d8-92c5-2d3f1bd2253f",
+            "ReaderRbacRoleId": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
+            "ClusterAdminGroupId": "env(CLUSTER_ADMIN_GROUP_ID)",
+            "NocUserGroupId": "env(NOC_USER_GROUP_ID)",
+            "DevUserGroupId": "env(DEV_USER_GROUP_ID)",
+        },
+        "Rbac": {
+            "ResourceGroupAssignments": [
+                {
+                    "Comments": "Azure Service Cluster Admin Role - Use Admin Persona Principal Id",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.AksClusterAdminRbacRoleId}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterAdminGroupId}"
+                },
+                {
+                    "Comments": "Azure Service Cluster User Role - Admin",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.AksClusterUserRbacRoleid}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterAdminGroupId}"
+                },
+                {
+                    "Comments": "Azure Service Cluster User Role - NOC user",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.AksClusterUserRbacRoleid}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.NocUserGroupId}"
+                },
+                {
+                    "Comments": "Azure Service Cluster User Role - Devs",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.AksClusterUserRbacRoleid}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.DevUserGroupId}"
+                },
+                {
+                    "Comments": "Reader Role - Use Admin Persona Principal Id",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ReaderRbacRoleId}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterAdminGroupId}"
+                },
+                {
+                    "Comments": "Reader Role - Use Dev Persona Principal Id",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ReaderRbacRoleId}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.DevUserGroupId}"
+                },
+                {
+                    "Comments": "Reader Role - Use NOC Persona Principal Id",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ReaderRbacRoleId}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.NocUserGroupId}"
+                }
+            ],
+            "Comments": "aks-node-resource-group-assignments gets its assignment scope by grabbing a node resource group name from AKS deployment outputs",
+            "AksNodeResourceGroupAssignments": [
+                {
+                    "Comments": "Reader Role - Use Admin Persona Principal Id",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ReaderRbacRoleId}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterAdminGroupId}"
+                },
+                {
+                    "Comments": "Reader Role - Use Dev Persona Principal Id",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ReaderRbacRoleId}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.DevUserGroupId}"
+                },
+                {
+                    "Comments": "Reader Role - Use NOC Persona Principal Id",
+                    "RoleDefinitionId": "${Parameters.ModuleConfigurationParameters.Kubernetes.ReaderRbacRoleId}",
+                    "PrincipalId": "${Parameters.ModuleConfigurationParameters.Kubernetes.NocUserGroupId}"
+                }
+            ]
+        },
+        "ContainerRegistry": {
+            "Name": "${Parameters.Organization}${Parameters.DeploymentName}acr",
+            "ResourceGroup": "${Parameters.InstanceName}-acr-rg",
+            "AdminUserEnabled": true,
+            "Sku": "Standard"
+        }
+    }
+}

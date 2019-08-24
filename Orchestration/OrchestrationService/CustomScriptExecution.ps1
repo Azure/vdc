@@ -235,7 +235,13 @@ Class CustomScriptExecution {
             if($null -ne $parameterName `
                 -and $arguments.ContainsKey($parameterName) `
                 -and $parameterName -notin $systemParameters) {
-                $orderedArguments += $arguments[$parameterName];
+
+                if($arguments[$parameterName] -is [array]) {
+                    $orderedArguments += , $arguments[$parameterName];
+                }
+                else {
+                    $orderedArguments += $arguments[$parameterName];
+                }
             }
             elseif($null -ne $parameterName `
                 -and $parameterName -notin $systemParameters) {
@@ -300,7 +306,7 @@ Class CustomScriptExecution {
                     (Get-Job -Name $job.Name).ChildJobs | ForEach-Object {
                         # Set the result only if there is an output
                         if($_.Output.Count -ge 1) {
-                            $result = $_.Output[$_.Output.Count-1];
+                            $result = $_.Output | Select-Object -Property * -ExcludeProperty PSComputerName,RunspaceID,PSShowComputerName;
                         }
                         else {
                             $result = $null;

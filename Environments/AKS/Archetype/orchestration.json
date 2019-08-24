@@ -1,0 +1,141 @@
+{
+    "ModuleConfigurationsPath": "../../../Modules",
+    "ModuleConfigurations": [
+        {
+            "Name": "ContainerRegistry",
+            "ModuleDefinitionName": "ContainerRegistries",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ContainerRegistry.ResourceGroup}",
+            "Version": "2.0",
+            "Deployment": {
+                "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
+                "TemplatePath": "../../../Modules/ContainerRegistries/2.0/deploy.json",
+                "OverrideParameters": {
+                    "containerRegistryName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ContainerRegistry.Name}"
+                    },
+                    "location": {
+                        "value": "westus"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "AzureKubernetesServices",
+            "ModuleDefinitionName": "AzureKubernetesServices",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Kubernetes.ResourceGroup}",
+            "Version": "2.0",
+            "Deployment": {
+                "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
+                "TemplatePath": "../../../Modules/AzureKubernetesServices/2.0/deploy.json",
+                "OverrideParameters": {
+                    "aksClusterName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterName}"
+                    },
+                    "location": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Region}"
+                    },
+                    "dnsPrefix": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DnsPrefix}"
+                    },
+                    "servicePrincipalClientId": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.ServicePrincipalClientId}"
+                    },
+                    "servicePrincipalClientSecret": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.ServicePrincipalClientSecret}"
+                    },
+                    "osType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.OsType}"
+                    },
+                    "kubernetesVersion": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.KubernetesVersion}"
+                    },
+                    "networkPlugin": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.NetworkPlugin}"
+                    },
+                    "enableRBAC": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.EnableRbac}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "subnetName": {
+                        "value": "default"
+                    },
+                    "serviceCIDR": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.ServiceCIDR}"
+                    },
+                    "dnsServiceIp": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.DnsServiceIp}"
+                    },
+                    "dockerBridgeCIDR": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.DockerBridgeCIDR}"
+                    },
+                    "logAnalyticsResourceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "diagnosticsEventHubName": {
+                        "value": "reference(EventHub.diagnosticEventHubName)"
+                    },
+                    "diagnosticsEventHubAuthRuleId": {
+                        "value": "reference(EventHub.diagnosticsEventHubAuthRuleId)"
+                    },
+                    "diagnosticsStorageId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "rbacServerAppId": {
+                        "value":"${Parameters.ModuleConfigurationParameters.Kubernetes.RbacServerAppid}"
+                    },
+                    "rbacServerSecret": {
+                        "value":"${Parameters.ModuleConfigurationParameters.Kubernetes.RbacServerSecret}"
+                    },
+                    "rbacClientAppId": {
+                        "value":"${Parameters.ModuleConfigurationParameters.Kubernetes.RbacClientAppId}"
+                    },
+                    "rbacTenant": {
+                        "value":"${Parameters.ModuleConfigurationParameters.Kubernetes.RbacTenant}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "PermissionsScriptsPreReqs",
+            "Comments": "PermissionsScriptsPreReqs",
+            "Script": {
+                "Command": "chmod +x ../../../Scripts/AKS/install-kubectl.sh",
+                "Arguments" : {}            }
+        },
+        {
+            "Name": "ScriptsPreReqs",
+            "Comments": "ScriptsPreReqs",
+            "DependsOn": [
+                "PermissionsScriptsPreReqs"
+            ],
+            "Script": {
+                "Command": "../../../Scripts/AKS/install-kubectl.sh",
+                "Arguments" : {}
+            }
+        },
+        {
+            "Name": "CreateClusterRBACRoleBindings",
+            "Comments": "CreateClusterRBACRoleBindings",
+            "DependsOn": [
+                "AzureKubernetesServices",
+                "ScriptsPreReqs"
+            ],
+            "Script": {
+                "Command": "../../../Scripts/AKS/create-cluster-rbac-role-bindings.sh",
+                "Arguments" : {
+                    "1_SCRIPT_EXECUTION_SP_ID": "env(SCRIPT_EXECUTION_SP_ID)",
+                    "2_SCRIPT_EXECUTION_SP_KEY": "env(SCRIPT_EXECUTION_SP_KEY)",
+                    "3_TENANT": "${Subscriptions.AKS.TenantId}",
+                    "4_CLUSTER_NAME" : "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterName}",
+                    "5_CLUSTER_RG" : "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterResourceGroupName}",
+                    "6_RBAC_CLUSTER_ADMIN_AD_GROUP" : "${Parameters.ModuleConfigurationParameters.Kubernetes.ClusterAdminGroupId}",
+                    "7_RBAC_CLUSTER_VIEW_AD_GROUP" : "${Parameters.ModuleConfigurationParameters.Kubernetes.NocUserGroupId}",
+                    "8_RBAC_EXTEND_VIEW_CLUSTER_ROLE" : "Y",
+                    "9_RBAC_ENABLE_READ_ONLY_DASHBOARD" : "Y"
+                }
+            }
+        }
+    ]
+}

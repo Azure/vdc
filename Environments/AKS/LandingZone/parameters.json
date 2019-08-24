@@ -1,0 +1,375 @@
+{
+    "Organization": "file(../../_Common/organizationName.txt)",
+    "DeploymentName": "aks",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "AKS",
+    "ModuleConfigurationParameters": {
+        "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
+        "DeploymentAppId": "env(DEPLOYMENT_APP_ID)",
+        "ResourceGroupPrefix": "${Parameters.Organization}-${Parameters.DeploymentName}",
+        "Region": "westus2",
+        "DnsPrefix": "aks",
+        "SharedServices": {
+            "DeploymentName": "shrdsvcs",
+            "ActiveDirectory": {
+                "VmIpAddressStart": [ "172.0.0.10" ]
+            },
+            "VirtualNetwork": {
+                "Id": "/subscriptions/${Subscriptions.SharedServices.SubscriptionId}/resourceGroups/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetwork.ResourceGroupName}/providers/Microsoft.Network/virtualNetworks/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetwork.Name}",
+                "Name": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-vnet",
+                "ResourceGroupName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-network-rg",
+                "AddressPrefix": "10.4.0.32/27",
+                "NetworkVirtualAppliance": {
+                    "EgressIp": "10.4.1.4",
+                    "AzureFirewall": {
+                        "Name": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-azfw"
+                    }
+                }
+            }
+        },
+        "KeyVault": {
+            "Name": "${Parameters.Organization}-${Parameters.DeploymentName}-kv",
+            "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
+            "Sku": "Premium",
+            "EnableVaultForDeployment": true,
+            "EnableVaultForDiskEncryption": true,
+            "EnableVaultForTemplateDeployment": true,
+            "AccessPolicies": [
+                {
+                    "tenantId": "${Subscriptions.AKS.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                },
+                {
+                    "tenantId": "${Subscriptions.AKS.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                }
+            ],
+            "SecretsObject": {
+                "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
+                "Secrets": [ ]
+            },
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
+        "DiagnosticStorageAccount": {
+            "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.Location}",
+            "Sku": "Standard_GRS",
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            },
+            "Policies": {
+                "Effect": "Audit"
+            }
+        },
+        "VirtualNetwork": {
+            "Name": "${Parameters.InstanceName}-vnet",
+            "ResourceGroup": "${Parameters.InstanceName}-network-rg",
+            "EnableDdosProtection": false,
+            "EnableVmProtection": false,
+            "AddressPrefixes": ["10.2.0.0/16"],
+            "ApplicationSecurityGroups": [],
+            "AzureFirewallNetworkRuleCollection": [
+                {
+                    "name": "aks-cluster-nrc-01",
+                    "properties": {
+                        "priority": "500",
+                        "action": {
+                            "type": "Allow"
+                        },
+                        "rules": [
+                            {
+                                "name": "allow-ssh-access",
+                                "description": "Allows outbound SSH access",
+                                "protocols": [
+                                    "TCP"
+                                ],
+                                "sourceAddresses": [
+                                    "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].AddressPrefix}"
+                                ],
+                                "destinationAddresses": [
+                                    "*"
+                                ],
+                                "destinationPorts": [
+                                    "22"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
+            "AzureFirewallApplicationRuleCollection": [
+                {
+                    "name": "aks-cluster-01",
+                    "properties": {
+                        "priority": 500,
+                        "action": {
+                            "type": "Allow"
+                        },
+                        "rules": [
+                            {
+                                "name": "cluster",
+                                "protocols": [
+                                    {
+                                        "protocolType": "Http",
+                                        "port": 80
+                                    },
+                                    {
+                                        "protocolType": "Https",
+                                        "port": 443
+                                    }
+                                ],
+                                "fqdnTags": [],
+                                "targetFqdns": [
+                                    "*"
+                                ],
+                                "sourceAddresses": [
+                                    "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].AddressPrefix}"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
+            "NetworkSecurityGroups": [
+                {
+                    "Name": "default",
+                    "Rules": [
+                        {
+                            "Name": "allow-azure-loadbalancer",
+                            "Properties": {
+                                "Access": "Allow",
+                                "DestinationAddressPrefixes": [],
+                                "DestinationAddressPrefix": "VirtualNetwork",
+                                "DestinationPortRange": "*",
+                                "DestinationPortRanges":[],
+                                "DestinationApplicationSecurityGroups": [],
+                                "Direction": "Inbound",
+                                "Priority": 100,
+                                "Protocol": "*",
+                                "SourcePortRange": "*",
+                                "SourcePortRanges": [],
+                                "SourceAddressPrefix": "AzureLoadBalancer",
+                                "SourceApplicationSecurityGroups":[]
+                            }
+                        },
+                        {
+                            "Name": "allow-ssh",
+                            "Properties": {
+                                "Access": "Allow",
+                                "DestinationAddressPrefixes": [],
+                                "DestinationAddressPrefix": "VirtualNetwork",
+                                "DestinationPortRange": "22",
+                                "DestinationPortRanges": [],
+                                "DestinationApplicationSecurityGroups": [],
+                                "Direction": "Inbound",
+                                "Priority": 110,
+                                "Protocol": "Tcp",
+                                "SourcePortRange": "*",
+                                "SourcePortRanges": [],
+                                "SourceAddressPrefix": "10.4.0.32/27",
+                                "SourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "Name": "allow-http",
+                            "Properties": {
+                                "Access": "Allow",
+                                "DestinationAddressPrefixes": [],
+                                "DestinationAddressPrefix": "VirtualNetwork",
+                                "DestinationPortRange": "80",
+                                "DestinationPortRanges": [],
+                                "DestinationApplicationSecurityGroups": [],
+                                "Direction": "Inbound",
+                                "Priority": 120,
+                                "Protocol": "*",
+                                "SourcePortRange": "*",
+                                "SourcePortRanges": [],
+                                "SourceAddressPrefix": "VirtualNetwork",
+                                "SourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "Name": "allow-https",
+                            "Properties": {
+                                "Access": "Allow",
+                                "DestinationAddressPrefixes": [],
+                                "DestinationAddressPrefix": "VirtualNetwork",
+                                "DestinationPortRange": "443",
+                                "DestinationPortRanges": [],
+                                "DestinationApplicationSecurityGroups": [],
+                                "Direction": "Inbound",
+                                "Priority": 130,
+                                "Protocol": "*",
+                                "SourcePortRange": "*",
+                                "SourcePortRanges": [],
+                                "SourceAddressPrefix": "VirtualNetwork",
+                                "SourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "Name": "deny-internet",
+                            "Properties": {
+                                "Access": "Deny",
+                                "DestinationAddressPrefix": "*",
+                                "DestinationAddressPrefixes": [],
+                                "DestinationPortRange": "*",
+                                "DestinationPortRanges": [],
+                                "DestinationApplicationSecurityGroups": [],
+                                "Direction": "Inbound",
+                                "Priority": 4095,
+                                "Protocol": "Tcp",
+                                "SourcePortRange": "*",
+                                "SourcePortRanges": [],
+                                "SourceAddressPrefix": "Internet",
+                                "SourceApplicationSecurityGroups": []
+                            }
+                        },
+                        {
+                            "Name": "deny-vnet",
+                            "Properties": {
+                                "Access": "Deny",
+                                "DestinationAddressPrefix": "VirtualNetwork",
+                                "DestinationAddressPrefixes": [],
+                                "DestinationPortRange": "*",
+                                "DestinationPortRanges": [],
+                                "DestinationApplicationSecurityGroups": [],
+                                "Direction": "Inbound",
+                                "Priority": 4096,
+                                "Protocol": "Tcp",
+                                "SourcePortRange": "*",
+                                "SourcePortRanges": [],
+                                "SourceAddressPrefix": "VirtualNetwork",
+                                "SourceApplicationSecurityGroups": []
+                            }
+                        }
+                    ]
+                }
+            ],
+            "UserDefinedRoutes": [
+                {
+                    "Name": "default",
+                    "Routes": [
+                        {
+                            "Name": "default",
+                            "Properties": {
+                                "AddressPrefix": "0.0.0.0/0",
+                                "NextHopIpAddress": "172.0.3.4",
+                                "NextHopType": "VirtualAppliance"
+                            }
+                        },
+                        {
+                            "Name": "to-on-premises",
+                            "Properties": {
+                                "AddressPrefix": "192.168.1.0/28",
+                                "NextHopType": "VirtualNetworkGateway"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "Subnets": [
+                {
+                    "name": "default",
+                    "addressPrefix": "10.2.0.0/17",
+                    "networkSecurityGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.NetworkSecurityGroups[0].Name}",
+                    "userDefinedRoute": "",
+                    "routeTableName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.UserDefinedRoutes[0].Name}",
+                    "serviceEndpoints": [
+                        {
+                            "Service": "Microsoft.EventHub"
+                        },
+                        {
+                            "Service": "Microsoft.Sql"
+                        },
+                        {
+                            "Service": "Microsoft.KeyVault"
+                        },
+                        {
+                            "Service": "Microsoft.Storage"
+                        }
+                    ]
+                }
+            ],
+            "DnsServers": "${Parameters.ModuleConfigurationParameters.SharedServices.ActiveDirectory.VmIpAddressStart}"
+        },
+        "Kubernetes": {
+            "ResourceGroup": "${Parameters.InstanceName}-aks-rg",
+            "CaCertKeyName": "${Parameters.Organization}-${Parameters.DeploymentName}-ca",
+            "CaName": "${Parameters.Organization}-${Parameters.DeploymentName}-ca"
+        },
+        "LogAnalytics": {
+            "Name": "${Parameters.InstanceName}-la",
+            "Comments": "Log Analytics and Diagnostic Storage Account must be deployed in the same region",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Location}",
+            "ListOfAllowedRegions": [
+                "Australia Central",
+                "Australia East",
+                "Australia Southeast",
+                "Canada Central",
+                "Central India",
+                "Central US",
+                "East Asia",
+                "East US",
+                "East US 2",
+                "France Central",
+                "Japan East",
+                "Korea Central",
+                "North Europe",
+                "South Central US",
+                "Southeast Asia",
+                "UK South",
+                "West Europe",
+                "West US",
+                "West US 2"
+            ]
+        },
+        "EventHub": {
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Location}",
+            "Namespace": "${Parameters.Organization}eventhubnamespace",
+            "Name": "${Parameters.Organization}-diagnostics-eventhub",
+            "ConsumerGroupName": "${Parameters.Organization}eventconsumergroup1",
+            "Sku": "Standard"
+        }
+    }
+}

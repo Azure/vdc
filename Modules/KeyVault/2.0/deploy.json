@@ -194,7 +194,7 @@
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2015-06-01",
-            "name": "[concat(parameters('keyVaultName'), '/', parameters('secretsObject').secrets[copyIndex()].secretName)]",
+            "name": "[if(equals(copyIndex(),0), concat(parameters('keyVaultName'), '/', 'dummy'), concat(parameters('keyVaultName'), '/', parameters('secretsObject').secrets[copyIndex()].secretName))]",
             "properties": {
                 "value": "[parameters('secretsObject').secrets[copyIndex()].secretValue]"
             },
