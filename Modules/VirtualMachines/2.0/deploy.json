@@ -313,6 +313,7 @@
                 }
             ]
         },
+        "joinToDomainExtensionName": "JoinToDomainExtension",
         "domainAndUsername": "[concat(parameters('domainName'), '\\', parameters('domainAdminUsername'))]",
         "artifactsStorageAccountSasToken": "[concat('?', parameters('artifactsStorageAccountSasKey'))]"
     },
@@ -1929,7 +1930,7 @@
                     "resources": [
                         {
                             "type": "Microsoft.Compute/virtualMachines/extensions",
-                            "name": "[concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset')), '/', variables('DSCExtensionName'))]",
+                            "name": "[concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset')), '/', variables('joinToDomainExtensionName'))]",
                             "apiVersion": "2017-03-30",
                             "location": "[parameters('location')]",
                             "properties": {
