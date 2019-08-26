@@ -211,11 +211,11 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                     # Only two failures can result:
                     # 1. Template / Parameters Validation failure
                     # 2. Deployment failure
-                    Write-Host "Running a deployment ...";
+                    Write-Host "Running a deployment ..." -ForegroundColor Yellow;
                     $this.WaitForDeploymentToComplete(
                         $deployment,
                         $this.isSubscriptionDeployment);
-                    Write-Host "Deployment complete";
+                    Write-Host "Deployment complete"  -ForegroundColor Yellow;
                 }
                 return $deployment;
             }

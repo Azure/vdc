@@ -234,8 +234,7 @@
         "tagPatching": "3rdSat7pm",
         "DSCExtensionName": "DSCExtension",
         "joinToDomainExtensionName": "JoinToDomainExtension",
-        "domainAndUsername": "[concat(parameters('domainName'), '\\', parameters('domainAdminUsername'))]",
-        "artifactsStorageAccountSasToken": "[concat('?', parameters('artifactsStorageAccountSasKey'))]"
+        "domainAndUsername": "[concat(parameters('domainName'), '\\', parameters('domainAdminUsername'))]"
     },
     "resources": [
         {

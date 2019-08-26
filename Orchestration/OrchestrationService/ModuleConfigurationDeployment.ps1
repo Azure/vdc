@@ -134,7 +134,7 @@ Function New-Deployment {
         }
 
         foreach($ModuleConfigurationName in $allModules) {
-            Write-Host "Deploying Module: $ModuleConfigurationName"
+            Write-Host "Deploying Module: $ModuleConfigurationName" -ForegroundColor Yellow
             $moduleConfiguration = `
                 Get-ModuleConfiguration `
                     -ArchetypeInstanceJson $archetypeInstanceJson `
