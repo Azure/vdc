@@ -234,7 +234,8 @@
         "tagPatching": "3rdSat7pm",
         "DSCExtensionName": "DSCExtension",
         "joinToDomainExtensionName": "JoinToDomainExtension",
-        "domainAndUsername": "[concat(parameters('domainName'), '\\', parameters('domainAdminUsername'))]"
+        "domainAndUsername": "[concat(parameters('domainName'), '\\', parameters('domainAdminUsername'))]",
+        "artifactsStorageAccountSasToken": "[concat('?', parameters('artifactsStorageAccountSasKey'))]"
     },
     "resources": [
         {
@@ -689,6 +690,9 @@
             "name": "[concat(parameters('virtualMachineScaleSetsName'), '/', variables('joinToDomainExtensionName'))]",
             "condition": "[variables('joinToDomain')]",
             "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('virtualMachineScaleSetsName'))]"
+            ],
             "properties": {
                 "publisher": "Microsoft.Compute",
                 "type": "JsonADDomainExtension",
@@ -711,7 +715,8 @@
             "name": "[concat(parameters('virtualMachineScaleSetsName'), '-cpuautoscale')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('virtualMachineScaleSetsName'))]"
+                "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('virtualMachineScaleSetsName'))]",
+                "[concat(resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSetsName')), '/extensions/', variables('joinToDomainExtensionName'))]"
             ],
             "properties": {
                 "name": "[concat(parameters('virtualMachineScaleSetsName'), '-cpuautoscale')]",

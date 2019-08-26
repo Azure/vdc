@@ -227,6 +227,10 @@
             "metadata": {
                 "description": "List of ADDS IPs that will serve as DNS Server List on a Virtual Network"
             }
+        },
+        "domainName": {
+            "type": "string",
+            "value": "[parameters('domainName')]"
         }
     }
 }

@@ -89,19 +89,6 @@
             }
         },
         {
-            "Name": "DomainControllerASG",
-            "ModuleDefinitionName": "ApplicationSecurityGroups",
-            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.ResourceGroup}",
-            "DependsOn": [],
-            "Deployment": {
-                "OverrideParameters": {
-                    "applicationSecurityGroupName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
-                    }
-                }
-            }
-        },
-        {
             "Name": "VirtualNetwork",
             "ModuleDefinitionName": "VirtualNetwork",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Network.ResourceGroup}",
@@ -271,6 +258,9 @@
                     },
                     "resourceGroupLocation": {
                         "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Location}"
+                    },
+                    "blobContainers": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Containers}"
                     }
                 }
             },
@@ -358,9 +348,6 @@
                     },
                     "vmIPAddress": {
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}"
-                    },
-                    "applicationSecurityGroupId": {
-                        "value": "reference(DomainControllerASG.applicationSecurityGroupResourceId)"
                     },
                     "adminUsername": {
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUsername}"

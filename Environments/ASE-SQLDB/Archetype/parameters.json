@@ -1,5 +1,5 @@
 {
-    "Organization": "file(../../_Common/organizationName.txt)",
+    "Organization": "env(ORGANIZATION_NAME)",
     "DeploymentName": "ase-sqldb",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "ASE_SQLDB",
@@ -104,6 +104,6 @@
                     "Name": "default"
                 }
             }
-        },
+        }
     }
 }

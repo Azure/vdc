@@ -4,7 +4,7 @@
     "parameters": {
         "storageAccountName": {
             "type": "string",
-            "defaultValue": "vdcstorageawus018",
+            "maxLength": 24,
             "metadata": {
                 "description": "Required. Name of the Storage Account."
             }

@@ -38,19 +38,35 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
   - job: AppServiceEnvironments
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - App Service Environments"
@@ -68,19 +84,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: AppServicePlan
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - App Service Plan"
@@ -98,19 +120,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: AppServiceWebApp
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - App Service WebApp"
@@ -128,19 +156,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: SQLDBServer
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - SQLDB Server"
@@ -158,19 +192,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: SQLDatabase
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - SQL Database"
@@ -188,15 +228,19 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: TearDownValidationResourceGroup
     pool: 
       name: 'vdc-self-hosted'
@@ -222,19 +266,36 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
   - job: AppServiceEnvironments
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: KeyVault
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "App Service Environments" 
@@ -242,20 +303,26 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: AppServicePlan
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: AppServiceEnvironments
+    dependsOn: [ AppServiceEnvironments, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "App Service Plan" 
@@ -263,19 +330,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: AppServiceWebApp
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: AppServicePlan
+    dependsOn: [ AppServicePlan, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "App Service WebApp" 
@@ -283,20 +356,26 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: SQLDBServer
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
     dependsOn: KeyVault
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "SQLDB Server" 
@@ -304,20 +383,26 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: SQLDatabase
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SQLDBServer
+    dependsOn: [ SQLDBServer, KeyVault ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "SQLDatabase" 
@@ -325,12 +410,16 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)

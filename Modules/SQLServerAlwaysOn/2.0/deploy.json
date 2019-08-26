@@ -141,7 +141,7 @@
                         "protectedSettings": {
                             "storageAccountName": "[parameters('artifactsStorageAccountName')]",
                             "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
-                            "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File ./windows/PrepareSQLServer_Install_Modules.ps1"
+                            "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File ./Windows/PrepareSQLServer_Install_Modules.ps1"
                         }
                     }
                 }
@@ -182,7 +182,7 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "configuration": {
-                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/windows/PrepareSQLServer.ps1.zip')]",
+                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/PrepareSQLServer.ps1.zip')]",
                                                 "script": "PrepareSqlServer.ps1",
                                                 "function": "SqlServerPrepareDsc"
                                             },
@@ -192,7 +192,7 @@
                                                 "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
                                                 "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
                                                 "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
-                                                "witnessStorageAccountKey": "[parameters('cloudWitnessStorageAccountKey')]"
+                                                "witnessStorageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessStorageAccountKey')), '2016-12-01').keys[0].value]"
                                             }
                                         },
                                         "protectedSettings": {
@@ -258,7 +258,7 @@
                                         "protectedSettings": {
                                             "storageAccountName": "[parameters('artifactsStorageAccountName')]",
                                             "storageAccountKey": "[parameters('artifactsStorageAccountKey')]",
-                                            "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File ./windows/sleep.ps1 -Sleep 600"
+                                            "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File ./Windows/sleep.ps1 -Sleep 600"
                                         }
                                     }
                                 }
@@ -314,7 +314,7 @@
                                                 "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
                                                 "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
                                                 "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
-                                                "witnessStorageAccountKey": "[parameters('cloudWitnessStorageAccountKey')]"
+                                                "witnessStorageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessStorageAccountKey')), '2016-12-01').keys[0].value]"
                                             }
                                         },
                                         "protectedSettings": {
@@ -384,7 +384,7 @@
                                                 "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
                                                 "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
                                                 "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
-                                                "witnessStorageAccountKey": "[parameters('cloudWitnessStorageAccountKey')]"
+                                                "witnessStorageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessStorageAccountKey')), '2016-12-01').keys[0].value]"
                                             }
                                         },
                                         "protectedSettings": {

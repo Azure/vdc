@@ -223,7 +223,7 @@
                     "serviceEndpoints": ""
                 }
             ],
-            "EnableDdosProtection": true,
+            "EnableDdosProtection": false,
             "EnableVmProtection": false,
             "DnsServers": [
                 "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",

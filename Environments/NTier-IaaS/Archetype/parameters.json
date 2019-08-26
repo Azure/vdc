@@ -5,21 +5,8 @@
     "Subscription": "NTier_IaaS",
     "ModuleConfigurationParameters": {
         "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
-        "OnPremisesInformation": {
-            "ActiveDirectory": {
-                "PrimaryDomainControllerIP": "192.168.1.4",
-                "DomainName": "fontoso.com",
-                "ADSitename": "Cloud-Site",
-                "DomainAdminUserName": "fontoso"
-            },
-            "Network": {
-                "AddressPrefix": "192.168.1.0/28"
-            }
-        },
+        "DeploymentAppId": "env(DEPLOYMENT_APP_ID)",
         "Comments": "Adding VirtualNetwork property, because KeyVault references a VirtualNetwork property references NetworkSecurityGroups and RouteTable, this is why these two properties are also included",
-        "RouteTables": "file(../LandingZone/NetworkParameters/routeTables.json)",
-        "NetworkSecurityGroups": "file(../LandingZone/NetworkParameters/networkSecurityGroups.json)",
-        "VirtualNetwork": "file(../LandingZone/NetworkParameters/virtualNetwork.json)",
         "KeyVault": {
             "Name": "${Parameters.InstanceName}-kv",
             "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
@@ -31,6 +18,21 @@
                 {
                     "tenantId": "${Parameters.TenantId}",
                     "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                },
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
                     "permissions": {
                         "certificates": [
                             "All"
@@ -58,19 +60,28 @@
                 "defaultAction": "Deny",
                 "virtualNetworkRules": [
                     {
-                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                        "subnet": "reference(VirtualNetwork.subnetNames)"
                     }
                 ],
                 "ipRules": []
             }
         },
         "WebApp": {
-            "Name": "web-vmss",
+            "Name": "webvmss",
             "ResourceGroup": "${Parameters.InstanceName}-webapp-rg",
             "VMSKU": {
                 "name": "Standard_DS3_v2", 
                 "tier": "Standard", 
                 "capacity": 5
+            },
+            "UpgradePolicy": {
+                "Mode": "Automatic",
+                "RollingUpgradePolicy": {
+                    "maxBatchInstancePercent": 20,
+                    "maxUnhealthyInstancePercent": 20,
+                    "maxUnhealthyUpgradedInstancePercent": 20,
+                    "pauseTimeBetweenBatches": "PT10S"
+                }
             },
             "OSImage": {
                 "offer": "WindowsServer",
@@ -83,7 +94,7 @@
                 "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
                 "Destination": "HSM"
             },
-            "DomainName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainName}",
+            "DomainName": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.domainName)",
             "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
             "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
@@ -93,7 +104,7 @@
                 },
                 "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
             },
-            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+            "SubnetName": "reference(VirtualNetwork.subnetNames)"
         },
         "WebAppLoadBalancer": {
             "Name": "web-lb",
@@ -105,36 +116,42 @@
                         "frontendPort": 80,
                         "backendPort": 80,
                         "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 3,
-                        "protocol": "TCP",
-                        "enableTcpReset": false,
-                        "loadDistribution": false,
-                        "disableOutboundSnat": false,
+                        "idleTimeoutInMinutes": 5,
+                        "protocol": "Tcp",
                         "probeName": "tcpProbe"
                     }
                 }
             ],
             "Probes": [
                 {
-                    "name": "probe",
+                    "name": "tcpProbe",
                     "properties": {
-                        "protocol": "TCP",
+                        "protocol": "Tcp",
                         "port": 80,
-                        "requestPath": "/",
-                        "intervalInSeconds": 10,
-                        "numberOfProbes": 5
+                        "requestPath": "",
+                        "intervalInSeconds": 5,
+                        "numberOfProbes": 2
                     }
                 }
             ],
-            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+            "SubnetName": "reference(VirtualNetwork.subnetNames)"
         },
         "BusinessApp": {
-            "Name": "biz-vmss",
-            "ResourceGroup": "${Parameters.InstanceName}-biz-rg",
+            "Name": "bizvmss",
+            "ResourceGroup": "${Parameters.InstanceName}-bizapp-rg",
             "VMSKU": {
                 "name": "Standard_DS3_v2", 
                 "tier": "Standard", 
                 "capacity": 5
+            },
+            "UpgradePolicy": {
+                "Mode": "Automatic",
+                "RollingUpgradePolicy": {
+                    "maxBatchInstancePercent": 20,
+                    "maxUnhealthyInstancePercent": 20,
+                    "maxUnhealthyUpgradedInstancePercent": 20,
+                    "pauseTimeBetweenBatches": "PT10S"
+                }
             },
             "OSImage": {
                 "offer": "WindowsServer",
@@ -143,11 +160,21 @@
             },
             "OSType": "Windows",
             "Kek": {
-                "Name": "WebAppKey",
+                "Name": "BusinessAppKey",
                 "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
                 "Destination": "HSM"
             },
-            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+            "DomainName": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.domainName)",
+            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
+            "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
+            "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
+            "AdminPassword": {
+                "keyVault": {
+                    "id": "reference(KeyVault.keyVaultResourceId)"
+                },
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
+            },
+            "SubnetName": "reference(VirtualNetwork.subnetNames)"
         },
         "BusinessAppLoadBalancer": {
             "Name": "${Parameters.InstanceName}-biz-lb",
@@ -159,28 +186,25 @@
                         "frontendPort": 80,
                         "backendPort": 80,
                         "enableFloatingIP": false,
-                        "idleTimeoutInMinutes": 3,
-                        "protocol": "TCP",
-                        "enableTcpReset": false,
-                        "loadDistribution": false,
-                        "disableOutboundSnat": false,
+                        "idleTimeoutInMinutes": 5,
+                        "protocol": "Tcp",
                         "probeName": "tcpProbe"
                     }
                 }
             ],
             "Probes": [
                 {
-                    "name": "probe",
+                    "name": "tcpProbe",
                     "properties": {
-                        "protocol": "TCP",
+                        "protocol": "Tcp",
+                        "requestPath": "",
                         "port": 80,
-                        "requestPath": "/",
-                        "intervalInSeconds": 10,
-                        "numberOfProbes": 5
+                        "intervalInSeconds": 5,
+                        "numberOfProbes": 2
                     }
                 }
             ],
-            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+            "SubnetName": "reference(VirtualNetwork.subnetNames)"
         },
         "SQLServerAlwaysOn": {
             "Name": "sql-vm",
@@ -194,7 +218,7 @@
                 "sku": "Enterprise"
             },
             "IPAddressStart": "172.2.0.20",
-            "DomainName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainName}",
+            "DomainName": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.domainName)",
             "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
             "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
@@ -204,17 +228,23 @@
                 },
                 "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
             },
+            "ClusterName": "AOCluster",
             "DataDisks": [
                 {
-                    "size": 1023
+                    "size": 1023,
+                    "driveLetter": "F",
+                    "diskId": 2
                 },
                 {
-                    "size": 1023
+                    "size": 1023,
+                    "driveLetter": "G",
+                    "diskId": 3
                 }
-            ]
+            ],
+            "SubnetName": "reference(VirtualNetwork.subnetNames)"
         },
         "SQLServerAlwaysOnCloudWitness": {
-            "Name": "${Parameters.InstanceName}cwntierstrg",
+            "Name": "${Parameters.InstanceName}ntierstrg",
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ResourceGroup}",
             "Sku": "Standard_GRS",
             "NetworkAcls": {
@@ -222,7 +252,7 @@
                 "defaultAction": "Deny",
                 "virtualNetworkRules": [
                     {
-                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                        "subnet": "reference(VirtualNetwork.subnetNames)"
                     }
                 ],
                 "ipRules": []
@@ -243,26 +273,24 @@
                         "backendPort": 1433,
                         "enableFloatingIP": false,
                         "idleTimeoutInMinutes": 5,
-                        "protocol": "TCP",
-                        "enableTcpReset": false,
-                        "loadDistribution": false,
-                        "disableOutboundSnat": false,
+                        "protocol": "Tcp",
                         "probeName": "tcpProbe"
                     }
                 }
             ],
             "Probes": [
                 {
-                    "name": "probe",
+                    "name": "tcpProbe",
                     "properties": {
-                        "protocol": "TCP",
+                        "protocol": "Tcp",
+                        "requestPath": "",
                         "port": 1433,
                         "intervalInSeconds": 5,
                         "numberOfProbes": 2
                     }
                 }
             ],
-            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+            "SubnetName": "reference(VirtualNetwork.subnetNames)"
         }
     }
 }

@@ -150,6 +150,13 @@
                 "description": "Required. Name of Shared Services Subnet, this name is used to get the SubnetId"
             }
         },
+        "loadBalancerBackendPoolId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. Represents a Load Balancer backend pool resource identifier, if left blank, no Load Balancer will be associated to the VMSS"
+            }
+        },
         "applicationSecurityGroupId": {
             "type": "string",
             "defaultValue": "",
@@ -257,6 +264,11 @@
                 ]
             }
         },
+        "loadBalancerBackendPoolId": [
+            {
+                "id": "[parameters('loadBalancerBackendPoolId')]"
+            }
+        ],
         "subnetId": "[concat(parameters('vNetId'), '/subnets/', variables('subnetName'))]",
         "antimalwareExtensionName": "IaaSAntimalware",
         "diagnosticsExtensionName": "IaaSDiagnostics",
@@ -359,6 +371,7 @@
                             "subnet": {
                                 "id": "[variables('subnetId')]"
                             },
+                            "loadBalancerBackendAddressPools": "[if(empty(parameters('loadBalancerBackendPoolId')), json('null'), variables('loadBalancerBackendPoolId'))]",
                             "applicationSecurityGroups": "[if(empty(parameters('applicationSecurityGroupId')), json('null'), variables('applicationSecurityGroups'))]"
                         }
                     }
@@ -446,7 +459,10 @@
                                 "name": "[replace(toLower(substring(concat(parameters('virtualMachineName'), copyIndex('vmLoop', parameters('virtualMachineOffset')), '-dsk', copyindex('dataDisks', parameters('virtualMachineOffset')), '-', replace(concat(variables('uniqueString'), variables('uniqueString')), '-', '')), 0, 30)), '-', '')]",
                                 "diskSizeGB": "[parameters('virtualMachineDataDisks')[copyIndex('dataDisks')].size]",
                                 "createOption": "Empty",
-                                "caching": "None"
+                                "caching": "None",
+                                "managedDisk": {
+                                    "storageAccountType": "Premium_LRS"
+                                }
                             }
                         }
                     ]

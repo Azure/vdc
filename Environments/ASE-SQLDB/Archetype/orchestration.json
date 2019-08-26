@@ -5,6 +5,7 @@
             "Name": "KeyVault",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
             "ModuleDefinitionName": "KeyVault",
+            "DependsOn": [],
             "Deployment": {
                 "OverrideParameters": {
                     "keyVaultName": {
@@ -49,6 +50,7 @@
             "Name": "AppServiceEnvironments",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AppServiceEnvironments.ResourceGroup}",
             "ModuleDefinitionName": "AppServiceEnvironments",
+            "DependsOn": [],
             "Deployment": {
                 "OverrideParameters": {
                     "dnsSuffix": {
@@ -76,6 +78,9 @@
             "Name": "AppServicePlan",
             "ModuleDefinitionName": "AppServicePlan",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AppServicePlan.ResourceGroup}",
+            "DependsOn": [
+                "AppServiceEnvironments"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "appServicePlanName": {
@@ -94,6 +99,9 @@
             "Name": "AppServiceWebApp",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AppServiceWebApp.ResourceGroup}",
             "ModuleDefinitionName": "AppServiceWebApp",
+            "DependsOn": [
+                "AppServicePlan"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "appServicePlanId": {
@@ -112,6 +120,7 @@
             "Name": "SQLDBServer",
             "ModuleDefinitionName": "SQLDBServer",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLDB.ResourceGroup}",
+            "DependsOn": [],
             "Deployment": {
                 "OverrideParameters": {
                     "administratorLogin": {
@@ -144,6 +153,9 @@
             "Name": "SQLDatabase",
             "ModuleDefinitionName": "SQLDatabase",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLDB.ResourceGroup}",
+            "DependsOn": [
+                "SQLDBServer"
+            ],
             "Deployment": {
                 "OverrideParameters": {
                     "databaseName": {

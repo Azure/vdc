@@ -2408,7 +2408,7 @@ Function Get-OutputReferenceValue() {
                 -Key $outputPathString;
 
         # Check if the cache value was retrieval successfully (i.e it returns a value)
-        if($cacheValue)
+        if($null -ne $cacheValue)
         {
             Write-Debug "Output found in cache";
             $resolvedOutput = $cacheValue;
@@ -2431,20 +2431,24 @@ Function Get-OutputReferenceValue() {
         if ($resolvedOutput `
             -and $resolvedOutput -is [object[]]){
             Write-Debug "Replacing an array";
-
+                        
             # Since is an array, let's replace the reference function
             # including double quotes or single quotes
             $tempfullReferenceFunctionString1 = `
                 """$fullReferenceFunctionString""";
 
+            Write-Debug "reference with double quotes is: $tempfullReferenceFunctionString1"
+
             $tempfullReferenceFunctionString2 = `
                 "'$fullReferenceFunctionString'";
+            
+            Write-Debug "reference with single quotes is: $tempfullReferenceFunctionString2"
 
             $resolvedOutputString = `
-                ConvertTo-Json `
-                    -InputObject $resolvedOutput `
-                    -Depth 100 `
-                    -Compress;
+                    ConvertTo-Json `
+                        -InputObject $resolvedOutput `
+                        -Depth 100 `
+                        -Compress;
 
             $parameterValueString = `
                 $parameterValueString.Replace(

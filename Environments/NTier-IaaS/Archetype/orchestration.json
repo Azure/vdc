@@ -92,11 +92,14 @@
                     "virtualMachineScaleSetsOSType": {
                         "value": "${Parameters.ModuleConfigurationParameters.WebApp.OSType}"
                     },
-                    "virtualMachineScaleSetsDataDisks": {
-                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DataDisks}"
+                    "virtualMachineScaleSetsUpgradePolicy": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.UpgradePolicy.Mode}"
+                    },
+                    "virtualMachineScaleSetsRollingUpgradePolicy": {
+                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.UpgradePolicy.RollingUpgradePolicy}"
                     },
                     "loadBalancerBackendPoolId": {
-                        "value": "reference(WebLoadBalancer.loadBalancerResourceBackendPoolId)"
+                        "value": "reference(WebAppLoadBalancer.loadBalancerResourceBackendPoolId)"
                     },
                     "workspaceId": {
                         "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
@@ -121,9 +124,6 @@
                     },
                     "subnetName": {
                         "value": "${Parameters.ModuleConfigurationParameters.WebApp.SubnetName}"
-                    },
-                    "vmIPAddress": {
-                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.AddsIPAddressStart}"
                     },
                     "applicationSecurityGroupId": {
                         "value": "reference(WebASG.applicationSecurityGroupResourceId)"
@@ -214,11 +214,14 @@
                     "virtualMachineScaleSetsOSType": {
                         "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.OSType}"
                     },
-                    "virtualMachineScaleSetsDataDisks": {
-                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DataDisks}"
+                    "virtualMachineScaleSetsUpgradePolicy": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.UpgradePolicy.Mode}"
+                    },
+                    "virtualMachineScaleSetsRollingUpgradePolicy": {
+                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.UpgradePolicy.RollingUpgradePolicy}"
                     },
                     "loadBalancerBackendPoolId": {
-                        "value": "reference(WebLoadBalancer.loadBalancerResourceBackendPoolId)"
+                        "value": "reference(BusinessAppLoadBalancer.loadBalancerResourceBackendPoolId)"
                     },
                     "workspaceId": {
                         "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
@@ -243,9 +246,6 @@
                     },
                     "subnetName": {
                         "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.SubnetName}"
-                    },
-                    "vmIPAddress": {
-                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.AddsIPAddressStart}"
                     },
                     "applicationSecurityGroupId": {
                         "value": "reference(BusinessASG.applicationSecurityGroupResourceId)"
@@ -345,6 +345,9 @@
                     "virtualMachineDataDisks": {
                         "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DataDisks}"
                     },
+                    "loadBalancerBackendPoolId": {
+                        "value": "reference(SQLServerAlwaysOnLoadBalancer.loadBalancerResourceBackendPoolId)"
+                    },
                     "workspaceId": {
                         "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
                     },
@@ -407,6 +410,20 @@
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnCloudWitness.ResourceGroup}",
             "Comments": "Storage Account that is used as a Cloud Witness",
+            "Policies": {
+                "Comments": "Policies is Optional - If no object is specified, no Policies deployment will occur",
+                "OverrideParameters": {
+                    "effect": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnCloudWitness.Policies.Effect}"
+                    },
+                    "resourceGroup": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnCloudWitness.ResourceGroup}"
+                    },
+                    "resourceGroupLocation": {
+                        "value": "${Parameters.Location}"
+                    }
+                }
+            },
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
                 "OverrideParameters": {
@@ -427,11 +444,10 @@
         },
         {
             "Name": "InstallSQLServerAlwaysOn",
-            "ModuleDefinitionName": "VirtualMachines",
+            "ModuleDefinitionName": "SQLServerAlwaysOn",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ResourceGroup}",
             "DependsOn": [
-                "KeyVault",
-                "SQLServerAlwaysOnLoadBalancer",
+                "SQLServerAlwaysOnVMs",
                 "CloudWitnessStorageAccount"
             ],
             "Comments": "Creates Active Directory Domain Services VMs",
@@ -440,14 +456,26 @@
                     "virtualMachineName": {
                         "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
                     },
+                    "virtualMachineCount": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.VMCount}"
+                    },
                     "adminUsername": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.AdminUsername}"
                     },
                     "adminPassword": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                        "reference": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.AdminPassword}"
+                    },
+                    "domainAdminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminUsername}"
+                    },
+                    "domainAdminPassword": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminPassword}"
+                    },
+                    "domainName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainName}"
                     },
                     "clusterName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ClusterName}"
                     },
                     "artifactsStorageAccountName": {
                         "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
@@ -465,16 +493,7 @@
                         "value": "reference(CloudWitnessStorageAccount.storageAccountName)"
                     },
                     "sqlServerILB_IPAddress": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
-                    },
-                    "domainName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
-                    },
-                    "domainAdminUsername": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
-                    },
-                    "domainAdminPassword": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.Name}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.IPAddressStart}"
                     }
                 }
             }

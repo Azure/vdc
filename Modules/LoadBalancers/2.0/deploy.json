@@ -72,11 +72,8 @@
                             "enableFloatingIP": "[parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.enableFloatingIP]",
                             "idleTimeoutInMinutes": "[parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.idleTimeoutInMinutes]",
                             "protocol": "[parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.protocol]",
-                            "enableTcpReset": "[parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.enableTcpReset]",
-                            "loadDistribution": "[parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.loadDistribution]",
-                            "disableOutboundSnat": "[parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.disableOutboundSnat]",
                             "probe": {
-                                "id": "[resourceId('Microsoft.Network/loadBalancers/probes', parameters('loadBalancerName'), parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.probeName)]"
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancerName')), '/probes/', parameters('loadBalancingRules')[copyIndex('loadBalancingRules')].properties.probeName)]"
                             }
                         }
                     }
@@ -92,8 +89,8 @@
                         "name": "[parameters('probes')[copyIndex('probes')].name]",
                         "properties": {
                             "protocol": "[parameters('probes')[copyIndex('probes')].properties.protocol]",
+                            "requestPath": "[if(equals(tolower(parameters('probes')[copyIndex('probes')].properties.protocol), 'tcp'), json('null'), parameters('probes')[copyIndex('probes')].properties.requestPath)]",
                             "port": "[parameters('probes')[copyIndex('probes')].properties.port]",
-                            "requestPath": "[parameters('probes')[copyIndex('probes')].properties.requestPath]",
                             "intervalInSeconds": "[parameters('probes')[copyIndex('probes')].properties.intervalInSeconds]",
                             "numberOfProbes": "[parameters('probes')[copyIndex('probes')].properties.numberOfProbes]"
                         }

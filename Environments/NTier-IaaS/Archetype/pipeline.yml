@@ -38,169 +38,325 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-  - job: AppServiceEnvironments
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
+  - job: VirtualMachines
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [SetupValidationResourceGroup, KeyVault]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
-      displayName: "Pester Tests for Module - App Service Environments"
+      displayName: "Pester Tests for Module - Virtual Machine Scale Sets"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
           
-          Invoke-Pester -Script "./Modules/AppServiceEnvironments/2.0/Tests";
+          Invoke-Pester -Script "./Modules/VirtualMachines/2.0/Tests";
           
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
-      displayName: "ARM Validation - App Service Environments"
+      displayName: "ARM Validation - SQL Server AlwaysOn Virtual Machines"
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "SQLServerAlwaysOnVMs" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-  - job: AppServicePlan
+  - job: VirtualMachineScaleSets
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [SetupValidationResourceGroup, KeyVault]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
-      displayName: "Pester Tests for Module - App Service Plan"
+      displayName: "Pester Tests for Module - Virtual Machine Scale Sets"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
           
-          Invoke-Pester -Script "./Modules/AppServicePlan/2.0/Tests";
+          Invoke-Pester -Script "./Modules/VirtualMachineScaleSets/2.0/Tests";
           
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
-      displayName: "ARM Validation - App Service Plan"
+      displayName: "ARM Validation - Web VMSS"
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "WebAppVMSS" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Business VMSS"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "BusinessAppVMSS" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: AppServiceWebApp
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: LoadBalancers
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [SetupValidationResourceGroup, KeyVault]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
-      displayName: "Pester Tests for Module - App Service WebApp"
+      displayName: "Pester Tests for Module - Load Balancers"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
           
-          Invoke-Pester -Script "./Modules/AppServiceWebApp/2.0/Tests";
+          Invoke-Pester -Script "./Modules/LoadBalancers/2.0/Tests";
           
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
-      displayName: "ARM Validation - App Service WebApp"
+      displayName: "ARM Validation - Web Load Balancer"
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "WebAppLoadBalancer" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Business Load Balancer"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "BusinessAppLoadBalancer" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: SQLDBServer
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - SQL Server Load Balancer"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "SQLServerAlwaysOnLoadBalancer" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: StorageAccounts
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [SetupValidationResourceGroup, KeyVault]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
-      displayName: "Pester Tests for Module - SQLDB Server"
+      displayName: "Pester Tests for Module - SQL Server Cloud Witness"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
           
-          Invoke-Pester -Script "./Modules/SQLDBServer/2.0/Tests";
+          Invoke-Pester -Script "./Modules/StorageAccounts/2.0/Tests";
           
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
-      displayName: "ARM Validation - SQLDB Server"
+      displayName: "ARM Validation - SQL Server Cloud Witness"
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "CloudWitnessStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-  - job: SQLDatabase
+  - job: InternetInformationServices
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [SetupValidationResourceGroup, KeyVault]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
-      displayName: "Pester Tests for Module - SQL Database"
+      displayName: "Pester Tests for Module - Internet Information Services"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
           
-          Invoke-Pester -Script "./Modules/SQLDatabase/2.0/Tests";
+          Invoke-Pester -Script "./Modules/InternetInformationServices/2.0/Tests";
           
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
-      displayName: "ARM Validation - SQL Database"
+      displayName: "ARM Validation - Web IIS"
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "IISOnWebVMSS" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Business IIS"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "IISOnBusinessVMSS" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: SQLServerAlwaysOn
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [SetupValidationResourceGroup, KeyVault]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: PowerShell@2
+      displayName: "Pester Tests for Module - SQL Server AlwaysOn installation"
+      inputs:
+        targetType: 'inline'
+        script: '# Write your powershell commands here.
+          
+          Invoke-Pester -Script "./Modules/SQLServerAlwaysOn/2.0/Tests";
+          
+          # Use the environment variables input below to pass secret variables to this script.'
+        pwsh: true
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - SQL Server AlwaysOn installation"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "InstallSQLServerAlwaysOn" -Validate'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: TearDownValidationResourceGroup
     pool: 
       name: 'vdc-self-hosted'
-    dependsOn: [ KeyVault, AppServiceEnvironments, AppServicePlan, AppServiceWebApp, SQLDBServer, SQLDatabase ]
+    dependsOn: [ StorageAccounts, KeyVault, VirtualMachineScaleSets, LoadBalancers, InternetInformationServices, SQLServerAlwaysOn ]
     steps:
     - task: AzurePowerShell@4
       displayName: "Teardown Validation Resource Group"
@@ -222,115 +378,255 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "KeyVault"'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "KeyVault"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: AppServiceEnvironments
-    timeoutInMinutes: 0
-    pool:
-      name: 'vdc-self-hosted'
-    steps:
-    - task: AzurePowerShell@4
-      displayName: "App Service Environments" 
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
       inputs:
-        azureSubscription: 'vdc2-spoke1'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceEnvironments"'
-        azurePowerShellVersion: 'LatestVersion'
-      env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-  - job: AppServicePlan
-    timeoutInMinutes: 0
-    pool:
-      name: 'vdc-self-hosted'
-    dependsOn: AppServiceEnvironments
-    steps:
-    - task: AzurePowerShell@4
-      displayName: "App Service Plan" 
-      inputs:
-        azureSubscription: 'vdc2-spoke1'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServicePlan"'
-        azurePowerShellVersion: 'LatestVersion'
-      env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-  - job: AppServiceWebApp
-    pool:
-      name: 'vdc-self-hosted'
-    dependsOn: AppServicePlan
-    steps:
-    - task: AzurePowerShell@4
-      displayName: "App Service WebApp" 
-      inputs:
-        azureSubscription: 'vdc2-spoke1'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "AppServiceWebApp"'
-        azurePowerShellVersion: 'LatestVersion'
-      env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-  - job: SQLDBServer
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
+  - job: LoadBalancers
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
     dependsOn: KeyVault
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
-      displayName: "SQLDB Server" 
+      displayName: "Web Load Balancer"
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDBServer"'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "WebAppLoadBalancer"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: SQLDatabase
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: AzurePowerShell@4
+      displayName: "Business Load Balancer"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "BusinessAppLoadBalancer"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: AzurePowerShell@4
+      displayName: "SQL Server Load Balancer"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "SQLServerAlwaysOnLoadBalancer"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: VirtualMachines
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [KeyVault, LoadBalancers]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "SQL Server AlwaysOn Virtual Machines"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "SQLServerAlwaysOnVMs"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: VirtualMachineScaleSets
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SQLDBServer
+    dependsOn: [KeyVault, LoadBalancers]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
-      displayName: "SQLDatabase" 
+      displayName: "Web VMSS"
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/Archetype/definition.json" -ModuleConfigurationName "SQLDatabase"'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "WebAppVMSS"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: AzurePowerShell@4
+      displayName: "Business VMSS"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "BusinessAppVMSS"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: InternetInformationServices
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [KeyVault, VirtualMachineScaleSets]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "Web IIS"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "IISOnWebVMSS"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: AzurePowerShell@4
+      displayName: "Business IIS"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "IISOnBusinessVMSS"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: SQLServerAlwaysOn
+    timeoutInMinutes: 0
+    pool:
+      name: 'vdc-self-hosted'
+    dependsOn: [KeyVault, VirtualMachines]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+    steps:
+    - task: AzurePowerShell@4
+      displayName: "SQL Server Cloud Witness"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "CloudWitnessStorageAccount"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: AzurePowerShell@4
+      displayName: "SQL Server AlwaysOn installation"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/Archetype/definition.json" -ModuleConfigurationName "InstallSQLServerAlwaysOn"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)

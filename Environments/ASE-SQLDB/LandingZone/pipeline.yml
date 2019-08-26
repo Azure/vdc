@@ -38,19 +38,35 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
   - job: LogAnalytics
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Log Analytics"
@@ -68,19 +84,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: AzureSecurityCenter
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Azure Security Center"
@@ -98,19 +120,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AzureSecurityCenter" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AzureSecurityCenter" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: NISTControls
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - NIST Controls"
@@ -128,19 +156,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "NISTControls" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "NISTControls" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: NetworkSecurityGroups
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Network Security Groups"
@@ -158,19 +192,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DefaultNSG" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DefaultNSG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: RouteTables
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Route Tables"
@@ -188,27 +228,33 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DefaultRouteTable" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "RouteTables" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
-  - job: vNet
+  - job: VirtualNetwork
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
-      displayName: "Pester Tests for Module - vNet"
+      displayName: "Pester Tests for Module - VirtualNetwork"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
           
-          Invoke-Pester -Script "./Modules/vNet/2.0/Tests";
+          Invoke-Pester -Script "./Modules/VirtualNetwork/2.0/Tests";
           
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
@@ -218,27 +264,33 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: VirtualNetworkPeering
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
+    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
-      displayName: "Pester Tests for Module - vNet Peering"
+      displayName: "Pester Tests for Module - VirtualNetwork Peering"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
           
-          Invoke-Pester -Script "./Modules/vNetPeering/2.0/Tests";
+          Invoke-Pester -Script "./Modules/VirtualNetworkPeering/2.0/Tests";
           
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
@@ -248,19 +300,23 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LocalVirtualNetworkPeering" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LocalVirtualNetworkPeering" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
-        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
-        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
-        TENANT_ID: $(TENANT_ID)
   - job: TearDownValidationResourceGroup
     pool: 
       name: 'vdc-self-hosted'
-    dependsOn: [ StorageAccounts, LogAnalytics, AzureSecurityCenter, NISTControls, NetworkSecurityGroups, RouteTables, vNet, VirtualNetworkPeering ]
+    dependsOn: [ StorageAccounts, LogAnalytics, AzureSecurityCenter, NISTControls, NetworkSecurityGroups, RouteTables, VirtualNetwork, VirtualNetworkPeering ]
     steps:
     - task: AzurePowerShell@4
       displayName: "Teardown Validation Resource Group"
@@ -282,19 +338,35 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstratInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
   - job: LogAnalytics
     pool:
       name: 'vdc-self-hosted'
     dependsOn: DiagnosticStorageAccount
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Log Analytics" 
@@ -302,19 +374,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LogAnalytics"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LogAnalytics"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: AzureSecurityCenter
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: LogAnalytics
+    dependsOn: [ LogAnalytics, DiagnosticStorageAccount ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Azure Security Center" 
@@ -322,19 +400,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AzureSecurityCenter"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "AzureSecurityCenter"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: NISTControls
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: LogAnalytics
+    dependsOn: [ LogAnalytics, DiagnosticStorageAccount ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "NIST Controls" 
@@ -342,19 +426,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "NISTControls"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "NISTControls"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: DefaultNetworkSecurityGroup
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: NetworkSecurityGroups
     pool:
       name: 'vdc-self-hosted'
     dependsOn: [ DiagnosticStorageAccount, LogAnalytics ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Default Network Security Group" 
@@ -362,18 +452,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DefaultNSG"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DefaultNSG"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: DefaultRouteTable
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+  - job: RouteTables
     pool:
       name: 'vdc-self-hosted'
+    dependsOn: DiagnosticStorageAccount
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Default Route Table" 
@@ -381,19 +478,25 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "DefaultRouteTable"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "RouteTables"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: VirtualNetwork
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ DefaultNetworkSecurityGroup, DefaultRouteTable ]
+    dependsOn: [ NetworkSecurityGroups, RouteTables, DiagnosticStorageAccount ]
+    variables: 
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Virtual Network" 
@@ -401,52 +504,54 @@ stages:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "VirtualNetwork"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "VirtualNetwork"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: WorkloadPeeringToSharedServices
-    pool:
-      name: 'vdc-self-hosted'
-    dependsOn: 'VirtualNetwork'
-    steps:
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: AzurePowerShell@4
       displayName: "Workload Virtual Network Peering to Shared Services" 
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LocalVirtualNetworkPeering"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "LocalVirtualNetworkPeering"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
-  - job: SharedServicesPeeringToWorkload
-    pool:
-      name: 'vdc-self-hosted'
-    dependsOn: 'VirtualNetwork'    
-    steps:
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: AzurePowerShell@4
       displayName: "Shared Services Virtual Network Peering to Workload" 
       inputs:
         azureSubscription: 'vdc2-spoke1'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/ASE_SQLDB/LandingZone/definition.json" -ModuleConfigurationName "RemoteVirtualNetworkPeering"'
+        ScriptArguments: '-DefinitionPath "Environments/ASE-SQLDB/LandingZone/definition.json" -ModuleConfigurationName "RemoteVirtualNetworkPeering"'
         azurePowerShellVersion: 'LatestVersion'
       env:
-        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
-        VDC_SUBSCRIPTIONS:VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
-        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEPLOYMENT_APP_ID: $(DEPLOYMENT_APP_ID)
+        DEPLOYMENT_USER_ID: $(DEPLOYMENT_USER_ID)
         DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
         TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
