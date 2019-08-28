@@ -1,5 +1,5 @@
 {
-    "Organization": "file(../_Common/organizationName.txt)",
+    "Organization": "env(ORGANIZATION_NAME)",
     "DeploymentName": "onprem",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "OnPremises",
