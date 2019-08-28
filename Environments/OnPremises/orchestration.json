@@ -172,6 +172,7 @@
         {
             "Name": "CreateRootCertificate",
             "Comments": "Create Root Certificate",
+            "Enabled": false,
             "DependsOn": [
                 "KeyVault"
             ],
@@ -214,10 +215,6 @@
                     },
                     "vpnClientAddressPoolPrefix": {
                         "value": "10.10.8.0/24"
-                    },
-                    "clientRootCertData": "${Parameters.ModuleConfigurationParameters.Network.VirtualGateway.VpnClientConfiguration.VpnClientRootCertificateData}",
-                    "clientRevokedCertThumbprint": {
-                        "value": "${Parameters.ModuleConfigurationParameters.Network.VirtualGateway.VpnClientConfiguration.VpnClientRevokedCertificateThumbprint}"
                     }
                 }
             }
@@ -228,7 +225,7 @@
             "Updates": "KeyVault",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
             "DependsOn": [
-                "VirtualNetworkGateway"
+                "KeyVault"
             ],
             "Deployment": {
                 "OverrideParameters": {

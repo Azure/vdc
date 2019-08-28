@@ -63,14 +63,27 @@ namespace VDC.Core
                                         dependency, 
                                         StringComparison.InvariantCultureIgnoreCase))
                                     .FirstOrDefault();
-                                    
-                            if(parentVertex == null)
+                            
+                            var isDisabled = 
+                                moduleConfigurations
+                                    .Where(m => m.Name.Equals(
+                                       dependency, 
+                                       StringComparison.InvariantCultureIgnoreCase) && !m.Enabled)
+                                    .FirstOrDefault();
+
+                            
+                            if(parentVertex == null && isDisabled == null)
                             {
-                                throw new Exception($"Parent node: {dependency} not found, make sure it exists and doesn't have Enabled: false.");
+                                throw new Exception($"Parent node: {dependency} not found, make sure it exists.");
                             }
-                            // Let's add edge like follows:
-                            // parentVertex -> to -> childVertex
-                            parentVertex.AddEdge(childVertex);
+                            else if (parentVertex != null) {
+                                // Let's add edge like follows:
+                                // parentVertex -> to -> childVertex
+                                parentVertex.AddEdge(childVertex);
+                            }
+                            else {
+                                continue;
+                            }
                         }
                     }
                 }
