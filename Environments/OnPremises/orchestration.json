@@ -258,9 +258,6 @@
                     },
                     "resourceGroupLocation": {
                         "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Location}"
-                    },
-                    "blobContainers": {
-                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Containers}"
                     }
                 }
             },
@@ -271,6 +268,9 @@
                     },
                     "storageAccountSku": {
                         "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Sku}"
+                    },
+                    "blobContainers": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Containers}"
                     }
                 }
             }
