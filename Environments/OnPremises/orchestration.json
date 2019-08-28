@@ -212,9 +212,6 @@
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
-                    },
-                    "vpnClientAddressPoolPrefix": {
-                        "value": "10.10.8.0/24"
                     }
                 }
             }

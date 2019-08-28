@@ -48,27 +48,23 @@
         },
         "vpnClientAddressPoolPrefix": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
-              "description": "The IP address range from which VPN clients will receive an IP address when connected. Range specified must not overlap with on-premise network."
+              "description": "Optional. The IP address range from which VPN clients will receive an IP address when connected. Range specified must not overlap with on-premise network."
             }
         },
         "clientRootCertData": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
-              "description": "Client root certificate data used to authenticate VPN clients."
+              "description": "Optional. Client root certificate data used to authenticate VPN clients."
             }
         },
         "clientRevokedCertThumbprint": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
-              "description": "Thumbprint of the revoked certificate. This would revoke VPN client certificates matching this thumbprint from connecting to the VNet."
-            }
-        },
-        "enablePip": {
-            "type": "bool",
-            "defaultValue": false,
-            "metadata": {
-                "description": "Optional. Value to specify if BGP is enabled or not"
+              "description": "Optional. Thumbprint of the revoked certificate. This would revoke VPN client certificates matching this thumbprint from connecting to the VNet."
             }
         }
     },
