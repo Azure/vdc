@@ -121,7 +121,8 @@
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
             "DependsOn":[
                 "DiagnosticStorageAccount", 
-                "LogAnalytics"
+                "LogAnalytics",
+                "VirtualNetwork"
             ],
             "Deployment": {
                 "OverrideParameters": {
