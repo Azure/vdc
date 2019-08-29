@@ -129,7 +129,7 @@
             "ResourceGroup": "${Parameters.InstanceName}-ad-rg",
             "ADSitename": "Cloud-Site",
             "CloudZone": "contosocloud.com",
-            "DomainAdminUsername": "contoso",
+            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
             "DomainAdminPassword": {
                 "keyVault": {
                     "id": "reference(KeyVault.keyVaultResourceId)"
