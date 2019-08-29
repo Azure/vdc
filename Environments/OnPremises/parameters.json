@@ -99,8 +99,8 @@
                 "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
                 "Secrets": [
                     {
-                        "secretName": "DomainAdminPassword",
-                        "secretValue": "P@ssword2019$123"
+                        "secretName": "env(DOMAIN_ADMIN_USERNAME)",
+                        "secretValue": "env(DOMAIN_ADMIN_USER_PWD)"
                     }
                 ]
             },
