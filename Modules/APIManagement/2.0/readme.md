@@ -14,7 +14,7 @@ The following Resources are deployed.
 ## Parameters
 
 | Parameter Name | Default Value | Required | Description |
-| :-             | :-            | :-          |
+| :-             | :-            | :-       |:-           |
 | `apiManagementServiceName` || **Required** | The name of the of the API Management Service
 | `publisherEmail` || **Required** | The email address of the owner of the service
 | `publisherName` || **Required** | The name of the owner of the service
