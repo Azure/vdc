@@ -18,8 +18,8 @@
                 "AddressPrefix": "192.168.1.0/28"
             },
             "VirtualNetworkGateway": {
-                "Name": "env(ORGANIZATION_NAME)-onprem-gw",
-                "ResourceGroup": "env(ORGANIZATION_NAME)-onprem-net-rg"
+                "Name": "env(ORGANIZATION_NAME)-onprem-vgw",
+                "ResourceGroup": "env(ORGANIZATION_NAME)-onprem-network-rg"
             },
             "SubscriptionId": "${Subscriptions.OnPremises.SubscriptionId}"
         },

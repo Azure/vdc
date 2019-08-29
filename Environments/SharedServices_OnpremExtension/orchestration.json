@@ -608,7 +608,8 @@
                 "LogAnalytics",
                 "KeyVault",
                 "ArtifactsStorageAccount",
-                "JumpboxASG"
+                "JumpboxASG",
+                "RemoteVirtualNetworkGatewayConnection"
             ],
             "Comments": "Creates Windows Jumpbox",
             "Deployment": {
@@ -718,7 +719,8 @@
                 "LogAnalytics",
                 "KeyVault",
                 "ArtifactsStorageAccount",
-                "JumpboxASG"
+                "JumpboxASG",
+                "RemoteVirtualNetworkGatewayConnection"
             ],
             "Comments": "Creates Linux Jumpbox",
             "Deployment": {
@@ -829,7 +831,8 @@
                 "WindowsJumpbox",
                 "KeyVault",
                 "ArtifactsStorageAccount",
-                "DomainControllerASG"
+                "DomainControllerASG",
+                "RemoteVirtualNetworkGatewayConnection"
             ],
             "Comments": "Creates Active Directory Domain Services VMs",
             "Deployment": {
