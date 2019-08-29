@@ -14,7 +14,7 @@ The following Resources are deployed.
 ## Parameters
 
 | Parameter Name | Default Value | Required | Description |
-| :-             | :-            | :-          |
+| :-             | :-            | :-       |:-           |
 | `serverName` || **Required** | The name of the Azure Analysis Services server to create
 | `Location` || **Optional** | Location of the Azure Analysis Services server.
 | `skuName` | S0 | **Optional** | The sku name of the Azure Analysis Services server to create.
