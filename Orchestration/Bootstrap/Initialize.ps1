@@ -106,6 +106,7 @@ Class Initialize {
 
     hidden [hashtable] CreateStorageAccountDataStore(){
         try {
+            
             if ($this.dataStoreName -eq '') {
                 $storageAccountName = "$($this.dataStoreTenantId)-$($this.dataStoreSubscriptionId)"
                 $this.dataStoreName = Get-UniqueString($storageAccountName);

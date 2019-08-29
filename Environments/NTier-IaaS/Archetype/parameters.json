@@ -3,9 +3,10 @@
     "DeploymentName": "ntier-iaas",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "NTier_IaaS",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
-        "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
-        "DeploymentAppId": "env(DEPLOYMENT_APP_ID)",
+        "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
+        "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
         "Comments": "Adding VirtualNetwork property, because KeyVault references a VirtualNetwork property references NetworkSecurityGroups and RouteTable, this is why these two properties are also included",
         "KeyVault": {
             "Name": "${Parameters.InstanceName}-kv",
@@ -17,7 +18,7 @@
             "AccessPolicies": [
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.KeyVaultManagementUserId}",
                     "permissions": {
                         "certificates": [
                             "All"
@@ -32,7 +33,7 @@
                 },
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DevOpsServicePrincipalId}",
                     "permissions": {
                         "certificates": [
                             "All"

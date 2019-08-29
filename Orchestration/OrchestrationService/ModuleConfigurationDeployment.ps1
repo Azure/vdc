@@ -100,6 +100,16 @@ Function New-Deployment {
                 -FilePath $DefinitionPath `
                 -WorkingDirectory $defaultWorkingDirectory `
                 -CacheKey $ArchetypeInstanceName;
+        
+        $location = ''
+
+        # Check for invariant
+        if ($null -eq $archetypeInstanceJson.Parameters.Location) {
+            throw "Location value is not present in the archetype parameters file"
+        }
+        else {
+            $location = $archetypeInstanceJson.Parameters.Location
+        }
 
         # Retrieve the Archetype instance name if not already passed
         # to this function
@@ -328,7 +338,7 @@ Function New-Deployment {
 
                         New-ResourceGroup `
                             -ResourceGroupName $moduleConfigurationResourceGroupName `
-                            -ResourceGroupLocation $subscriptionInformation.Location `
+                            -ResourceGroupLocation $location `
                             -Validate:$($Validate.IsPresent);
                         Write-Debug "Resource Group successfully created";
                     }
@@ -362,7 +372,7 @@ Function New-Deployment {
                                 -DeploymentParameters $moduleConfigurationPolicyDeploymentParameters `
                                 -ModuleConfiguration $moduleConfiguration.Policies `
                                 -ArchetypeInstanceName $ArchetypeInstanceName `
-                                -Location $subscriptionInformation.Location `
+                                -Location $location `
                                 -Validate:$($Validate.IsPresent);
                             Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $policyResourceState)";
                     }
@@ -397,7 +407,7 @@ Function New-Deployment {
                                 -DeploymentParameters $moduleConfigurationRBACDeploymentParameters `
                                 -ModuleConfiguration $moduleConfiguration.RBAC `
                                 -ArchetypeInstanceName $ArchetypeInstanceName `
-                                -Location $subscriptionInformation.Location `
+                                -Location $location `
                                 -Validate:$($Validate.IsPresent);
                         Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $rbacResourceState)";
                     }
@@ -418,7 +428,7 @@ Function New-Deployment {
                                 -DeploymentParameters $moduleConfigurationDeploymentParameters `
                                 -ModuleConfiguration $moduleConfiguration.Deployment `
                                 -ArchetypeInstanceName $ArchetypeInstanceName `
-                                -Location $subscriptionInformation.Location `
+                                -Location $location `
                                 -Validate:$($Validate.IsPresent);
                         Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $resourceState)";
                     }
@@ -851,14 +861,11 @@ Function Add-SubscriptionAndTenantIds {
             $additionalInformation = @{
                 SubscriptionId = $ConfigurationInstance.Subscriptions.$subscriptionName.SubscriptionId
                 TenantId = $ConfigurationInstance.Subscriptions.$subscriptionName.TenantId
-                Location = $ConfigurationInstance.Subscriptions.$subscriptionName.Location
             }
 
             if ($null -eq $ConfigurationInstance.Parameters.SubscriptionId `
                 -and `
-                $null -eq $ConfigurationInstance.Parameters.TenantId `
-                -and `
-                $null -eq $ConfigurationInstance.Parameters.Location) {
+                $null -eq $ConfigurationInstance.Parameters.TenantId) {
 
                 Write-Debug "$(ConvertTo-Json $ConfigurationInstance)";
                 Write-Debug "$(ConvertTo-Json $additionalInformation)";
@@ -1032,19 +1039,6 @@ Function Get-SubscriptionInformation {
                     $archetypeInstanceJson.$archetypeInstanceSubscriptions.$SubscriptionName;
             }
 
-            $locationMatch = $subscriptionInformation.Keys -match "location";
-            # First, make sure the location key is present itn the subscriptionInformation hashtable
-            if($locationMatch) {
-                # Retrieve case-sensitive key name from case-insensitive key name using match operation
-                $location = $locationMatch[0];
-                # Then proceed to check if the location properties is present in the subscriptionInformation
-                if($null -eq $subscriptionInformation.$location) {
-                    Write-Debug "Deployment location not found, using default location: $defaultLocation";
-                    # $defaultLocation is a global variable
-                    $subscriptionInformation.$location = `
-                        $defaultLocation;
-                }
-            }
             Write-Debug "Subscription information is: $(ConvertTo-Json $subscriptionInformation)";
             return $subscriptionInformation;
         }
@@ -2652,10 +2646,11 @@ Function Get-OutputFromStateStore() {
 # verify if the mandatory parameters are not passed.
 
 if (![string]::IsNullOrEmpty($DefinitionPath)) {
+
         New-Deployment `
-            -DefinitionPath $DefinitionPath `
-            -ArchetypeInstanceName $ArchetypeInstanceName `
-            -ModuleConfigurationName $ModuleConfigurationName `
-            -WorkingDirectory $WorkingDirectory `
-            -Validate:$($Validate.IsPresent);
+                -DefinitionPath $DefinitionPath `
+                -ArchetypeInstanceName $ArchetypeInstanceName `
+                -ModuleConfigurationName $ModuleConfigurationName `
+                -WorkingDirectory $WorkingDirectory `
+                -Validate:$($Validate.IsPresent);
 }

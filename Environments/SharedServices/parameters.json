@@ -3,10 +3,11 @@
     "DeploymentName": "shrdsvcs",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "SharedServices",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
-        "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
-        "DeploymentAppId": "env(DEPLOYMENT_APP_ID)",
-        "Comments": "Deployment UserId corresponds to the AAD Object Id of the user that wants to manage Key Vault through the Portal. DeploymentAppId corresponds the service principal (SPN) - Object Id - of your service connection from Azure DevOps pipeline, to get this value run the following az cli command: az ad sp show --id YOUR_APP_ID --query 'objectId'",
+        "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
+        "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
+        "Comments": "Deployment UserId corresponds to the AAD Object Id of the user that wants to manage Key Vault through the Portal. DevOpsServicePrincipalId corresponds the service principal (SPN) - Object Id - of your service connection from Azure DevOps pipeline, to get this value run the following az cli command: az ad sp show --id YOUR_APP_ID --query 'objectId'",
         "DiagnosticStorageAccount": {
             "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
             "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
@@ -656,7 +657,7 @@
             "AccessPolicies": [
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.KeyVaultManagementUserId}",
                     "permissions": {
                         "certificates": [
                             "All"
@@ -671,7 +672,7 @@
                 },
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DevOpsServicePrincipalId}",
                     "permissions": {
                         "certificates": [
                             "All"

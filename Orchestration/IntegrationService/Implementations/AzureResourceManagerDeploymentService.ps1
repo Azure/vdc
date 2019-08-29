@@ -445,15 +445,34 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
             }
         }
         while (@("Running", "Accepted") -match $currentDeployment.ProvisioningState)
-   
-        if (($currentDeployment.ProvisioningState -eq "Failed") -or `
-            ($currentDeployment.ProvisioningState -eq "Canceled")) {
+        
+        if ((($currentDeployment.ProvisioningState -eq "Failed") -or `
+            ($currentDeployment.ProvisioningState -eq "Canceled") -or `
+            ($currentDeployment.ProvisioningState -eq "Conflict")) -and `
+             $isSubscriptionDeployment -eq $false) {
+            
             # If the deployment fails, get the deployment details again.
             # But this time, call Get-AzResourceGroupDeploymentOperation, to get the error information which is
             # not available through the Get-AzResourceGroupDeployment AzureRm Cmdlet return object
             $allDeploymentDetails = Get-AzResourceGroupDeploymentOperation -ResourceGroupName $currentDeployment.ResourceGroupName -DeploymentName $currentDeployment.DeploymentName;
             $failedDeploymentDetails = $allDeploymentDetails | ? { $_.Properties.ProvisioningState -eq "Failed" }
             $errorDetails = " $($currentDeployment.DeploymentName) has failed."
+            Write-Debug "Error details from resource group deployment: $errorDetails"
+            $errorDetails = $this.GetErrorMessage($failedDeploymentDetails);
+            Throw $errorDetails;
+        }
+        elseif ((($currentDeployment.ProvisioningState -eq "Failed") -or `
+                ($currentDeployment.ProvisioningState -eq "Canceled") -or `
+                ($currentDeployment.ProvisioningState -eq "Conflict")) -and `
+                $isSubscriptionDeployment -eq $true) {
+            
+            # If the deployment fails, get the deployment details again.
+            # But this time, call Get-AzResourceGroupDeploymentOperation, to get the error information which is
+            # not available through the Get-AzResourceGroupDeployment AzureRm Cmdlet return object
+            $allDeploymentDetails = Get-AzDeploymentOperation -DeploymentName $currentDeployment.DeploymentName;
+            $failedDeploymentDetails = $allDeploymentDetails | ? { $_.ProvisioningState -eq "Failed" }
+            $errorDetails = " $($currentDeployment.DeploymentName) has failed."
+            Write-Debug "Error details from subscription deployment: $errorDetails"
             $errorDetails = $this.GetErrorMessage($failedDeploymentDetails);
             Throw $errorDetails;
         }
@@ -466,7 +485,14 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
         for($index=0;$index -lt $deploymentDetails.Count; $index++)
         {
             $errorDetail = $deploymentDetails[$index].Properties;
+            
+            if ($null -eq $errorDetail) {
+                # Attempt to retrieve StatusMessage from the root
+                $errorDetail = $deploymentDetails[$index];
+            }
+            
             $message = $errorDetail.statusMessage;
+            Write-Debug "Error message is: $message"
             # Loop until details is not found. If the property "details" is not found, then we have hit the object with the message to retrieve.
             $continueTraversingErrorObject = $true;
             while($continueTraversingErrorObject -eq $true) {
@@ -475,13 +501,51 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                 # If you cannot parse the message into a Json, that is the innermost exception we are looking for.
                 if($message.PSObject.Properties.Name -match "details" -and `
                    $message.details.Count -gt 0){
+                    Write-Debug "Found error details"
                     $message = $message.details[0];
+                    Write-Debug $message
                 }
                 elseif($message.PSObject.Properties.Name -match "error"){
+                    Write-Debug "Found error message"
                     $message = $message.error;
+                    Write-Debug $message
+                }
+                elseif(Test-JsonContent ((ConvertTo-Json $message -Compress))){
+                    $message = ConvertFrom-Json (ConvertTo-Json $message) -Depth 10
+                    Write-Host "Initial error message is: $(ConvertTo-Json $message)"
+                    $recursive = $true;
+                    
+                    while ($recursive -eq $true) {
+                        if ($null -ne $message.error){
+                            Write-Debug "Error: $($message.error)";
+                            $message = $message.error;
+                        }
+                        elseif ($null -ne $message.details -and `
+                                $message.details.Count -gt 0) {
+                            Write-Debug "Details: $($message.details[0])";
+                            $message = $message.details[0];
+                        }
+                        elseif ($null -ne $message.message) {
+                            # Stop when we find a message property
+                            Write-Debug "Message: $($message.message)";
+                            $recursive = $false;
+
+                            # Let's stop the main recursion
+                            $continueTraversingErrorObject = $false;
+                        }
+                        else {
+                            Write-Debug "Stopping all recursions"
+                            $recursive = $false;
+
+                            # Let's stop the main recursion
+                            $continueTraversingErrorObject = $false;
+                        }
+                    }
                 }
                 else {
+                    Write-Debug "Let's check if is a valid Json message"
                     $continueTraversingErrorObject = $this.IsMessageAValidJson([ref]$message);
+                    Write-Debug $message
                 }
             }
             # Double line breaks are for formatting purpose only

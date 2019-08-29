@@ -3,9 +3,10 @@
     "DeploymentName": "shrdsvcs",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "SharedServices",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
-        "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
-        "DeploymentAppId": "env(DEPLOYMENT_APP_ID)",
+        "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
+        "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
         "OnPremisesInformation": {
             "ActiveDirectory": {
                 "PrimaryDomainControllerIP": "192.168.1.4",
@@ -17,8 +18,8 @@
                 "AddressPrefix": "192.168.1.0/28"
             },
             "VirtualNetworkGateway": {
-                "Name": "cnts-onprem-gw",
-                "ResourceGroup": "cnts-onprem-net-rg"
+                "Name": "env(ORGANIZATION_NAME)-onprem-gw",
+                "ResourceGroup": "env(ORGANIZATION_NAME)-onprem-net-rg"
             },
             "SubscriptionId": "${Subscriptions.OnPremises.SubscriptionId}"
         },
@@ -746,7 +747,7 @@
             "AccessPolicies": [
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.KeyVaultManagementUserId}",
                     "permissions": {
                         "certificates": [
                             "All"
@@ -761,7 +762,7 @@
                 },
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DevOpsServicePrincipalId}",
                     "permissions": {
                         "certificates": [
                             "All"

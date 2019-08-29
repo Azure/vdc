@@ -3,6 +3,7 @@
     "DeploymentName": "ntier-iaas",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "NTier_IaaS",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
         "OnPremisesInformation": {
             "Network": {

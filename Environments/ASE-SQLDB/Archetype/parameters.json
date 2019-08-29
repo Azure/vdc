@@ -3,8 +3,9 @@
     "DeploymentName": "ase-sqldb",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "ASE_SQLDB",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
-        "DeploymentUserId": "env(DEPLOYMENT_USER_ID)",
+        "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "OnPremisesInformation": {
             "ActiveDirectory": {
                 "PrimaryDomainControllerIP": "192.168.1.4",
@@ -30,7 +31,7 @@
             "AccessPolicies": [
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.KeyVaultManagementUserId}",
                     "permissions": {
                         "certificates": [
                             "All"

@@ -350,6 +350,9 @@
                     "adminPassword": {
                         "reference": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminPassword}"
                     },
+                    "enablePublicIP": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.EnablePublicIP}"
+                    },
                     "virtualMachineDataDisks": {
                         "value": [
                             {

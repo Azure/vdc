@@ -4,10 +4,9 @@
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "OnPremises",
     "Location": "West US 2",
-    "TenantId": "${Subscriptions.OnPremises.TenantId}",
     "ModuleConfigurationParameters": {
-        "DeploymentUserId": "env(Deployment_User_Id)",
-        "DeploymentAppId": "env(Deployment_App_Id)",
+        "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
+        "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
         "SharedServices": {
             "DeploymentName": "shrdsvcs"
         },
@@ -67,7 +66,7 @@
             "AccessPolicies": [
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentUserId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.KeyVaultManagementUserId}",
                     "permissions": {
                         "certificates": [
                             "All"
@@ -82,7 +81,7 @@
                 },
                 {
                     "tenantId": "${Parameters.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DeploymentAppId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DevOpsServicePrincipalId}",
                     "permissions": {
                         "certificates": [
                             "All"
@@ -138,7 +137,8 @@
                 "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
             },
             "DomainName": "contoso.com",
-            "PrimaryDomainControllerIP": "192.168.1.4"
+            "PrimaryDomainControllerIP": "192.168.1.4",
+            "EnablePublicIP": true
         },
         "ApplicationSecurityGroups": {
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.Network.ResourceGroup}",

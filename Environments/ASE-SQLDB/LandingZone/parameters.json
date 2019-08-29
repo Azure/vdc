@@ -3,6 +3,7 @@
     "DeploymentName": "ase-sqldb",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "ASE_SQLDB",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
         "OnPremisesInformation": {
             "Network": {

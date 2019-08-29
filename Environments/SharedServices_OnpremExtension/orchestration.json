@@ -530,6 +530,7 @@
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.ResourceGroup}",
             "Comments": "Storage Account that is used for ...",
+            "Enabled": false,
             "DependsOn": [],
             "Policies": {
                 "Comments": "Optional - If no object is specified, no Policies deployment will occur",
@@ -553,6 +554,18 @@
                     "storageAccountSku": {
                         "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Sku}"
                     }
+                }
+            }
+        },
+        {
+            "Name": "UploadScriptsToArtifactsStorage",
+            "Comments": "Upload Scripts to Artifacts Storage",
+            "DependsOn": [ 
+                "ArtifactsStorageAccount"
+            ],
+            "Script": {
+                "Command": "Write-Host 'Adding Scripts...'; Import-Module -Name Az.Storage; $ctx = New-AzStorageContext -StorageAccountName reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName) -SasToken '?reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)'; New-AzRmStorageContainer -Name scripts -ResourceGroupName reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountResourceGroup) -StorageAccountName reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName); Get-ChildItem -LiteralPath '../../Scripts/Windows' -File -Recurse | % { Set-AzStorageBlobContent -Context $ctx -Container scripts -Force -File $($_.FullName) -Blob Windows/$($_.Name)}",
+                "Arguments" : {
                 }
             }
         },
@@ -634,13 +647,13 @@
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -744,13 +757,13 @@
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -858,13 +871,13 @@
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -936,13 +949,13 @@
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.VMCount}"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "addsAddressStart": {
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.AddsIPAddressStart}"

@@ -3,6 +3,7 @@
     "DeploymentName": "aks",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "AKS",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
         "ResourceGroupPrefix": "${Parameters.Organization}-${Parameters.DeploymentName}",
         "Region": "westus2",
@@ -38,7 +39,7 @@
             "ReaderRbacRoleId": "acdd72a7-3385-48ef-bd42-f606fba81ae7",
             "ClusterAdminGroupId": "env(CLUSTER_ADMIN_GROUP_ID)",
             "NocUserGroupId": "env(NOC_USER_GROUP_ID)",
-            "DevUserGroupId": "env(DEV_USER_GROUP_ID)",
+            "DevUserGroupId": "env(DEV_USER_GROUP_ID)"
         },
         "Rbac": {
             "ResourceGroupAssignments": [
