@@ -1,0 +1,21 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiManagementServiceName": {
+      "value": "testapiManagementServiceName"
+    },
+    "publisherEmail": {
+      "value": "someone@publisherEmail"
+    },
+    "publisherName": {
+      "value": "somepublisherName"
+    },
+    "diagnosticStorageAccountId": {
+      "value": "/subscriptions/00000000/resourceGroups/resourceGroup"
+    },
+    "logAnalyticsWorkspaceId": {
+      "value": "/subscriptions/00000000/resourceGroups/resourceGroup"
+    }
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apiManagementServiceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the of the API Management service"
+      }
+    },
+    "publisherEmail": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The email address of the owner of the service"
+      }
+    },
+    "publisherName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. The name of the owner of the service"
+      }
+    },
+    "sku": {
+      "type": "string",
+      "allowedValues": [
+        "Developer",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Developer",
+      "metadata": {
+        "description": "Optional.The pricing tier of this API Management service"
+      }
+    },
+    "skuCount": {
+      "type": "string",
+      "allowedValues": [
+        "1",
+        "2"
+      ],
+      "defaultValue": "1",
+      "metadata": {
+        "description": "Optional.The instance size of this API Management service"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Optional. Location of the API Management service"
+      }
+    },
+    "diagnosticStorageAccountId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Resource identifier of the Diagnostic Storage Account"
+      }
+    },
+    "logAnalyticsWorkspaceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Resource identifier of Log Analytics Workspace"
+      }
+    },
+    "logsRetentionInDays": {
+      "type": "int",
+      "defaultValue": 30,
+      "minValue": 0,
+      "maxValue": 365,
+      "metadata": {
+        "description": "Optional. Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely"
+      }
+    },
+    "cuaId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Customer Usage Attribution Id (GUID). This GUID must be previously registered"
+      }
+    },
+    "tagEnvironment": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The name of the Environment"
+      }
+    },
+    "tagProject": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The name of the project"
+      }
+    },
+    "tagApplication": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The name of the application"
+      }
+    },
+    "tagOwner": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The business owner for the application"
+      }
+    },
+    "tagOwnerEmail": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. The Email address of the business owner for the application"
+      }
+    }
+  },
+  "variables": {
+    "apimServiceName": "[parameters('apiManagementServiceName')]",
+    "apimServiceResourceId": "[resourceId('Microsoft.ApiManagement/service',parameters('apiManagementServiceName'))]",
+    "diagnosticStorageAccountId": "[parameters('diagnosticStorageAccountId')]",
+    "diagnosticWorkspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+    "pidName": "[concat('pid-', parameters('cuaId'))]"
+  },
+  "resources": [
+    {
+      "condition": "[not(empty(parameters('cuaId')))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-02-01",
+      "name": "[variables('pidName')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": []
+        }
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service",
+      "apiVersion": "2019-01-01",
+      "name": "[parameters('apiManagementServiceName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "Environment": "[parameters('tagEnvironment')]",
+        "Application": "[parameters('tagApplication')]",
+        "Project": "[parameters('tagProject')]",
+        "Owner": "[parameters('tagOwner')]",
+        "OwnerEmail": "[parameters('tagOwnerEmail')]"
+      },
+      "sku": {
+        "name": "[parameters('sku')]",
+        "capacity": "[parameters('skuCount')]"
+      },
+      "properties": {
+        "publisherEmail": "[parameters('publisherEmail')]",
+        "publisherName": "[parameters('publisherName')]",
+        "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com"
+      },
+      "resources": [
+        {
+          "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
+          "apiVersion": "2017-05-01-preview",
+          "name": "[concat(variables('apimServiceName'), '/', 'Microsoft.Insights/service')]",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'))]"
+          ],
+          "properties": {
+            "storageAccountId": "[variables('diagnosticStorageAccountId')]",
+            "workspaceId": "[variables('diagnosticWorkspaceId')]",
+            "logs": [
+              {
+                "category": "GatewayLogs",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": "[parameters('logsRetentionInDays')]",
+                  "enabled": true
+                }
+              }
+            ],
+            "metrics": [
+              {
+                "category": "Gateway Requests",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": "[parameters('logsRetentionInDays')]",
+                  "enabled": true
+                }
+              },
+              {
+                "category": "Capacity",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": "[parameters('logsRetentionInDays')]",
+                  "enabled": true
+                }
+              },
+              {
+                "category": "EventHub Events",
+                "enabled": true,
+                "retentionPolicy": {
+                  "days": "[parameters('logsRetentionInDays')]",
+                  "enabled": true
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {
+    "apimServiceName": {
+      "type": "string",
+      "value": "[variables('apimServiceName')]",
+      "metadata": {
+        "description": "The API Management Service Name"
+      }
+    },
+    "apimServiceResourceId": {
+      "type": "string",
+      "value": "[variables('apimServiceResourceId')]",
+      "metadata": {
+        "description": "The Resource Id of the API Management Service"
+      }
+    },
+    "apimServiceResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The name of the Resource Group with the API Management Service"
+      }
+    }
+  }
+}

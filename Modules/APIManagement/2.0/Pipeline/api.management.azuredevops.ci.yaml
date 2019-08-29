@@ -1,0 +1,35 @@
+name: $(Build.DefinitionName)-$(SourceBranchName)-$(Date:yyyyMMdd).$(Rev:rr)
+
+variables:
+  ModuleName: APIManagement
+  ModuleVersion: 2.0
+  RepoName: azure-devops
+  ModulePath: modules/$(ModuleName)/$(ModuleVersion)
+  ArtifactName: contents
+
+resources:
+  repositories:
+    - repository: main
+      type: git
+      name: '$(RepoName)'
+
+trigger:
+  branches:
+    include:
+      - master
+      - '*'
+  paths:
+    include:
+      - modules/APIManagement/2.0
+
+jobs:
+- job: BuildModule
+  displayName: Build Module
+  workspace:
+    clean: all
+  
+  steps:
+  - template: /azure-devops/ci/buildmodule.yaml
+    parameters:
+      ModulePath: $(ModulePath)
+      ArtifactName: $(ArtifactName)
