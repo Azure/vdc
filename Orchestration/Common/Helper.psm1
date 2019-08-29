@@ -41,7 +41,7 @@ Function Test-IsLoggedIn() {
 Function Test-JsonContent() {
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         $Content
     )
 
