@@ -3,11 +3,11 @@
 		==============================================================================================
 		Copyright(c) Microsoft Corporation. All rights reserved.
 
-		File:		application.insights.continuousexport.ps1
+		File:		tier1.appinsights.continuous.export.ps1
 
 		Purpose:	Deploys Application Insights Continuous Export Configuration
 
-		Version: 	1.0.0.0 - 1st April 2019 - Azure Virtual Datacenter Development Team
+		Version: 	1.0.0.3 - 27th August 2019 - Chubb Build Release Deployment Team
 		==============================================================================================
 
 	.SYNOPSIS
@@ -19,18 +19,18 @@
 		Deployment steps of the script are outlined below.
         1) Azure Parameter Configuration
         2) Configure Application Insights Continuous Export
-		
-    .PARAMETER AppInsightName
+
+    .PARAMETER appInsightsName
 		Specify the Azure Application Insights Name parameter.
 
-    .PARAMETER StorageAccountName
+    .PARAMETER storageAccountName
 		Specify the Storage Account Name parameter.
 
 	.EXAMPLE
 		Default:
-			C:\PS>.\application.insights.continuousexport.ps1 `
-				-AppInsightName <"AppInsightName"> `
-				-StorageAccountName <"StorageAccountName"> `
+		C:\PS>.\tier1.appinsights.continuous.export.ps1
+            -appInsightsName "$(appInsightsName)"
+            -storageAccountName "$(storageAccountName)"
 #>
 
 #Requires -Version 5
@@ -40,56 +40,52 @@
 param
 (
 	[Parameter(Mandatory = $false)]
-	[string]$AppInsightName,
-	
+	[string]$appInsightsName,
+
 	[Parameter(Mandatory = $false)]
-	[string]$StorageAccountName
+	[string]$storageAccountName
 )
 
 #region - Application Insights Continuous Export Configuration
-Write-Output "Application Insights Name: $AppInsightName"
-Write-Output "Storage Account Name: $StorageAccountName"
+Write-Output "Application Insights Name: 	$appInsightsName"
+Write-Output "Storage Account Name: 	        $storageAccountName"
 
-$Parameters = @{
+$paramGetAzureRmResource = @{
 	ResourceType = "Microsoft.Insights/components"
-    ResourceName = $AppInsightName
+    ResourceName = $appInsightsName
 }
-$resource = Get-AzureRmResource @Parameters
+$resource = Get-AzureRmResource @paramGetAzureRmResource
 
-$ResourceGroup = $resource.ResourceGroupName
+$resourceGroup = $resource.ResourceGroupName
 
 $paramGetAzureRmApplicationInsightsContinuousExport = @{
-	ResourceGroupName = $ResourceGroup
-    Name = $AppInsightName
+	ResourceGroupName = $resourceGroup
+    Name = $appInsightsName
 }
-$ContinuousExport = Get-AzureRmApplicationInsightsContinuousExport @paramGetAzureRmApplicationInsightsContinuousExport
+$continuousExport = Get-AzureRmApplicationInsightsContinuousExport @paramGetAzureRmApplicationInsightsContinuousExport
 
-if ($ContinuousExport -ne $null)
+if (-not ($continuousExport))
 {
-	Write-Output "Existing Application Insights Continuous Export Configuration - Skipping"
-}
-else
-{
-	$Parameters = @{
+	$paramGetAzureRmResource = @{
         ResourceType = "Microsoft.Storage/storageAccounts"
-        ResourceName = $StorageAccountName
+        ResourceName = $storageAccountName
     }
-    $resource = Get-AzureRmResource @Parameters  
+    $resource = Get-AzureRmResource @paramGetAzureRmResource
 
-    $Parameters = @{
-        ResourceId = $resource.Id    
+    $paramGetAzureRmResource = @{
+        ResourceId = $resource.Id
     }
-    $resource = Get-AzureRmResource @Parameters
-     
-    $Parameters = @{
+    $resource = Get-AzureRmResource @paramGetAzureRmResource
+
+    $ParamInvokeAzureRmResourceAction = @{
 	    Action	   = 'listkeys'
-	    ResourceId = $resource.ResourceId   	
+	    ResourceId = $resource.ResourceId
     }
-    $Storagekey = (Invoke-AzureRmResourceAction @Parameters -Force).keys[0].value
-    
+    $storageKey = (Invoke-AzureRmResourceAction @ParamInvokeAzureRmResourceAction -Force).keys[0].value
+
     $paramNewAzureStorageContext =@{
-        StorageAccountName  = $StorageAccountName
-        StorageAccountKey   = $Storagekey
+        StorageAccountName  = $storageAccountName
+        StorageAccountKey   = $storageKey
     }
     $context = New-AzureStorageContext @paramNewAzureStorageContext
 
@@ -106,18 +102,22 @@ else
         ExpiryTime  = (Get-Date).AddYears(50)
         Permission  = 'w'
     }
-    $sastoken = New-AzureStorageContainerSASToken @paramNewAzureStorageContainerSASToken	
-    $sasuri = $resource.Properties.primaryEndpoints.blob + "appinsights" + $sastoken
+    $sasToken = New-AzureStorageContainerSASToken @paramNewAzureStorageContainerSASToken
+    $sasURI = $resource.Properties.primaryEndpoints.blob + "appinsights" + $sasToken
 
     $paramNewAzureRmApplicationInsightsContinuousExport = @{
-        ResourceGroupName   = $ResourceGroup 
-        Name                = $AppInsightName
+        ResourceGroupName   = $resourceGroup
+        Name                = $appInsightsName
         DocumentType        = "Request","Exception","Custom Event","Metric","Page Load","Page View","Dependency","Availability","Performance Counter"
-        StorageAccountId    = $resource.ResourceId 
+        StorageAccountId    = $resource.ResourceId
         StorageLocation     = $resource.Properties.primaryLocation
-        StorageSASUri       = $sasuri	
-        ErrorAction         = 'Stop'	
-	}	
+        StorageSASUri       = $sasURI
+        ErrorAction         = 'Stop'
+	}
 	New-AzureRmApplicationInsightsContinuousExport @paramNewAzureRmApplicationInsightsContinuousExport
+}
+else
+{
+	Write-Output "Existing Application Insights Continuous Export Configuration - Skipping"
 }
 #endregion

@@ -2,14 +2,17 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "appInsName": {
-      "value": null
+    "appInsightsName": {
+      "value": "crs-sea-ai-shr-de-01"
     },
     "storageAccountName": {
-      "value": null
+      "value": "crsseastgaide01"
     },
     "storageAccountType": {
       "value": "Standard_GRS"
+    },
+    "cuaId": {
+      "value": "adb8eac6-989a-5354-8580-19055546ec74"
     }
   }
 }
