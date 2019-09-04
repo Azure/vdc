@@ -1,6 +1,6 @@
 Class CustomScriptExecution {
 
-    [object] Execute([string] $command, [hashtable] $arguments) {
+    [object] Execute([string] $command, [object] $arguments) {
 
         # Derive the script type from the command being
         # passed
@@ -114,7 +114,7 @@ Class CustomScriptExecution {
         }
     }
 
-    hidden [object] RunPowerShellScript([string] $command, [hashtable] $arguments, [array] $scriptType) {
+    hidden [object] RunPowerShellScript([string] $command, [object] $arguments, [array] $scriptType) {
 
         if($scriptType[1].ToLower() -eq "script") {
 
@@ -139,7 +139,7 @@ Class CustomScriptExecution {
         
     }
 
-    hidden [object] RunBashScript([string] $command, [hashtable] $arguments, [array] $scriptType) {
+    hidden [object] RunBashScript([string] $command, [object] $arguments, [array] $scriptType) {
 
         # Get arguments to execute the bash script
         $argumentsList = `
@@ -159,7 +159,7 @@ Class CustomScriptExecution {
 
     hidden [array] AddArgumentsForExecution([string] $command, 
                                             [string] $type, 
-                                            [hashtable] $arguments
+                                            [object] $arguments
                                             ){
 
         # Get arguments for the script execution
@@ -182,26 +182,28 @@ Class CustomScriptExecution {
         }
     }
 
-    hidden [array] GetArgumentsForBashScript([hashtable] $arguments) {
+    hidden [array] GetArgumentsForBashScript([object] $arguments) {
 
         # Variable to hold the list of arguments to be
         # passed to the bash script execution
         $orderedArguments = @();
+        Write-Host "[Pre] Value of args of bash script is $(ConvertTo-Json $orderedArguments -Depth 50)";
 
         # Add the arguments to the array as-is as 
         # there is no way to verify the order in bash.
         # We are only converting the hashtable to an 
         # array
-        $arguments.GetEnumerator() | Sort-Object -Property Name | Select-Object -Property Name | ForEach-Object {
+        $arguments.PSObject.Properties | Select-Object -Property Name | ForEach-Object {
             $argumentName = $_.Name;
-            $orderedArguments += $arguments[$argumentName];
+            Write-Host "Debug name - $argumentName";
+            Write-Host "Debug value - $($arguments.$argumentName)";
+            $orderedArguments += $arguments.$argumentName;
         }
-
         # Return the arguments list
         return $orderedArguments;
     }
 
-    hidden [array] GetArgumentsForPowerShellScript([string] $command, [hashtable] $arguments) {
+    hidden [array] GetArgumentsForPowerShellScript([string] $command, [object] $arguments) {
 
         # List of system parameters we can pass to a 
         # PowerShell script by default
@@ -233,14 +235,14 @@ Class CustomScriptExecution {
             # it is passed from the orchestation. Otherwise, add a 
             # null in its place
             if($null -ne $parameterName `
-                -and $arguments.ContainsKey($parameterName) `
+                -and $arguments.$parameterName -ne $null `
                 -and $parameterName -notin $systemParameters) {
 
-                if($arguments[$parameterName] -is [array]) {
-                    $orderedArguments += , $arguments[$parameterName];
+                if($($arguments.$parameterName) -is [array]) {
+                    $orderedArguments += , $arguments.$parameterName;
                 }
                 else {
-                    $orderedArguments += $arguments[$parameterName];
+                    $orderedArguments += $arguments.$parameterName;
                 }
             }
             elseif($null -ne $parameterName `

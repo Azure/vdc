@@ -77,7 +77,7 @@ Describe  "Custom Script Execution Unit Test Cases" {
             $scriptPath = $scriptPath.Replace('\', '/')
             $command = $scriptPath;
 
-            $arguments = @{
+            $arguments = [PSCustomObject]@{
                 "FIRST_VAR" = "bash-script-test"
             }
 
@@ -90,13 +90,36 @@ Describe  "Custom Script Execution Unit Test Cases" {
             $result | Should Be "bash-script-test";
         }
 
+        It "Should execute a Bash script and preserve the order of arguments passed" {
+
+            $bashRootPath = bash -c 'echo $PWD';
+            $scriptPath = Join-Path $bashRootPath -ChildPath 'Orchestration' -AdditionalChildPath  @("Tests", "Samples", "scripts", "bash-script-order.sh");
+            $scriptPath = $scriptPath.Replace('\', '/')
+            $command = $scriptPath;
+
+            $arguments = [PSCustomObject]@{
+                "FIRST_VAR" = "a";
+                "SECOND_VAR" = "b";
+                "THIRD_VAR" = "c";
+                "FOURTH_VAR" = "d";
+            }
+
+            # Execute the script by calling Execute method
+            $result = $customScriptExecutor.Execute(
+                $command, 
+                $arguments
+            );
+
+            $result | Should Be "a_b_c_d";
+        }
+
         It "Should execute Bash Commands" {
             $command = "echo bash-test";
 
             # Execute the script by calling Execute method
             $result = $customScriptExecutor.Execute(
                 $command, 
-                @{}
+                [PSCustomObject]@{}
             );
 
             $result | Should Be "bash-test";

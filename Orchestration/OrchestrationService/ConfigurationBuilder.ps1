@@ -4,7 +4,7 @@ Import-Module $helperPath;
 
 Class ConfigurationBuilder {
 
-    $configurationInstance = $null;
+    $configurationInstanceAsObject = $null;
     $configurationInstanceName = "";
     $configurationDefinitionParentFolder = "";
     $configurationDefinitionFileName = "";
@@ -45,7 +45,7 @@ Class ConfigurationBuilder {
         # Convert the resultant string from previous step to an
         # object. We cannot convert this to hashtable here because
         # the ReplaceTokens function expects an object
-        $this.configurationInstance = `
+        $this.configurationInstanceAsObject = `
             ConvertFrom-Json `
                 -InputObject $configurationInstanceContent `
                 -Depth 100;
@@ -57,18 +57,62 @@ Class ConfigurationBuilder {
             # ConfigurationInstance as an object
             Invoke-Command `
                 -ScriptBlock $func `
-                -ArgumentList $this.configurationInstance;
+                -ArgumentList $this.configurationInstanceAsObject;
         }
 
         # Replace Tokens in Configuration Instance
-        $this.configurationInstance = `
-            $this.ReplaceTokens($this.configurationInstance);
+        $this.configurationInstanceAsObject = `
+            $this.ReplaceTokens($this.configurationInstanceAsObject);
 
         # Convert to hashtable and return Configuration Instance
-        return `
+        $configurationInstanceAsHashtable = `
             ConvertTo-HashTable `
-                -InputObject $this.configurationInstance;
+                -InputObject $this.configurationInstanceAsObject;
+      
+        # This condition is required to filter out objects that do not meet the structural requirements.
+        # Since BuildConfigurationInstance() method is called for building other objects (like tookit 
+        # configuration), we do not want to process all objects through RetainScriptArgumentsOrder() method.
+        if( $null -ne $this.configurationInstanceAsObject.Orchestration.ModuleConfigurations -and `
+            $this.configurationInstanceAsObject.Orchestration.ModuleConfigurations -is [array] ) {
+                return `
+                    $this.RetainScriptArgumentsOrder(
+                        $this.configurationInstanceAsObject, 
+                    $configurationInstanceAsHashtable
+                );
+        }
+        else {
+            return $configurationInstanceAsHashtable;
+        }
+    }
 
+    hidden [hashtable] RetainScriptArgumentsOrder([object] $configurationInstanceAsObject, [hashtable] $configurationInstanceAsHashtable) {
+
+        # ConfigurationInstanceAsObject - is of type PSCustomObject. This will be used as reference
+        # object going forward since this object preserves the order of its properties.
+        # ConfigurationInstnaceAsHashtable - is of type Hashtable. This will be used as actual object
+        # to be returned and will be modified during the course of this function.
+        # Get only module configurations that invoke scripts.
+        $configurationInstanceAsHashtable.Orchestration.ModuleConfigurations | Where-Object {
+            $null -ne $_.Script
+        } | ForEach-Object {
+            # Assign the current module configuration to the actualModule var. This is object of 
+            # type hashtable.
+            $actualModule = $_;
+
+            # Retrieve the reference module configuration which will be an object of type PSCustomObject.
+            $referenceModule = $configurationInstanceAsObject.Orchestration.ModuleConfigurations | ? { $_.Name -eq $actualModule.Name };
+            
+            # Override the "arguments" property of actualModule var whose type is hashtable with "arguments"
+            # property of referenceModule var whose type is PSCustomObject.
+            if($actualModule.Script.Arguments -is [hashtable] -and `
+                $actualModule.Script.Arguments.Keys.Count -gt 0 ) {
+                $actualModule.Script.Arguments = $referenceModule.Script.Arguments;
+            }
+        }
+
+        # Return the configurationInstanceAsHashtable object. But this object is not a pure hashtable.
+        # That is, one or more child value are PSCustomObject types.
+        return $configurationInstanceAsHashtable;
     }
     
     hidden [string] ProcessFile([string] $filePath, [int] $depthLimit) {
