@@ -697,4 +697,52 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
             throw $_;
         }
     }
+
+    [void] RemoveResourceGroupLock([guid] $subscriptionId,
+                                   [string] $resourceGroupName) {
+        try {
+            $scope = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName"
+            $allLocks = Get-AzResourceLock -Scope $scope -ErrorAction SilentlyContinue | Where-Object "ProvisioningState" -ne "Deleting"
+
+            if ($null -ne $allLocks) {
+                $allLocks | ForEach-Object { Remove-AzResourceLock -LockId $_.ResourceId -Force -ErrorAction SilentlyContinue }
+            }
+        }
+        catch {
+            Write-Host "An error ocurred while running RemoveResourceGroupLock";
+            Write-Host $_;
+            throw $_;
+        }
+    }
+
+    [void] RemoveResourceGroup([guid] $subscriptionId,
+                               [string] $resourceGroupName) {
+        try {
+            $id = "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName"
+            $resourceGroup = $this.GetResourceGroup($subscriptionId, $resourceGroupName)
+            if ($null -ne $resourceGroup) {
+                Remove-AzResourceGroup -Id $id -Force -ErrorAction SilentlyContinue -AsJob
+            }
+        }
+        catch {
+            Write-Host "An error ocurred while running RemoveResourceGroup";
+            Write-Host $_;
+            throw $_;
+        }
+    }
+
+    [object] GetResourceGroup([guid] $subscriptionId,
+                              [string] $resourceGroupName) {
+        try {
+            return `
+                Get-AzResourceGroup `
+                    -Id "/subscriptions/$subscriptionId/resourceGroups/$resourceGroupName" `
+                    -ErrorAction SilentlyContinue
+        }
+        catch {
+            Write-Host "An error ocurred while running GetResourceGroup";
+            Write-Host $_;
+            throw $_;
+        }
+    }
 }

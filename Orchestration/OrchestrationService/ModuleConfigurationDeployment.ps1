@@ -14,7 +14,10 @@
     $WorkingDirectory,
     [Parameter(Mandatory=$false)]
     [switch]
-    $Validate)
+    $Validate,
+    [Parameter(Mandatory=$false)]
+    [switch]
+    $TearDownEnvironment)
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent;
 $bootstrapModulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('Bootstrap', 'Initialize.ps1');
@@ -27,20 +30,20 @@ Import-Module $bootstrapModulePath -Force;
 Import-Module $factoryModulePath -Force;
 Import-Module "$($rootPath)/../Common/Helper.psd1" -Force;
 
-$deploymentService = $null;
-$cacheDataService = $null;
-$auditDataService = $null;
-$moduleStateDataService = $null;
-$configurationBuilder = $null;
-$customScriptExecution = $null
-$factory = $null;
+$global:deploymentService = $null;
+$global:cacheDataService = $null;
+$global:auditDataService = $null;
+$global:moduleStateDataService = $null;
+$global:configurationBuilder = $null;
+$global:customScriptExecution = $null
+$global:factory = $null;
 $defaultLocation = "West US";
 $defaultSupportedVersion = 2.0;
 $defaultModuleConfigurationsFolderName = "Modules";
 $defaultTemplateFileName = "deploy.json";
 $defaultParametersFileName = "parameters.json";
 
-Function New-Deployment {
+Function Start-Deployment {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory=$false)]
@@ -68,84 +71,20 @@ Function New-Deployment {
     )
     try {
 
-        $defaultWorkingDirectory = `
-            Get-WorkingDirectory `
-                -WorkingDirectory $WorkingDirectory;
+        $initializedValues = `
+            Start-Init `
+                -WorkingDirectory $WorkingDirectory `
+                -DefinitionPath $DefinitionPath `
+                -ArchetypeInstanceName $ArchetypeInstanceName
 
-        Write-Debug "Working directory is: $defaultWorkingDirectory";
+        $defaultWorkingDirectory = $initializedValues.WorkingDirectory
+        $archetypeInstanceJson = $initializedValues.ArchetypeInstanceJson
+        $archetypeInstanceName = $initializedValues.ArchetypeInstanceName
+        $location = $initializedValues.Location
 
-        $factory = `
-            Invoke-Bootstrap `
-                -WorkingDirectory $defaultWorkingDirectory;
-
-        $deploymentService = `
-            $factory.GetInstance('IDeploymentService');
-
-        $cacheDataService = `
-            $factory.GetInstance('ICacheDataService');
-
-        $auditDataService = `
-            $factory.GetInstance('IDeploymentAuditDataService');
-
-        $moduleStateDataService = `
-            $factory.GetInstance('IModuleStateDataService');
-
-        $customScriptExecution = `
-            $factory.GetInstance('CustomScriptExecution');
-
-        # Contruct the archetype instance object only if it is not already
-        # cached
-        $archetypeInstanceJson = `
-            New-ConfigurationInstance `
-                -FilePath $DefinitionPath `
-                -WorkingDirectory $defaultWorkingDirectory `
-                -CacheKey $ArchetypeInstanceName;
-        
-        $location = ''
-
-        # Check for invariant
-        if ($null -eq $archetypeInstanceJson.Parameters.Location) {
-            throw "Location value is not present in the archetype parameters file"
-        }
-        else {
-            $location = $archetypeInstanceJson.Parameters.Location
-        }
-
-        # Retrieve the Archetype instance name if not already passed
-        # to this function
-        $ArchetypeInstanceName = `
-            Get-ArchetypeInstanceName `
-                -ArchetypeInstance $archetypeInstanceJson `
-                -ArchetypeInstanceName $ArchetypeInstanceName;
-
-        $allModules = @()
-
-        if ([string]::IsNullOrEmpty($ModuleConfigurationName)) {
-
-            $topologicalSortRootPath = `
-                Join-Path $rootPath -ChildPath 'TopologicalSort';
-
-            Invoke-Command -ScriptBlock { dotnet build $topologicalSortRootPath --configuration Release --output ./ }
-
-            $topologicalSortAssemblyPath = `
-                Join-Path $topologicalSortRootPath "TopologicalSort.dll"
-
-            Add-Type -Path $topologicalSortAssemblyPath
-
-            $graph = [VDC.Core.DirectedGraph]::new()
-            $orchestrationJson = `
-                ConvertTo-Json $archetypeInstanceJson.Orchestration.ModuleConfigurations
-            $graph.Generate($orchestrationJson)
-            $graph.DFS()
-            $graph.TopologicalSort | ForEach-Object { $allModules += $_.Name }
-
-            if ($allModules.Count -eq 0) {
-                Write-Host "No modules found or all are disabled, please verify your ModuleConfigurations array" -ForegroundColor Red
-            }
-        }
-        else {
-            $allModules += $ModuleConfigurationName
-        }
+        $allModules = Get-AllModules `
+            -ModuleConfigurationName $ModuleConfigurationName `
+            -ArchetypeInstanceJson $archetypeInstanceJson
 
         foreach($ModuleConfigurationName in $allModules) {
             Write-Host "Deploying Module: $ModuleConfigurationName" -ForegroundColor Yellow
@@ -474,6 +413,328 @@ Function New-Deployment {
     }
 }
 
+Function Start-TearDownEnvironment {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$false)]
+        [string]
+        $ArchetypeInstanceName,
+        [Parameter(Mandatory=$true)]
+        [string]
+        $DefinitionPath,
+        [Parameter(Mandatory=$false)]
+        [string]
+        $ModuleConfigurationName,
+        [Parameter(Mandatory=$false)]
+        [string]
+        $WorkingDirectory
+    )
+        # WorkingDirectory is required to construct
+        # modules folder, deployment and parameters file paths
+        # when no value is specified. If no value is specified,
+        # we assume that the folders and files will be
+        # relative to the working directory (root of the repository).
+        # WorkingDirectory is required when running the script
+        # from a local computer.
+    try {        
+        $initializedValues = `
+            Start-Init `
+                -WorkingDirectory $WorkingDirectory `
+                -DefinitionPath $DefinitionPath `
+                -ArchetypeInstanceName $ArchetypeInstanceName
+        
+        $archetypeInstanceJson = $initializedValues.ArchetypeInstanceJson
+        $archetypeInstanceName = $initializedValues.ArchetypeInstanceName
+        Write-Debug "Values retrieved from Init: $(ConvertTo-Json $initializedValues)"
+        $allModules = Get-AllModules `
+            -ModuleConfigurationName $ModuleConfigurationName `
+            -ArchetypeInstanceJson $archetypeInstanceJson
+        Write-Debug "All modules: $(ConvertTo-Json $allModules)"
+
+        [array]::Reverse($allModules)
+
+        Write-Debug "Reversed module list: $(ConvertTo-Json $allModules)"
+
+        # TODO: Use a C# data structure (List<>) instead of a Powershell hashtable
+        $allResourceGroupsToDelete = @{}
+        $allResourceGroupsDeleted = $false
+        $loop = 0
+        while (!$allResourceGroupsDeleted) {
+            $loop++
+            foreach($ModuleConfigurationName in $allModules) {
+
+                Write-Host "Deleting Module: $ModuleConfigurationName in loop number: $loop" -ForegroundColor Yellow
+                $moduleConfiguration = `
+                    Get-ModuleConfiguration `
+                        -ArchetypeInstanceJson $archetypeInstanceJson `
+                        -ModuleConfigurationName $moduleConfigurationName `
+                        -ArchetypeInstanceName $ArchetypeInstanceName `
+                        -Operation "Validate"
+                
+                if ($null -eq $moduleConfiguration) {
+                    throw "Module configuration not found for module name: $moduleConfigurationName";
+                }
+                elseif ($moduleConfiguration.Enabled -eq $false) {
+                    Write-Host "Module is disabled, enable it by setting -> """Enabled""": true on module: $moduleConfigurationName" -ForegroundColor Red
+                }
+                else {
+
+                    Write-Debug "Module instance is: $(ConvertTo-Json $moduleConfiguration)";
+    
+                    # Let's make sure we use the updated name
+                    # There are instances when we have a module configuration updating an existing
+                    # module configuration that was already deployed, in this case, let's use
+                    # the name of the existing module configuration.
+                    Write-Debug "Updating module instance name from $ModuleConfigurationName to $($moduleConfiguration.Name)";
+                    $ModuleConfigurationName = `
+                        $moduleConfiguration.Name;
+    
+                    $subscriptionInformation = $null;
+                    $subscriptionInformation = `
+                        Get-SubscriptionInformation `
+                            -ArchetypeInstanceJson $archetypeInstanceJson `
+                            -SubscriptionName $archetypeInstanceJson.Parameters.Subscription `
+                            -ModuleConfiguration $moduleConfiguration;
+    
+                    if ($null -eq $subscriptionInformation) {
+                        throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
+                    }
+                    elseif ($subscriptionInformation.SubscriptionId -ne `
+                            $archetypeInstanceJson.Parameters.SubscriptionId) {
+                        Write-Host "Module: $ModuleConfigurationName belongs to a different subscription: $($moduleConfiguration.Subscription), skipping the deletion process" -ForegroundColor Green
+                    }
+                    else {    
+                        # Let's get the current subscription context
+                        $sub = Get-AzContext | Select-Object Subscription
+        
+                        # Do not change the subscription context if the operation is validate.
+                        # This is because the script will expect the validation resource
+                        # group to be present in all the subscriptions we are deploying.
+                        [Guid]$subscriptionCheck = [Guid]::Empty;
+                        [Guid]$tenantIdCheck = [Guid]::Empty;
+                        if($null -ne $subscriptionInformation -and `
+                            [Guid]::TryParse($subscriptionInformation.SubscriptionId, [ref]$subscriptionCheck) -and `
+                            [Guid]::TryParse($subscriptionInformation.TenantId, [ref]$tenantIdCheck) -and `
+                            $subscriptionCheck -ne [Guid]::Empty -and `
+                            $tenantIdCheck -ne [Guid]::Empty -and
+                            $subscriptionCheck -ne $sub.Subscription.Id) {
+        
+                            Write-Debug "Setting subscription context";
+                            Write-Debug "Deployment service object is: $deploymentService"
+        
+                            Set-SubscriptionContext `
+                                -SubscriptionId $subscriptionInformation.SubscriptionId `
+                                -TenantId $subscriptionInformation.TenantId;
+                        }
+        
+                        if($null -eq $ModuleConfiguration.Script `
+                            -and `
+                           $null -eq $ModuleConfiguration.Script.Command) {
+        
+                            $moduleConfigurationResourceGroupName = `
+                                Get-ResourceGroupName `
+                                    -ArchetypeInstanceName $archetypeInstanceName `
+                                    -ModuleConfiguration $moduleConfiguration;
+                            Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
+                            
+                            $resourceGroupFound = $deploymentService.GetResourceGroup(
+                                $subscriptionInformation.SubscriptionId,
+                                $moduleConfigurationResourceGroupName
+                            )
+
+                            # Let's check if the resource group exists and the resource group name
+                            # hasn't been added to allResourceGroupsToDelete hashtable or if the resource group
+                            # is not in deleting status (maybe it failed the deletion the first time)
+                            if ($null -ne $resourceGroupFound -and `
+                                ( $null -eq $allResourceGroupsToDelete.$moduleConfigurationResourceGroupName -or `
+                                  $resourceGroupFound | Where-Object "ProvisioningState" -ne "Deleting") ) {
+                                
+                                # Add to temporal hashtable if is not already added
+                                # Adding the item with a Value = false, which means that the resource group
+                                # hasn't been deleted yet, one the resource group gets deleted, this value
+                                # will switch to true
+                                if ($null -eq $allResourceGroupsToDelete.$moduleConfigurationResourceGroupName) {
+                                    $allResourceGroupsToDelete += @{
+                                        $moduleConfigurationResourceGroupName = $false
+                                    }
+                                }
+        
+                                # Start deleting the resource group locks and resource group
+        
+                                Write-Debug "Deleting all resource locks"
+                                $deploymentService.RemoveResourceGroupLock(
+                                    $subscriptionInformation.SubscriptionId,
+                                    $moduleConfigurationResourceGroupName
+                                )
+        
+                                Write-Debug "Deleting resource group: $moduleConfigurationResourceGroupName"
+        
+                                $deploymentService.RemoveResourceGroup(
+                                    $subscriptionInformation.SubscriptionId,
+                                    $moduleConfigurationResourceGroupName
+                                )
+                            }
+                            elseif ($null -eq $resourceGroupFound -and `
+                                    $allResourceGroupsToDelete.$moduleConfigurationResourceGroupName -eq $false) {
+                                # Update the flag to true
+                                Write-Debug "Resource group successfully deleted"
+                                $allResourceGroupsToDelete.$moduleConfigurationResourceGroupName = $true
+                            }
+                            elseif (($allResourceGroupsToDelete.GetEnumerator() | Where-Object { $_.Value -eq $false }).Count -eq 0) {
+                                Write-Debug "No more resource groups to delete, stopping the loop"
+                                # Let's stop the loop
+                                $allResourceGroupsDeleted = $true
+                            }
+                            else {
+                                # Continue
+                            }
+                        }
+                    }
+                }
+            } 
+            
+            # Finished first loop, let's wait for a minute
+            # to give time for the resource group to get deleted
+            if ($allResourceGroupsDeleted -eq $false) {
+                Write-Debug "Starting sleep"
+                Start-Sleep -Seconds 60
+            }
+        }
+    }
+    catch {
+        Write-Host "An error ocurred while running TearDownEnvironment";
+        Write-Host $_;
+        throw $_;
+    }
+}
+
+Function Start-Init {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$false)]
+        [string]
+        $ArchetypeInstanceName,
+        [Parameter(Mandatory=$true)]
+        [string]
+        $DefinitionPath,
+        [Parameter(Mandatory=$false)]
+        [string]
+        $WorkingDirectory
+    )
+    try {
+        $defaultWorkingDirectory = `
+            Get-WorkingDirectory `
+                -WorkingDirectory $WorkingDirectory;
+
+        Write-Debug "Working directory is: $defaultWorkingDirectory";
+
+        $global:factory = `
+            Invoke-Bootstrap `
+                -WorkingDirectory $defaultWorkingDirectory;
+
+        $global:deploymentService = `
+            $factory.GetInstance('IDeploymentService');
+
+        $global:cacheDataService = `
+            $factory.GetInstance('ICacheDataService');
+
+        $global:auditDataService = `
+            $factory.GetInstance('IDeploymentAuditDataService');
+
+        $global:moduleStateDataService = `
+            $factory.GetInstance('IModuleStateDataService');
+
+        $global:customScriptExecution = `
+            $factory.GetInstance('CustomScriptExecution');
+
+        # Contruct the archetype instance object only if it is not already
+        # cached
+        $archetypeInstanceJson = `
+            New-ConfigurationInstance `
+                -FilePath $DefinitionPath `
+                -WorkingDirectory $defaultWorkingDirectory `
+                -CacheKey $ArchetypeInstanceName;
+        
+        $location = ''
+
+        # Check for invariant
+        if ($null -eq $archetypeInstanceJson.Parameters.Location) {
+            throw "Location value is not present in the archetype parameters file"
+        }
+        else {
+            $location = $archetypeInstanceJson.Parameters.Location
+        }
+
+        # Retrieve the Archetype instance name if not already passed
+        # to this function
+        $archetypeInstanceName = `
+            Get-ArchetypeInstanceName `
+                -ArchetypeInstance $archetypeInstanceJson `
+                -ArchetypeInstanceName $ArchetypeInstanceName;
+
+        return @{
+            WorkingDirectory = $defaultWorkingDirectory
+            ArchetypeInstanceJson = $archetypeInstanceJson
+            ArchetypeInstanceName = $archetypeInstanceName
+            Location = $location
+        }
+    }
+    catch {
+        Write-Host "An error ocurred while running Start-Init";
+        Write-Host $_;
+        throw $_;
+    }
+}
+
+Function Get-AllModules {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$false)]
+        [string]
+        $ModuleConfigurationName,
+        [Parameter(Mandatory=$true)]
+        [hashtable]
+        $ArchetypeInstanceJson
+    )
+    try {
+        $allModules = @()
+        if ([string]::IsNullOrEmpty($ModuleConfigurationName)) {
+
+            $topologicalSortRootPath = `
+                Join-Path $rootPath -ChildPath 'TopologicalSort';
+
+            # Adding Out-Null to prevent outputs from the Invoke-Command from being added to 
+            Invoke-Command -ScriptBlock { dotnet build $topologicalSortRootPath --configuration Release --output ./ } | Out-Null
+
+            $topologicalSortAssemblyPath = `
+                Join-Path $topologicalSortRootPath "TopologicalSort.dll"
+
+            Add-Type -Path $topologicalSortAssemblyPath
+
+            $graph = [VDC.Core.DirectedGraph]::new()
+            $orchestrationJson = `
+                ConvertTo-Json $ArchetypeInstanceJson.Orchestration.ModuleConfigurations
+            $graph.Generate($orchestrationJson)
+            $graph.DFS()
+            $graph.TopologicalSort | ForEach-Object { $allModules += $_.Name }
+
+            if ($allModules.Count -eq 0) {
+                Write-Host "No modules found or all are disabled, please verify your ModuleConfigurations array" -ForegroundColor Red
+            }
+        }
+        else {
+            $allModules += $ModuleConfigurationName
+        }
+
+        return $allModules
+    }
+    catch {
+        Write-Host "An error ocurred while running Get-AllModules";
+        Write-Host $_;
+        throw $_;
+    }
+}
+
 Function Get-WorkingDirectory {
     [CmdletBinding()]
     param(
@@ -526,7 +787,7 @@ Function Get-WorkingDirectory {
             Write-Debug "Local deployment, attempting to resolve root path";
             # If no explicity working directory is passed and the script
             # is run locally, then use the current path
-            $defaultWorkingDirectory = Resolve-Path ".\";
+            $defaultWorkingDirectory = (Resolve-Path ".\").Path;
         }
 
         return $defaultWorkingDirectory;
@@ -539,20 +800,21 @@ Function Get-WorkingDirectory {
 }
 
 Function New-CustomScripts {
-        param(
-            [Parameter(Mandatory=$true)]
-            [hashtable]
-            $ModuleConfiguration,
-            [Parameter(Mandatory=$true)]
-            [hashtable]
-            $ArchetypeInstanceJson,
-            [Parameter(Mandatory=$false)]
-            [switch]
-            $Validate
-        )
-     
-        $result = @($null, $null);
-     
+    param(
+        [Parameter(Mandatory=$true)]
+        [hashtable]
+        $ModuleConfiguration,
+        [Parameter(Mandatory=$true)]
+        [hashtable]
+        $ArchetypeInstanceJson,
+        [Parameter(Mandatory=$false)]
+        [switch]
+        $Validate
+    )
+    
+    try {
+        $result = @($null, $null);
+ 
         if(-not $Validate.IsPresent) {
             # Run and retrieve the script output, if any.
             $scriptOutput = `
@@ -587,8 +849,7 @@ Function New-CustomScripts {
                 DeploymentParameters = $null
                 Type = "CustomScript"
                
-            }
-         
+            }         
 
             $deploymentOutputs = @{};
            
@@ -632,6 +893,12 @@ Function New-CustomScripts {
         # Return the result array
         return $result;
     }
+    catch {
+        Write-Host "An error ocurred while running Start-CustomScript";
+        Write-Host $_;
+        throw $_;
+    }
+}
      
 Function Start-CustomScript {
     [CmdletBinding()]
@@ -669,47 +936,54 @@ Function Update-ArchetypeInstanceConfiguration {
         [object] $Output
     )
 
-    # Check if the string returned is a JSON string
-    $isJson = `
+    try {
+        # Check if the string returned is a JSON string
+        $isJson = `
         Test-Json $Output `
             -ErrorAction SilentlyContinue;
- 
-    # If we can convert to object, then return converted object
-    # else return string
-    if($isJson) {
-        $Output = `
-            ConvertFrom-Json `
-                -InputObject $Output `
-                -Depth 50;
+     
+        # If we can convert to object, then return converted object
+        # else return string
+        if($isJson) {
+            $Output = `
+                ConvertFrom-Json `
+                    -InputObject $Output `
+                    -Depth 50;
+        }
+     
+        # Get PropertyPath and split it to get individual properties
+        $propertyPathArray = $PropertyPath.Split('.');
+     
+        # Initialize the PropertyObject to the ArchetypeInstanceJson
+        $propertyObject = $ArchetypeInstanceJson;
+     
+        # Drill down to the property through the path provided in the
+        # UpdatePath. We only iterate to the n-1 node, i.e stop one
+        # property path short.
+        for($i = 0; $i -lt $propertyPathArray.Count - 1; $i++) {
+            $propertyName = $propertyPathArray[$i];
+            if($propertyObject.ContainsKey($propertyName)) {
+                $propertyObject = $propertyObject.$propertyName;
+            }
+            else {
+                Throw "Property Path $PropertyPath is an invalid path";
+            }
+        }
+     
+        # Get the leaf property name
+        $leafPropertyName = $($propertyPathArray[$propertyPathArray.Count-1]);
+     
+        # Set the value represented by the property path to the output value passed
+        $propertyObject.$leafPropertyName = $Output;
+     
+        # Return the updated ArchetypeInstanceJson
+        return $ArchetypeInstanceJson;
+    }
+    catch {
+        Write-Host "An error ocurred while running Start-CustomScript";
+        Write-Host $_;
+        throw $_;
     }
- 
-    # Get PropertyPath and split it to get individual properties
-    $propertyPathArray = $PropertyPath.Split('.');
- 
-    # Initialize the PropertyObject to the ArchetypeInstanceJson
-    $propertyObject = $ArchetypeInstanceJson;
- 
-    # Drill down to the property through the path provided in the
-    # UpdatePath. We only iterate to the n-1 node, i.e stop one
-    # property path short.
-    for($i = 0; $i -lt $propertyPathArray.Count - 1; $i++) {
-        $propertyName = $propertyPathArray[$i];
-        if($propertyObject.ContainsKey($propertyName)) {
-            $propertyObject = $propertyObject.$propertyName;
-        }
-        else {
-            Throw "Property Path $PropertyPath is an invalid path";
-        }
-    }
- 
-    # Get the leaf property name
-    $leafPropertyName = $($propertyPathArray[$propertyPathArray.Count-1]);
- 
-    # Set the value represented by the property path to the output value passed
-    $propertyObject.$leafPropertyName = $Output;
- 
-    # Return the updated ArchetypeInstanceJson
-    return $ArchetypeInstanceJson;
 }
 
 Function Get-ArchetypeInstanceName {
@@ -806,7 +1080,7 @@ Function New-ConfigurationInstance {
 
             Write-Debug "File path is: $FilePath";
 
-            $configurationBuilder = `
+            $global:configurationBuilder = `
                 [ConfigurationBuilder]::new(
                     $null,
                     $FilePath);
@@ -2062,34 +2336,40 @@ Function Add-OutputsToCache {
         $Validate
     )
 
-    if(-not $Validate.IsPresent) {
-        # Iterate through all the keys in the hashtable
-        $Outputs.Keys | ForEach-Object {
-
-            # Retrieve key and value of each parameter entry
-            # in the hashtable
-            $outputParameterName = $_;
-
-            # Format the Cache Key from the Module Instance Name
-            # and output parameter name
-            $cacheKey = ("{0}.{1}" -F $ModuleConfigurationName, $outputParameterName);
-
-            # Convert to Json before saving this value
-            $cacheValue = `
-                $Outputs.$outputParameterName.Value;
-
-
-            Write-Debug "Adding Output $(ConvertTo-Json $cacheValue -Depth 50) `
-                to $cacheKey";
-
-            # Call Add-ItemToCache function to cache them
-            # Safe to do .Value because we are caching deployment outputs
-            # all deployment outputs contains a Type and Value properties.
-            Add-ItemToCache `
-                -Key $cacheKey `
-                -Value $cacheValue `
-                -Validate:$($Validate.IsPresent);
+    try {
+        if(-not $Validate.IsPresent) {
+            # Iterate through all the keys in the hashtable
+            $Outputs.Keys | ForEach-Object {
+    
+                # Retrieve key and value of each parameter entry
+                # in the hashtable
+                $outputParameterName = $_;
+    
+                # Format the Cache Key from the Module Instance Name
+                # and output parameter name
+                $cacheKey = ("{0}.{1}" -F $ModuleConfigurationName, $outputParameterName);
+    
+                # Convert to Json before saving this value
+                $cacheValue = `
+                    $Outputs.$outputParameterName.Value;
+    
+    
+                Write-Debug "Adding Output $(ConvertTo-Json $cacheValue -Depth 50) to $cacheKey";
+    
+                # Call Add-ItemToCache function to cache them
+                # Safe to do .Value because we are caching deployment outputs
+                # all deployment outputs contains a Type and Value properties.
+                Add-ItemToCache `
+                    -Key $cacheKey `
+                    -Value $cacheValue `
+                    -Validate:$($Validate.IsPresent);
+            }
         }
+    }
+    catch {
+        Write-Host "An error ocurred while running New-NormalizePath";
+        Write-Host $_;
+        throw $_;
     }
 }
 
@@ -2156,96 +2436,103 @@ Function Merge-Parameters {
         [string]
         $Operation
     )
-    # Variable to hold the consolidated parameter values
-    $deploymentParametersJson = @{};
-    $parametersFromDeploymentParameters = @{};
-    $overrideParameters = @{};
 
-    if($null -ne $DeploymentParameters) {
+    try {
+        # Variable to hold the consolidated parameter values
+        $deploymentParametersJson = @{};
+        $parametersFromDeploymentParameters = @{};
+        $overrideParameters = @{};
 
-        # Convert the string to hashtable before using it
-        $deploymentParametersJson = `
-            ConvertFrom-Json $DeploymentParameters `
-                -AsHashtable `
-                -Depth 100;
+        if($null -ne $DeploymentParameters) {
+
+            # Convert the string to hashtable before using it
+            $deploymentParametersJson = `
+                ConvertFrom-Json $DeploymentParameters `
+                    -AsHashtable `
+                    -Depth 100;
+        }
+
+        # Retrieve the override parameters from the moduleConfiguration.
+        # If moduleConfiguration does not have overrideparameters, then
+        # assume the override parameters is an empty hashtable.
+        if($moduleConfiguration.Keys -eq "OverrideParameters") {
+            # Retrieve the module instance override parameters
+            $overrideParameters = $moduleConfiguration.OverrideParameters;
+        }
+
+        # Check if the template parameters file has
+        # parameters at the top level and branch accordingly
+        if($deploymentParametersJson.Keys -eq "parameters") {
+            $parametersFromDeploymentParameters = $deploymentParametersJson.parameters;
+        }
+        else {
+            # Assumes it is a valid deployment parameter file
+            $parametersFromDeploymentParameters = $deploymentParametersJson;
+        }
+
+        # Account for the following four cases:
+        # Case 1: Parameter file present and Override Parameters present
+        # Case 2: Parameter file present but No Override Parameters
+        # Case 3: No Parameter file but Override Parameters present
+        # Case 4: No Parameter file and No Override Parameters
+        # If true, we have Case 1 - Parameter file present and Override
+        # Parameters present
+        if($parametersFromDeploymentParameters.Count -gt 0 `
+            -and $overrideParameters.Count -gt 0) {
+
+            # Source Parameter Set overrides the Target Parameter Set
+            $parametersFromDeploymentParameters = `
+                Join-ParameterSets `
+                    -SourceParameterSet $overrideParameters `
+                    -TargetParameterSet $parametersFromDeploymentParameters;
+
+        }
+        # If true, we have Case 2 - Parameter file present but No Override
+        # Parameters
+        elseif($parametersFromDeploymentParameters.Count -gt 0) {
+
+            # DeploymentParameters should not have any reference to other
+            # deployment outputs. So return as is.
+            return $DeploymentParameters;
+        }
+        # If true, we have Case 3 - No Parameter file but Override Parameters
+        # present
+        elseif($overrideParameters.Count -gt 0) {
+
+            Write-Debug "Override Parameters are: $(ConvertTo-Json $overrideParameters -Depth 50)";
+
+            # Source Parameter Set overrides the Target Parameter Set
+            $parametersFromDeploymentParameters = `
+                Join-ParameterSets `
+                    -SourceParameterSet $overrideParameters `
+                    -TargetParameterSet $parametersFromDeploymentParameters;
+
+        }
+        # Finally, we have Case 4 - No Parameter file and No Override
+        # Parameters
+        else {
+            # No additional steps needed for this case
+            # Return an empty hashtable which was already initialized
+            # at the start of this method
+        }
+
+        if($deploymentParametersJson.Keys -eq "parameters") {
+            # Reassign merged parameters to the template's parameters object.
+            $deploymentParametersJson.parameters = $parametersFromDeploymentParameters;
+            return `
+                ConvertTo-Json $deploymentParametersJson -Depth 100;
+        }
+        else {
+            # Send the deployment parameters as-is (after converting to string)
+            return `
+                ConvertTo-Json $parametersFromDeploymentParameters -Depth 100;
+        }
     }
-
-    # Retrieve the override parameters from the moduleConfiguration.
-    # If moduleConfiguration does not have overrideparameters, then
-    # assume the override parameters is an empty hashtable.
-    if($moduleConfiguration.Keys -eq "OverrideParameters") {
-        # Retrieve the module instance override parameters
-        $overrideParameters = $moduleConfiguration.OverrideParameters;
+    catch {
+        Write-Host "An error ocurred while running Get-ItemFromCache";
+        Write-Host $_;
+        throw $_;
     }
-
-    # Check if the template parameters file has
-    # parameters at the top level and branch accordingly
-    if($deploymentParametersJson.Keys -eq "parameters") {
-        $parametersFromDeploymentParameters = $deploymentParametersJson.parameters;
-    }
-    else {
-        # Assumes it is a valid deployment parameter file
-        $parametersFromDeploymentParameters = $deploymentParametersJson;
-    }
-
-    # Account for the following four cases:
-    # Case 1: Parameter file present and Override Parameters present
-    # Case 2: Parameter file present but No Override Parameters
-    # Case 3: No Parameter file but Override Parameters present
-    # Case 4: No Parameter file and No Override Parameters
-    # If true, we have Case 1 - Parameter file present and Override
-    # Parameters present
-    if($parametersFromDeploymentParameters.Count -gt 0 `
-        -and $overrideParameters.Count -gt 0) {
-
-        # Source Parameter Set overrides the Target Parameter Set
-        $parametersFromDeploymentParameters = `
-            Join-ParameterSets `
-                -SourceParameterSet $overrideParameters `
-                -TargetParameterSet $parametersFromDeploymentParameters;
-
-    }
-    # If true, we have Case 2 - Parameter file present but No Override
-    # Parameters
-    elseif($parametersFromDeploymentParameters.Count -gt 0) {
-
-        # DeploymentParameters should not have any reference to other
-        # deployment outputs. So return as is.
-        return $DeploymentParameters;
-    }
-    # If true, we have Case 3 - No Parameter file but Override Parameters
-    # present
-    elseif($overrideParameters.Count -gt 0) {
-
-        Write-Debug "Override Parameters are: $(ConvertTo-Json $overrideParameters -Depth 50)";
-
-        # Source Parameter Set overrides the Target Parameter Set
-        $parametersFromDeploymentParameters = `
-            Join-ParameterSets `
-                -SourceParameterSet $overrideParameters `
-                -TargetParameterSet $parametersFromDeploymentParameters;
-
-    }
-    # Finally, we have Case 4 - No Parameter file and No Override
-    # Parameters
-    else {
-        # No additional steps needed for this case
-        # Return an empty hashtable which was already initialized
-        # at the start of this method
-    }
-
-    if($deploymentParametersJson.Keys -eq "parameters") {
-        # Reassign merged parameters to the template's parameters object.
-        $deploymentParametersJson.parameters = $parametersFromDeploymentParameters;
-        return `
-            ConvertTo-Json $deploymentParametersJson -Depth 100;
-    }
-    else {
-        # Send the deployment parameters as-is (after converting to string)
-        return `
-            ConvertTo-Json $parametersFromDeploymentParameters -Depth 100;
-    }
-
 }
 
 Function Join-ParameterSets() {
@@ -2259,22 +2546,29 @@ Function Join-ParameterSets() {
         $TargetParameterSet
     )
 
-    # Iterate through the source hashtable and add them to the target hashtable
-    # if they are not already present.
-    # If they are present, update the target value with the source value
-    $SourceParameterSet.Keys | ForEach-Object {
-        $sourceParameterName = $_;
-        if($TargetParameterSet.Keys -eq $sourceParameterName) {
-            $TargetParameterSet.$sourceParameterName = $SourceParameterSet.$sourceParameterName;
-        }
-        else {
-            $TargetParameterSet += @{
-                $sourceParameterName = $SourceParameterSet.$sourceParameterName
+    try {
+        # Iterate through the source hashtable and add them to the target hashtable
+        # if they are not already present.
+        # If they are present, update the target value with the source value
+        $SourceParameterSet.Keys | ForEach-Object {
+            $sourceParameterName = $_;
+            if($TargetParameterSet.Keys -eq $sourceParameterName) {
+                $TargetParameterSet.$sourceParameterName = $SourceParameterSet.$sourceParameterName;
+            }
+            else {
+                $TargetParameterSet += @{
+                    $sourceParameterName = $SourceParameterSet.$sourceParameterName
+                }
             }
         }
-    }
 
-    return $TargetParameterSet;
+        return $TargetParameterSet;
+    }
+    catch {
+        Write-Host "An error ocurred while running Get-ItemFromCache";
+        Write-Host $_;
+        throw $_;
+    }
 }
 
 Function Resolve-ReferenceFunctionsInModuleConfiguration() {
@@ -2290,31 +2584,39 @@ Function Resolve-ReferenceFunctionsInModuleConfiguration() {
         [string]
         $Operation
     )
-    # Regex to match for the following format:
-    # reference(archetypeInstance.moduleConfiguration.outputName)
-    $fullReferenceFunctionMatchRegex = 'reference\((.*)\)';
 
-    # Convert object to string
-    $ModuleConfigurationContent = `
-        ConvertTo-Json `
-            -InputObject $ModuleConfiguration `
-            -Depth 50;
+    try {
+        # Regex to match for the following format:
+        # reference(archetypeInstance.moduleConfiguration.outputName)
+        $fullReferenceFunctionMatchRegex = 'reference\((.*)\)';
 
-    # Resolve only during deploy operation and if reference function is
-    # found
-    if($Operation -eq "deploy" -and `
-        $ModuleConfigurationContent -match $fullReferenceFunctionMatchRegex) {
+        # Convert object to string
+        $ModuleConfigurationContent = `
+            ConvertTo-Json `
+                -InputObject $ModuleConfiguration `
+                -Depth 50;
 
+        # Resolve only during deploy operation and if reference function is
+        # found
+        if($Operation -eq "deploy" -and `
+            $ModuleConfigurationContent -match $fullReferenceFunctionMatchRegex) {
+
+                return `
+                    (Get-OutputReferenceValue `
+                    -ParameterValue $ModuleConfiguration `
+                    -ArchetypeInstanceName $ArchetypeInstanceName).result;
+
+        }
+        else {
+            # When in validate mode or if no reference function is found, return as-is.
             return `
-                (Get-OutputReferenceValue `
-                -ParameterValue $ModuleConfiguration `
-                -ArchetypeInstanceName $ArchetypeInstanceName).result;
-
+                $ModuleConfiguration;
+        }
     }
-    else {
-        # When in validate mode or if no reference function is found, return as-is.
-        return `
-            $ModuleConfiguration;
+    catch {
+        Write-Host "An error ocurred while running Get-ItemFromCache";
+        Write-Host $_;
+        throw $_;
     }
 }
 
@@ -2329,175 +2631,182 @@ Function Get-OutputReferenceValue() {
         $ArchetypeInstanceName
     )
 
-    # Regex to match for the following format:
-    # reference(archetypeInstance.moduleConfiguration.outputName)
-    $fullReferenceFunctionMatchRegex = '(reference\(.*?\))';
-    $outputPathMatchRegex = 'reference\((.*?)\)';
+    try {
+        # Regex to match for the following format:
+        # reference(archetypeInstance.moduleConfiguration.outputName)
+        $fullReferenceFunctionMatchRegex = '(reference\(.*?\))';
+        $outputPathMatchRegex = 'reference\((.*?)\)';
 
-    # This is a string version of the object being passed
-    $parameterValueString = "";
+        # This is a string version of the object being passed
+        $parameterValueString = "";
 
-    # This is an array that holds the path to retrieve the output
-    # from the cache or state store.
-    $outputPathArray = $null;
+        # This is an array that holds the path to retrieve the output
+        # from the cache or state store.
+        $outputPathArray = $null;
 
-    # First thing, we convert the parameterValue object to string
-    # if it is not already a string.
-    if($ParameterValue -isnot [string]) {
-        $parameterValueString = `
-            ConvertTo-Json `
-                -InputObject $ParameterValue `
-                -Depth 50 `
-                -Compress;
-    }
-    else {
-        $parameterValueString = $ParameterValue;
-    }
+        # First thing, we convert the parameterValue object to string
+        # if it is not already a string.
+        if($ParameterValue -isnot [string]) {
+            $parameterValueString = `
+                ConvertTo-Json `
+                    -InputObject $ParameterValue `
+                    -Depth 50 `
+                    -Compress;
+        }
+        else {
+            $parameterValueString = $ParameterValue;
+        }
 
-    Write-Debug "Parameter value JSON string is: $parameterValueString";
+        Write-Debug "Parameter value JSON string is: $parameterValueString";
 
-    # Get all reference functions in the string - parameterValueString
-    $options = [Text.RegularExpressions.RegexOptions]::IgnoreCase;
-    $referenceFunctionMatches = `
-        [regex]::Matches(
-            $parameterValueString,
-            $fullReferenceFunctionMatchRegex,
-            $options
-        );
-
-    Write-Debug "Reference functions found: $($referenceFunctionMatches.Count)";
-    # Iterate through all the reference function matches found
-    $referenceFunctionMatches | ForEach-Object {
-
-        # Get the current reference function match
-        $referenceFunctionMatch = $_;
-
-        Write-Debug "Reference function to be resolved: $referenceFunctionMatch";
-
-        # Variable to hold our resolved reference function value
-        $resolvedOutput = "";
-
-        # If there is a match, its always going to be the index 1 of the match.Groups
-        # This regex will match the full string including the reference function itself
-        # For Example: Consider the example below:
-        # "some-prefix-reference(archetypeInstanceA.moduleConfigurationA.OutputA)-some-suffix"
-        # The regex will capture - reference(archetypeInstanceA.moduleConfigurationA.OutputA)
-        $fullReferenceFunctionString = $referenceFunctionMatch.Groups[1].Value;
-
-        Write-Debug "Reference function found is: $fullReferenceFunctionString";
-
-        # From the full string including reference function captured in the previous step,
-        # Extract only the inner string (i.e output path) of the function. Continuing the
-        # previous example, this regex will extract - archetypeInstanceA.moduleConfigurationA.OutputA
-        $outputPathStringMatch = `
-            [regex]::Match(
-                $fullReferenceFunctionString,
-                $outputPathMatchRegex,
+        # Get all reference functions in the string - parameterValueString
+        $options = [Text.RegularExpressions.RegexOptions]::IgnoreCase;
+        $referenceFunctionMatches = `
+            [regex]::Matches(
+                $parameterValueString,
+                $fullReferenceFunctionMatchRegex,
                 $options
             );
-        $outputPathString = $outputPathStringMatch.Groups[1].Value;
 
-        Write-Debug "Reference function content is: $outputPathString";
+        Write-Debug "Reference functions found: $($referenceFunctionMatches.Count)";
+        # Iterate through all the reference function matches found
+        $referenceFunctionMatches | ForEach-Object {
 
-        # Array does not allow operations like Remove, RemoveAt and so on. We need arraylist to
-        # be able to perform these operations. Remove operation will be used to remove the last item
-        #  (parameter name) in the array.
-        [System.Collections.ArrayList]$outputPathArray = $outputPathString.Split(".");
-        Write-Debug "Reference function split: $(ConvertTo-Json $outputPathArray)";
+            # Get the current reference function match
+            $referenceFunctionMatch = $_;
 
-        # Call to retrieve output from cache
-        $cacheValue = `
-            Get-ItemFromCache `
-                -Key $outputPathString;
+            Write-Debug "Reference function to be resolved: $referenceFunctionMatch";
 
-        # Check if the cache value was retrieval successfully (i.e it returns a value)
-        if($null -ne $cacheValue)
-        {
-            Write-Debug "Output found in cache";
-            $resolvedOutput = $cacheValue;
-        }
-        else
-        {
-            Write-Debug "Output not in cache, let's get it from the storage account";
+            # Variable to hold our resolved reference function value
+            $resolvedOutput = "";
 
-            # Retrieves output from the state store
-            $resolvedOutput = `
-                Get-OutputFromStateStore `
-                    -Filters $outputPathArray `
-                    -ArchetypeInstanceName $ArchetypeInstanceName;
-        }
+            # If there is a match, its always going to be the index 1 of the match.Groups
+            # This regex will match the full string including the reference function itself
+            # For Example: Consider the example below:
+            # "some-prefix-reference(archetypeInstanceA.moduleConfigurationA.OutputA)-some-suffix"
+            # The regex will capture - reference(archetypeInstanceA.moduleConfigurationA.OutputA)
+            $fullReferenceFunctionString = $referenceFunctionMatch.Groups[1].Value;
 
-        Write-Debug "Output is: $(ConvertTo-Json $resolvedOutput)";
-        Write-Debug "Output type is $($resolvedOutput.GetType())";
+            Write-Debug "Reference function found is: $fullReferenceFunctionString";
 
-        # Did we resolve the output?
-        if ($resolvedOutput `
-            -and $resolvedOutput -is [object[]]){
-            Write-Debug "Replacing an array";
-                        
-            # Since is an array, let's replace the reference function
-            # including double quotes or single quotes
-            $tempfullReferenceFunctionString1 = `
-                """$fullReferenceFunctionString""";
+            # From the full string including reference function captured in the previous step,
+            # Extract only the inner string (i.e output path) of the function. Continuing the
+            # previous example, this regex will extract - archetypeInstanceA.moduleConfigurationA.OutputA
+            $outputPathStringMatch = `
+                [regex]::Match(
+                    $fullReferenceFunctionString,
+                    $outputPathMatchRegex,
+                    $options
+                );
+            $outputPathString = $outputPathStringMatch.Groups[1].Value;
 
-            Write-Debug "reference with double quotes is: $tempfullReferenceFunctionString1"
+            Write-Debug "Reference function content is: $outputPathString";
 
-            $tempfullReferenceFunctionString2 = `
-                "'$fullReferenceFunctionString'";
-            
-            Write-Debug "reference with single quotes is: $tempfullReferenceFunctionString2"
+            # Array does not allow operations like Remove, RemoveAt and so on. We need arraylist to
+            # be able to perform these operations. Remove operation will be used to remove the last item
+            #  (parameter name) in the array.
+            [System.Collections.ArrayList]$outputPathArray = $outputPathString.Split(".");
+            Write-Debug "Reference function split: $(ConvertTo-Json $outputPathArray)";
 
-            $resolvedOutputString = `
+            # Call to retrieve output from cache
+            $cacheValue = `
+                Get-ItemFromCache `
+                    -Key $outputPathString;
+
+            # Check if the cache value was retrieval successfully (i.e it returns a value)
+            if($null -ne $cacheValue)
+            {
+                Write-Debug "Output found in cache";
+                $resolvedOutput = $cacheValue;
+            }
+            else
+            {
+                Write-Debug "Output not in cache, let's get it from the storage account";
+
+                # Retrieves output from the state store
+                $resolvedOutput = `
+                    Get-OutputFromStateStore `
+                        -Filters $outputPathArray `
+                        -ArchetypeInstanceName $ArchetypeInstanceName;
+            }
+
+            Write-Debug "Output is: $(ConvertTo-Json $resolvedOutput)";
+            Write-Debug "Output type is $($resolvedOutput.GetType())";
+
+            # Did we resolve the output?
+            if ($resolvedOutput `
+                -and $resolvedOutput -is [object[]]){
+                Write-Debug "Replacing an array";
+                            
+                # Since is an array, let's replace the reference function
+                # including double quotes or single quotes
+                $tempfullReferenceFunctionString1 = `
+                    """$fullReferenceFunctionString""";
+
+                Write-Debug "reference with double quotes is: $tempfullReferenceFunctionString1"
+
+                $tempfullReferenceFunctionString2 = `
+                    "'$fullReferenceFunctionString'";
+                
+                Write-Debug "reference with single quotes is: $tempfullReferenceFunctionString2"
+
+                $resolvedOutputString = `
+                        ConvertTo-Json `
+                            -InputObject $resolvedOutput `
+                            -Depth 100 `
+                            -Compress;
+
+                $parameterValueString = `
+                    $parameterValueString.Replace(
+                        $tempfullReferenceFunctionString1,
+                        $resolvedOutputString
+                    ).Replace(
+                        $tempfullReferenceFunctionString2,
+                        $resolvedOutputString
+                    );
+            }
+            elseif($resolvedOutput `
+                -and $resolvedOutput -isnot [string]) {
+
+                Write-Debug "Converting object into a JSON string";
+                # If the resolved output is not already a string, convert it to string before
+                # continuing to replace the reference function with the string contents.
+                $resolvedOutputString = `
                     ConvertTo-Json `
                         -InputObject $resolvedOutput `
                         -Depth 100 `
                         -Compress;
 
-            $parameterValueString = `
-                $parameterValueString.Replace(
-                    $tempfullReferenceFunctionString1,
-                    $resolvedOutputString
-                ).Replace(
-                    $tempfullReferenceFunctionString2,
-                    $resolvedOutputString
-                );
-        }
-        elseif($resolvedOutput `
-            -and $resolvedOutput -isnot [string]) {
+                $parameterValueString = `
+                    $parameterValueString.Replace(
+                        $fullReferenceFunctionString,
+                        $resolvedOutputString
+                    );
+            }
+            elseif($resolvedOutput) {
 
-            Write-Debug "Converting object into a JSON string";
-            # If the resolved output is not already a string, convert it to string before
-            # continuing to replace the reference function with the string contents.
-            $resolvedOutputString = `
-                ConvertTo-Json `
-                    -InputObject $resolvedOutput `
-                    -Depth 100 `
-                    -Compress;
-
-            $parameterValueString = `
-                $parameterValueString.Replace(
-                    $fullReferenceFunctionString,
-                    $resolvedOutputString
-                );
+                # If the resolved output is already a string, continue to replace the reference
+                # function with the string contents
+                $parameterValueString = `
+                    $parameterValueString.Replace(
+                        $fullReferenceFunctionString,
+                        $resolvedOutput
+                    );
+            }
         }
-        elseif($resolvedOutput) {
 
-            # If the resolved output is already a string, continue to replace the reference
-            # function with the string contents
-            $parameterValueString = `
-                $parameterValueString.Replace(
-                    $fullReferenceFunctionString,
-                    $resolvedOutput
-                );
-        }
+
+        Write-Debug "Replaced string is: $parameterValueString";
+        # Output string needs to be formatted and wrapped before returning
+        return `
+            Format-ResolvedOutput `
+                -OutputValue $parameterValueString;
     }
-
-
-    Write-Debug "Replaced string is: $parameterValueString";
-    # Output string needs to be formatted and wrapped before returning
-    return `
-        Format-ResolvedOutput `
-            -OutputValue $parameterValueString;
+    catch {
+        Write-Host "An error ocurred while running Get-ItemFromCache";
+        Write-Host $_;
+        throw $_;
+    }
 }
 
 Function Format-ResolvedOutput() {
@@ -2508,34 +2817,41 @@ Function Format-ResolvedOutput() {
         $OutputValue
     )
 
-    # We are wrapping the resolved string into a result property
-    # Two reasons to do this:
-    # 1. Test-Json will fail for "['a']", however ConvertFrom-Json converts
-    # this string correctly to an array. To overcome this, we wrap this into
-    # an object so that Test-Json passes.
-    # 2. When we have an array of one item, the function will return the item
-    # instead of array
-    $jsonWrapper = "{'result':$OutputValue}";
+    try {
+        # We are wrapping the resolved string into a result property
+        # Two reasons to do this:
+        # 1. Test-Json will fail for "['a']", however ConvertFrom-Json converts
+        # this string correctly to an array. To overcome this, we wrap this into
+        # an object so that Test-Json passes.
+        # 2. When we have an array of one item, the function will return the item
+        # instead of array
+        $jsonWrapper = "{'result':$OutputValue}";
 
-    # Test if we can convert the string to an object
-    $isJson = `
-        Test-Json $jsonWrapper `
-            -ErrorAction SilentlyContinue;
+        # Test if we can convert the string to an object
+        $isJson = `
+            Test-Json $jsonWrapper `
+                -ErrorAction SilentlyContinue;
 
-    # Truthy for json conversion
-    if($isJson) {
-        # Convert string to object and return the object
-        return `
-            ConvertFrom-Json `
-                -InputObject $jsonWrapper `
-                -AsHashtable `
-                -Depth 100;
+        # Truthy for json conversion
+        if($isJson) {
+            # Convert string to object and return the object
+            return `
+                ConvertFrom-Json `
+                    -InputObject $jsonWrapper `
+                    -AsHashtable `
+                    -Depth 100;
+        }
+        else {
+            # Still return an object wrapped into a result property
+            # because the calling function expects a result property
+            return `
+                @{ 'result' = $OutputValue };
+        }
     }
-    else {
-        # Still return an object wrapped into a result property
-        # because the calling function expects a result property
-        return `
-            @{ 'result' = $OutputValue };
+    catch {
+        Write-Host "An error ocurred while running Get-ItemFromCache";
+        Write-Host $_;
+        throw $_;
     }
 }
 
@@ -2549,95 +2865,103 @@ Function Get-OutputFromStateStore() {
         [string]
         $ArchetypeInstanceName
     )
-    Write-Debug "All filters: $(ConvertTo-Json $Filters)";
 
-    # Start by retrieving all the outputs for the archetype and/or module
-    # instance combination
+    try {
+        Write-Debug "All filters: $(ConvertTo-Json $Filters)";
 
-    $crossArchetypeOutputs = $false;
+        # Start by retrieving all the outputs for the archetype and/or module
+        # instance combination
 
-    if($Filters.Count -ge 3) {
-        # If there are three segments, we are in a cross archetype scenario
-        $archetypeInstanceName = $Filters[0];
-        $moduleConfigurationName = $Filters[1];
-        $crossArchetypeOutputs = $true;
-    }
-    elseif($Filters.Count -eq 2) {
-        # If there are two segments, we are in the same archetype scenario
-        $archetypeInstanceName = $ArchetypeInstanceName;
-        $moduleConfigurationName = $Filters[0];
-    }
-    else {
-        return $null;
-    }
+        $crossArchetypeOutputs = $false;
 
-    Write-Debug "About to retrieve ouputs for: ArchetypeInstanceName: $archetypeInstanceName and Module configuration Name: $moduleConfigurationName";
-
-    # Start by retrieving the outputs for the module instance
-    $allOutputs = $moduleStateDataService.GetResourceStateOutputs(
-                    $archetypeInstanceName,
-                    $moduleConfigurationName
-                );
-
-    Write-Debug "Outputs retrieved: $(ConvertTo-Json $allOutputs)"
-
-    # Retrieve only the output parameter name which is always the last index in the array
-    $outputParameterName = `
-        $Filters[$outputPathArray.Count -1];
-
-    Write-Debug "Output to be searched: $outputParameterName";
-
-    if ($null -ne $allOutputs) {
-        Write-Debug "Outputs found, proceed to cache the values";
-
-        # Let's format the deployment outputs, this function
-        # will create a Powershell Array when a JArray is found
-        # as a deployment output. This is true when a deployment
-        # output has a type = "array"
-
-        $allOutputs = `
-            Format-DeploymentOutputs `
-                -DeploymentOutputs $allOutputs;
-
-        Write-Debug "Formatted deployment outputs: $(ConvertTo-Json $allOutputs -Depth 10)";
-
-        $allOutputs.Keys | ForEach-Object {
-            $parameterName = $_;
-            # Doing .Value because is a deployment output parameter
-            $parameterValue = $allOutputs.$parameterName.Value;
-
-            if ($crossArchetypeOutputs) {
-                $cacheKey = `
-                    "$archetypeInstanceName.$moduleConfigurationName.$parameterName";
-            }
-            else {
-                $cacheKey = `
-                    "$moduleConfigurationName.$parameterName";
-            }
-
-            Write-Debug "Cache Key: $cacheKey";
-            Write-Debug "Cache Value is: $(ConvertTo-Json $parameterValue)";
-            # Cache the retrieved value by calling set method on cache data service with key and value
-            $cacheDataService.SetByKey(
-                $cacheKey,
-                $parameterValue);
+        if($Filters.Count -ge 3) {
+            # If there are three segments, we are in a cross archetype scenario
+            $archetypeInstanceName = $Filters[0];
+            $moduleConfigurationName = $Filters[1];
+            $crossArchetypeOutputs = $true;
         }
-
-        # Find the specific output
-        if($allOutputs.Keys -eq $outputParameterName) {
-            $output = $allOutputs.$outputParameterName.Value;
-
-            Write-Debug "Ouput found, parameter: $outputParameterName and its value is: $(ConvertTo-Json $output)";
-            Write-Debug "Output type is: $($output.GetType())";
-            return $output;
+        elseif($Filters.Count -eq 2) {
+            # If there are two segments, we are in the same archetype scenario
+            $archetypeInstanceName = $ArchetypeInstanceName;
+            $moduleConfigurationName = $Filters[0];
         }
         else {
             return $null;
         }
+
+        Write-Debug "About to retrieve ouputs for: ArchetypeInstanceName: $archetypeInstanceName and Module configuration Name: $moduleConfigurationName";
+
+        # Start by retrieving the outputs for the module instance
+        $allOutputs = $moduleStateDataService.GetResourceStateOutputs(
+                        $archetypeInstanceName,
+                        $moduleConfigurationName
+                    );
+
+        Write-Debug "Outputs retrieved: $(ConvertTo-Json $allOutputs)"
+
+        # Retrieve only the output parameter name which is always the last index in the array
+        $outputParameterName = `
+            $Filters[$outputPathArray.Count -1];
+
+        Write-Debug "Output to be searched: $outputParameterName";
+
+        if ($null -ne $allOutputs) {
+            Write-Debug "Outputs found, proceed to cache the values";
+
+            # Let's format the deployment outputs, this function
+            # will create a Powershell Array when a JArray is found
+            # as a deployment output. This is true when a deployment
+            # output has a type = "array"
+
+            $allOutputs = `
+                Format-DeploymentOutputs `
+                    -DeploymentOutputs $allOutputs;
+
+            Write-Debug "Formatted deployment outputs: $(ConvertTo-Json $allOutputs -Depth 10)";
+
+            $allOutputs.Keys | ForEach-Object {
+                $parameterName = $_;
+                # Doing .Value because is a deployment output parameter
+                $parameterValue = $allOutputs.$parameterName.Value;
+
+                if ($crossArchetypeOutputs) {
+                    $cacheKey = `
+                        "$archetypeInstanceName.$moduleConfigurationName.$parameterName";
+                }
+                else {
+                    $cacheKey = `
+                        "$moduleConfigurationName.$parameterName";
+                }
+
+                Write-Debug "Cache Key: $cacheKey";
+                Write-Debug "Cache Value is: $(ConvertTo-Json $parameterValue)";
+                # Cache the retrieved value by calling set method on cache data service with key and value
+                $cacheDataService.SetByKey(
+                    $cacheKey,
+                    $parameterValue);
+            }
+
+            # Find the specific output
+            if($allOutputs.Keys -eq $outputParameterName) {
+                $output = $allOutputs.$outputParameterName.Value;
+
+                Write-Debug "Ouput found, parameter: $outputParameterName and its value is: $(ConvertTo-Json $output)";
+                Write-Debug "Output type is: $($output.GetType())";
+                return $output;
+            }
+            else {
+                return $null;
+            }
+        }
+        else {
+            Write-Debug "Outputs not found";
+            return $null;
+        }
     }
-    else {
-        Write-Debug "Outputs not found";
-        return $null;
+    catch {
+        Write-Host "An error ocurred while running Get-ItemFromCache";
+        Write-Host $_;
+        throw $_;
     }
 }
 
@@ -2646,11 +2970,19 @@ Function Get-OutputFromStateStore() {
 # verify if the mandatory parameters are not passed.
 
 if (![string]::IsNullOrEmpty($DefinitionPath)) {
-
-        New-Deployment `
+        if($TearDownEnvironment.IsPresent) {
+            Start-TearDownEnvironment `
+                -ArchetypeInstanceName $ArchetypeInstanceName `
+                -DefinitionPath $DefinitionPath `
+                -ModuleConfigurationName $ModuleConfigurationName `
+                -WorkingDirectory $WorkingDirectory
+        }
+        else {
+            Start-Deployment `
                 -DefinitionPath $DefinitionPath `
                 -ArchetypeInstanceName $ArchetypeInstanceName `
                 -ModuleConfigurationName $ModuleConfigurationName `
                 -WorkingDirectory $WorkingDirectory `
                 -Validate:$($Validate.IsPresent);
+        }
 }
