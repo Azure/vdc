@@ -65,6 +65,37 @@
             }
         },
         {
+            "Name": "AzureSecurityCenter",
+            "ModuleDefinitionName": "AzureSecurityCenter",
+            "DependsOn": [
+                "LogAnalytics"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "NISTControls",
+            "ModuleDefinitionName": "NISTControls",
+            "DependsOn": [
+                "LogAnalytics"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
+                    },
+                    "location": {
+                        "value": "${Parameters.Location}"
+                    }
+                }
+            }
+        },
+        {
             "Name": "AutomationAccounts",
             "ModuleDefinitionName": "AutomationAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.AutomationAccounts.ResourceGroup}",
@@ -163,6 +194,24 @@
             }
         },
         {
+            "Name": "EnableSharedServicesNSGFlowLogs",
+            "DependsOn": [
+                "SharedServicesNSG"
+            ],
+            "Script": {
+                "Command": "../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Arguments": {
+                    "SubscriptionId": "${Parameters.SubscriptionId}",
+                    "NetworkWatcherRegion": "${Parameters.Location}",
+                    "NetworkSecurityGroupId": "reference(SharedServicesNSG.networkSecurityGroupResourceId)",
+                    "DiagnosticStorageAccountId": "reference(DiagnosticStorageAccount.storageAccountResourceId)",
+                    "WorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceId)",
+                    "LogAnalyticsWorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)",
+                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                }
+            }
+        },
+        {
             "Name": "DMZNSG",
             "ModuleDefinitionName": "NetworkSecurityGroups",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.ResourceGroup}",
@@ -190,6 +239,24 @@
             }
         },
         {
+            "Name": "EnableDMZNSGFlowLogs",
+            "DependsOn": [
+                "DMZNSG"
+            ],
+            "Script": {
+                "Command": "../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Arguments": {
+                    "SubscriptionId": "${Parameters.SubscriptionId}",
+                    "NetworkWatcherRegion": "${Parameters.Location}",
+                    "NetworkSecurityGroupId": "reference(DMZNSG.networkSecurityGroupResourceId)",
+                    "DiagnosticStorageAccountId": "reference(DiagnosticStorageAccount.storageAccountResourceId)",
+                    "WorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceId)",
+                    "LogAnalyticsWorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)",
+                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                }
+            }
+        },
+        {
             "Name": "SharedServicesRouteTable",
             "ModuleDefinitionName": "RouteTables",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.RouteTables.ResourceGroup}",
@@ -207,8 +274,8 @@
             "ModuleDefinitionName": "VirtualNetwork",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
             "DependsOn": [
-                "SharedServicesNSG",
-                "DMZNSG",
+                "EnableSharedServicesNSGFlowLogs",
+                "EnableDMZNSGFlowLogs",
                 "SharedServicesRouteTable"
             ],
             "Deployment": {
@@ -280,6 +347,12 @@
                     },
                     "enableBgp": {
                         "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkGateway.EnableBgp}"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     }
                 }
             }
@@ -564,7 +637,7 @@
                 "ArtifactsStorageAccount"
             ],
             "Script": {
-                "Command": "Write-Host 'Adding Scripts...'; Import-Module -Name Az.Storage; $ctx = New-AzStorageContext -StorageAccountName reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName) -SasToken '?reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)'; New-AzRmStorageContainer -Name scripts -ResourceGroupName reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountResourceGroup) -StorageAccountName reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName); Get-ChildItem -LiteralPath '../../Scripts/Windows' -File -Recurse | % { Set-AzStorageBlobContent -Context $ctx -Container scripts -Force -File $($_.FullName) -Blob Windows/$($_.Name)}",
+                "Command": "Write-Host 'Adding Scripts...'; Import-Module -Name Az.Storage; $ctx = New-AzStorageContext -StorageAccountName reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName) -SasToken '?reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)'; New-AzRmStorageContainer -Name scripts -ResourceGroupName reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountResourceGroup) -StorageAccountName reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName); Get-ChildItem -LiteralPath '../../Scripts/Windows' -File -Recurse | % { Set-AzStorageBlobContent -Context $ctx -Container scripts -Force -File $($_.FullName) -Blob Windows/$($_.Name)}",
                 "Arguments" : {
                 }
             }
@@ -572,7 +645,7 @@
         {
             "Name": "RegisterAzureBastionFeature",
             "Script": {
-                "Command": "../../Modules/AzureBastion/2.0/Scripts/RegisterProviderFeature.ps1",
+                "Command": "../../Modules/AzureBastion/2.0/Scripts/register.provider.feature.ps1",
                 "Arguments": {}
             }
         },
@@ -594,6 +667,12 @@
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
                     }
                 }
             }
@@ -638,23 +717,23 @@
                     "logAnalyticsWorkspacePrimarySharedKey": {
                         "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
                     },
-                    "diagnosticsStorageAccountId": {
+                    "diagnosticStorageAccountId": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     },
-                    "diagnosticsStorageAccountName": {
+                    "diagnosticStorageAccountName": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountName)"
                     },
-                    "diagnosticsStorageAccountSasToken": {
+                    "diagnosticStorageAccountSasToken": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -749,23 +828,23 @@
                     "logAnalyticsWorkspacePrimarySharedKey": {
                         "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
                     },
-                    "diagnosticsStorageAccountId": {
+                    "diagnosticStorageAccountId": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     },
-                    "diagnosticsStorageAccountName": {
+                    "diagnosticStorageAccountName": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountName)"
                     },
-                    "diagnosticsStorageAccountSasToken": {
+                    "diagnosticStorageAccountSasToken": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -864,23 +943,23 @@
                     "logAnalyticsWorkspacePrimarySharedKey": {
                         "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
                     },
-                    "diagnosticsStorageAccountId": {
+                    "diagnosticStorageAccountId": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     },
-                    "diagnosticsStorageAccountName": {
+                    "diagnosticStorageAccountName": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountName)"
                     },
-                    "diagnosticsStorageAccountSasToken": {
+                    "diagnosticStorageAccountSasToken": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -892,7 +971,7 @@
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.AddsIPAddressStart}"
                     },
                     "applicationSecurityGroupId": {
-                        "value": "reference(JumpboxASG.applicationSecurityGroupResourceId)"
+                        "value": "reference(DomainControllerASG.applicationSecurityGroupResourceId)"
                     },
                     "adminUsername": {
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.AdminUsername}"
@@ -952,13 +1031,13 @@
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.VMCount}"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-onprem.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "addsAddressStart": {
                         "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.AddsIPAddressStart}"

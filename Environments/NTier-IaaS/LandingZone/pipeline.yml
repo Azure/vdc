@@ -53,7 +53,7 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -66,7 +66,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Log Analytics"
@@ -102,7 +102,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Azure Security Center"
@@ -138,7 +138,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - NIST Controls"
@@ -174,7 +174,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Network Security Groups"
@@ -210,7 +210,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Route Tables"
@@ -246,7 +246,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - VirtualNetwork"
@@ -282,7 +282,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - VirtualNetwork Peering"
@@ -326,7 +326,7 @@ stages:
         ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
         ScriptArguments: '-TearDownResourceGroup'
         azurePowerShellVersion: 'LatestVersion'
-- stage: Deploy
+- stage: ApplyGovernance
   jobs:
   - job: DiagnosticStorageAccount
     pool:
@@ -353,7 +353,7 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -366,7 +366,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: DiagnosticStorageAccount
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Log Analytics" 
@@ -392,7 +392,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ LogAnalytics, DiagnosticStorageAccount ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Azure Security Center" 
@@ -418,7 +418,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ LogAnalytics, DiagnosticStorageAccount ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "NIST Controls" 
@@ -439,12 +439,11 @@ stages:
         ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+- stage: DeployEnvironment
+  jobs:
   - job: ApplicationSecurityGroups
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: DiagnosticStorageAccount
-    variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Web Application Security Group" 
@@ -465,6 +464,16 @@ stages:
         ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: PowerShell@2
+      displayName: "Sets multi-job variable"
+      name: "bootstrapInitializedOutput"
+      inputs:
+        targetType: 'inline'
+        script: '
+        
+          $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
+          Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
+        pwsh: true
     - task: AzurePowerShell@4
       displayName: "Business Application Security Group" 
       inputs:
@@ -506,9 +515,9 @@ stages:
   - job: NetworkSecurityGroups
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ DiagnosticStorageAccount, LogAnalytics, ApplicationSecurityGroups ]
+    dependsOn: ApplicationSecurityGroups
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.ApplicationSecurityGroups.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Default Network Security Group" 
@@ -529,12 +538,31 @@ stages:
         ORGANIZATION_NAME: $(ORGANIZATION_NAME)
         VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+    - task: AzurePowerShell@4
+      displayName: "Enable NSG Flow Logs on Default Network Security Group" 
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/NTier-IaaS/LandingZone/definition.json" -ModuleConfigurationName "EnableDefaultNSGFlowLogs"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEVOPS_SERVICE_PRINCIPAL_USER_ID: $(DEVOPS_SERVICE_PRINCIPAL_USER_ID)
+        KEYVAULT_MANAGEMENT_USER_ID: $(KEYVAULT_MANAGEMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
   - job: RouteTables
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: DiagnosticStorageAccount
+    dependsOn: ApplicationSecurityGroups
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.ApplicationSecurityGroups.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Default Route Table" 
@@ -558,9 +586,9 @@ stages:
   - job: VirtualNetwork
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ NetworkSecurityGroups, RouteTables, DiagnosticStorageAccount ]
+    dependsOn: [ ApplicationSecurityGroups, NetworkSecurityGroups, RouteTables ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.ApplicationSecurityGroups.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Virtual Network" 

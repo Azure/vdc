@@ -43,7 +43,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -60,7 +60,7 @@ stages:
         SCRIPT_EXECUTION_SP_KEY: $(SCRIPT_EXECUTION_SP_KEY)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -73,7 +73,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Log Analytics"
@@ -91,7 +91,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "LogAnalytics" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -111,7 +111,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Network Security Groups"
@@ -124,12 +124,12 @@ stages:
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
-      displayName: "ARM Validation - On-Premises NSG"
+      displayName: "ARM Validation - OnPremises NSG"
       inputs:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "OnPremisesNSG" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "OnPremisesNSG" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -149,7 +149,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Virtual NetWork"
@@ -167,7 +167,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "VirtualNetwork" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -187,7 +187,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Virtual Network Gateway"
@@ -205,7 +205,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "VirtualNetworkGateway" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "VirtualNetworkGateway" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -225,7 +225,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Key Vault"
@@ -243,7 +243,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "KeyVault" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -264,7 +264,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnKeyVault" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnKeyVault" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -284,7 +284,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Active Directory"
@@ -302,7 +302,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "ActiveDirectoryVM" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "ActiveDirectoryVM" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -323,7 +323,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "InstallActiveDirectory" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "InstallActiveDirectory" -Validate'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -351,7 +351,7 @@ stages:
         ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
         ScriptArguments: '-TearDownResourceGroup'
         azurePowerShellVersion: 'LatestVersion'
-- stage: Deploy
+- stage: DeployEnvironment
   jobs:
   - job: DiagnosticStorageAccount
     timeoutInMinutes: 0
@@ -364,7 +364,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "DiagnosticStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -381,7 +381,7 @@ stages:
         SCRIPT_EXECUTION_SP_KEY: $(SCRIPT_EXECUTION_SP_KEY)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -395,7 +395,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: DiagnosticStorageAccount
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Log Analytics"
@@ -403,7 +403,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "LogAnalytics"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "LogAnalytics"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -424,15 +424,15 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ LogAnalytics, DiagnosticStorageAccount ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
-      displayName: "On-premises Network Security Group"
+      displayName: "OnPremises Network Security Group"
       inputs:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "OnPremisesNSG"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "OnPremisesNSG"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -453,7 +453,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ NetworkSecurityGroups, DiagnosticStorageAccount ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Virtual Network"
@@ -461,7 +461,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "VirtualNetwork"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "VirtualNetwork"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -482,7 +482,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ DiagnosticStorageAccount, LogAnalytics, VirtualNetwork ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Key Vault"
@@ -490,7 +490,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "KeyVault"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "KeyVault"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -511,7 +511,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "CreateRootCertificate"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "CreateRootCertificate"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -532,7 +532,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnKeyVault"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "EnableServiceEndpointOnKeyVault"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -553,7 +553,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ VirtualNetwork, KeyVault, DiagnosticStorageAccount ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Virtual Network Gateway"
@@ -561,7 +561,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "VirtualNetworkGateway"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "VirtualNetworkGateway"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -581,7 +581,7 @@ stages:
     pool:
       name: 'vdc-self-hosted'
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     dependsOn: DiagnosticStorageAccount
     steps:
     - task: AzurePowerShell@4
@@ -590,7 +590,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "ArtifactsStorageAccount"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "ArtifactsStorageAccount"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -611,7 +611,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "UploadScriptsToArtifactsStorage"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "UploadScriptsToArtifactsStorage"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -632,7 +632,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, KeyVault, ArtifactsStorageAccount ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Active Directory VM"
@@ -640,7 +640,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "ActiveDirectoryVM"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "ActiveDirectoryVM"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -661,7 +661,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/On-Premise/definition.json" -ModuleConfigurationName "InstallActiveDirectory"'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "InstallActiveDirectory"'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)

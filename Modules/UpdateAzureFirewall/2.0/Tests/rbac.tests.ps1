@@ -5,16 +5,16 @@
 
 		File:		module.tests.ps1
 
-		Purpose:	Pester - Test Key Vault ARM Templates
+		Purpose:	Pester - Test Update Azure Firewall ARM Templates
 
 		Version: 	1.0.0.0 - 1st April 2019 - Azure Virtual Datacenter Development Team
 		==============================================================================================
 
 	.SYNOPSIS
-		This script contains functionality used to test Azure Key Vault ARM template synatax.
+		This script contains functionality used to test Azure Update Azure Firewall ARM template synatax.
 
 	.DESCRIPTION
-		This script contains functionality used to test Azure Key Vault ARM template synatax.
+		This script contains functionality used to test Azure Update Azure Firewall ARM template synatax.
 
 		Deployment steps of the script are outlined below.
         1) Test Template File Syntax
@@ -58,7 +58,7 @@ if ($null -ne $TemplateFileTestCases -and
     $TemplateFileTestCases.Count -gt 0) { 
 
     #region Run Pester Test Script
-    Describe "Template: $template - Key Vault" -Tags Unit {
+    Describe "Template: $template - Update Azure Firewall" -Tags Unit {
 
         Context "Template File Syntax" {
 

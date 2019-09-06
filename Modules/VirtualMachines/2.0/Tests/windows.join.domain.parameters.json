@@ -27,13 +27,13 @@
         "logAnalyticsWorkspacePrimarySharedKey": {
             "value": ""
         },
-        "diagnosticsStorageAccountId": {
+        "diagnosticStorageAccountId": {
             "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup/providers/Microsoft.Storage/storageAccounts/contosostrgexmpl"
         },
-        "diagnosticsStorageAccountName": {
+        "diagnosticStorageAccountName": {
             "value": "contoso-diag-storage"
         },
-        "diagnosticsStorageAccountSasToken": {
+        "diagnosticStorageAccountSasToken": {
             "value": ""
         },
         "artifactsStorageAccountName": {

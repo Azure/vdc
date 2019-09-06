@@ -42,7 +42,7 @@ Class CacheDataService: ICacheDataService {
         if ($cache) {
             # Check if the string returned is a JSON string
             $isJson = `
-                Test-Json $cache `
+                Test-JsonContent $cache `
                     -ErrorAction SilentlyContinue;
             
             # If we can convert to object, then return converted object 

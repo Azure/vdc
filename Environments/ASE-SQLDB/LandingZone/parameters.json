@@ -6,9 +6,15 @@
     "Location": "West US",
     "ModuleConfigurationParameters": {
         "OnPremisesInformation": {
+            "DeploymentName": "onprem",
+            "InstanceName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.OnPremisesInformation.DeploymentName}",
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"
             }
+        },
+        "SharedServices": {
+            "DeploymentName": "shrdsvcs",
+            "InstanceName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}"
         },
         "DiagnosticStorageAccount": {
             "Name": "${Parameters.Organization}asesqldiag01",
@@ -24,7 +30,12 @@
             },
             "Policies": {
                 "Effect": "Audit"
-            }
+            },
+            "Containers": [
+                {
+                    "name": "vulnerability-assessment"
+                }
+            ]
         },
         "LogAnalytics": {
             "Name": "${Parameters.InstanceName}-la",

@@ -5,6 +5,10 @@
     "Subscription": "SharedServices",
     "Location": "West US",
     "ModuleConfigurationParameters": {
+        "OnPremisesInformation": {
+            "InstanceName": "${Parameters.InstanceName}",
+            "Comments": "This InstanceName is a temporal value, this value is used in artifactsStorageAccount.json, the idea is to have a global set of services and this name should point to the InstanceName (deployment name) of the global services archetype"
+        },
         "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
         "Comments": "Deployment UserId corresponds to the AAD Object Id of the user that wants to manage Key Vault through the Portal. DevOpsServicePrincipalId corresponds the service principal (SPN) - Object Id - of your service connection from Azure DevOps pipeline, to get this value run the following az cli command: az ad sp show --id YOUR_APP_ID --query 'objectId'",
@@ -85,7 +89,7 @@
         "AzureBastion": {
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
             "Name": "${Parameters.InstanceName}-bastion",
-            "Location": "West US",
+            "Location": "${Parameters.Location}",
             "ListOfAllowedRegions": [
                 "West US",
                 "East US",
@@ -304,6 +308,31 @@
                             "destinationApplicationSecurityGroups": [
                                 {
                                     "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-azure-bastion-rdp-into-jb",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "3389",
+                                "22"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 180,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[5].addressPrefix}",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Jumpbox.Name}"
                                 }
                             ],
                             "sourceApplicationSecurityGroups": []
@@ -741,7 +770,7 @@
                 "Name": "linux-jb-vm",
                 "VMCount": 1,
                 "OSType": "Linux",
-                "VMSize": "Standard_D2s_v3",
+                "VMSize": "Standard_DS2_v2",
                 "OSImage": {
                     "publisher": "Canonical",
                     "offer": "UbuntuServer",

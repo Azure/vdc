@@ -65,6 +65,12 @@
                     },
                     "subnetName": {
                         "value": "${Parameters.ModuleConfigurationParameters.WebAppLoadBalancer.SubnetName}"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     }
                 }
             }
@@ -107,17 +113,17 @@
                     "logAnalyticsWorkspacePrimarySharedKey": {
                         "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
                     },
-                    "diagnosticsStorageAccountName": {
+                    "diagnosticStorageAccountName": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountName)"
                     },
-                    "diagnosticsStorageAccountSasToken": {
+                    "diagnosticStorageAccountSasToken": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -135,13 +141,13 @@
                         "reference": "${Parameters.ModuleConfigurationParameters.WebApp.AdminPassword}"
                     },
                     "domainAdminUsername": {
-                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DomainAdminUsername}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminUsername}"
                     },
                     "domainAdminPassword": {
-                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DomainAdminPassword}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminPassword}"
                     },
                     "domainName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.WebApp.DomainName}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainName}"
                     }
                 }
             }
@@ -159,10 +165,10 @@
                         "value": "${Parameters.ModuleConfigurationParameters.WebApp.Name}"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     }
                 }
             }
@@ -187,6 +193,12 @@
                     },
                     "subnetName": {
                         "value": "${Parameters.ModuleConfigurationParameters.BusinessAppLoadBalancer.SubnetName}"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     }
                 }
             }
@@ -229,17 +241,17 @@
                     "logAnalyticsWorkspacePrimarySharedKey": {
                         "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
                     },
-                    "diagnosticsStorageAccountName": {
+                    "diagnosticStorageAccountName": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountName)"
                     },
-                    "diagnosticsStorageAccountSasToken": {
+                    "diagnosticStorageAccountSasToken": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -257,13 +269,13 @@
                         "reference": "${Parameters.ModuleConfigurationParameters.BusinessApp.AdminPassword}"
                     },
                     "domainAdminUsername": {
-                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DomainAdminUsername}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminUsername}"
                     },
                     "domainAdminPassword": {
-                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DomainAdminPassword}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminPassword}"
                     },
                     "domainName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.DomainName}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainName}"
                     }
                 }
             }
@@ -281,10 +293,10 @@
                         "value": "${Parameters.ModuleConfigurationParameters.BusinessApp.Name}"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     }
                 }
             }
@@ -312,6 +324,12 @@
                     },
                     "subnetName": {
                         "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOnLoadBalancer.SubnetName}"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     }
                 }
             }
@@ -357,23 +375,23 @@
                     "logAnalyticsWorkspacePrimarySharedKey": {
                         "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
                     },
-                    "diagnosticsStorageAccountId": {
+                    "diagnosticStorageAccountId": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     },
-                    "diagnosticsStorageAccountName": {
+                    "diagnosticStorageAccountName": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountName)"
                     },
-                    "diagnosticsStorageAccountSasToken": {
+                    "diagnosticStorageAccountSasToken": {
                         "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "vNetId": {
                         "value": "reference(VirtualNetwork.vNetResourceId)"
@@ -394,13 +412,13 @@
                         "reference": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.AdminPassword}"
                     },
                     "domainAdminUsername": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminUsername}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminUsername}"
                     },
                     "domainAdminPassword": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminPassword}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminPassword}"
                     },
                     "domainName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainName}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainName}"
                     }
                 }
             }
@@ -466,25 +484,25 @@
                         "reference": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.AdminPassword}"
                     },
                     "domainAdminUsername": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminUsername}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminUsername}"
                     },
                     "domainAdminPassword": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainAdminPassword}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainAdminPassword}"
                     },
                     "domainName": {
-                        "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.DomainName}"
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.DomainName}"
                     },
                     "clusterName": {
                         "value": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ClusterName}"
                     },
                     "artifactsStorageAccountName": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountName)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountName)"
                     },
                     "artifactsStorageAccountKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountAccessKey)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountAccessKey)"
                     },
                     "artifactsStorageAccountSasKey": {
-                        "value": "reference(${Parameters.Organization}-shrdsvcs.ArtifactsStorageAccount.storageAccountSasToken)"
+                        "value": "reference(${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.InstanceName}.ArtifactsStorageAccount.storageAccountSasToken)"
                     },
                     "cloudWitnessStorageAccountName": {
                         "value": "reference(CloudWitnessStorageAccount.storageAccountName)"

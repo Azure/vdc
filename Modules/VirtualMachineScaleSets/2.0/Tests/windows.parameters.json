@@ -28,10 +28,10 @@
         "logAnalyticsWorkspacePrimarySharedKey": {
             "value": ""
         },
-        "diagnosticsStorageAccountName": {
+        "diagnosticStorageAccountName": {
             "value": "contoso-diag-storage"
         },
-        "diagnosticsStorageAccountSasToken": {
+        "diagnosticStorageAccountSasToken": {
             "value": ""
         },
         "artifactsStorageAccountName": {

@@ -9,7 +9,7 @@ Class LocalCacheRepository: ICacheRepository {
                 New-Object System.Runtime.Caching.MemoryCache('Main');
     }
 
-    [string] GetByKey([string] $key) {
+    [object] GetByKey([string] $key) {
 
         # key is empty string
         if([string]::IsNullOrEmpty($key)) {
@@ -30,9 +30,12 @@ Class LocalCacheRepository: ICacheRepository {
         # Return type from Get-Item is name-value pair. If present,
         # return its Value
         if([LocalCacheRepository]::memoryCache.Contains($key)) {
-            return [LocalCacheRepository]::memoryCache.Get($key);
+            $cachedValue = [LocalCacheRepository]::memoryCache.Get($key);
+            Write-Debug "Key: $key found in cache, with value: $cachedValue"
+            return $cachedValue;
         }
         else {
+            Write-Debug "Key: $key not found in cache, returning null"
             return $null;
         }
     }
@@ -41,7 +44,7 @@ Class LocalCacheRepository: ICacheRepository {
                [string] $value) {
         
         $policy = New-Object System.Runtime.Caching.CacheItemPolicy;
-        $policy.AbsoluteExpiration = (Get-Date).ToUniversalTime().AddDays(2);
+        $policy.AbsoluteExpiration = (Get-Date).AddHours(3);
         
         if(![string]::IsNullOrEmpty($key)) {
             # Add prefix to the key before attempting save
@@ -62,6 +65,7 @@ Class LocalCacheRepository: ICacheRepository {
             -and [LocalCacheRepository]::memoryCache.Get($key) -ne $value
            ) `
             -or ![LocalCacheRepository]::memoryCache.Contains($key)) {
+            Write-Debug "Caching key: $key with value: $value"
             [void][LocalCacheRepository]::memoryCache.Set($key, $value, $policy);
         }
     }

@@ -3,6 +3,7 @@
     "ResourceGroup": "${Parameters.Organization}-artifacts-rg",
     "Sku": "Standard_GRS",
     "Location": "${Parameters.Location}",
+    "InstanceName": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.InstanceName}",
     "Policies": {
         "Effect": "Audit"
     },

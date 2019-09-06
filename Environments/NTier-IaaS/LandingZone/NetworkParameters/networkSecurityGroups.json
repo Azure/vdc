@@ -138,6 +138,24 @@
                 }
             },
             {
+                "name": "allow-within-vnet",
+                "properties": {
+                    "access": "Allow",
+                    "destinationAddressPrefixes": [],
+                    "destinationAddressPrefix": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].addressPrefix}",
+                    "destinationPortRange": "*",
+                    "destinationPortRanges":[],
+                    "destinationApplicationSecurityGroups": [],
+                    "direction": "Inbound",
+                    "priority": 220,
+                    "protocol": "*",
+                    "sourcePortRange": "*",
+                    "sourcePortRanges": [],
+                    "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].addressPrefix}",
+                    "sourceApplicationSecurityGroups":[]
+                }
+            },
+            {
                 "name": "deny-internet",
                 "properties": {
                     "access": "Deny",

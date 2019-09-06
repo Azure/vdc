@@ -174,6 +174,24 @@
             }
         },
         {
+            "Name": "EnableDefaultNSGFlowLogs",
+            "DependsOn": [
+                "DefaultNSG"
+            ],
+            "Script": {
+                "Command": "../../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Arguments": {
+                    "SubscriptionId": "${Parameters.SubscriptionId}",
+                    "NetworkWatcherRegion": "${Parameters.Location}",
+                    "NetworkSecurityGroupId": "reference(DefaultNSG.networkSecurityGroupResourceId)",
+                    "DiagnosticStorageAccountId": "reference(DiagnosticStorageAccount.storageAccountResourceId)",
+                    "WorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceId)",
+                    "LogAnalyticsWorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)",
+                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                }
+            }
+        },
+        {
             "Name": "DefaultRouteTable",
             "ModuleDefinitionName": "RouteTables",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.RouteTables.ResourceGroup}",
@@ -194,7 +212,7 @@
             "ModuleDefinitionName": "VirtualNetwork",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
             "DependsOn": [
-                "DefaultNSG",
+                "EnableDefaultNSGFlowLogs",
                 "DefaultRouteTable"
             ],
             "Deployment": {
@@ -216,6 +234,26 @@
                     },
                     "enableVmProtection": {
                         "value": false
+                    }
+                }
+            }
+        },
+        {
+            "Name": "EnableServiceEndpointOnDiagnosticStorageAccount",
+            "ModuleDefinitionName": "StorageAccounts",
+            "Updates": "DiagnosticStorageAccount",
+            "Comments": "Enables Service endpoint on the Storage Account",
+            "DependsOn": [
+                "DiagnosticStorageAccount",
+                "VirtualNetwork"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "networkAcls": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.NetworkAcls}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
                     }
                 }
             }

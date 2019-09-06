@@ -139,11 +139,11 @@
                     "serverName": {
                         "value": "${Parameters.ModuleConfigurationParameters.SQLDB.Server.Name}"
                     },
-                    "diagnosticStorageAccountPrimaryBlobEndpoint": {
-                        "value": "reference(DiagnosticStorageAccount.storageAccountPrimaryBlobEndpoint)"
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
                     },
-                    "diagnosticStorageAccountAccessKey": {
-                        "value": "reference(DiagnosticStorageAccount.storageAccountAccessKey)"
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
                     },
                     "virtualNetworkList": {
                         "value": "${Parameters.ModuleConfigurationParameters.SQLDB.Server.VirtualNetworkList}"
@@ -165,6 +165,12 @@
                     },
                     "serverName": {
                         "value": "reference(SQLDBServer.sqlServerName)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
                     }
                 }
             }

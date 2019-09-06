@@ -5,9 +5,20 @@
     "Subscription": "NTier_IaaS",
     "Location": "West US",
     "ModuleConfigurationParameters": {
+        "OnPremisesInformation": {
+            "DeploymentName": "onprem",
+            "InstanceName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.OnPremisesInformation.DeploymentName}"
+        },
+        "SharedServices": {
+            "DeploymentName": "shrdsvcs",
+            "InstanceName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}",
+            "DomainName": "reference(${Parameters.ModuleConfigurationParameters.SharedServices.InstanceName}.InstallActiveDirectoryDomainServices.domainName)",
+            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
+            "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)"
+        },
         "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
-        "Comments": "Adding VirtualNetwork property, because KeyVault references a VirtualNetwork property references NetworkSecurityGroups and RouteTable, this is why these two properties are also included",
+        "ArtifactsStorageAccount": "file(../../_Common/artifactsStorageAccount.json)",
         "KeyVault": {
             "Name": "${Parameters.InstanceName}-kv",
             "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
@@ -95,9 +106,6 @@
                 "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
                 "Destination": "HSM"
             },
-            "DomainName": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.domainName)",
-            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
-            "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
             "AdminPassword": {
                 "keyVault": {
@@ -165,9 +173,6 @@
                 "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
                 "Destination": "HSM"
             },
-            "DomainName": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.domainName)",
-            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
-            "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
             "AdminPassword": {
                 "keyVault": {
@@ -219,9 +224,6 @@
                 "sku": "Enterprise"
             },
             "IPAddressStart": "172.2.0.20",
-            "DomainName": "reference(${Parameters.Organization}-shrdsvcs.InstallActiveDirectoryDomainServices.domainName)",
-            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
-            "DomainAdminPassword": "env(DOMAIN_ADMIN_USER_PWD)",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
             "AdminPassword": {
                 "keyVault": {
@@ -245,7 +247,7 @@
             "SubnetName": "reference(VirtualNetwork.subnetNames)"
         },
         "SQLServerAlwaysOnCloudWitness": {
-            "Name": "${Parameters.InstanceName}ntierstrg",
+            "Name": "${Parameters.InstanceName}cwstrg",
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.SQLServerAlwaysOn.ResourceGroup}",
             "Sku": "Standard_GRS",
             "NetworkAcls": {

@@ -215,7 +215,7 @@
         },
         "storageAccountAccessKey": {
             "type": "string",
-            "value": "[listKeys(variables('cleanStorageAccountName'),'2015-06-15').key1]",
+            "value": "[listKeys(variables('cleanStorageAccountName'), '2016-12-01').keys[0].value]",
             "metadata": {
                 "description": "The Access Key for the Storage Account."
             }

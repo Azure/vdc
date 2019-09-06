@@ -8,6 +8,8 @@
         "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
         "OnPremisesInformation": {
+            "DeploymentName": "onprem",
+            "InstanceName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.OnPremisesInformation.DeploymentName}",
             "ActiveDirectory": {
                 "PrimaryDomainControllerIP": "192.168.1.4",
                 "DomainName": "contoso.com",
@@ -99,7 +101,7 @@
         "AzureBastion": {
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
             "Name": "${Parameters.InstanceName}-bastion",
-            "Location": "West US",
+            "Location": "${Parameters.Location}",
             "ListOfAllowedRegions": [
                 "West US",
                 "East US",
@@ -387,6 +389,31 @@
                             "destinationApplicationSecurityGroups": [
                                 {
                                     "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-azure-bastion-rdp-into-jb",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "3389",
+                                "22"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 180,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[5].addressPrefix}",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Jumpbox.Name}"
                                 }
                             ],
                             "sourceApplicationSecurityGroups": []
@@ -738,7 +765,7 @@
             ]
         },
         "KeyVault": {
-            "Name": "${Parameters.InstanceName}-kv03",
+            "Name": "${Parameters.InstanceName}-kv",
             "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
             "Sku": "Premium",
             "EnableVaultForDeployment": true,
@@ -831,7 +858,7 @@
                 "Name": "linux-jb-vm",
                 "VMCount": 1,
                 "OSType": "Linux",
-                "VMSize": "Standard_D2s_v3",
+                "VMSize": "Standard_DS2_v2",
                 "OSImage": {
                     "publisher": "Canonical",
                     "offer": "UbuntuServer",
@@ -846,7 +873,7 @@
             }
         },
         "ActiveDirectoryDomainServices": {
-            "Name": "adds-vms",
+            "Name": "adds-vm",
             "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
             "Comments": "Windows VM name cannot exceed 13 characters. Additionally, Make sure that AddsIPAddressStart and ActiveDirectory.PrimaryDomainControllerIP are in the same subnet address prefix and they don't overlap",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",

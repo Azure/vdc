@@ -43,7 +43,7 @@
         "enableVaultForTemplateDeployment": {
             "value": true
         },
-        "logsRetentionInDays": {
+        "diagnosticLogsRetentionInDays": {
             "value": 365
         },
         "vaultSku": {

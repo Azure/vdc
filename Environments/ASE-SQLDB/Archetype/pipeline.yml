@@ -53,7 +53,7 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -66,7 +66,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - App Service Environments"
@@ -102,7 +102,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - App Service Plan"
@@ -138,7 +138,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - App Service WebApp"
@@ -174,7 +174,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - SQLDB Server"
@@ -210,7 +210,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SetupValidationResourceGroup, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - SQL Database"
@@ -254,7 +254,7 @@ stages:
         ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
         ScriptArguments: '-TearDownResourceGroup'
         azurePowerShellVersion: 'LatestVersion'
-- stage: Deploy
+- stage: DeployEnvironment
   jobs:
   - job: KeyVault
     pool:
@@ -281,7 +281,7 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -295,7 +295,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: KeyVault
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "App Service Environments" 
@@ -322,7 +322,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ AppServiceEnvironments, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "App Service Plan" 
@@ -348,7 +348,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ AppServicePlan, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "App Service WebApp" 
@@ -375,7 +375,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: KeyVault
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "SQLDB Server" 
@@ -402,7 +402,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [ SQLDBServer, KeyVault ]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "SQLDatabase" 

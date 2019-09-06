@@ -53,7 +53,7 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -66,7 +66,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [SetupValidationResourceGroup, KeyVault]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Virtual Machine Scale Sets"
@@ -102,7 +102,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [SetupValidationResourceGroup, KeyVault]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Virtual Machine Scale Sets"
@@ -157,7 +157,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [SetupValidationResourceGroup, KeyVault]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Load Balancers"
@@ -231,7 +231,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [SetupValidationResourceGroup, KeyVault]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - SQL Server Cloud Witness"
@@ -267,7 +267,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [SetupValidationResourceGroup, KeyVault]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Internet Information Services"
@@ -322,7 +322,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [SetupValidationResourceGroup, KeyVault]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - SQL Server AlwaysOn installation"
@@ -366,7 +366,7 @@ stages:
         ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
         ScriptArguments: '-TearDownResourceGroup'
         azurePowerShellVersion: 'LatestVersion'
-- stage: Deploy
+- stage: DeployEnvironment
   jobs:
   - job: KeyVault
     pool:
@@ -393,7 +393,7 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
     - task: PowerShell@2
       displayName: "Sets multi-job variable"
-      name: "bootstratInitializedOutput"
+      name: "bootstrapInitializedOutput"
       inputs:
         targetType: 'inline'
         script: '
@@ -407,7 +407,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: KeyVault
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Web Load Balancer"
@@ -471,7 +471,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [KeyVault, LoadBalancers]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "SQL Server AlwaysOn Virtual Machines"
@@ -498,7 +498,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [KeyVault, LoadBalancers]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Web VMSS"
@@ -544,7 +544,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [KeyVault, VirtualMachineScaleSets]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "Web IIS"
@@ -590,7 +590,7 @@ stages:
       name: 'vdc-self-hosted'
     dependsOn: [KeyVault, VirtualMachines]
     variables: 
-      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstratInitializedOutput.BOOTSTRAP_INITIALIZED']]
+      BOOTSTRAP_INITIALIZED: $[dependencies.KeyVault.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
       displayName: "SQL Server Cloud Witness"

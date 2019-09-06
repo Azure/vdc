@@ -63,7 +63,7 @@
                 "description": "Optional. Switch to lock Key Vault from deletion."
             }
         },
-        "logsRetentionInDays": {
+        "diagnosticLogsRetentionInDays": {
             "type": "int",
             "defaultValue": 365,
             "minValue": 0,
@@ -107,6 +107,13 @@
             "metadata": {
                 "description": "Optional. Virtual Network resource identifier, if networkAcls is passed, this value must be passed as well"
             }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Optional. Location for all resources."
+            }
         }
     },
     "variables": {
@@ -135,7 +142,7 @@
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2018-02-14",
             "name": "[parameters('keyVaultName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "tags": {
                 "displayName": "KeyVault"
             },
@@ -170,20 +177,31 @@
                     "type": "Microsoft.KeyVault/vaults/providers/diagnosticsettings",
                     "apiVersion": "2016-09-01",
                     "name": "[concat(parameters('keyVaultName'), '/Microsoft.Insights/service')]",
-                    "location": "[resourceGroup().location]",
+                    "location": "[parameters('location')]",
                     "dependsOn": [
                         "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
                     ],
                     "properties": {
                         "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
                         "workspaceId": "[parameters('workspaceId')]",
+                        "metrics": [
+                            {
+                                "category": "AllMetrics",
+                                "timeGrain": null,
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": true,
+                                    "days": "[parameters('diagnosticLogsRetentionInDays')]"
+                                }
+                            }
+                        ],
                         "logs": [
                             {
                                 "category": "AuditEvent",
                                 "enabled": true,
                                 "retentionPolicy": {
                                     "enabled": true,
-                                    "days": "[parameters('LogsRetentionInDays')]"
+                                    "days": "[parameters('diagnosticLogsRetentionInDays')]"
                                 }
                             }
                         ]

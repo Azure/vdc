@@ -53,7 +53,7 @@ Describe  "Azure DevOps Cache Repository Unit Test Cases" {
             $localCacheRepository.RemoveByKey('vdc_tests_dummy2');
 
             $cache = $localCacheRepository.GetByKey('vdc_tests_dummy2');
-            $cache | Should Be "";
+            $cache | Should Be $null;
         }
  
         It "Should flush all cache items" {

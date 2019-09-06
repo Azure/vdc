@@ -18,6 +18,10 @@ $scriptBlock = ". $scriptPath";
 $script = [scriptblock]::Create($scriptBlock);
 . $script;
 
+$rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$scriptPath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath  @("..", "Common", "Helper.psd1");
+Import-Module $scriptPath -Force
+
 Describe  "Azure DevOps Cache Repository Unit Test Cases" {
 
     Context "Azure DevOps Cache" {

@@ -6,15 +6,19 @@
     "Location": "West US",
     "ModuleConfigurationParameters": {
         "OnPremisesInformation": {
+            "DeploymentName": "onprem",
+            "InstanceName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.OnPremisesInformation.DeploymentName}",
             "Network": {
                 "AddressPrefix": "192.168.1.0/28"
             }
         },
         "SharedServices": {
+            "DeploymentName": "shrdsvcs",
+            "InstanceName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}",
             "Jumpbox_SubnetAddressPrefix": "172.0.0.0/24"
         },
         "DiagnosticStorageAccount": {
-            "Name": "${Parameters.Organization}asesqldiag01",
+            "Name": "${Parameters.Organization}ntieridiag01",
             "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
             "Sku": "Standard_GRS",
             "NetworkAcls": {

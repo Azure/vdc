@@ -5,16 +5,16 @@
 
 		File:		module.tests.ps1
 
-		Purpose:	Pester - Test Key Vault ARM Templates
+		Purpose:	Pester - Test Internet Information Services ARM Templates
 
 		Version: 	1.0.0.0 - 1st April 2019 - Azure Virtual Datacenter Development Team
 		==============================================================================================
 
 	.SYNOPSIS
-		This script contains functionality used to test Key Vault ARM template synatax.
+		This script contains functionality used to test Internet Information Services ARM template synatax.
 
 	.DESCRIPTION
-		This script contains functionality used to test Key Vault ARM template synatax.
+		This script contains functionality used to test Internet Information Services ARM template synatax.
 
 		Deployment steps of the script are outlined below.
         1) Test Template File Syntax
@@ -55,7 +55,7 @@ ForEach ( $File in (Get-ChildItem (Join-Path "$here" "deploy.json") ) ) {
 #endregion
 
 #region Run Pester Test Script
-Describe "Template: $template - Key Vault" -Tags Unit {
+Describe "Template: $template - Internet Information Services" -Tags Unit {
 
     Context "Template File Syntax" {
 

@@ -34,16 +34,25 @@
                 "description": "Whether the database is accessible by the Azure services."
             }
         },
-        "diagnosticStorageAccountPrimaryBlobEndpoint": {
-            "type": "string",
+        "diagnosticLogsRetentionInDays": {
+            "type": "int",
+            "defaultValue": 365,
+            "minValue": 0,
+            "maxValue": 365,
             "metadata": {
-                "description": "The primary endpoint of the storage account where the vulnerability assesments scan results will be stored."
+                "description": "Optional. Specifies the number of days that logs will be kept for; a value of 0 will retain data indefinitely."
             }
         },
-        "diagnosticStorageAccountAccessKey": {
-            "type": "securestring",
+        "diagnosticStorageAccountId": {
+            "type": "string",
             "metadata": {
-                "description": "The key of the storage account where the vulnerability assesments scan results will be stored."
+                "description": "Required. Resource identifier of the Diagnostic Storage Account."
+            }
+        },
+        "workspaceId": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. Resource identifier of Log Analytics."
             }
         },
         "virtualNetworkList": {
@@ -108,22 +117,29 @@
                     }
                 },
                 {
-                    "apiVersion": "2018-06-01-preview",
-                    "type": "vulnerabilityAssessments",
-                    "name": "Default",
-                    "properties": {
-                        "storageContainerPath": "[concat(parameters('diagnosticStorageAccountPrimaryBlobEndpoint'), 'vulnerability-assessment')]",
-                        "storageAccountAccessKey": "[parameters('diagnosticStorageAccountAccessKey')]",
-                        "recurringScans": {
-                            "isEnabled": true,
-                            "emailSubscriptionAdmins": true,
-                            "emails": []
-                        }
-                    },
+                    "name": "SecurityAlerts",
+                    "type": "securityAlertPolicies",
+                    "apiVersion": "2017-03-01-preview",
                     "dependsOn": [
-                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]",
-                        "[concat('Microsoft.Sql/servers/', parameters('serverName'), '/securityAlertPolicies/Default')]"
-                    ]
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "state": "Enabled",
+                        "emailAccountAdmins": true
+                    }
+                },
+                {
+                    "name": "AuditingSettings",
+                    "type": "auditingSettings",
+                    "apiVersion": "2017-03-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "state": "Enabled",
+                        "isAzureMonitorTargetEnabled": true,
+                        "retentionDays": "[parameters('diagnosticLogsRetentionInDays')]"
+                    }
                 }
             ]
         },
@@ -143,6 +159,30 @@
             "dependsOn": [
                 "[concat('Microsoft.Sql/servers/', parameters('serverName'))]"
             ]
+        },
+        {
+            "type": "Microsoft.Sql/servers/providers/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            "location": "[parameters('location')]",
+            "name": "[concat(parameters('serverName'), '/Microsoft.Insights/service')]",
+            "dependsOn": [
+                "virtualNetworkCopy"
+            ],
+            "properties": {
+                "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
+                "workspaceId": "[parameters('workspaceId')]",
+                "metrics": [
+                    {
+                        "category": "AllMetrics",
+                        "timeGrain": null,
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('diagnosticLogsRetentionInDays')]"
+                        }
+                    }
+                ]
+            }
         }
     ],
     "outputs": {

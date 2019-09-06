@@ -12,7 +12,7 @@ Class AzureDevOpsCacheRepository: ICacheRepository {
         $this.cacheNamePrefix = $cacheNamePrefix;
     }
 
-    [string] GetByKey([string] $key) {
+    [object] GetByKey([string] $key) {
 
         # key is empty string
         if([string]::IsNullOrEmpty($key)) {
@@ -40,15 +40,16 @@ Class AzureDevOpsCacheRepository: ICacheRepository {
         # An invalid key throws an exception, so we 
         # set ErrorAction to SilentlyContinue
         $environmentValue = `
-            (Get-Item Env:$key `
-                -ErrorAction SilentlyContinue);
+            Get-PowershellEnvironmentVariable -Key $key;
 
         # return type from Get-Item is name-value pair, if present
         # return its Value
         if($null -ne $environmentValue) {
-            return $environmentValue.Value;
+            Write-Debug "Key: $key found in cache, with value: $($environmentValue)"
+            return $environmentValue;
         }
         else {
+            Write-Debug "Key: $key not found in cache, returning null"
             return $null;
         }
     }
@@ -86,6 +87,7 @@ Class AzureDevOpsCacheRepository: ICacheRepository {
                (![string]::IsNullOrEmpty($environmentValue) `
                 -and $environmentValue -ne $value
                )) {
+                Write-Debug "Caching key: $key with value: $value"
                 Write-Host "##vso[task.setvariable variable=$key;]$value";
             }
         }

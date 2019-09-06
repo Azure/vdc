@@ -86,25 +86,25 @@
                 "description": "Required. WorkspaceKey value of OMS. This value is referenced in OMS VM Extension"
             }
         },
-        "diagnosticsStorageAccountId": {
+        "diagnosticStorageAccountId": {
             "type": "string",
             "metadata": {
                 "description": "Required. The Resource Id of the Storage Account."
             }
         },
-        "diagnosticsStorageAccountName": {
+        "diagnosticStorageAccountName": {
             "type": "string",
             "metadata": {
                 "description": "Required. Storage account used to store diagnostic information"
             }
         },
-        "diagnosticsStorageAccountSasToken": {
+        "diagnosticStorageAccountSasToken": {
             "type": "securestring",
             "metadata": {
                 "description": "Required. Diagnostic Storage Account SAS token"
             }
         },
-        "diagnosticsLogsRetentionInDays": {
+        "diagnosticLogsRetentionInDays": {
             "type": "int",
             "defaultValue": 365,
             "minValue": 0,
@@ -231,7 +231,7 @@
         "joinToDomain": "[and(not(empty(parameters('domainAdminUsername'))), not(empty(parameters('domainAdminPassword'))))]",
         "uniqueString": "[uniqueString(subscription().id, resourceGroup().id, concat(parameters('virtualMachineName'), '-vm'))]",
         "subnetName": "[parameters('subnetName')]",
-        "availabilitySetName": "vm-availability-set",
+        "availabilitySetName": "[concat(parameters('virtualMachineName'), '-availability-set')]",
         "availabilityZonesEnabled": "[if(or(equals(parameters('location'), 'centralus'), equals(parameters('location'), 'eastus'), equals(parameters('location'), 'eastus2'), equals(parameters('location'), 'westus2'), equals(parameters('location'), 'francecentral'), equals(parameters('location'), 'northeurope'), equals(parameters('location'), 'uksouth'), equals(parameters('location'), 'westeurope'), equals(parameters('location'), 'japaneast'), equals(parameters('location'), 'southeastasia')), bool('true'), bool('false'))]",
         "applicationSecurityGroups": [
             {
@@ -351,6 +351,61 @@
             }
         },
         {
+            "type": "Microsoft.Network/publicIPAddresses/providers/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            "location": "[parameters('location')]",
+            "condition": "[parameters('enablePublicIP')]",
+            "name": "[concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset')), '-pip', '/Microsoft.Insights/service')]",
+            "dependsOn": [
+                "pipLoop"
+            ],
+            "copy": {
+                "name": "pipDiagnosticLoop",
+                "count": "[parameters('virtualMachineCount')]"
+            },
+            "properties": {
+                "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
+                "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
+                "metrics": [
+                    {
+                        "category": "AllMetrics",
+                        "timeGrain": null,
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('diagnosticLogsRetentionInDays')]"
+                        }
+                    }
+                ],
+                "logs": [
+                    {
+                        "category": "DDoSProtectionNotifications",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('diagnosticLogsRetentionInDays')]"
+                        }
+                    },
+                    {
+                        "category": "DDoSMitigationFlowLogs",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('diagnosticLogsRetentionInDays')]"
+                        }
+                    },
+                    {
+                        "category": "DDoSMitigationReports",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('diagnosticLogsRetentionInDays')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2017-09-01",
             "location": "[parameters('location')]",
@@ -363,6 +418,8 @@
             ],
             "name": "[concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset')), '-nic')]",
             "properties": {
+                "enableIPForwarding": true,
+                "enableAcceleratedNetworking": true,
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
@@ -393,7 +450,7 @@
                 "count": "[parameters('virtualMachineCount')]"
             },
             "properties": {
-                "storageAccountId": "[parameters('diagnosticsStorageAccountId')]",
+                "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
                 "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
                 "metrics": [
                     {
@@ -402,7 +459,7 @@
                         "enabled": true,
                         "retentionPolicy": {
                             "enabled": true,
-                            "days": "[parameters('diagnosticsLogsRetentionInDays')]"
+                            "days": "[parameters('diagnosticLogsRetentionInDays')]"
                         }
                     }
                 ]
@@ -479,7 +536,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                        "storageUri": "[concat('https://', parameters('diagnosticStorageAccountName'), '.blob.core.windows.net/')]"
                     }
                 }
             },
@@ -493,7 +550,7 @@
                         "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('virtualMachineName'), copyIndex(parameters('virtualMachineOffset'))))]"
                     ],
                     "properties": {
-                        "storageAccountId": "[parameters('diagnosticsStorageAccountId')]",
+                        "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
                         "workspaceId": "[parameters('logAnalyticsWorkspaceId')]",
                         "metrics": [
                             {
@@ -501,7 +558,7 @@
                                 "enabled": true,
                                 "retentionPolicy": {
                                     "enabled": true,
-                                    "days": "[parameters('diagnosticsLogsRetentionInDays')]"
+                                    "days": "[parameters('diagnosticLogsRetentionInDays')]"
                                 }
                             }
                         ],
@@ -600,7 +657,7 @@
                         "typeHandlerVersion": "1.5",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "StorageAccount": "[parameters('diagnosticsStorageAccountName')]",
+                            "StorageAccount": "[parameters('diagnosticStorageAccountName')]",
                             "StorageType": "Blob",
                             "WadCfg": {
                                 "DiagnosticMonitorConfiguration": {
@@ -872,8 +929,8 @@
                             }
                         },
                         "protectedSettings": {
-                            "storageAccountName": "[parameters('diagnosticsStorageAccountName')]",
-                            "storageAccountSasToken": "[parameters('diagnosticsStorageAccountSasToken')]",
+                            "storageAccountName": "[parameters('diagnosticStorageAccountName')]",
+                            "storageAccountSasToken": "[parameters('diagnosticStorageAccountSasToken')]",
                             "storageAccountEndPoint": "https://core.windows.net"
                         }
                     }
@@ -1112,7 +1169,7 @@
                         "typeHandlerVersion": "3.0",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "StorageAccount": "[parameters('diagnosticsStorageAccountName')]",
+                            "StorageAccount": "[parameters('diagnosticStorageAccountName')]",
                             "ladCfg": {
                                 "diagnosticMonitorConfiguration": {
                                     "eventVolume": "Medium",
@@ -1813,9 +1870,9 @@
                             }
                         },
                         "protectedSettings": {
-                            "storageAccountName": "[parameters('diagnosticsStorageAccountName')]",
+                            "storageAccountName": "[parameters('diagnosticStorageAccountName')]",
                             "storageAccountEndPoint": "https://core.windows.net/",
-                            "storageAccountSasToken": "[parameters('diagnosticsStorageAccountSasToken')]"
+                            "storageAccountSasToken": "[parameters('diagnosticStorageAccountSasToken')]"
                         }
                     }
                 },

@@ -101,13 +101,13 @@
                 "description": "Required. WorkspaceKey value of OMS. This value is referenced in OMS VM Extension"
             }
         },
-        "diagnosticsStorageAccountName": {
+        "diagnosticStorageAccountName": {
             "type": "string",
             "metadata": {
                 "description": "Required. Storage account used to store diagnostic information"
             }
         },
-        "diagnosticsStorageAccountSasToken": {
+        "diagnosticStorageAccountSasToken": {
             "type": "securestring",
             "metadata": {
                 "description": "Required. Diagnostic Storage Account SAS token"
@@ -318,7 +318,7 @@
                     "diagnosticsProfile": {
                         "bootDiagnostics": {
                             "enabled": true,
-                            "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                            "storageUri": "[concat('https://', parameters('diagnosticStorageAccountName'), '.blob.core.windows.net/')]"
                         }
                     },
                     "extensionProfile": {
@@ -365,7 +365,7 @@
                                     "typeHandlerVersion": "1.5",
                                     "autoUpgradeMinorVersion": true,
                                     "settings": {
-                                        "StorageAccount": "[parameters('diagnosticsStorageAccountName')]",
+                                        "StorageAccount": "[parameters('diagnosticStorageAccountName')]",
                                         "StorageType": "Blob",
                                         "WadCfg": {
                                             "DiagnosticMonitorConfiguration": {
@@ -637,8 +637,8 @@
                                         }
                                     },
                                     "protectedSettings": {
-                                        "storageAccountName": "[parameters('diagnosticsStorageAccountName')]",
-                                        "storageAccountSasToken": "[parameters('diagnosticsStorageAccountSasToken')]",
+                                        "storageAccountName": "[parameters('diagnosticStorageAccountName')]",
+                                        "storageAccountSasToken": "[parameters('diagnosticStorageAccountSasToken')]",
                                         "storageAccountEndPoint": "https://core.windows.net"
                                     }
                                 }

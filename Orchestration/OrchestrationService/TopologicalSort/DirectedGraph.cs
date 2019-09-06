@@ -27,67 +27,55 @@ namespace VDC.Core
                 var moduleConfigurations = 
                     JsonConvert.DeserializeObject<List<GraphModel>>(
                         jsonGraph);
-
-                foreach (var moduleConfiguration in moduleConfigurations.Where(m => m.Enabled))
+                
+                if (moduleConfigurations != null)
                 {
-                    // Add to vertices list
-                    var vertex = new Vertex(moduleConfiguration.Name)
+                    foreach (var moduleConfiguration in moduleConfigurations.Where(m => m.Enabled))
                     {
-                        Color = Color.White
-                    };
-                    
-                    AddVertex(vertex);
-                }
-
-                foreach (var moduleConfiguration in moduleConfigurations.Where(m => m.Enabled))
-                {
-                    // Let's analyze the dependencies and add them 
-                    // as an edge of the parent vertex
-                    if(moduleConfiguration.DependsOn != null && 
-                       moduleConfiguration.DependsOn.Count > 0)
-                    {
-                        var childVertex = 
-                                Vertices
-                                    .Where(v => v.Name.Equals(
-                                        moduleConfiguration.Name, 
-                                        StringComparison.InvariantCultureIgnoreCase))
-                                    .FirstOrDefault();
-                        
-                        foreach (var dependency in moduleConfiguration.DependsOn)
+                        // Add to vertices list
+                        var vertex = new Vertex(moduleConfiguration.Name)
                         {
-                            // Find the module configuration in the list 
-                            // of vertices
-                            var parentVertex = 
-                                Vertices
-                                    .Where(v => v.Name.Equals(
-                                        dependency, 
-                                        StringComparison.InvariantCultureIgnoreCase))
-                                    .FirstOrDefault();
-                            
-                            var isDisabled = 
-                                moduleConfigurations
-                                    .Where(m => m.Name.Equals(
-                                       dependency, 
-                                       StringComparison.InvariantCultureIgnoreCase) && !m.Enabled)
-                                    .FirstOrDefault();
+                            Color = Color.White
+                        };
+                        
+                        AddVertex(vertex);
+                    }
 
+                    foreach (var moduleConfiguration in moduleConfigurations.Where(m => m.Enabled))
+                    {
+                        // Let's analyze the dependencies and add them 
+                        // as an edge of the parent vertex
+                        if(moduleConfiguration.DependsOn?.Count > 0)
+                        {
+                            var childVertex = 
+                                    Vertices
+                                        .Where(v => v.Name.Equals(
+                                            moduleConfiguration.Name, 
+                                            StringComparison.InvariantCultureIgnoreCase))
+                                        .FirstOrDefault();
                             
-                            if(parentVertex == null && isDisabled == null)
+                            foreach (var dependency in moduleConfiguration.DependsOn)
                             {
-                                throw new Exception($"Parent node: {dependency} not found, make sure it exists.");
-                            }
-                            else if (parentVertex != null) {
-                                // Let's add edge like follows:
-                                // parentVertex -> to -> childVertex
-                                parentVertex.AddEdge(childVertex);
-                            }
-                            else {
-                                continue;
+                                // Find the module configuration in the list 
+                                // of vertices
+                                var parentVertex = 
+                                    Vertices
+                                        .Where(v => v.Name.Equals(
+                                            dependency, 
+                                            StringComparison.InvariantCultureIgnoreCase))
+                                        .FirstOrDefault();
+                                
+                                if(parentVertex != null)
+                                {
+                                    // Let's add edge like follows:
+                                    // parentVertex -> to -> childVertex
+                                    parentVertex.AddEdge(childVertex);
+                                }
                             }
                         }
                     }
                 }
-            }
+            }    
             catch
             {
                 throw;

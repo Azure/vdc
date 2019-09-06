@@ -25,6 +25,15 @@
         },
         "clientRevokedCertThumbprint": {
             "value": "thumbprint"
+        },
+        "diagnosticLogsRetentionInDays": {
+            "value": 365
+        },
+        "diagnosticStorageAccountId": {
+            "value": "/subscriptions/00000000/resourceGroups/resourceGroup"
+        },
+        "workspaceId": {
+            "value": "/subscriptions/00000000/resourceGroups/resourceGroup"
         }
     }
 }

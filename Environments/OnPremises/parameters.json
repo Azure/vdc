@@ -7,6 +7,10 @@
     "ModuleConfigurationParameters": {
         "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
+        "OnPremisesInformation": {
+            "InstanceName": "${Parameters.InstanceName}",
+            "Comments": "This InstanceName is a temporal value, this value is used in artifactsStorageAccount.json, the idea is to have a global set of services and this name should point to the InstanceName (deployment name) of the global services archetype"
+        },
         "SharedServices": {
             "DeploymentName": "shrdsvcs"
         },
@@ -225,10 +229,7 @@
             ],
             "EnableDdosProtection": false,
             "EnableVmProtection": false,
-            "DnsServers": [
-                "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",
-                "168.63.129.16"
-            ]
+            "DnsServers": []
         }
     }
 }

@@ -21,8 +21,8 @@ This template deploys Active Directory Domain Services.
 | `artifactsStorageAccountKey` | | Required. Default storage account Key. Storage account that contains output parameters and common scripts
 | `workspaceId` | | Required. WorkspaceId or CustomerId value of OMS. This value is referenced in OMS VM Extension
 | `logAnalyticsWorkspacePrimarySharedKey` | | Required. WorkspaceKey value of OMS. This value is referenced in OMS VM Extension
-| `diagnosticsStorageAccountName` | | Required. Storage account used to store diagnostic information
-| `diagnosticsStorageAccountSasToken` | | Required. Diagnostic Storage Account SAS token
+| `diagnosticStorageAccountName` | | Required. Storage account used to store diagnostic information
+| `diagnosticStorageAccountSasToken` | | Required. Diagnostic Storage Account SAS token
 | `adIpAddress` | | Required. IP address used as primary Domain Controller IP
 | `vNetId` | | Required. Shared services Virtual Network resource identifier
 | `domainControllerAsgId` | | Required. ASG associated to Domain Controllers

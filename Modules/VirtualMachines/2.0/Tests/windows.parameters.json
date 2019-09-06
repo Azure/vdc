@@ -33,7 +33,7 @@
         "vNetId": {
             "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/shrdsvcs-network-rg/providers/Microsoft.Network/virtualNetworks/shrdsvcs-vnet"
         },
-        "diagnosticsStorageAccountName": {
+        "diagnosticStorageAccountName": {
             "value": "shrdsvcsdiag01"
         },
         "artifactsStorageAccountKey": {
@@ -54,7 +54,7 @@
         "virtualMachineSize": {
             "value": "Standard_DS2_v2"
         },
-        "diagnosticsStorageAccountSasToken": {
+        "diagnosticStorageAccountSasToken": {
             "value": ""
         },
         "subnetName": {
@@ -66,7 +66,7 @@
         "virtualMachineCount": {
             "value": 1
         },
-        "diagnosticsStorageAccountId": {
+        "diagnosticStorageAccountId": {
             "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/shrdsvcs-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/shrdsvcsdiag01"
         },
         "adminPassword": {
