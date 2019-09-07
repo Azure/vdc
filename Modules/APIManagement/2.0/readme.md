@@ -2,14 +2,12 @@
 
 This module deploys API Management. 
 
-
 ## Resources
 
 The following Resources are deployed.
 
 + **Microsoft.ApiManagement/service**
 + **Microsoft.ApiManagement/service/providers/diagnosticsettings**
-
 
 ## Parameters
 
@@ -31,7 +29,6 @@ The following Resources are deployed.
 | `tagOwner` || **Optional** | The business owner for the application
 | `tagOwnerEmail` || **Optional** | The Email address of the business owner for the application
 
-
 ## Outputs
 
 | Output Name | Description |
@@ -40,16 +37,15 @@ The following Resources are deployed.
 | `apimServiceResourceId` | API Management Service ResourceId output parameter
 | `apimServiceResourceGroup` | API Management Service ResourceGroup output parameter
 
-
 ## Scripts
 
-+ There is no Scripts for this Module
-
+| Script Name | Description |
+| :-          | :-          |
+| `api.management.akv.secrects.ps1` | Set API Management KeyVault Secrets Automation Script
 
 ## Considerations
 
 + There is no deployment considerations for this Module.
-
 
 ## Additional resources
 
