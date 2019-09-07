@@ -56,42 +56,42 @@
       "metadata": {
         "description": "Optional. Customer Usage Attribution id (GUID). This GUID must be previously registered"
       }
-    }
+    },
     "tagEnvironment": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "The name of the Environment"
+        "description": "Optional. The name of the Environment"
       }
     },
     "tagProject": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "The name of the project"
+        "description": "Optional. The name of the project"
       }
     },
     "tagApplication": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "The name of the application"
+        "description": "Optional. The name of the application"
       }
     },
     "tagOwner": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "The business owner for the application"
+        "description": "Optional. The business owner for the application"
       }
     },
     "tagOwnerEmail": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "The Email address of the business owner for the application"
+        "description": "Optional. The Email address of the business owner for the application"
       }
-    }    
+    }
   },
   "variables": {
     "appInsightsName": "[parameters('appInsightsName')]",
@@ -117,8 +117,8 @@
     },
     {
       "type": "Microsoft.Insights/components",
-      "apiVersion": "[providers('Microsoft.Insights', 'components').apiVersions[0]]",
-      "name": "[variables('appInsightsName')]",
+      "apiVersion": "[providers('Microsoft.Insights','components').apiVersions[0]]",
+      "name": "[parameters('appInsightsName')]",
       "location": "[parameters('location')]",
       "tags": {
         "Environment": "[parameters('tagEnvironment')]",
@@ -126,18 +126,17 @@
         "Project": "[parameters('tagProject')]",
         "Owner": "[parameters('tagOwner')]",
         "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
+      },    
       "properties": {
-        "ApplicationId": "[variables('appInsightsName')]",
+        "ApplicationId": "[parameters('appInsightsName')]",
         "Application_Type": "[parameters('appInsightsType')]"
       }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]]",
+      "apiVersion": "[providers('Microsoft.Storage','storageAccounts').apiVersions[0]]",
       "name": "[parameters('storageAccountName')]",
-      "kind": "[parameters('storageAccountKind')]",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "tags": {
         "Environment": "[parameters('tagEnvironment')]",
         "Application": "[parameters('tagApplication')]",
@@ -147,49 +146,49 @@
       },
       "sku": {
         "name": "[parameters('storageAccountType')]"
-      },
+      },    
       "properties": {
         "supportsHttpsTrafficOnly": true
       }
     }
   ],
   "outputs": {
-    "appInsightsOpsName": {
+    "appInsightsName": {
       "type": "string",
       "value": "[variables('appInsightsName')]",
       "metadata": {
         "description": "Application Insights Resource Name"
       }
     },
-    "appInsightsOpsResourceId": {
+    "appInsightsResourceId": {
       "type": "string",
       "value": "[variables('appInsightsresourceId')]",
       "metadata": {
         "description": "Application Insights Resource Id"
       }
     },
-    "appInsightsOpsResourceGroup": {
+    "appInsightsResourceGroup": {
       "type": "string",
       "value": "[resourceGroup().name]",
       "metadata": {
         "description": "Application Insights ResourceGroup"
       }
     },
-    "appInsightsOpsKey": {
+    "appInsightsKey": {
       "type": "string",
       "value": "[reference(variables('appInsightsresourceId'),variables('apiVersion')).instrumentationKey]",
       "metadata": {
         "description": "Application Insights Resource Instrumentation Key"
       }
     },
-    "appInsightsOpsAppId": {
+    "appInsightsAppId": {
       "type": "string",
       "value": "[reference(variables('appInsightsresourceId'),variables('apiVersion')).AppId]",
       "metadata": {
         "description": "Application Insights Paalication Id"
       }
     },
-    "opsStorageAccountName": {
+    "appInsightsStorageAccountName": {
       "type": "string",
       "value": "[variables('storageAccountName')]",
       "metadata": {

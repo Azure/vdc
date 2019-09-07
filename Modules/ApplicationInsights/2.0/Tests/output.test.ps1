@@ -3,73 +3,51 @@
 		==============================================================================================
 		Copyright(c) Microsoft Corporation. All rights reserved.
 
-		File:		tier1.app.insights.output.tests.ps1
+		Microsoft Consulting Services - AzureCAT - VDC Toolkit (v2.0)
+
+		File:		output.test.ps1
 
 		Purpose:	Test - Application Insights ARM Template Output Variables
 
-		Version: 	1.0.0.4 - 2nd September 2019 - Chubb Build Release Deployment Team
+		Version: 	2.0.0.0 - 1st September 2019 - Azure Virtual Datacenter Development Team
 		==============================================================================================
 
 	.SYNOPSIS
-		This script contains functionality used to test Application Insights ARM Templates output variables.
+		This script contains functionality used to test Application Insights ARM Template Output Variables.
 
 	.DESCRIPTION
-		This script contains functionality used to test Application Insights ARM Templates output variables.
+		This script contains functionality used to test Application Insights ARM Template Output Variables.
 
 		Deployment steps of the script are outlined below.
-            1) Outputs variable Logic from pipeline
+            1) Outputs Variable Logic from pipeline
 
-	.PARAMETER appInsightsOpsName
-		Specify the Application Insights (Ops) Name output parameter.
+	.PARAMETER appInsightsName
+		Specify the Application Insights Name output parameter.
 
-	.PARAMETER appInsightsOpsResourceId
-		Specify the Application Insights (Ops) Resource Id output parameter.
+	.PARAMETER appInsightsResourceId
+		Specify the Application Insights Resource Id output parameter.
 
-	.PARAMETER appInsightsOpsResourceGroup
-		Specify the Application Insights (Ops) ResourceGroup output parameter.
+	.PARAMETER appInsightsResourceGroup
+		Specify the Application Insights ResourceGroup output parameter.
 
-	.PARAMETER appInsightsOpsKey
-		Specify the Application Insights (Ops) Key output parameter.
+	.PARAMETER appInsightsKey
+		Specify the Application Insights Instrumentation Key output parameter.
 
-	.PARAMETER appInsightsOpsAppId
-		Specify the Application Insights (Ops) AppId output parameter.
+	.PARAMETER appInsightsAppId
+		Specify the Application Insights AppId output parameter.
 
-	.PARAMETER appInsightsRulesName
-		Specify the Application Insights (Rules) Name output parameter.
-
-	.PARAMETER appInsightsRulesResourceId
-		Specify the Application Insights (Rules) Resource Id output parameter.
-
-	.PARAMETER appInsightsRulesResourceGroup
-		Specify the Application Insights (Rules) ResourceGroup output parameter.
-
-	.PARAMETER appInsightsRulesKey
-		Specify the Application Insights (Rules) Key output parameter.
-
-	.PARAMETER appInsightsRulesAppId
-		Specify the Application Insights (Rules) AppId output parameter.
-
-    .PARAMETER opsStorageAccountName
-		Specify the (Ops) Storage Account Name output parameter.
-
-	.PARAMETER rulesStorageAccountName
-		Specify the (Rules) Storage Account Name output parameter.
+    .PARAMETER appInsightsStorageAccountName
+		Specify the Application Storage Account Name output parameter.
 
 	.EXAMPLE
 		Default:
-		C:\PS>.\tier1.app.insights.output.tests.ps1
-            -appInsightsOpsName "$(appInsightsOpsName)"
-			-appInsightsOpsResourceId "$(appInsightsOpsResourceId)"
-			-appInsightsOpsResourceGroup "$(appInsightsOpsResourceGroup)"
-            -appInsightsOpsKey "$(appInsightsOpsKey)"
-            -appInsightsOpsAppId "$(appInsightsOpsAppId)"
-            -appInsightsRulesName "$(appInsightsRulesName)"
-			-appInsightsRulesResourceId "$(appInsightsRulesResourceId)"
-			-appInsightsRulesResourceGroup "$(appInsightsRulesResourceGroup)"
-            -appInsightsRulesKey "$(appInsightsRulesKey)"
-            -appInsightsRulesAppId "$(appInsightsRulesAppId)"
-            -opsStorageAccountName "$(opsStorageAccountName)"
-            -rulesStorageAccountName "$(rulesStorageAccountName)"
+		C:\PS>.\output.test.ps1
+            -appInsightsName "$(appInsightsName)"
+			-appInsightsResourceId "$(appInsightsResourceId)"
+			-appInsightsResourceGroup "$(appInsightsResourceGroup)"
+            -appInsightsKey "$(appInsightsKey)"
+            -appInsightsAppId "$(appInsightsAppId)"
+            -appInsightsStorageAccountName "$(appInsightsStorageAccountName)"
 #>
 
 #Requires -Version 5
@@ -77,152 +55,78 @@
 [CmdletBinding()]
 param
 (
-    [Parameter(Mandatory = $false)]
-    [string]$appInsightsOpsName,
+	[Parameter(Mandatory = $false)]
+	[string]$appInsightsName,
 
 	[Parameter(Mandatory = $false)]
-    [string]$appInsightsOpsResourceId,
+	[string]$appInsightsResourceId,
 
 	[Parameter(Mandatory = $false)]
-    [string]$appInsightsOpsResourceGroup,
-
-    [Parameter(Mandatory = $false)]
-    [string]$appInsightsOpsKey,
-
-    [Parameter(Mandatory = $false)]
-    [string]$appInsightsOpsAppId,
-
-    [Parameter(Mandatory = $false)]
-    [string]$appInsightsRulesName,
+	[string]$appInsightsResourceGroup,
 
 	[Parameter(Mandatory = $false)]
-    [string]$appInsightsRulesResourceId,
+	[string]$appInsightsKey,
 
 	[Parameter(Mandatory = $false)]
-    [string]$appInsightsRulesResourceGroup,
+	[string]$appInsightsAppId,
 
-    [Parameter(Mandatory = $false)]
-    [string]$appInsightsRulesKey,
-
-    [Parameter(Mandatory = $false)]
-    [string]$appInsightsRulesAppId,
-
-    [Parameter(Mandatory = $false)]
-    [string]$opsStorageAccountName,
-
-    [Parameter(Mandatory = $false)]
-    [string]$rulesStorageAccountName
+	[Parameter(Mandatory = $false)]
+	[string]$appInsightsStorageAccountName
 )
 
-#region - Application Insights (Ops)
+#region - Application Insights Output Tests
 
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsOpsName']))
+if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsName']))
 {
-    Write-Output "Application Insights (OPS) Name: $($appInsightsOpsName)"
+	Write-Output "Application Insights Name: $($appInsightsName)"
 }
 else
 {
-    Write-Output "Application Insights (OPS) Name: []"
+	Write-Output "Application Insights Name: []"
 }
 
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsOpsResourceId']))
+if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsResourceId']))
 {
-    Write-Output "Application Insights (OPS) ResourceId: $($appInsightsOpsResourceId)"
+	Write-Output "Application Insights ResourceId: $($appInsightsResourceId)"
 }
 else
 {
-    Write-Output "Application Insights (OPS) Resource Id: []"
+	Write-Output "Application Insights Resource Id: []"
 }
 
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsOpsResourceGroup']))
+if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsResourceGroup']))
 {
-    Write-Output "Application Insights (OPS) ResourceGroup: $($appInsightsOpsResourceGroup)"
+	Write-Output "Application Insights ResourceGroup: $($appInsightsResourceGroup)"
 }
 else
 {
-    Write-Output "Application Insights (OPS) ResourceGroup: []"
+	Write-Output "Application Insights ResourceGroup: []"
 }
 
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsOpsKey']))
+if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsKey']))
 {
-    Write-Output "Application Insights (OPS) Instrumentation Key: $($appInsightsOpsKey)"
+	Write-Output "Application Insights Instrumentation Key: $($appInsightsKey)"
 }
 else
 {
-    Write-Output "Application Insights (OPS) Instrumentation Key: []"
+	Write-Output "Application Insights Instrumentation Key: []"
 }
 
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsOpsAppId']))
+if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsAppId']))
 {
-    Write-Output "Application Insights (OPS) AppId: $($appInsightsOpsAppId)"
+	Write-Output "Application Insights AppId: $($appInsightsAppId)"
 }
 else
 {
-    Write-Output "Application Insights (OPS) AppId: []"
+	Write-Output "Application Insights AppId: []"
 }
 
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['opsStorageAccountName']))
+if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsStorageAccountName']))
 {
-    Write-Output "Application Insights (Ops) Storage Account Name: $($opsStorageAccountName)"
+	Write-Output "Application Insights Storage Account Name: $($appInsightsStorageAccountName)"
 }
 else
 {
-    Write-Output "Application Insights (Ops) Storage Account Name: []"
-}
-#endregion
-
-#region - Application Insights (Rules)
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsRulesName']))
-{
-    Write-Output "Application Insights (Rules) Name: $($appInsightsRulesName)"
-}
-else
-{
-    Write-Output "Application Insights (Rules) Name: []"
-}
-
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsRulesResourceId']))
-{
-    Write-Output "Application Insights (Rules) ResourceId: $($appInsightsRulesResourceId)"
-}
-else
-{
-    Write-Output "Application Insights (Rules) Resource Id: []"
-}
-
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsRulesResourceGroup']))
-{
-    Write-Output "Application Insights (Rules) ResourceGroup: $($appInsightsRulesResourceGroup)"
-}
-else
-{
-    Write-Output "Application Insights (Rules) ResourceGroup: []"
-}
-
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsRulesKey']))
-{
-    Write-Output "Application Insights (Rules) Instrumentation Key: $($appInsightsRulesKey)"
-}
-else
-{
-    Write-Output "Application Insights (Rules) Instrumentation Key: []"
-}
-
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsRulesAppId']))
-{
-    Write-Output "Application Insights (Rules) AppId: $($appInsightsRulesAppId)"
-}
-else
-{
-    Write-Output "Application Insights (Rules) AppId: []"
-}
-
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['rulesStorageAccountName']))
-{
-    Write-Output "Application Insights (Rules) Storage Account Name: $($rulesStorageAccountName)"
-}
-else
-{
-    Write-Output "Application Insights (Rules) Storage Account Name: []"
+	Write-Output "Application Insights Storage Account Name: []"
 }
 #endregion

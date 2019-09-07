@@ -2,7 +2,6 @@
 
 This module deploys Application Insights. 
 
-
 ## Resources
 
 The following Resources are deployed.
@@ -21,7 +20,11 @@ The following Resources are deployed.
 | `storageAccountName` || **Required** | Storage Account Name
 | `storageAccountType` | Standard_GRS | **Optional** | Storage Account sku type
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
-
+| `tagEnvironment` || **Optional** | The name of the Environment
+| `tagProject` || **Optional** | The name of the project
+| `tagApplication` || **Optional** | The name of the application
+| `tagOwner` || **Optional** | The business owner for the application
+| `tagOwnerEmail` || **Optional** | The Email address of the business owner for the application
 
 ## Outputs
 
@@ -34,19 +37,16 @@ The following Resources are deployed.
 | `appInsightsAppId` | Application Insights Paalication Id
 | `appInsightsStorageAccountName` | Application Insights Logging Storage Account Name
 
-
 ## Scripts
 
 | Output Name | Description |
 | :-          | :-          |
-| `tier1.app.insights.akv.secrects.ps1` |  Set Application Insights KeyVault Secrets Automation Script
-| `tier1.app.insights.continuous.export.ps1` |  Configures Application Insights Continuous Export Configuration
-
+| `application.insights.akv.secrects.ps1` |  Set Application Insights KeyVault Secrets Automation Script
+| `application.insights.continuous.export.ps1` |  Configures Application Insights Continuous Export Configuration
 
 ## Considerations
 
 + There is no deployment considerations for this Module
-
 
 ## Additional resources
 
