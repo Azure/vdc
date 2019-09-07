@@ -33,7 +33,7 @@
         "description": "Required. Storage Account Name"
       }
     },
-    "storageAccountType": {
+    "storageAccountsku": {
       "type": "string",
       "allowedValues": [
         "Standard_LRS",
@@ -145,7 +145,7 @@
         "OwnerEmail": "[parameters('tagOwnerEmail')]"
       },
       "sku": {
-        "name": "[parameters('storageAccountType')]"
+        "name": "[parameters('storageAccountSku')]"
       },    
       "properties": {
         "supportsHttpsTrafficOnly": true

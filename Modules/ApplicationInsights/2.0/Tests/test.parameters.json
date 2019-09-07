@@ -7,10 +7,7 @@
     },
     "storageAccountName": {
       "value": "teststorageAccountName"
-    },
-    "storageAccountType": {
-      "value": "Standard_GRS"
-    },
+    },    
     "cuaId": {
       "value": "00000000-0000-0000-0000-000000000000"
     }
