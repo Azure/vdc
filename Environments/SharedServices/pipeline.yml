@@ -1258,7 +1258,7 @@ stages:
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [VirtualNetwork, AutomationAccounts, KeyVault, ArtifactsStorageAccount]
+    dependsOn: [VirtualNetwork, AutomationAccounts, KeyVault, ArtifactsStorageAccount, Jumpboxes]
     variables: 
       BOOTSTRAP_INITIALIZED: $[dependencies.AutomationAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
@@ -1342,7 +1342,7 @@ stages:
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [VirtualNetwork, AutomationAccounts, ActiveDirectory, KeyVault, ArtifactsStorageAccount]
+    dependsOn: [VirtualNetwork, AutomationAccounts, KeyVault, ArtifactsStorageAccount]
     variables: 
       BOOTSTRAP_INITIALIZED: $[dependencies.AutomationAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
