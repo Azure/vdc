@@ -24,14 +24,17 @@
     )
 
 try {
-    $currentSubscriptionId = Get-AzContext | Select-Object "Subscription" | Out-Null
+    $currentSubscriptionId = Get-AzContext | Select-Object "Subscription"
 
-    if ($null -ne $currentSubscriptionId -and `
-        $currentSubscriptionId.Subscription.Id -eq $SubscriptionId) {
+    if ($null -eq $currentSubscriptionId) {
+        throw "Are you logged in? Please, make sure to run Login-AzAccount"
+    }
+    elseif ($null -ne $currentSubscriptionId -and `
+            $currentSubscriptionId.Subscription.Id.ToString() -ne $SubscriptionId) {
         Set-AzContext -Subscription $SubscriptionId
     }
     else {
-        throw "Are you logged in? Please, make sure to run Login-AzAccount"
+        Write-Host "No subscription switching is required."
     }
 
     $WorkspaceRegion = $WorkspaceRegion.Replace(' ', '').ToLower()
@@ -44,7 +47,7 @@ try {
     }
 
     While ($null -eq $registered) { 
-        $registered = Get-AzResourceProvider -ProviderNamespace Microsoft.Network | Where-Object -Property "FeatureName" -EQ "AllowBastionHost" 
+        $registered = Get-AzResourceProvider -ProviderNamespace Microsoft.Insights
         $isRegistered = $null -ne $registered
         Write-Host "Is installed: $isRegistered"
         Start-Sleep -Seconds 20 
