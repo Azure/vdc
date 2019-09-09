@@ -1,6 +1,6 @@
 
 Function Get-UniqueString ($value, $length=24)
-{   
+{
     $sha512 = [System.Security.Cryptography.SHA512Managed]::new();
     $hash = $sha512.ComputeHash($value.ToCharArray());
     # Ensures that the appended value is within the 26 chars in the alphabet ($_ % 26)
@@ -46,12 +46,29 @@ Function Test-JsonContent() {
     )
 
     try {
-        $result = `
-            ConvertFrom-Json $Content `
-                -ErrorAction SilentlyContinue;
-        return $null -ne $result
+        if(![string]::IsNullOrEmpty($Content)) {
+            # Test-Json does not correctly check all string for Json conversion. Some strings
+            # that are convertible to Json fails Test-Json check. So, we need to rely
+            # on ConvertFrom-Json directly. However doing so will result in exception
+            # being thrown by ConvertFrom-Json if an invalid / non-json string is passed.
+            ConvertFrom-Json `
+                -AsHashtable `
+                -InputObject $Content `
+                -Depth 50 | Out-Null;
+
+            # If the conversion from string to json object is sucessful, then it will
+            # not error out. So, we return true.
+            return $true;
+        }
+        else {
+            # Empty string values should evaluate to false.
+            return $false;
+        }
+
     }
     catch {
+        # If we reach this block, then it means the conversion has failed. So, we
+        # return false.
         return $false;
     }
 }
@@ -66,20 +83,20 @@ Function ConvertTo-AbsolutePath() {
     )
 
     # This will hold the full path of the file being read.
-    # Value to be set later in this method based on absolute 
+    # Value to be set later in this method based on absolute
     # or relative path being passed to this method.
     $fullFilePath = "";
 
     # checks if the path being passed is absolute or relative path
-    # IsPathRooted method returns true if the first character is a 
+    # IsPathRooted method returns true if the first character is a
     # directory separator character such as "\", or if the path starts
-    # with a drive letter and colon (:). For example, it returns true 
-    # for path strings such as "\\MyDir\\MyFile.json", "C:\\MyDir", or 
+    # with a drive letter and colon (:). For example, it returns true
+    # for path strings such as "\\MyDir\\MyFile.json", "C:\\MyDir", or
     # "C:MyDir". It returns false for path strings such as "MyDir".
 
-    # So, in our file() function, we will have to enter the path in 
-    # the following format to be relative paths: “./MyFile.json”, 
-    # “MyFile.json”. Format “c:\MyFile.json”, “/MyFile.json” are 
+    # So, in our file() function, we will have to enter the path in
+    # the following format to be relative paths: “./MyFile.json”,
+    # “MyFile.json”. Format “c:\MyFile.json”, “/MyFile.json” are
     # considered absolute paths.
     $isAbsolutePath = [System.IO.Path]::IsPathRooted($Path);
 
@@ -89,7 +106,7 @@ Function ConvertTo-AbsolutePath() {
         $fullFilePath = $Path;
     }
     else {
-        # If the path is relative path, we always assume that the 
+        # If the path is relative path, we always assume that the
         # relative path is in the format below irrespective of the OS
         # "Directory-A/Directory-B/Directory-C/File-A.json"
 
@@ -105,7 +122,7 @@ Function ConvertTo-AbsolutePath() {
 
     # Test if the path is valid
     $fileExists = Test-Path -Path $fullFilePath;
-    
+
     # Return path if file exists (truthy)
     if($fileExists -eq $true) {
         return (Get-Item -Path $fullFilePath).FullName;
@@ -125,7 +142,7 @@ Function Get-ParentFolder() {
     # Test if the path is valid
     $fileExists = Test-Path -Path $Path;
 
-    # Check if truthy for file existence before 
+    # Check if truthy for file existence before
     # retrieving the parent folder
     if($fileExists -eq $true) {
         return (Get-Item -Path $Path).DirectoryName;
@@ -137,7 +154,7 @@ Function Get-ParentFolder() {
 }
 
 Function Get-ContentFromPath() {
-    [CmdletBinding()]    
+    [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$true)]
         $Path
@@ -154,14 +171,14 @@ Function Get-ContentFromPath() {
 }
 
 Function ConvertTo-HashTable() {
-    [CmdletBinding()] 
+    [CmdletBinding()]
     Param(
         [Parameter(Mandatory=$false)]
         $InputObject
     )
 
     if($InputObject) {
-        # Convert to string prior to converting to 
+        # Convert to string prior to converting to
         # hashtable
         $objectString = `
             ConvertTo-Json `
@@ -228,7 +245,7 @@ Function Get-PowershellEnvironmentVariable {
         $Key
     )
     try {
-        # Environment variables are stored as 
+        # Environment variables are stored as
         # Dictionaries, therefore we need to call
         # .Value to get the proper value, otherwise
         # we'll get a Dictionary object.
@@ -255,7 +272,7 @@ Function Format-DeploymentOutputs {
         $outputs = @{};
         if ($null -ne $DeploymentOutputs) {
             Write-Debug "Deployment outputs type is: $($DeploymentOutputs.GetType())";
-        
+
             # DeploymentOutputs are exposed as a Dictionary
             if (!$DeploymentOutputs.GetType().`
                 ToString().`
@@ -271,18 +288,18 @@ Function Format-DeploymentOutputs {
 
             $DeploymentOutputs.Keys | ForEach-Object {
                 $key = $_;
-                
+
                 # We use .Type because a deployment output contains two
                 # keys, .Type and .Value.
                 if ($DeploymentOutputs.$key.Type.Equals(
-                    "Array", 
+                    "Array",
                     [StringComparison]::InvariantCultureIgnoreCase)) {
-                
+
                     # We are in a case that a deployment output is an array
-                    # let's convert the string into a JSON object, let's 
+                    # let's convert the string into a JSON object, let's
                     # loop through it and append the items into a temp array
                     $outputAsArray = @();
-                    
+
                     # Create a new Powershell array only when the type is JArray
                     if ($DeploymentOutputs.$key.Value.GetType().`
                         ToString().`
@@ -301,8 +318,8 @@ Function Format-DeploymentOutputs {
                         # valid objects
                         $outputAsArray = $DeploymentOutputs.$key.Value;
                     }
-                    
-                    
+
+
                     $outputs += @{
                         $key = @{
                             "Type" = "Array"

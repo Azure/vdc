@@ -2,23 +2,6 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "location": {
-      "type": "string",
-      "allowedValues": [
-        "Australia Southeast",
-        "Canada Central",
-        "Central India",
-        "East US",
-        "Japan East",
-        "Southeast Asia",
-        "UK South",
-        "West Europe",
-        "West US 2"
-      ],
-      "metadata": {
-        "description": "Optional. Region used when establishing the workspace."
-      }
-    },
     "eventHubName": {
       "type": "string",
       "metadata": {
@@ -59,16 +42,72 @@
       "metadata": {
         "description": "Optional. Authorization Rules Root Managed Shared Access Key."
       }
+    },
+    "diagnosticStorageAccountId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Diagnostic Storage Account Id for enabling the diagnostic settings."
+      }
+    },
+    "workspaceId": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Log Analytics Workpsace Id for enabling the diagnostic settings."
+      }
+    },
+    "logsRetentionInDays": {
+      "type": "int",
+      "defaultValue": 30,
+      "minValue": 0,
+      "maxValue": 365,
+      "metadata": {
+        "description": "Optional. Specifies the number of days that logs will be kept for, a value of 0 will retain data indefinitely"
+      }
+    },
+    "networkAcls": {
+        "type": "object",
+        "defaultValue": {},
+        "metadata": {
+            "description": "Optional. Service endpoint object information"
+        }
+    },
+    "vNetId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Virtual Network Id to lock down the Event Hub."
+      }
     }
   },
   "variables": {
+    "deployServiceEndpoint": "[not(empty(parameters('networkAcls')))]",
+    "virtualNetworkRules": {
+        "copy": [
+            {
+                "name": "virtualNetworkRules",
+                "count": "[if(not(variables('deployServiceEndpoint')), 0, length(parameters('networkAcls').virtualNetworkRules))]",
+                "input": {
+                  "subnet": {
+                    "id": "[concat(parameters('vNetId'), '/subnets/', parameters('networkAcls').virtualNetworkRules[copyIndex('virtualNetworkRules')].subnet)]"
+                  }
+                }
+            }
+        ]
+    },
+    "networkAcls": {
+        "bypass": "[if(not(variables('deployServiceEndpoint')), json('null'), parameters('networkAcls').bypass)]",
+        "defaultAction": "[if(not(variables('deployServiceEndpoint')), json('null'), parameters('networkAcls').defaultAction)]",
+        "virtualNetworkRules": "[if(not(variables('deployServiceEndpoint')), json('null'), if(equals(length(parameters('networkAcls').virtualNetworkRules), 0), variables('emptyArray'), variables('virtualNetworkRules').virtualNetworkRules))]",
+        "ipRules": "[if(not(variables('deployServiceEndpoint')), json('null'), if(equals(length(parameters('networkAcls').ipRules), 0), variables('emptyArray'), parameters('networkAcls').ipRules))]"
+    },
+    "emptyArray": []
   },
   "resources": [
     {
       "apiVersion": "2017-04-01",
       "name": "[parameters('namespaceName')]",
       "type": "Microsoft.EventHub/namespaces",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "sku": {
         "name": "[parameters('eventHubSku')]",
         "tier": "[parameters('eventHubSku')]",
@@ -77,7 +116,8 @@
       "tags": {
         "displayName": "[parameters('namespaceName')]"
       },
-      "properties": {},
+      "properties": {
+      },
       "resources": [
         {
           "apiVersion": "2017-04-01",
@@ -88,16 +128,104 @@
           ],
           "properties": {},
           "resources": [
-            {
-              "apiVersion": "2017-04-01",
-              "name": "[parameters('consumerGroupName')]",
-              "type": "consumergroups",
-              "dependsOn": [ "[parameters('eventHubName')]" ],
-              "properties": {
-                "userMetadata": "User Metadata"
+              {
+                "apiVersion": "2017-04-01",
+                "name": "[parameters('consumerGroupName')]",
+                "type": "consumergroups",
+                "dependsOn": [ "[parameters('eventHubName')]" ],
+                "properties": {
+                  "userMetadata": "User Metadata"
+                }
               }
-            }
           ]
+        },
+        {
+          "type": "Microsoft.EventHub/namespaces/NetworkRuleSets",
+          "apiVersion": "2018-01-01-preview",
+          "name": "[concat(parameters('namespaceName'), '/default')]",
+          "condition": "[not(empty(parameters('vNetId')))]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+              "[concat('Microsoft.EventHub/namespaces/', parameters('namespaceName'))]"
+          ],
+          "properties": {
+            "defaultAction": "[variables('networkAcls').defaultAction]",
+            "virtualNetworkRules": "[variables('networkAcls').virtualNetworkRules]",
+            "ipRules": "[variables('networkAcls').ipRules]"
+          }
+        },
+        {
+            "type": "Microsoft.EventHub/namespaces/providers/diagnosticsettings",
+            "apiVersion": "2016-09-01",
+            "name": "[concat(parameters('namespaceName'), '/Microsoft.Insights/service')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.EventHub/namespaces/', parameters('namespaceName'))]"
+            ],
+            "properties": {
+                "storageAccountId": "[parameters('diagnosticStorageAccountId')]",
+                "workspaceId": "[parameters('workspaceId')]",
+                "logs": [
+                    {
+                        "category": "ArchiveLogs",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('logsRetentionInDays')]"
+                        }
+                    },
+                    {
+                        "category": "OperationalLogs",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('logsRetentionInDays')]"
+                        }
+                    },
+                    {
+                        "category": "AutoScaleLogs",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('logsRetentionInDays')]"
+                        }
+                    },
+                    {
+                        "category": "KafkaCoordinatorLogs",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('logsRetentionInDays')]"
+                        }
+                    },
+                    {
+                        "category": "EventHubVNetConnectionEvent",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('logsRetentionInDays')]"
+                        }
+                    },
+                    {
+                        "category": "CustomerManagedKeyUserLogs",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": true,
+                            "days": "[parameters('logsRetentionInDays')]"
+                        }
+                    }
+                ],
+                "metrics": [
+                  {
+                    "category": "AllMetrics",
+                    "enabled": true,
+                    "retentionPolicy": {
+                      "days": "[parameters('logsRetentionInDays')]",
+                      "enabled": true
+                    }
+                  }
+                ]
+            }
         }
       ]
     },
@@ -105,7 +233,7 @@
       "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
       "name": "[concat(parameters('namespaceName'), '/', parameters('authorizationRulesRootManageSharedAccessKeyName'))]",
       "apiVersion": "2017-04-01",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "scale": null,
       "properties": {
         "rights": [

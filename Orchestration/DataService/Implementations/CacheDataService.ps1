@@ -6,17 +6,19 @@ Class CacheDataService: ICacheDataService {
     CacheDataService([ICacheRepository] $cacheRepository) {
         $this.cacheRepository = $cacheRepository;
     }
-        
+
     [void] SetByKey([string] $key, [object] $value) {
-        
+
         # converting the object to string
         $valueType = $value.GetType().ToString();
-        
+
         # Adding .Contains("System.Collections.Generic.Dictionary") because
         # Azure deployment outputs is of type of Generic.Dictionary[Sdk.OutputVariables]
         if (($valueType -eq "System.Collections.Hashtable") -or `
             ($valueType.Contains("System.Collections.Generic.Dictionary")) -or `
-            ($valueType -eq "System.Management.Automation.PSCustomObject")) {
+            ($valueType -eq "System.Management.Automation.PSCustomObject") -or `
+            ($valueType -eq "System.Object[]") -or `
+            ($valueType -eq "System.Object")) {
             $cacheValue = `
                 ConvertTo-Json `
                     -InputObject $value `
@@ -26,10 +28,10 @@ Class CacheDataService: ICacheDataService {
         else {
             $cacheValue = $value;
         }
-        
+
         # call repository to store the cache
         $this.cacheRepository.Set(
-            $key, 
+            $key,
             $cacheValue);
     }
 
@@ -37,17 +39,16 @@ Class CacheDataService: ICacheDataService {
         # Retrieve the value from cache using key
         $cache = `
             $this.cacheRepository.GetByKey($key);
-        $isJson = $false;
 
         if ($cache) {
             # Check if the string returned is a JSON string
             $isJson = `
                 Test-JsonContent $cache `
                     -ErrorAction SilentlyContinue;
-            
-            # If we can convert to object, then return converted object 
-            # else return string
-            if($isJson) {
+
+            # If we can convert to object, then return converted object
+            # else return the string as-is.
+            if($(Test-JsonContent -Content $cache) -eq $true) {
                 $cache = `
                     ConvertFrom-Json `
                         -AsHashtable `

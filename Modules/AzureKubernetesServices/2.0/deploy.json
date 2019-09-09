@@ -12,11 +12,13 @@
         },
         "dnsPrefix": {
             "type": "string",
+            "minLength": 3,
+            "maxLength": 45,
             "metadata": {
                 "description": "Required. DNS prefix to use with hosted Kubernetes API server FQDN."
             }
         },
-        "osDiskSizeGb": {
+        "agentOSDiskSizeGb": {
             "defaultValue": 0,
             "minValue": 0,
             "maxValue": 1023,
@@ -25,10 +27,11 @@
                 "description": "Optional. Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize."
             }
         },
-        "osType": {
+        "agentOSType": {
             "defaultValue": "Linux",
             "allowedValues": [
-                "Linux"
+                "Linux",
+                "Windows"
             ],
             "type": "string",
             "metadata": {
@@ -54,37 +57,38 @@
         "servicePrincipalClientId": {
             "type": "securestring",
             "metadata": {
-                "description": "Required. Client ID (used by cloudprovider)."
+                "description": "Required. Server Principal Client ID for AKS to securely interact with Azure to create resources."
             }
         },
         "servicePrincipalClientSecret": {
             "type": "securestring",
             "metadata": {
-                "description": "Required. The Service Principal Client Secret."
+                "description": "Required. Service Principal Client Secret for AKS to securely interact with Azure to create resources."
             }
         },
         "kubernetesVersion": {
-            "defaultValue": "1.7.7",
+            "defaultValue": "1.13.10",
             "type": "string",
             "metadata": {
-                "description": "Optional. The version of Kubernetes."
+                "description": "Optional. The version of Kubernetes. Always use the latest version of Kubernetes. Refer - https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions"
             }
         },
         "networkPlugin": {
+            "defaultValue": "azure",
             "allowedValues": [
                 "azure",
                 "kubenet"
             ],
             "type": "string",
             "metadata": {
-                "description": "Required. Network plugin used for building Kubernetes network."
+                "description": "Optional. Network plugin used for building Kubernetes network."
             }
         },
         "enableRBAC": {
             "defaultValue": true,
             "type": "bool",
             "metadata": {
-                "description": "Optional. Boolean flag to turn on and off of RBAC."
+                "description": "Optional. Boolean flag to turn on and off of RBAC. The RBAC for AKS is separate from Azure RBAC. Enabling RBAC on AKS allows role based access control using kubectl."
             }
         },
         "vNetId": {
@@ -96,25 +100,26 @@
         "subnetName": {
             "type": "string",
             "metadata": {
-                "description": "Required. Resource Name of subnet used for nodes and/or pods IP assignment."
+                "description": "Required. Resource Name of subnet used for nodes and/or pods IP assignment. Make sure your subnet CIDR allows the number of nodes you specify."
             }
         },
         "serviceCIDR": {
             "type": "string",
             "metadata": {
-                "description": "Required. A CIDR notation IP range from which to assign service cluster IPs."
+                "description": "Required. A CIDR notation IP range from which to assign to internal services in your cluster. Does not overlap with the VNet CIDR and must be smaller than /12."
             }
         },
         "dnsServiceIp": {
+            "defaultValue": "172.17.0.10",
             "type": "string",
             "metadata": {
-                "description": "Required. Containers DNS server IP address."
+                "description": "Required. Containers DNS server IP address. Must be within the address range of serviceCIDR. Don't use the first IP address in your address range such as .1"
             }
         },
         "dockerBridgeCIDR": {
             "type": "string",
             "metadata": {
-                "description": "Required. A CIDR notation IP for Docker bridge."
+                "description": "Required. A CIDR notation IP of IP address used as the Docker bridge IP on nodes. This CIDR is tied to the number of containers on the node. Default of 172.17.0.1/16."
             }
         },
         "logAnalyticsResourceId": {
@@ -176,7 +181,6 @@
         }
     },
     "variables": {
-        "authRuleResourceId": "[parameters('diagnosticsEventHubAuthRuleId')]",
         "emptyContent": {},
         "omsAgentConfig": {
             "omsagent": {
@@ -203,10 +207,10 @@
                 "agentPoolProfiles": [
                     {
                         "name": "agentpool",
-                        "osDiskSizeGB": "[parameters('osDiskSizeGb')]",
+                        "osDiskSizeGb": "[parameters('agentOSDiskSizeGb')]",
                         "count": "[parameters('agentCount')]",
                         "vmSize": "[parameters('agentVMSize')]",
-                        "osType": "[parameters('osType')]",
+                        "osType": "[parameters('agentOSType')]",
                         "storageProfile": "ManagedDisks",
                         "vnetSubnetID": "[concat(parameters('vNetId'), '/subnets/', parameters('subnetName'))]"
                     }

@@ -308,10 +308,19 @@ Class CustomScriptExecution {
                     $childJob | ForEach-Object {
                         # Set the result only if there is an output
                         if($_.Output.Count -ge 1) {
-                            # TODO: To verify
-                            #$result = $_.Output | Select-Object -Property * -ExcludeProperty PSComputerName,RunspaceID,PSShowComputerName;
-                            $result = (ConvertTo-Json $_.Output | ConvertFrom-Json -AsHashtable).value
+                            # Output from the script execution could be simple data types like string and integer or complex datatypes like
+                            # Hashtable and PSCustomObject. Simple output data types are wrapped in a object with additional properties. 
+                            # For Example: { value: "demo", PSComputerName: ***, RunspaceID: ***, PSShowComputerName: ***}
+                            # Complex output data types like array of objects have additional properties added to each object in the array.
+                            # For Example: 
+                            # [ { name: "abc", protocol: 443, PSComputerName: ***, RunspaceID: ***, PSShowComputerName: *** },
+                            # { name: "xyz", protocol: 80, PSComputerName: ***, RunspaceID: ***, PSShowComputerName: *** } ]
+                            $result = (ConvertTo-Json $_.Output -Depth 50 | ConvertFrom-Json) | Select-Object -Property * -ExcludeProperty PSComputerName,RunspaceID,PSShowComputerName;
 
+                            # If the result has only one properties with the name "value", then return $result.value
+                            if(($result | Get-Member | Where-Object { $_.MemberType -ne "Method" -and $_.Name.ToLower() -eq "value"}).Count -eq 1) {
+                                $result = $result.value;
+                            }
                         }
                         else {
                             $result = $null;
@@ -326,6 +335,7 @@ Class CustomScriptExecution {
                     Throw "Script failed to execute: $exception";
                 }
             }
+
             # Return the latest output
             return $result;
         }

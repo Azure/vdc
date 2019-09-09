@@ -7,10 +7,9 @@ Param (
     [Parameter(Mandatory=$false)]
     [string] $ThirdParameter
 )
-
 if(![string]::IsNullOrEmpty($SecondParameter)) {
-    Write-Output "$SecondParameter";
+    return "$SecondParameter";
 }
 else {
-    Write-Output "pwsh";
+    return "pwsh";
 }

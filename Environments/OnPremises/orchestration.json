@@ -89,6 +89,24 @@
             }
         },
         {
+            "Name": "EnableOnPremisesNSGFlowLogs",
+            "DependsOn": [
+                "OnPremisesNSG"
+            ],
+            "Script": {
+                "Command": "../../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Arguments": {
+                    "SubscriptionId": "${Parameters.SubscriptionId}",
+                    "NetworkWatcherRegion": "${Parameters.Location}",
+                    "NetworkSecurityGroupId": "reference(OnPremisesNSG.networkSecurityGroupResourceId)",
+                    "DiagnosticStorageAccountId": "reference(DiagnosticStorageAccount.storageAccountResourceId)",
+                    "WorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceId)",
+                    "LogAnalyticsWorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)",
+                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                }
+            }
+        },
+        {
             "Name": "VirtualNetwork",
             "ModuleDefinitionName": "VirtualNetwork",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Network.ResourceGroup}",
@@ -179,9 +197,6 @@
             "Script": {
                 "Command": "../../Modules/VirtualNetworkGateway/2.0/Scripts/virtual.network.gateway.rootcert.ps1",
                 "Arguments" : {
-                    "TenantId": "${Subscriptions.OnPremises.TenantId}",
-                    "ServicePrincipal_ID": "env(SCRIPT_EXECUTION_SP_ID)",
-                    "ServicePrincipal_Secret": "env(SCRIPT_EXECUTION_SP_KEY)",
                     "KeyVaultName" : "${Parameters.ModuleConfigurationParameters.KeyVault.Name}",
                     "KeyName" : "CACert",
                     "BashScriptPath": "../../Modules/VirtualNetworkGateway/2.0/Scripts/virtual.network.gateway.rootcert.sh"
@@ -273,6 +288,7 @@
                     "blobContainers": {
                         "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Containers}"
                     }
+
                 }
             }
         },

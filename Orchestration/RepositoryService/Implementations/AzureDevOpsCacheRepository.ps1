@@ -42,6 +42,7 @@ Class AzureDevOpsCacheRepository: ICacheRepository {
         $environmentValue = `
             Get-PowershellEnvironmentVariable -Key $key;
 
+
         # return type from Get-Item is name-value pair, if present
         # return its Value
         if($null -ne $environmentValue) {

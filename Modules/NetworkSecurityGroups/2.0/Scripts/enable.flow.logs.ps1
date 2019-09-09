@@ -46,11 +46,11 @@ try {
         Register-AzResourceProvider -ProviderNamespace Microsoft.Insights
     }
 
-    While ($null -eq $registered) { 
+    While ($null -eq $registered) {
         $registered = Get-AzResourceProvider -ProviderNamespace Microsoft.Insights
         $isRegistered = $null -ne $registered
         Write-Host "Is installed: $isRegistered"
-        Start-Sleep -Seconds 20 
+        Start-Sleep -Seconds 20
     }
 
     Write-Host "Registration complete"
@@ -58,7 +58,7 @@ try {
     $NW = Get-AzNetworkWatcher -ResourceGroupName NetworkWatcherRg -Name "NetworkWatcher_$NetworkWatcherRegion"
 
     #Configure Version 2 FLow Logs with Traffic Analytics Configured
-    Set-AzNetworkWatcherConfigFlowLog -EnableRetention $true -RetentionInDays 365 -NetworkWatcher $NW -TargetResourceId $NetworkSecurityGroupId -StorageAccountId $DiagnosticStorageAccountId -EnableFlowLog $true -FormatType Json -FormatVersion 2 -EnableTrafficAnalytics -WorkspaceResourceId $LogAnalyticsWorkspaceId -WorkspaceGUID $WorkspaceId -WorkspaceLocation $WorkspaceRegion | Out-Null  
+    Set-AzNetworkWatcherConfigFlowLog -EnableRetention $true -RetentionInDays 365 -NetworkWatcher $NW -TargetResourceId $NetworkSecurityGroupId -StorageAccountId $DiagnosticStorageAccountId -EnableFlowLog $true -FormatType Json -FormatVersion 2 -EnableTrafficAnalytics -WorkspaceResourceId $LogAnalyticsWorkspaceId -WorkspaceGUID $WorkspaceId -WorkspaceLocation $WorkspaceRegion | Out-Null
 }
 catch {
     throw $_

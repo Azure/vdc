@@ -17,6 +17,9 @@
     $Validate,
     [Parameter(Mandatory=$false)]
     [switch]
+    $TearDownValidationResourceGroup,
+    [Parameter(Mandatory=$false)]
+    [switch]
     $TearDownEnvironment)
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent;
@@ -94,7 +97,7 @@ Function Start-Deployment {
                     -ModuleConfigurationName $moduleConfigurationName `
                     -ArchetypeInstanceName $ArchetypeInstanceName `
                     -Operation @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];;
-            
+
             if ($null -eq $moduleConfiguration) {
                 throw "Module configuration not found for module name: $moduleConfigurationName";
             }
@@ -118,7 +121,8 @@ Function Start-Deployment {
                     Get-SubscriptionInformation `
                         -ArchetypeInstanceJson $archetypeInstanceJson `
                         -SubscriptionName $archetypeInstanceJson.Parameters.Subscription `
-                        -ModuleConfiguration $moduleConfiguration;
+                        -ModuleConfiguration $moduleConfiguration `
+                        -Mode @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];
 
                 if ($null -eq $subscriptionInformation) {
                     throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
@@ -144,6 +148,7 @@ Function Start-Deployment {
                     Set-SubscriptionContext `
                         -SubscriptionId $subscriptionInformation.SubscriptionId `
                         -TenantId $subscriptionInformation.TenantId;
+
                 }
 
                 # Let's attempt to get the Audit Id from cache
@@ -326,14 +331,33 @@ Function Start-Deployment {
                             -WorkingDirectory $defaultWorkingDirectory;
                     Write-Debug "RBAC Deployment template contents is: $moduleConfigurationRBACDeploymentTemplate";
 
-                    $moduleConfigurationRBACDeploymentParameters = `
-                        Get-RbacDeploymentParametersFileContents `
-                            -DeploymentConfiguration $moduleConfiguration.RBAC `
-                            -ModuleConfigurationsPath $archetypeInstanceJson.Orchestration.ModuleConfigurationsPath `
-                            -WorkingDirectory $defaultWorkingDirectory;
-                    Write-Debug "RBAC Deployment parameters contents is: $moduleConfigurationRBACDeploymentParameters";
+                    # If we are not in a subscription deployment
+                    # proceed to create a resource group
+                    if ($null -ne $subscriptionInformation -and `
+                        -not $isSubscriptionDeployment) {
 
-                    $rbacResourceState = @{};
+                        if($Validate.IsPresent -eq $false) {
+                            # Retrieve the deployment resource group name
+                            $moduleConfigurationResourceGroupName = `
+                                Get-ResourceGroupName `
+                                        -ArchetypeInstanceName $ArchetypeInstanceName `
+                                        -ModuleConfiguration $moduleConfiguration;
+                            Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
+                        }
+                        elseif($Validate.IsPresent -eq $true) {
+                            # Retrieve the validation resource group name
+                            $moduleConfigurationResourceGroupName = `
+                                Get-ValidationResourceGroupName `
+                                    -ArchetypeInstanceName $ArchetypeInstanceName;
+                        }
+
+                        New-ResourceGroup `
+                            -ResourceGroupName $moduleConfigurationResourceGroupName `
+                            -ResourceGroupLocation $location `
+                            -Validate:$($Validate.IsPresent);
+
+                        Write-Debug "Resource Group successfully created";
+                    }
 
                     if ($null -ne $moduleConfigurationRBACDeploymentTemplate) {
                         Write-Debug "About to trigger a deployment";
@@ -402,7 +426,44 @@ Function Start-Deployment {
                         -RBAC $rbacResourceState `
                         -Validate:$($Validate.IsPresent);
                 Write-Debug "Module state created, Id: $($moduleStateId)";
+
+                # Store deployment state information
+                $moduleStateId = `
+                    New-DeploymentStateInformation `
+                        -AuditId $auditId `
+                        -DeploymentId $resourceState.DeploymentId `
+                        -DeploymentName $resourceState.DeploymentName `
+                        -ArchetypeInstanceName $ArchetypeInstanceName `
+                        -ModuleConfigurationName $moduleConfigurationName `
+                        -ResourceStates $resourceState.ResourceStates `
+                        -ResourceIds $resourceState.ResourceIds `
+                        -ResourceGroupName $resourceState.ResourceGroupName `
+                        -DeploymentTemplate $resourceState.DeploymentTemplate `
+                        -DeploymentParameters $resourceState.DeploymentParameters `
+                        -DeploymentOutputs $resourceState.DeploymentOutputs `
+                        -TenantId @("", $subscriptionInformation.TenantId)[$null -ne $subscriptionInformation] `
+                        -SubscriptionId @("", $subscriptionInformation.SubscriptionId)[$null -ne $subscriptionInformation] `
+                        -Policies $policyResourceState `
+                        -RBAC $rbacResourceState `
+                        -Validate:$($Validate.IsPresent);
+                Write-Debug "Module state created, Id: $($moduleStateId)";
             }
+
+            # Finally, destroy the validation resource group only if the following conditions are satisfied:
+            # 1. Deployment is run in Validate mode
+            # 2. TearDownValidationResourceGroup flag is present
+            if($Validate.IsPresent -eq $true -and `
+                    $TearDownValidationResourceGroup.IsPresent -eq $true) {
+
+                Write-Debug "Validation Resource Group is being destroyed ..."
+
+                # Destroy the validation Resource Group
+                Remove-ValidationResourceGroup `
+                        -ArchetypeInstanceName $ArchetypeInstanceName;
+
+                Write-Host "Validation Resource Group is destroyed."
+            }
+
         }
     }
     catch {
@@ -436,13 +497,13 @@ Function Start-TearDownEnvironment {
         # relative to the working directory (root of the repository).
         # WorkingDirectory is required when running the script
         # from a local computer.
-    try {        
+    try {
         $initializedValues = `
             Start-Init `
                 -WorkingDirectory $WorkingDirectory `
                 -DefinitionPath $DefinitionPath `
                 -ArchetypeInstanceName $ArchetypeInstanceName
-        
+
         $archetypeInstanceJson = $initializedValues.ArchetypeInstanceJson
         $archetypeInstanceName = $initializedValues.ArchetypeInstanceName
         Write-Debug "Values retrieved from Init: $(ConvertTo-Json $initializedValues)"
@@ -470,7 +531,7 @@ Function Start-TearDownEnvironment {
                         -ModuleConfigurationName $moduleConfigurationName `
                         -ArchetypeInstanceName $ArchetypeInstanceName `
                         -Operation "Validate"
-                
+
                 if ($null -eq $moduleConfiguration) {
                     throw "Module configuration not found for module name: $moduleConfigurationName";
                 }
@@ -480,7 +541,7 @@ Function Start-TearDownEnvironment {
                 else {
 
                     Write-Debug "Module instance is: $(ConvertTo-Json $moduleConfiguration)";
-    
+
                     # Let's make sure we use the updated name
                     # There are instances when we have a module configuration updating an existing
                     # module configuration that was already deployed, in this case, let's use
@@ -488,14 +549,15 @@ Function Start-TearDownEnvironment {
                     Write-Debug "Updating module instance name from $ModuleConfigurationName to $($moduleConfiguration.Name)";
                     $ModuleConfigurationName = `
                         $moduleConfiguration.Name;
-    
+
                     $subscriptionInformation = $null;
                     $subscriptionInformation = `
                         Get-SubscriptionInformation `
                             -ArchetypeInstanceJson $archetypeInstanceJson `
                             -SubscriptionName $archetypeInstanceJson.Parameters.Subscription `
-                            -ModuleConfiguration $moduleConfiguration;
-    
+                            -ModuleConfiguration $moduleConfiguration  `
+                            -Mode @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];
+
                     if ($null -eq $subscriptionInformation) {
                         throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
                     }
@@ -503,10 +565,10 @@ Function Start-TearDownEnvironment {
                             $archetypeInstanceJson.Parameters.SubscriptionId) {
                         Write-Host "Module: $ModuleConfigurationName belongs to a different subscription: $($moduleConfiguration.Subscription), skipping the deletion process" -ForegroundColor Green
                     }
-                    else {    
+                    else {
                         # Let's get the current subscription context
                         $sub = Get-AzContext | Select-Object Subscription
-        
+
                         # Do not change the subscription context if the operation is validate.
                         # This is because the script will expect the validation resource
                         # group to be present in all the subscriptions we are deploying.
@@ -518,25 +580,25 @@ Function Start-TearDownEnvironment {
                             $subscriptionCheck -ne [Guid]::Empty -and `
                             $tenantIdCheck -ne [Guid]::Empty -and
                             $subscriptionCheck -ne $sub.Subscription.Id) {
-        
+
                             Write-Debug "Setting subscription context";
                             Write-Debug "Deployment service object is: $deploymentService"
-        
+
                             Set-SubscriptionContext `
                                 -SubscriptionId $subscriptionInformation.SubscriptionId `
                                 -TenantId $subscriptionInformation.TenantId;
                         }
-        
+
                         if($null -eq $ModuleConfiguration.Script `
                             -and `
                            $null -eq $ModuleConfiguration.Script.Command) {
-        
+
                             $moduleConfigurationResourceGroupName = `
                                 Get-ResourceGroupName `
                                     -ArchetypeInstanceName $archetypeInstanceName `
                                     -ModuleConfiguration $moduleConfiguration;
                             Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
-                            
+
                             $resourceGroupFound = $deploymentService.GetResourceGroup(
                                 $subscriptionInformation.SubscriptionId,
                                 $moduleConfigurationResourceGroupName
@@ -548,7 +610,7 @@ Function Start-TearDownEnvironment {
                             if ($null -ne $resourceGroupFound -and `
                                 ( $null -eq $allResourceGroupsToDelete.$moduleConfigurationResourceGroupName -or `
                                   $resourceGroupFound | Where-Object "ProvisioningState" -ne "Deleting") ) {
-                                
+
                                 # Add to temporal hashtable if is not already added
                                 # Adding the item with a Value = false, which means that the resource group
                                 # hasn't been deleted yet, one the resource group gets deleted, this value
@@ -558,17 +620,17 @@ Function Start-TearDownEnvironment {
                                         $moduleConfigurationResourceGroupName = $false
                                     }
                                 }
-        
+
                                 # Start deleting the resource group locks and resource group
-        
+
                                 Write-Debug "Deleting all resource locks"
                                 $deploymentService.RemoveResourceGroupLock(
                                     $subscriptionInformation.SubscriptionId,
                                     $moduleConfigurationResourceGroupName
                                 )
-        
+
                                 Write-Debug "Deleting resource group: $moduleConfigurationResourceGroupName"
-        
+
                                 $deploymentService.RemoveResourceGroup(
                                     $subscriptionInformation.SubscriptionId,
                                     $moduleConfigurationResourceGroupName
@@ -591,8 +653,8 @@ Function Start-TearDownEnvironment {
                         }
                     }
                 }
-            } 
-            
+            }
+
             # Finished first loop, let's wait for a minute
             # to give time for the resource group to get deleted
             if ($allResourceGroupsDeleted -eq $false) {
@@ -654,7 +716,7 @@ Function Start-Init {
                 -FilePath $DefinitionPath `
                 -WorkingDirectory $defaultWorkingDirectory `
                 -CacheKey $ArchetypeInstanceName;
-        
+
         $location = ''
 
         # Check for invariant
@@ -703,7 +765,7 @@ Function Get-AllModules {
             $topologicalSortRootPath = `
                 Join-Path $rootPath -ChildPath 'TopologicalSort';
 
-            # Adding Out-Null to prevent outputs from the Invoke-Command from being added to 
+            # Adding Out-Null to prevent outputs from the Invoke-Command from being added to
             Invoke-Command -ScriptBlock { dotnet build $topologicalSortRootPath --configuration Release --output ./ } | Out-Null
 
             $topologicalSortAssemblyPath = `
@@ -811,7 +873,7 @@ Function New-CustomScripts {
         [switch]
         $Validate
     )
-    
+
     try {
         $result = @($null, $null);
  
@@ -1210,7 +1272,8 @@ Function Invoke-Bootstrap {
                     $auditStorageInformation.SubscriptionId,
                     $auditStorageInformation.ResourceGroup,
                     $auditStorageInformation.Location,
-                    $auditStorageInformation.StorageAccountName);
+                    $auditStorageInformation.StorageAccountName
+                    );
 
             $factory = `
                 New-FactoryInstance `
@@ -1261,7 +1324,10 @@ Function Get-SubscriptionInformation {
         $SubscriptionName,
         [Parameter(Mandatory=$false)]
         [hashtable]
-        $ModuleConfiguration
+        $ModuleConfiguration,
+        [Parameter(Mandatory=$true)]
+        [string]
+        $Mode
     )
 
     try {
@@ -1291,10 +1357,12 @@ Function Get-SubscriptionInformation {
 
             $subscriptionInformation = $null;
 
+            # Use the Module Instance's Subscription information only in "deploy" mode. Otherwise, use the Archetype's Subscription information.
             Write-Debug "Let's check if module configuration is not null and has a Subscription property with a value different than null or empty.";
             if (($null -ne $ModuleConfiguration) -and `
                 $null -ne $subscriptionKey -and `
-                ![string]::IsNullOrEmpty($ModuleConfiguration.$subscriptionKey)) {
+                ![string]::IsNullOrEmpty($ModuleConfiguration.$subscriptionKey) -and `
+                $Mode -eq "deploy") {
                 Write-Debug "Module instance configuration found and has a Subscription property, will use its values to run a deployment.";
                 Write-Debug "Subscription name is: $($moduleConfiguration.$subscriptionKey)";
 
@@ -2050,11 +2118,9 @@ Function New-ResourceGroup {
     )
 
     try {
-        if (-not $Validate.IsPresent) {
-            $deploymentService.CreateResourceGroup(
-                $resourceGroupName,
-                $resourceGroupLocation);
-        }
+        $deploymentService.CreateResourceGroup(
+            $resourceGroupName,
+            $resourceGroupLocation);
     }
     catch {
         Write-Host "An error ocurred while running New-ResourceGroup";
@@ -2108,12 +2174,11 @@ Function New-AzureResourceManagerDeployment {
 
         if($Validate.IsPresent) {
             Write-Debug "Validating the template";
-
             return `
                 $deploymentService.ExecuteValidation(
                     $TenantId,
                     $SubscriptionId,
-                    $defaultValidationResourceGroupName,
+                    $ResourceGroupName,
                     $DeploymentTemplate,
                     $DeploymentParameters,
                     $Location);
@@ -2340,22 +2405,22 @@ Function Add-OutputsToCache {
         if(-not $Validate.IsPresent) {
             # Iterate through all the keys in the hashtable
             $Outputs.Keys | ForEach-Object {
-    
+
                 # Retrieve key and value of each parameter entry
                 # in the hashtable
                 $outputParameterName = $_;
-    
+
                 # Format the Cache Key from the Module Instance Name
                 # and output parameter name
                 $cacheKey = ("{0}.{1}" -F $ModuleConfigurationName, $outputParameterName);
-    
+
                 # Convert to Json before saving this value
                 $cacheValue = `
                     $Outputs.$outputParameterName.Value;
-    
-    
+
+
                 Write-Debug "Adding Output $(ConvertTo-Json $cacheValue -Depth 50) to $cacheKey";
-    
+
                 # Call Add-ItemToCache function to cache them
                 # Safe to do .Value because we are caching deployment outputs
                 # all deployment outputs contains a Type and Value properties.
@@ -2737,7 +2802,7 @@ Function Get-OutputReferenceValue() {
             if ($resolvedOutput `
                 -and $resolvedOutput -is [object[]]){
                 Write-Debug "Replacing an array";
-                            
+
                 # Since is an array, let's replace the reference function
                 # including double quotes or single quotes
                 $tempfullReferenceFunctionString1 = `
@@ -2747,7 +2812,7 @@ Function Get-OutputReferenceValue() {
 
                 $tempfullReferenceFunctionString2 = `
                     "'$fullReferenceFunctionString'";
-                
+
                 Write-Debug "reference with single quotes is: $tempfullReferenceFunctionString2"
 
                 $resolvedOutputString = `
@@ -2963,6 +3028,86 @@ Function Get-OutputFromStateStore() {
         Write-Host $_;
         throw $_;
     }
+}
+
+Function Remove-ValidationResourceGroup() {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]
+        $ArchetypeInstanceName
+    )
+
+    $resourceGroupFound = `
+        Assert-ValidationResourceGroup `
+            -ArchetypeInstanceName $ArchetypeInstanceName;
+
+    if($resourceGroupFound -eq $true) {
+
+        $resourceGroupName = `
+            Get-ValidationResourceGroupName `
+                -ArchetypeInstanceName $ArchetypeInstanceName;
+
+        Start-ExponentialBackoff `
+            -Expression { Remove-AzResourceGroup `
+                            -Name $resourceGroupName `
+                            -Force; }
+
+        Write-Host "Validation ResourceGroup $resourceGroupName deleted."
+    }
+    else {
+        Write-Host "Validation ResourceGroup $resourceGroupName does not exists."
+    }
+}
+
+Function Assert-ValidationResourceGroup() {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]
+        $ArchetypeInstanceName
+    )
+
+    $resourceGroup = `
+        Get-ValidationResourceGroup `
+            -ArchetypeInstanceName $ArchetypeInstanceName;
+
+    if($null -ne $resourceGroup) {
+        return $true;
+    }
+    else {
+        return $false;
+    }
+
+}
+
+Function Get-ValidationResourceGroup() {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]
+        $ArchetypeInstanceName
+    )
+
+    $resourceGroupName = `
+        Get-ValidationResourceGroupName `
+            -ArchetypeInstanceName $ArchetypeInstanceName;
+
+    return `
+        Get-AzResourceGroup $resourceGroupName `
+            -ErrorAction SilentlyContinue;
+}
+
+Function Get-ValidationResourceGroupName() {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]
+        $ArchetypeInstanceName
+    )
+
+    return `
+        Get-UniqueString($ArchetypeInstanceName);
 }
 
 # Entry point script, used when invoking ModuleConfigurationDeployment.ps1

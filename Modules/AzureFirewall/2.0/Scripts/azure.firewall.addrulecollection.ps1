@@ -3,10 +3,8 @@ param(
     [Parameter(Mandatory=$True)]
     [string]$SubscriptionId,
     [Parameter(Mandatory=$True)]
-    [string]$AzureFirewallName,
-    [Parameter(Mandatory=$True)]
-    [string]$AzureFirewallResourceGroup,
-    [Parameter(Mandatory=$True)]
+    [string]$AzureFirewallId,
+    [Parameter(Mandatory=$False)]
     [array]$RuleCollections,
     [Parameter(Mandatory=$True)]
     [string]$RuleType
@@ -39,11 +37,8 @@ Function ConvertTo-HashTable() {
     }
 }
 
-# Construct the Resource Id for Azure Firewall using subscription id, resource group name and azure firewall name
-$azureFirewallId = "/subscriptions/$SubscriptionId/resourceGroups/$AzureFirewallResourceGroup/providers/Microsoft.Network/azureFirewalls/$AzureFirewallName";
-
 # Get the current state of the Azure Firewall from Graph
-$azfw = Search-AzGraph -Query "where id == '$azureFirewallId'";
+$azfw = Search-AzGraph -Query "where id == '$AzureFirewallId'" -Subscription $SubscriptionId;
 
 if($null -ne $azfw) {
 
@@ -96,5 +91,5 @@ if($null -ne $azfw) {
 }
 else {
 
-    Throw "Firewall named $AzureFirewallName does not exists";
+    Throw "Firewall $AzureFirewallId does not exists";
 }

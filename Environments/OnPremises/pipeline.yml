@@ -10,31 +10,18 @@ trigger:
 stages:
 - stage: Validate
   jobs:
-  - job: SetupValidationResourceGroup
-    pool: 
-      name: 'vdc-self-hosted'
-    steps:
-    - task: AzurePowerShell@4
-      displayName: "Setup Validation Resource Group"
-      inputs:
-        azureSubscription: 'vdc2-onprem'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
-        ScriptArguments: '-ResourceGroupName vdc-validation-rg -SetupResourceGroup'
-        azurePowerShellVersion: 'LatestVersion'
   - job: StorageAccounts
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: SetupValidationResourceGroup
     steps:
     - task: PowerShell@2
       displayName: "Pester Tests for Module - Storage Accounts"
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
-          
+
           Invoke-Pester -Script "./Modules/StorageAccounts/2.0/Tests";
-          
+
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
@@ -64,15 +51,15 @@ stages:
       inputs:
         targetType: 'inline'
         script: '
-        
+
           $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
           Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
         pwsh: true
   - job: LogAnalytics
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
-    variables: 
+    dependsOn: [ StorageAccounts ]
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
@@ -80,9 +67,9 @@ stages:
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
-          
+
           Invoke-Pester -Script "./Modules/LogAnalytics/2.0/Tests";
-          
+
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
@@ -109,8 +96,8 @@ stages:
   - job: NetworkSecurityGroups
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
-    variables: 
+    dependsOn: [ StorageAccounts ]
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
@@ -118,9 +105,9 @@ stages:
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
-          
+
           Invoke-Pester -Script "./Modules/NetworkSecurityGroups/2.0/Tests";
-          
+
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
@@ -147,8 +134,8 @@ stages:
   - job: VirtualNetwork
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
-    variables: 
+    dependsOn: [ StorageAccounts ]
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
@@ -156,9 +143,9 @@ stages:
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
-          
+
           Invoke-Pester -Script "./Modules/VirtualNetwork/2.0/Tests";
-          
+
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
@@ -185,8 +172,8 @@ stages:
   - job: VirtualNetworkGateway
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
-    variables: 
+    dependsOn: [ StorageAccounts ]
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
@@ -194,9 +181,9 @@ stages:
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
-          
+
           Invoke-Pester -Script "./Modules/VirtualNetworkGateway/2.0/Tests";
-          
+
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
@@ -223,8 +210,8 @@ stages:
   - job: KeyVault
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
-    variables: 
+    dependsOn: [ StorageAccounts ]
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
@@ -232,9 +219,9 @@ stages:
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
-          
+
           Invoke-Pester -Script "./Modules/KeyVault/2.0/Tests";
-          
+
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
@@ -282,8 +269,8 @@ stages:
   - job: ActiveDirectory
     pool:
       name: 'vdc-self-hosted'
-    dependsOn: [ SetupValidationResourceGroup, StorageAccounts ]
-    variables: 
+    dependsOn: [ StorageAccounts ]
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.StorageAccounts.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: PowerShell@2
@@ -291,9 +278,9 @@ stages:
       inputs:
         targetType: 'inline'
         script: '# Write your powershell commands here.
-          
+
           Invoke-Pester -Script "./Modules/ActiveDirectory/2.0/Tests";
-          
+
           # Use the environment variables input below to pass secret variables to this script.'
         pwsh: true
     - task: AzurePowerShell@4
@@ -323,7 +310,7 @@ stages:
         azureSubscription: 'vdc2-onprem'
         ScriptType: 'FilePath'
         ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
-        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "InstallActiveDirectory" -Validate'
+        ScriptArguments: '-DefinitionPath "Environments/OnPremises/definition.json" -ModuleConfigurationName "InstallActiveDirectory" -Validate -TearDownValidationResourceGroup'
         azurePowerShellVersion: 'LatestVersion'
       env:
         ADMIN_USER_PWD: $(ADMIN_USER_PWD)
@@ -338,19 +325,6 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
         SCRIPT_EXECUTION_SP_ID: $(SCRIPT_EXECUTION_SP_ID)
         SCRIPT_EXECUTION_SP_KEY: $(SCRIPT_EXECUTION_SP_KEY)
-  - job: TearDownValidationResourceGroup
-    pool: 
-      name: 'vdc-self-hosted'
-    dependsOn: [ StorageAccounts, LogAnalytics, NetworkSecurityGroups, VirtualNetwork, VirtualNetworkGateway, ActiveDirectory ]
-    steps:
-    - task: AzurePowerShell@4
-      displayName: "Teardown Validation Resource Group"
-      inputs:
-        azureSubscription: 'vdc2-onprem'
-        ScriptType: 'FilePath'
-        ScriptPath: 'Orchestration/OrchestrationService/ValidationResourceGroupSetup.ps1'
-        ScriptArguments: '-TearDownResourceGroup'
-        azurePowerShellVersion: 'LatestVersion'
 - stage: DeployEnvironment
   jobs:
   - job: DiagnosticStorageAccount
@@ -385,7 +359,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: '
-        
+
           $bootstrapInitialized = $ENV:BOOTSTRAP_INITIALIZED;
           Write-Host "##vso[task.setvariable variable=BOOTSTRAP_INITIALIZED;isOutput=true]$bootstrapInitialized";'
         pwsh: true
@@ -394,7 +368,7 @@ stages:
     pool:
       name: 'vdc-self-hosted'
     dependsOn: DiagnosticStorageAccount
-    variables: 
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
@@ -423,7 +397,7 @@ stages:
     pool:
       name: 'vdc-self-hosted'
     dependsOn: [ LogAnalytics, DiagnosticStorageAccount ]
-    variables: 
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
@@ -447,12 +421,33 @@ stages:
         VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
         SCRIPT_EXECUTION_SP_ID: $(SCRIPT_EXECUTION_SP_ID)
         SCRIPT_EXECUTION_SP_KEY: $(SCRIPT_EXECUTION_SP_KEY)
+    - task: AzurePowerShell@4
+      displayName: "ARM Validation - Enable Network Security Group Flow Logs"
+      inputs:
+        azureSubscription: 'vdc2-spoke1'
+        ScriptType: 'FilePath'
+        ScriptPath: 'Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1'
+        ScriptArguments: '-DefinitionPath "Environments/AKS/LandingZone/definition.json" -ModuleConfigurationName "OnPremisesNSG"'
+        azurePowerShellVersion: 'LatestVersion'
+      env:
+        ADMIN_USER_PWD: $(ADMIN_USER_PWD)
+        ADMIN_USER_SSH: $(ADMIN_USER_SSH)
+        DEVOPS_SERVICE_PRINCIPAL_USER_ID: $(DEVOPS_SERVICE_PRINCIPAL_USER_ID)
+        KEYVAULT_MANAGEMENT_USER_ID: $(KEYVAULT_MANAGEMENT_USER_ID)
+        DOMAIN_ADMIN_USER_PWD: $(DOMAIN_ADMIN_USER_PWD)
+        DOMAIN_ADMIN_USERNAME: $(DOMAIN_ADMIN_USERNAME)
+        TENANT_ID: $(TENANT_ID)
+        ORGANIZATION_NAME: $(ORGANIZATION_NAME)
+        VDC_SUBSCRIPTIONS: $(VDC_SUBSCRIPTIONS)
+        VDC_TOOLKIT_SUBSCRIPTION: $(VDC_TOOLKIT_SUBSCRIPTION)
+        SCRIPT_EXECUTION_SP_ID: $(SCRIPT_EXECUTION_SP_ID)
+        SCRIPT_EXECUTION_SP_KEY: $(SCRIPT_EXECUTION_SP_KEY)
   - job: VirtualNetwork
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
     dependsOn: [ NetworkSecurityGroups, DiagnosticStorageAccount ]
-    variables: 
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
@@ -481,7 +476,7 @@ stages:
     pool:
       name: 'vdc-self-hosted'
     dependsOn: [ DiagnosticStorageAccount, LogAnalytics, VirtualNetwork ]
-    variables: 
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
@@ -552,7 +547,7 @@ stages:
     pool:
       name: 'vdc-self-hosted'
     dependsOn: [ VirtualNetwork, KeyVault, DiagnosticStorageAccount ]
-    variables: 
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4
@@ -580,7 +575,7 @@ stages:
     timeoutInMinutes: 0
     pool:
       name: 'vdc-self-hosted'
-    variables: 
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     dependsOn: DiagnosticStorageAccount
     steps:
@@ -631,7 +626,7 @@ stages:
     pool:
       name: 'vdc-self-hosted'
     dependsOn: [ VirtualNetwork, DiagnosticStorageAccount, LogAnalytics, KeyVault, ArtifactsStorageAccount ]
-    variables: 
+    variables:
       BOOTSTRAP_INITIALIZED: $[dependencies.DiagnosticStorageAccount.outputs['bootstrapInitializedOutput.BOOTSTRAP_INITIALIZED']]
     steps:
     - task: AzurePowerShell@4

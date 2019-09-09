@@ -3,7 +3,7 @@
     "DeploymentName": "onprem",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "OnPremises",
-    "Location": "West US 2",
+    "Location": "West US",
     "ModuleConfigurationParameters": {
         "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
@@ -228,8 +228,7 @@
                 }
             ],
             "EnableDdosProtection": false,
-            "EnableVmProtection": false,
-            "DnsServers": []
+            "EnableVmProtection": false
         }
     }
 }

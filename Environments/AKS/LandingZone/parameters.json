@@ -19,9 +19,8 @@
                 "Id": "/subscriptions/${Subscriptions.SharedServices.SubscriptionId}/resourceGroups/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetwork.ResourceGroupName}/providers/Microsoft.Network/virtualNetworks/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetwork.Name}",
                 "Name": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-vnet",
                 "ResourceGroupName": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-network-rg",
-                "AddressPrefix": "10.4.0.32/27",
+                "AddressPrefix": "172.0.0.0/16",
                 "NetworkVirtualAppliance": {
-                    "EgressIp": "10.4.1.4",
                     "AzureFirewall": {
                         "Name": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-azfw"
                     }
@@ -106,7 +105,7 @@
             "ResourceGroup": "${Parameters.InstanceName}-network-rg",
             "EnableDdosProtection": false,
             "EnableVmProtection": false,
-            "AddressPrefixes": ["10.2.0.0/16"],
+            "AddressPrefixes": ["172.2.0.0/16"],
             "ApplicationSecurityGroups": [],
             "AzureFirewallNetworkRuleCollection": [
                 {
@@ -131,6 +130,23 @@
                                 ],
                                 "destinationPorts": [
                                     "22"
+                                ]
+                            },
+                            {
+                                "name": "allow-internet-connectivity",
+                                "description": "Allows outbound connectivity to internet for AKS VNet",
+                                "protocols": [
+                                    "TCP",
+                                    "UDP"
+                                ],
+                                "sourceAddresses": [
+                                    "${Parameters.ModuleConfigurationParameters.VirtualNetwork.AddressPrefixes[0]}"
+                                ],
+                                "destinationAddresses": [
+                                    "*"
+                                ],
+                                "destinationPorts": [
+                                    "*"
                                 ]
                             }
                         ]
@@ -206,7 +222,7 @@
                                 "Protocol": "Tcp",
                                 "SourcePortRange": "*",
                                 "SourcePortRanges": [],
-                                "SourceAddressPrefix": "10.4.0.32/27",
+                                "SourceAddressPrefix": "172.0.0.0/16",
                                 "SourceApplicationSecurityGroups": []
                             }
                         },
@@ -310,7 +326,7 @@
             "Subnets": [
                 {
                     "name": "default",
-                    "addressPrefix": "10.2.0.0/17",
+                    "addressPrefix": "172.2.0.0/17",
                     "networkSecurityGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.NetworkSecurityGroups[0].Name}",
                     "userDefinedRoute": "",
                     "routeTableName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.UserDefinedRoutes[0].Name}",
@@ -370,7 +386,15 @@
             "Namespace": "${Parameters.Organization}eventhubnamespace",
             "Name": "${Parameters.Organization}-diagnostics-eventhub",
             "ConsumerGroupName": "${Parameters.Organization}eventconsumergroup1",
-            "Sku": "Standard"
+            "Sku": "Standard",
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [{
+                    "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                }],
+                "ipRules": []
+            },
         }
     }
 }

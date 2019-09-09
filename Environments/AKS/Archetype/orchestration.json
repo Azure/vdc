@@ -24,6 +24,15 @@
             "ModuleDefinitionName": "AzureKubernetesServices",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Kubernetes.ResourceGroup}",
             "Version": "2.0",
+            "RBAC": {
+                "Comments": "RBAC is Optional - If no object is specified, no RBAC deployment will occur",
+                "TemplatePath": "../../../Modules/AzureKubernetesServices/2.0/RBAC/kubernetes.aks.deploy.json",
+                "OverrideParameters": {
+                    "roleAssignments": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Rbac.ResourceGroupAssignments}"
+                    }
+                }
+            },
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
                 "TemplatePath": "../../../Modules/AzureKubernetesServices/2.0/deploy.json",
@@ -43,7 +52,7 @@
                     "servicePrincipalClientSecret": {
                         "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.ServicePrincipalClientSecret}"
                     },
-                    "osType": {
+                    "agentOSType": {
                         "value": "${Parameters.ModuleConfigurationParameters.Kubernetes.OsType}"
                     },
                     "kubernetesVersion": {

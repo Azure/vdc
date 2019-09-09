@@ -22,6 +22,12 @@
     },
     "authorizationRulesRootManageSharedAccessKeyName": {
       "value": "RootManageSharedAccessKey"
+    },
+    "storageAccountId": {
+      "value": "/subscriptions/0000000000000000/resourceGroups/org-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/storage-account-name"
+    },
+    "workspaceId": {
+      "value": "/subscriptions/0000000000000000/resourcegroups/org-diagnostics-rg/providers/microsoft.operationalinsights/workspaces/workspace-name"
     }
   }
 }

@@ -54,37 +54,23 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
 
     [void] ExecuteValidation([string] $tenantId, `
                             [string] $subscriptionId, `
-                            [string] $resourceGroupName, `
+                            [string] $validationResourceGroupName, `
                             [string] $deploymentTemplate, `
                             [string] $deploymentParameters, `
                             [string] $location) {
         
         try {
-            # Try to fetch the validation resource group
-            $validationResourceGroup = `
-            Get-AzResourceGroup `
-                -Name $resourceGroupName `
-                -ErrorAction SilentlyContinue;
-
-            # Does the validation resource group exists?
-            if($null -ne $validationResourceGroup) {
-                # call arm validation
-                $validation = `
-                    $this.InvokeARMOperation(
-                        $tenantId,
-                        $subscriptionId,
-                        $resourceGroupName,
-                        $deploymentTemplate,
-                        $deploymentParameters,
-                        $location,
-                        "validate");
-            }
-            else {
-                # Fail early if the validation resource group does not
-                # exists
-                Throw "Validation resource group - $resourceGroupName is not setup. Create the validation resource `
-                    group before invoking the ARM validation.";
-            }
+           
+            # call arm validation
+            $validation = `
+                $this.InvokeARMOperation(
+                    $tenantId,
+                    $subscriptionId,
+                    $validationResourceGroupName,
+                    $deploymentTemplate,
+                    $deploymentParameters,
+                    $location,
+                    "validate");
 
             # Did the validation succeed?
             if($validation.error.code -eq "InvalidTemplateDeployment") {
@@ -152,83 +138,99 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
                 $scope = "subscription";
             }
 
-            # Contruct the uri for the desired operation (deploy 
-            # or validate) and for the desired scope (resource-group
-            # or subscription)
-            $uri = $this.ConstructUri(
-                $subscriptionId,
-                $resourceGroupName,
-                $operation,
-                $scope
-            );
-            
-            # Prepare the request body for the REST API
-            $requestBody = $this.PrepareRequestBodyForArm(
-                $deploymentTemplate,
-                $deploymentParameters,
-                $location,
-                $scope
-            );
-           
-            # Get Access Token
-            $accessToken = $this.GetAccessToken($tenantId);
-   
-            # header will need the access token of the sp or user performing the deployment
-            $headers = @{
-                "authorization" = "Bearer $accessToken";
-            }
 
-            # Switch REST Verb based on operation type
-            if($operation -eq "deploy") {
-                $method = "Put";
+            # If the scope is resource-group, check if the resource group exists before proceeding.
+            # If the scope is subscription, resource group is not expected.
+            if((![string]::IsNullOrEmpty($resourceGroupName) -and `
+                $scope -eq "resource-group") -or `
+                $scope -eq "subscription") {
+
+                # Contruct the uri for the desired operation (deploy 
+                # or validate) and for the desired scope (resource-group
+                # or subscription)
+                $uri = $this.ConstructUri(
+                    $subscriptionId,
+                    $resourceGroupName,
+                    $operation,
+                    $scope
+                );
+                
+                # Prepare the request body for the REST API
+                $requestBody = $this.PrepareRequestBodyForArm(
+                    $deploymentTemplate,
+                    $deploymentParameters,
+                    $location,
+                    $scope
+                );
+            
+                # Get Access Token
+                $accessToken = $this.GetAccessToken($tenantId);
+    
+                # header will need the access token of the sp or user performing the deployment
+                $headers = @{
+                    "authorization" = "Bearer $accessToken";
+                }
+
+                # Switch REST Verb based on operation type
+                if($operation -eq "deploy") {
+                    $method = "Put";
+                }
+                else {
+                    $method = "Post";
+                }
+                
+                try
+                {  
+                    Write-Debug "Invoking ARM REST API with Uri: $uri";
+                    Write-Debug "Request Body: $requestBody";
+
+                    # Call REST API to start the deployment
+                    $deployment = `
+                        Invoke-RestMethod `
+                            -Method $method `
+                            -Uri $uri `
+                            -Body $requestBody `
+                            -Headers $headers `
+                            -ContentType "application/json";
+
+                    Write-Debug "Result of ARM Invocation is: $(ConvertTo-Json $deployment -Depth 50)";
+    
+                    # wait for arm deployment
+                    if($deployment.Id -ne $null `
+                        -and $operation -eq "deploy") {
+                        # if the $deployment object's id is not null, then wait for the deployment to continue
+                        # at this step, the REST call was accepted and being processed. The process can be tracked
+                        # through the deployment object's id provided.
+                        # Only two failures can result:
+                        # 1. Template / Parameters Validation failure
+                        # 2. Deployment failure
+                        Write-Host "Running a deployment ..." -ForegroundColor Yellow;
+                        $this.WaitForDeploymentToComplete(
+                            $deployment,
+                            $this.isSubscriptionDeployment);
+                        Write-Host "Deployment complete"  -ForegroundColor Yellow;
+                    }
+                    return $deployment;
+                
+                }
+                catch {
+                    # For deploy operation, the error is due malformed or incorrect inputs
+                    if($operation -eq "deploy") {
+                        Write-Host "An Exception Occurred While Invoking the Deployment. Please see the error below:";
+                        throw $(Get-Exception $_);
+                    }
+                    # For validate operation, the error is due to validation failure
+                    else {
+                        return $_;
+                    }
+                }
+
             }
             else {
-                $method = "Post";
-            }
-            
-            try
-            {  
-                Write-Debug "Invoking ARM REST API with Uri: $uri";
-                Write-Debug "Request Body: $requestBody";
-
-                # Call REST API to start the deployment
-                $deployment = `
-                    Invoke-RestMethod `
-                        -Method $method `
-                        -Uri $uri `
-                        -Body $requestBody `
-                        -Headers $headers `
-                        -ContentType "application/json";
-
-                Write-Debug "Result of ARM Invocation is: $(ConvertTo-Json $deployment -Depth 50)";
- 
-                # wait for arm deployment
-                if($deployment.Id -ne $null `
-                    -and $operation -eq "deploy") {
-                    # if the $deployment object's id is not null, then wait for the deployment to continue
-                    # at this step, the REST call was accepted and being processed. The process can be tracked
-                    # through the deployment object's id provided.
-                    # Only two failures can result:
-                    # 1. Template / Parameters Validation failure
-                    # 2. Deployment failure
-                    Write-Host "Running a deployment ..." -ForegroundColor Yellow;
-                    $this.WaitForDeploymentToComplete(
-                        $deployment,
-                        $this.isSubscriptionDeployment);
-                    Write-Host "Deployment complete"  -ForegroundColor Yellow;
-                }
-                return $deployment;
-            }
-            catch {
-                # For deploy operation, the error is due malformed or incorrect inputs
-                if($operation -eq "deploy") {
-                    Write-Host "An Exception Occurred While Invoking the Deployment. Please see the error below:";
-                    throw $(Get-Exception $_);
-                }
-                # For validate operation, the error is due to validation failure
-                else {
-                    return $_;
-                }
+                # Fail early if the validation resource group does not
+                # exists
+                Throw "Validation resource group - $resourceGroupName is not setup. Create the validation resource `
+                    group before invoking the ARM validation.";
             }
         }
     }
