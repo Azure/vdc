@@ -315,10 +315,10 @@
     },
     "sharedAccessPolicyPrimaryKey": {
       "type": "string",
-      "value": "[listkeys(variables('authRuleResourceId'), variables('apiVersion')).primaryKey]"
-    },
-    "metadata": {
-      "description": "The shared access policy primary key for the EventHub Namespace"
+      "value": "[listkeys(variables('authRuleResourceId'), variables('apiVersion')).primaryKey]",
+      "metadata": {
+        "description": "The shared access policy primary key for the EventHub Namespace"
+      }
     }
   }
 }
