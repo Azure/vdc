@@ -87,7 +87,7 @@
     },
     {
       "type": "Microsoft.CognitiveServices/accounts",
-      "apiVersion": "2017-04-18",
+      "apiVersion": "[providers('Microsoft.CognitiveServices','accounts').apiVersions[0]]",
       "name": "[parameters('accountName')]",
       "kind": "TextTranslation",
       "location": "[parameters('location')]",
