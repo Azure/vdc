@@ -14,7 +14,7 @@ The following Resources are deployed.
 | :-             | :-            | :-       |:-           |
 | `accountName` || **Required** |The name of Text Translation API account
 | `sku` | S0| **Optional** | sku for Text Translation API
-| `location` || **Optional** | Location of the Azure Analysis Services server
+| `location` || **Optional** | Location for all Resources
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
 | `tagEnvironment` || **Optional** | The name of the Environment
 | `tagProject` || **Optional** | The name of the project

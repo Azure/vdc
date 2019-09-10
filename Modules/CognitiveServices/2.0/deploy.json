@@ -19,7 +19,7 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Optional. Location of the Azure Analysis Services server"
+        "description": "Optional. Location for all Resources"
       }
     },
     "cuaId": {
