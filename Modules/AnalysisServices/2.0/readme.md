@@ -14,7 +14,7 @@ The following Resources are deployed.
 | Parameter Name | Default Value | Required | Description |
 | :-             | :-            | :-       |:-           |
 | `serverName` || **Required** | The name of the Azure Analysis Services server to create
-| `Location` || **Optional** | Location of the Azure Analysis Services server
+| `location` | resourceGroup().location | **Optional** | Location for all Resources
 | `skuName` | S0 | **Optional** | The sku name of the Azure Analysis Services server to create
 | `skuCapacity` | 1 | **Optional** | The total number of query replica scale-out instances
 | `firewallSettings` | AllowFromAll | **Optional** | The inbound firewall rules to define on the server. If not specified, firewall is disabled
