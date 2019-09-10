@@ -18,9 +18,9 @@ The following Resources are deployed.
 | :-             | :-            | :-       |:-           |
 | `namespaceName` || **Required** | The name of the EventHub namespace
 | `eventHubName` || **Required** | The name of the EventHub
-| `messageRetentionInDays` | 1 | **Optional** | How long to retain the data in Event Hub
+| `messageRetentionInDays` | 1 | **Optional** | How long to retain the data in EventHub
 | `partitionCount` | 4 | **Optional** | Number of partitions chosen
-| `location` || **Optional** | Location of the Azure Analysis Services server
+| `location` | resourceGroup().location | **Optional** | Location for all Resources
 | `diagnosticStorageAccountId` || **Required** | Resource identifier of the Diagnostic Storage Account
 | `logAnalyticsWorkspaceId` || **Required** | Resource identifier of Log Analytics Workspace
 | `logsRetentionInDays` | 30 |**Optional** | Specifies the number of days that logs will be kept for, a value of 0 will retain data indefinitely
