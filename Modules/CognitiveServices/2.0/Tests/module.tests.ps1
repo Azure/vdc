@@ -7,7 +7,7 @@
 
 		File:		module.tests.ps1
 
-		Purpose:	Pester - Test Application Insights ARM Templates
+		Purpose:	Pester - Test Cognitive Services ARM Templates
 
 		Version: 	2.0.0.0 - 1st September 2019 - Azure Virtual Datacenter Development Team
 		==============================================================================================

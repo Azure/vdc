@@ -73,7 +73,7 @@ if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['keyVaultName']))
 	if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['cognitiveServicesName']))
 	{
 		Write-Output "Cognitive Services Name : $cognitiveServicesName"
-		$kVSecretParameters.Add("cognitiveServices--Name", $($cognitiveServicesName))
+		$kVSecretParameters.Add("CognitiveServices--Name", $($cognitiveServicesName))
 	}
 	else
 	{
@@ -83,7 +83,7 @@ if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['keyVaultName']))
 	if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['cognitiveServicesResourceId']))
 	{
 		Write-Output "cognitiveServices ResourceId : $cognitiveServicesResourceId"
-		$kVSecretParameters.Add("cognitiveServices--ResourceId", $($cognitiveServicesResourceId))
+		$kVSecretParameters.Add("CognitiveServices--ResourceId", $($cognitiveServicesResourceId))
 	}
 	else
 	{
@@ -93,7 +93,7 @@ if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['keyVaultName']))
 	if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['cognitiveServicesResourceGroup']))
 	{
 		Write-Output "Cognitive Services ResourceGroup : $cognitiveServicesResourceGroup"
-		$kVSecretParameters.Add("cognitiveServices--ResourceGroup", $($cognitiveServicesResourceGroup))
+		$kVSecretParameters.Add("CognitiveServices--ResourceGroup", $($cognitiveServicesResourceGroup))
 	}
 	else
 	{
