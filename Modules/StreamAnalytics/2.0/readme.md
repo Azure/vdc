@@ -14,6 +14,7 @@ The following Resources are deployed.
 | :-             | :-            | :-       |:-           |
 | `streamAnalyticsJobName` || **Required** | Stream Analytics Job Name
 | `numberOfStreamingUnits` | 1 | **Optional** | Number of Streaming Units
+| `location` | resourceGroup().location | **Optional** | Location for all Resources
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
 | `tagEnvironment` || **Optional** | The name of the Environment
 | `tagProject` || **Optional** | The name of the project
