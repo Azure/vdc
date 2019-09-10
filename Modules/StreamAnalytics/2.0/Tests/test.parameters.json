@@ -3,10 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "streamAnalyticsJobName": {
-      "value": null
-    },
-    "numberOfStreamingUnits": {
-      "value": 1
-    }
+      "value": "teststreamAnalyticsJobName"
+    }    
   }
 }
