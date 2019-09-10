@@ -5,7 +5,7 @@
 
 		Microsoft Consulting Services - AzureCAT - VDC Toolkit (v2.0)
 
-		File:		output.test.ps1
+		File:		output.tests.ps1
 
 		Purpose:	Test - Application Insights ARM Template Output Variables
 
@@ -41,7 +41,7 @@
 
 	.EXAMPLE
 		Default:
-		C:\PS>.\output.test.ps1
+		C:\PS>.\output.tests.ps1
             -appInsightsName "$(appInsightsName)"
 			-appInsightsResourceId "$(appInsightsResourceId)"
 			-appInsightsResourceGroup "$(appInsightsResourceGroup)"
