@@ -394,7 +394,7 @@
                     "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
                 }],
                 "ipRules": []
-            },
+            }
         }
     }
 }

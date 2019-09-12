@@ -54,6 +54,7 @@
     },
     "variables": {
         "isVMSS": "[not(empty(parameters('virtualMachineScaleSetsName')))]",
+        "virtualMachineScaleSetsName": "[if(empty(parameters('virtualMachineScaleSetsName')), 'dummy', parameters('virtualMachineScaleSetsName'))]",
         "DSCExtensionName": "DSCExtension",
         "artifactsStorageAccountSasToken": "[concat('?', parameters('artifactsStorageAccountSasKey'))]"
     },
@@ -88,7 +89,7 @@
         {
             "type": "Microsoft.Compute/virtualMachineScaleSets/extensions",
             "apiVersion": "2019-03-01",
-            "name": "[concat(parameters('virtualMachineScaleSetsName'), '/', variables('DSCExtensionName'))]",
+            "name": "[concat(variables('virtualMachineScaleSetsName'), '/', variables('DSCExtensionName'))]",
             "condition": "[variables('isVMSS')]",
             "location": "[parameters('location')]",
             "properties": {
