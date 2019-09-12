@@ -2,6 +2,50 @@
     "ModuleConfigurationsPath": "../../../Modules",
     "ModuleConfigurations": [
         {
+            "Name": "KeyVault",
+            "ModuleDefinitionName": "KeyVault",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "keyVaultName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Name}"
+                    },
+                    "accessPolicies": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.AccessPolicies}"
+                    },
+                    "secretsObject": {
+                        "value": {
+                            "secrets": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets}"
+                        }
+                    },
+                    "enableVaultForDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDeployment}"
+                    },
+                    "enableVaultForDiskEncryption": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDiskEncryption}"
+                    },
+                    "enableVaultForTemplateDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForTemplateDeployment}"
+                    },
+                    "vaultSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Sku}"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    },
+                    "networkAcls": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.NetworkAcls}"
+                    }
+                }
+            }
+        },
+        {
             "Name": "ContainerRegistry",
             "ModuleDefinitionName": "ContainerRegistries",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ContainerRegistry.ResourceGroup}",
@@ -122,6 +166,39 @@
             "Script": {
                 "Command": "../../../Scripts/AKS/install-kubectl.sh",
                 "Arguments" : {}
+            }
+        },
+        {
+            "Name": "CreateCACertificate",
+            "Comments": "CreateCACertificate",
+            "dependsOn": [ "KeyVault" ],
+            "Script": {
+                "Command": "../../../Scripts/AKS/create-and-upload-ca-cert.sh",
+                "Arguments" : {
+                    "1_SCRIPT_EXECUTION_SP_ID": "env(SCRIPT_EXECUTION_SP_ID)",
+                    "2_SCRIPT_EXECUTION_SP_KEY": "env(SCRIPT_EXECUTION_SP_KEY)",
+                    "3_TENANT": "${Subscriptions.AKS.TenantId}",
+                    "4_KEY_VAULT_NAME" : "${Parameters.ModuleConfigurationParameters.KeyVault.Name}",
+                    "5_CA_CERT_KEY_NAME" : "${Parameters.ModuleConfigurationParameters.Kubernetes.CaCertKeyName}",
+                    "6_CA_NAME" : "${Parameters.ModuleConfigurationParameters.Kubernetes.CaName}"
+                }
+            }
+        },
+        {
+            "Name": "EnableServiceEndpointOnKeyVault",
+            "ModuleDefinitionName": "KeyVault",
+            "Updates": "KeyVault",
+            "dependsOn": [ "CreateCACertificate" ],
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
+            "Deployment": {
+                "OverrideParameters": {
+                    "networkAcls": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.NetworkAcls}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetwork.vNetResourceId)"
+                    }
+                }
             }
         },
         {

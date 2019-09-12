@@ -27,6 +27,16 @@
                 }
             }
         },
+        "VirtualNetworkPeering": {
+            "LocalPeering": {
+                "Name": "${Parameters.DeploymentName}-to-sharedsvcs"
+            },
+            "RemotePeering": {
+                "Name": "sharedsvcs-to-${Parameters.DeploymentName}",
+                "AllowGatewayTransit": true,
+                "UseRemoteGateways": false
+            }
+        },
         "KeyVault": {
             "Name": "${Parameters.Organization}-${Parameters.DeploymentName}-kv",
             "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
@@ -186,6 +196,7 @@
                     }
                 }
             ],
+            "AzureFirewallNatRuleCollection":[],
             "NetworkSecurityGroups": [
                 {
                     "Name": "default",
@@ -394,7 +405,7 @@
                     "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
                 }],
                 "ipRules": []
-            },
+            }
         }
     }
 }
