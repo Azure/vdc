@@ -190,8 +190,8 @@ Class ConfigurationBuilder {
 
                 # Check for json objects before replacing it
                 $isJson = `
-                    Test-Json `
-                        -Json $referencedFileContent `
+                    Test-JsonContent `
+                        -Content $referencedFileContent `
                         -ErrorAction SilentlyContinue;
 
                 if(!$isJson) {

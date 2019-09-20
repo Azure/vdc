@@ -55,4 +55,20 @@ Describe  "Orchestration Instance Builder Unit Test Cases" {
             $archetypeInstance.Subscriptions | Should be $environmentValue;
         }
     }
+
+    Context "Build Archetype Instance using functions" {
+        $ENV:FROMENVIRONMENTVARIABLE = "My value";
+        $ENV:FROMANOTHERENVIRONMENTVARIABLE = "bar";
+        It "Should build the archetype instance from definition file with file function" {
+            $archetypeDefinitionFileAbsolutePath = Join-Path $rootPath -ChildPath ".." -AdditionalChildPath @("Tests", "Samples", "nested-file-functions", "paas", "archetype-definition-array-filefn.json");
+            $ConfigurationBuilder = New-Object ConfigurationBuilder("shared-services", $archetypeDefinitionFileAbsolutePath);
+            $archetypeInstance = $ConfigurationBuilder.BuildConfigurationInstance(${function:\Add-SubscriptionAndTenantIds});
+            $archetypeInstance.Subscriptions | Should BeOfType [object];
+            $archetypeInstance.Subscriptions.Toolkit.nested.fromEnvironmentVariable| Should Be "My value";
+            $archetypeInstance.Subscriptions.Toolkit.nested.concatEnvironmentVariables | Should Be "My value-bar";
+            $archetypeInstance.ToolkitComponents | Should BeOfType [object];
+            $archetypeInstance.ArchetypeParameters | Should BeOfType [object];
+            $archetypeInstance.ArchetypeOrchestration | Should BeOfType [object];
+        }
+    }
 }
