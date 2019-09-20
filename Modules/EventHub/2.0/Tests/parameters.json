@@ -2,9 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "location": {
-      "value": "West US 2"
-    },
     "eventHubName": {
       "value": "org-event-hub-name"
     },
@@ -23,11 +20,20 @@
     "authorizationRulesRootManageSharedAccessKeyName": {
       "value": "RootManageSharedAccessKey"
     },
-    "storageAccountId": {
+    "diagnosticStorageAccountId": {
       "value": "/subscriptions/0000000000000000/resourceGroups/org-diagnostics-rg/providers/Microsoft.Storage/storageAccounts/storage-account-name"
     },
     "workspaceId": {
       "value": "/subscriptions/0000000000000000/resourcegroups/org-diagnostics-rg/providers/microsoft.operationalinsights/workspaces/workspace-name"
+    },
+    "logsRetentionInDays": {
+      "value": 30
+    },
+    "networkAcls": {
+      "value": {}
+    },
+    "vNetId": {
+      "value": ""
     }
   }
 }

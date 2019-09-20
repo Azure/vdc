@@ -35,7 +35,7 @@ Describe  "Custom Script Execution Unit Test Cases" {
                 $command,
                 $arguments
             );
-            $result.value | Should Be "pwsh";
+            $result | Should Be "pwsh";
         }
 
         It "Should execute PowerShell Cmdlets" {
@@ -47,7 +47,7 @@ Describe  "Custom Script Execution Unit Test Cases" {
                 @{}
             );
 
-            $result.value | Should Be "pwsh-test";
+            $result | Should Be "pwsh-test";
         }
 
         It "Should execute a PowerShell Script with Arguments passed" {
@@ -66,7 +66,7 @@ Describe  "Custom Script Execution Unit Test Cases" {
                 $arguments
             );
 
-            $result.value | Should Be "pwsh-script-test";
+            $result | Should Be "pwsh-script-test";
         }
 
         It "Should execute a Bash script" {
@@ -87,7 +87,7 @@ Describe  "Custom Script Execution Unit Test Cases" {
 
 
             
-            $result.value | Should Be "bash-script-test";
+            $result | Should Be "bash-script-test";
         }
 
         It "Should execute a Bash script and preserve the order of arguments passed" {
@@ -122,7 +122,7 @@ Describe  "Custom Script Execution Unit Test Cases" {
                 [PSCustomObject]@{}
             );
 
-            $result.value | Should Be "bash-test";
+            $result | Should Be "bash-test";
         }
 
         It "Should throw script not supported error for invalid set of commands passed" {

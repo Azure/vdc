@@ -13,6 +13,9 @@
     [string]
     $WorkingDirectory,
     [Parameter(Mandatory=$false)]
+    [string]
+    $ToolkitConfigurationFilePath = '/Config/toolkit.config.json',
+    [Parameter(Mandatory=$false)]
     [switch]
     $Validate,
     [Parameter(Mandatory=$false)]
@@ -57,6 +60,9 @@ Function Start-Deployment {
         $DefinitionPath,
         [Parameter(Mandatory=$false)]
         [string]
+        $ToolkitConfigurationFilePath,
+        [Parameter(Mandatory=$false)]
+        [string]
         $ModuleConfigurationName,
         [Parameter(Mandatory=$false)]
         [string]
@@ -78,7 +84,9 @@ Function Start-Deployment {
             Start-Init `
                 -WorkingDirectory $WorkingDirectory `
                 -DefinitionPath $DefinitionPath `
-                -ArchetypeInstanceName $ArchetypeInstanceName
+                -ToolkitConfigurationFilePath $ToolkitConfigurationFilePath `
+                -ArchetypeInstanceName $ArchetypeInstanceName `
+                -Validate:$($Validate.IsPresent);
 
         $defaultWorkingDirectory = $initializedValues.WorkingDirectory
         $archetypeInstanceJson = $initializedValues.ArchetypeInstanceJson
@@ -342,18 +350,25 @@ Function Start-Deployment {
                                 Get-ResourceGroupName `
                                         -ArchetypeInstanceName $ArchetypeInstanceName `
                                         -ModuleConfiguration $moduleConfiguration;
-                            Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
                         }
                         elseif($Validate.IsPresent -eq $true) {
-                            # Retrieve the validation resource group name
+
                             $moduleConfigurationResourceGroupName = `
-                                Get-ValidationResourceGroupName `
-                                    -ArchetypeInstanceName $ArchetypeInstanceName;
+                                $initializedValues.ValidationResourceGroupInformation.Name;
+
+                            # if location is provided in the validation resource group property of the configuration object in
+                            # the toolkit config json, then use it.
+                            if(![string]::IsNullOrEmpty($initializedValues.ValidationResourceGroupInformation.Location)) {
+                                $location = `
+                                    $initializedValues.ValidationResourceGroupInformation.Location;
+                            }
                         }
+                        Write-Debug "Resource Group is: $moduleConfigurationResourceGroupName";
 
                         New-ResourceGroup `
                             -ResourceGroupName $moduleConfigurationResourceGroupName `
                             -ResourceGroupLocation $location `
+                            -Tags $moduleConfigurationResourceGroupInformation.Tags `
                             -Validate:$($Validate.IsPresent);
 
                         Write-Debug "Resource Group successfully created";
@@ -459,7 +474,8 @@ Function Start-Deployment {
 
                 # Destroy the validation Resource Group
                 Remove-ValidationResourceGroup `
-                        -ArchetypeInstanceName $ArchetypeInstanceName;
+                        -ArchetypeInstanceName $ArchetypeInstanceName `
+                        -ValidationResourceGroupInformation $initializedValues.ValidationResourceGroupInformation;
 
                 Write-Host "Validation Resource Group is destroyed."
             }
@@ -485,6 +501,9 @@ Function Start-TearDownEnvironment {
         $DefinitionPath,
         [Parameter(Mandatory=$false)]
         [string]
+        $ToolkitConfigurationFilePath,
+        [Parameter(Mandatory=$false)]
+        [string]
         $ModuleConfigurationName,
         [Parameter(Mandatory=$false)]
         [string]
@@ -502,7 +521,9 @@ Function Start-TearDownEnvironment {
             Start-Init `
                 -WorkingDirectory $WorkingDirectory `
                 -DefinitionPath $DefinitionPath `
-                -ArchetypeInstanceName $ArchetypeInstanceName
+                -ToolkitConfigurationFilePath $ToolkitConfigurationFilePath `
+                -ArchetypeInstanceName $ArchetypeInstanceName `
+                -Validate;
 
         $archetypeInstanceJson = $initializedValues.ArchetypeInstanceJson
         $archetypeInstanceName = $initializedValues.ArchetypeInstanceName
@@ -681,7 +702,13 @@ Function Start-Init {
         $DefinitionPath,
         [Parameter(Mandatory=$false)]
         [string]
-        $WorkingDirectory
+        $ToolkitConfigurationFilePath,
+        [Parameter(Mandatory=$false)]
+        [string]
+        $WorkingDirectory,
+        [Parameter(Mandatory=$false)]
+        [switch]
+        $Validate
     )
     try {
         $defaultWorkingDirectory = `
@@ -690,9 +717,13 @@ Function Start-Init {
 
         Write-Debug "Working directory is: $defaultWorkingDirectory";
 
-        $global:factory = `
+        $bootstrappedValues = `
             Invoke-Bootstrap `
-                -WorkingDirectory $defaultWorkingDirectory;
+                -WorkingDirectory $defaultWorkingDirectory `
+                -ToolkitConfigurationFilePath $ToolkitConfigurationFilePath `
+                -Mode @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];
+
+        $global:factory = $bootstrappedValues.Factory
 
         $global:deploymentService = `
             $factory.GetInstance('IDeploymentService');
@@ -738,6 +769,7 @@ Function Start-Init {
             WorkingDirectory = $defaultWorkingDirectory
             ArchetypeInstanceJson = $archetypeInstanceJson
             ArchetypeInstanceName = $archetypeInstanceName
+            ValidationResourceGroupInformation = $bootstrappedValues.ValidationResourceGroupInformation
             Location = $location
         }
     }
@@ -1232,17 +1264,23 @@ Function Invoke-Bootstrap {
     param (
         [Parameter(Mandatory=$true)]
         [string]
-        $WorkingDirectory
+        $WorkingDirectory,
+        [Parameter(Mandatory=$true)]
+        [string]
+        $ToolkitConfigurationFilePath,
+        [Parameter(Mandatory=$true)]
+        [string]
+        $Mode
     )
 
-    $toolkitConfigurationFileName = `
-        Join-Path "Config" -ChildPath "toolkit.config.json";
+    $ToolkitConfigurationFilePath = `
+        Format-FilePathSpecificToOS -Path $ToolkitConfigurationFilePath;
 
     try {
         # Build toolkit configuration from file
         $toolkitConfigurationJson = `
             New-ConfigurationInstance `
-                -FilePath $toolkitConfigurationFileName `
+                -FilePath $ToolkitConfigurationFilePath `
                 -WorkingDirectory $WorkingDirectory;
 
         # Getting cache information from toolkit configuration
@@ -1259,6 +1297,16 @@ Function Invoke-Bootstrap {
                 -WorkingDirectory $WorkingDirectory;
 
         Write-Debug "Audit storage information is: $(ConvertTo-Json $auditStorageInformation -Depth 100)";
+
+        # Validation Resource Group details are only needed in validate mode
+        if($Mode -eq "validate") {
+            # Getting validation resource group information from toolkit configuration
+            $validationResourceGroupInformation = `
+                Get-ValidationResourceGroupInformation `
+                    -ToolkitConfigurationJson $toolkitConfigurationJson;
+
+            Write-Debug "Validation Resource Group information is: $(ConvertTo-Json $validationResourceGroupInformation -Depth 100)";
+        }
 
         # Let's create a new instance of Bootstrap
         $bootstrap = [Initialize]::new();
@@ -1304,7 +1352,10 @@ Function Invoke-Bootstrap {
             throw "ToolkitComponents.Audit.StorageType not supported, currently supported types are: StorageAccount and Local";
         }
 
-        return $factory;
+        # Return an object that wraps the factory and the validation resource group information. 
+        return @{ "Factory" = $factory
+            "ValidationResourceGroupInformation" = $ValidationResourceGroupInformation
+        }
     }
     catch {
         Write-Host "An error ocurred while running Invoke-Bootstrap";
@@ -1509,6 +1560,41 @@ Function Get-AuditStorageInformation {
     }
     catch {
         Write-Host "An error ocurred while running Get-AuditStorageInformation";
+        Write-Host $_;
+        throw $_;
+    }
+}
+
+Function Get-ValidationResourceGroupInformation {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [hashtable]
+        $ToolkitConfigurationJson
+    )
+
+    try {
+        $validationResourceGroupInformation = @{};
+
+        # At a minimum, we expect the configuration object to have an property named "ValidationResourceGroup" of type object
+        # and a child property named "Name" of type string. Other properties including Location and Tags are optional.
+        if ($null -ne $ToolkitConfigurationJson.Configuration.ValidationResourceGroup -and `
+            ![string]::IsNullOrEmpty($ToolkitConfigurationJson.Configuration.ValidationResourceGroup.Name)) {
+            # Let's get the Validation Resource Group information
+            
+            $validationResourceGroupInformation.Name = $ToolkitConfigurationJson.Configuration.ValidationResourceGroup.Name;
+            $validationResourceGroupInformation.Location = $ToolkitConfigurationJson.Configuration.ValidationResourceGroup.Location;
+            $validationResourceGroupInformation.Tags = $ToolkitConfigurationJson.Configuration.ValidationResourceGroup.Tags;
+        }
+        else {
+            $validationResourceGroupInformation.Name = `
+                Get-UniqueString($ArchetypeInstanceName);
+        }
+
+        return $validationResourceGroupInformation;
+    }
+    catch {
+        Write-Host "An error ocurred while running Get-ValidationResourceGroupInformation";
         Write-Host $_;
         throw $_;
     }
@@ -2112,6 +2198,9 @@ Function New-ResourceGroup {
         [Parameter(Mandatory=$false)]
         [string]
         $ResourceGroupLocation,
+        [Parameter(Mandatory=$false)]
+        [object]
+        $Tags,
         [Parameter(Mandatory=$true)]
         [switch]
         $Validate
@@ -2120,7 +2209,8 @@ Function New-ResourceGroup {
     try {
         $deploymentService.CreateResourceGroup(
             $resourceGroupName,
-            $resourceGroupLocation);
+            $resourceGroupLocation,
+            $Tags);
     }
     catch {
         Write-Host "An error ocurred while running New-ResourceGroup";
@@ -3035,18 +3125,20 @@ Function Remove-ValidationResourceGroup() {
     param(
         [Parameter(Mandatory=$true)]
         [string]
-        $ArchetypeInstanceName
+        $ArchetypeInstanceName,
+        [Parameter(Mandatory=$false)]
+        [object]
+        $ValidationResourceGroupInformation
     )
 
     $resourceGroupFound = `
         Assert-ValidationResourceGroup `
-            -ArchetypeInstanceName $ArchetypeInstanceName;
+            -ArchetypeInstanceName $ArchetypeInstanceName `
+            -ValidationResourceGroupInformation $ValidationResourceGroupInformation;
 
     if($resourceGroupFound -eq $true) {
 
-        $resourceGroupName = `
-            Get-ValidationResourceGroupName `
-                -ArchetypeInstanceName $ArchetypeInstanceName;
+        $resourceGroupName = $ValidationResourceGroupInformation.Name;
 
         Start-ExponentialBackoff `
             -Expression { Remove-AzResourceGroup `
@@ -3065,12 +3157,16 @@ Function Assert-ValidationResourceGroup() {
     param(
         [Parameter(Mandatory=$true)]
         [string]
-        $ArchetypeInstanceName
+        $ArchetypeInstanceName,
+        [Parameter(Mandatory=$true)]
+        [object]
+        $ValidationResourceGroupInformation
     )
 
     $resourceGroup = `
         Get-ValidationResourceGroup `
-            -ArchetypeInstanceName $ArchetypeInstanceName;
+            -ArchetypeInstanceName $ArchetypeInstanceName `
+            -ValidationResourceGroupInformation $ValidationResourceGroupInformation;
 
     if($null -ne $resourceGroup) {
         return $true;
@@ -3086,28 +3182,17 @@ Function Get-ValidationResourceGroup() {
     param(
         [Parameter(Mandatory=$true)]
         [string]
-        $ArchetypeInstanceName
+        $ArchetypeInstanceName,
+        [Parameter(Mandatory=$false)]
+        [object]
+        $ValidationResourceGroupInformation
     )
 
-    $resourceGroupName = `
-        Get-ValidationResourceGroupName `
-            -ArchetypeInstanceName $ArchetypeInstanceName;
+    $resourceGroupName = $ValidationResourceGroupInformation.Name;
 
     return `
         Get-AzResourceGroup $resourceGroupName `
             -ErrorAction SilentlyContinue;
-}
-
-Function Get-ValidationResourceGroupName() {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]
-        $ArchetypeInstanceName
-    )
-
-    return `
-        Get-UniqueString($ArchetypeInstanceName);
 }
 
 # Entry point script, used when invoking ModuleConfigurationDeployment.ps1
@@ -3119,12 +3204,14 @@ if (![string]::IsNullOrEmpty($DefinitionPath)) {
             Start-TearDownEnvironment `
                 -ArchetypeInstanceName $ArchetypeInstanceName `
                 -DefinitionPath $DefinitionPath `
+                -ToolkitConfigurationFilePath $ToolkitConfigurationFilePath `
                 -ModuleConfigurationName $ModuleConfigurationName `
                 -WorkingDirectory $WorkingDirectory
         }
         else {
             Start-Deployment `
                 -DefinitionPath $DefinitionPath `
+                -ToolkitConfigurationFilePath $ToolkitConfigurationFilePath `
                 -ArchetypeInstanceName $ArchetypeInstanceName `
                 -ModuleConfigurationName $ModuleConfigurationName `
                 -WorkingDirectory $WorkingDirectory `

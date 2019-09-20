@@ -37,60 +37,6 @@
                 "UseRemoteGateways": false
             }
         },
-        "KeyVault": {
-            "Name": "${Parameters.Organization}-${Parameters.DeploymentName}-kv",
-            "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
-            "Sku": "Premium",
-            "EnableVaultForDeployment": true,
-            "EnableVaultForDiskEncryption": true,
-            "EnableVaultForTemplateDeployment": true,
-            "AccessPolicies": [
-                {
-                    "tenantId": "${Subscriptions.AKS.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.KeyVaultManagementUserId}",
-                    "permissions": {
-                        "certificates": [
-                            "All"
-                        ],
-                        "keys": [
-                            "All"
-                        ],
-                        "secrets": [
-                            "All"
-                        ]
-                    }
-                },
-                {
-                    "tenantId": "${Subscriptions.AKS.TenantId}",
-                    "objectId": "${Parameters.ModuleConfigurationParameters.DevOpsServicePrincipalId}",
-                    "permissions": {
-                        "certificates": [
-                            "All"
-                        ],
-                        "keys": [
-                            "All"
-                        ],
-                        "secrets": [
-                            "All"
-                        ]
-                    }
-                }
-            ],
-            "SecretsObject": {
-                "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
-                "Secrets": [ ]
-            },
-            "NetworkAcls": {
-                "bypass": "AzureServices",
-                "defaultAction": "Deny",
-                "virtualNetworkRules": [
-                    {
-                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
-                    }
-                ],
-                "ipRules": []
-            }
-        },
         "DiagnosticStorageAccount": {
             "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
             "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",

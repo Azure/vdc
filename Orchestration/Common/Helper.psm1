@@ -428,3 +428,54 @@ Function Start-ExponentialBackoff () {
 
     throw "Maximum number of retries reached. Number of retries: $MaxRetries. InnerException: $innerException";
 }
+
+Function Format-FilePathSpecificToOS () {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]
+        $Path
+    )
+
+    # List of arguments that will be passed to Join-Path using splatting
+    $arguments = @{};
+    # Position to start the processing of the segments in a Path to build 
+    # the arugments to be passed to the Join-Path function. If the 
+    # Path starts with a slash, then we need to adjust the Start Position
+    # accordingly because passing an empty string as "Path" argument to 
+    # Join-Path function results in an error being thrown.
+    $startPosition = 0;
+
+    # Split the Path using forward / backward slash as delimiter
+    $pathSegments = $Path -Split {$_ -eq "/" -or $_ -eq "\"};  
+
+    # If the path starts with a slash, then the start position is one.
+    # Also, remove the begining slash
+    if($Path -like "/*" -or `
+        $Path -like "\*" ) {
+        $startPosition = 1;
+        $Path = $Path.Substring(1, $Path.Length-1);
+    }
+
+    # Case 1: Only one segment is found.
+    # Example: Path = "toolkit.config.json"
+    if($pathSegments.Length -eq $startPosition + 1) {
+        return $Path;
+    }
+    # Case 2: Two or more segments found.
+    # Example: Path = "Config/toolkit.config.json"
+    elseif($pathSegments.Length -eq $startPosition + 2) {
+        $arguments.Add("Path", $pathSegments[$startPosition + 0]);
+        $arguments.Add("ChildPath", $pathSegments[$startPosition + 1]);
+        return `
+            Join-Path @arguments;
+    }
+    # Case 3: More than two segments found.
+    # Example: Path = "Config/Temp/toolkit.config.json" 
+    elseif($pathSegments.Length -gt $startPosition + 2) {
+        $arguments.Add("Path", $pathSegments[$startPosition + 0]);
+        $arguments.Add("ChildPath", $pathSegments[$startPosition + 1]);
+        $arguments.Add("AdditionalChildPath", $pathSegments[$($startPosition + 2)..$($startPosition + $pathSegments.Length - 1)]);
+        return `
+            Join-Path @arguments;
+    }
+}

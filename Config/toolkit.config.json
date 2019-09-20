@@ -11,6 +11,13 @@
         "Cache": {
             "Comments": "Caching service",
             "StorageType": "AzureDevOps"
+        },
+        "ValidationResourceGroup": {
+            "Name": "vdc-custom-rg",
+            "Location": "West US",
+            "Tags": {
+                "Policy": "Exempt"
+            }
         }
     }
 }

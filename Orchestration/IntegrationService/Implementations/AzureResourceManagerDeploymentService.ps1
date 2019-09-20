@@ -665,17 +665,24 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
     }
  
     [void] CreateResourceGroup([string] $resourceGroupName,
-                               [string] $location) {
+                               [string] $location,
+                               [object] $tags) {
         try {
             $resourceGroupFound = `
                 Get-AzResourceGroup $resourceGroupName `
                     -ErrorAction SilentlyContinue;
             
+            # Convert the object to hashtable
+            $tags = `
+                ConvertTo-HashTable -InputObject $tags;
+            
             if($null -eq $resourceGroupFound) {
                 Start-ExponentialBackoff `
                     -Expression { New-AzResourceGroup `
                                     -Name $resourceGroupName `
-                                    -Location $location -Force; }
+                                    -Location $location `
+                                    -Tag $tags `
+                                    -Force; }
             }
         }
         catch {
