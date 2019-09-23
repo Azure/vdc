@@ -29,39 +29,11 @@
         "description": "Optional. Customer Usage Attribution id (GUID). This GUID must be previously registered"
       }
     },
-    "tagEnvironment": {
-      "type": "string",
+    "tagValues": {
+      "type": "object",
       "defaultValue": "",
       "metadata": {
-        "description": "Optional. The name of the Environment"
-      }
-    },
-    "tagProject": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the project"
-      }
-    },
-    "tagApplication": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "The name of the application"
-      }
-    },
-    "tagOwner": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The business owner for the application"
-      }
-    },
-    "tagOwnerEmail": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The Email address of the business owner for the application"
+        "description": "Optional. Azure Resource Tags object"
       }
     }
   },
@@ -88,16 +60,10 @@
     {
       "type": "Microsoft.CognitiveServices/accounts",
       "apiVersion": "[providers('Microsoft.CognitiveServices','accounts').apiVersions[0]]",
-      "name": "[parameters('accountName')]",
-      "kind": "TextTranslation",
+      "name": "[variables('cognitiveServicesName')]",
       "location": "[parameters('location')]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
+      "kind": "TextTranslation",
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",      
       "sku": {
         "name": "[parameters('sku')]"
       },

@@ -16,11 +16,7 @@ The following Resources are deployed.
 | `sku` | S0| **Optional** | sku for Text Translation API
 | `location` || **Optional** | Location for all Resources
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
-| `tagEnvironment` || **Optional** | The name of the Environment
-| `tagProject` || **Optional** | The name of the project
-| `tagApplication` || **Optional** | The name of the application
-| `tagOwner` || **Optional** | The business owner for the application
-| `tagOwnerEmail` || **Optional** | The Email address of the business owner for the application
+| `tagValues` || **Optional** | Optional. Azure Resource Tags object
 
 ## Outputs
 
@@ -32,9 +28,7 @@ The following Resources are deployed.
 
 ## Scripts
 
-| Script Name | Description |
-| :-          | :-          |
-| `cognitive.services.akv.secrects.ps1` | Set Cognitive Services KeyVault Secrets Automation Script
++ There is no Scripts for this Module
 
 ## Considerations
 

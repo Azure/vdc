@@ -41,41 +41,13 @@
         "description": "Optional. Customer Usage Attribution id (GUID). This GUID must be previously registered"
       }
     },
-    "tagEnvironment": {
-      "type": "string",
+    "tagValues": {
+      "type": "object",
       "defaultValue": "",
       "metadata": {
-        "description": "Optional. The name of the Environment"
+        "description": "Optional. Azure Resource Tags object"
       }
-    },
-    "tagProject": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the project"
-      }
-    },
-    "tagApplication": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the application"
-      }
-    },
-    "tagOwner": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The business owner for the application"
-      }
-    },
-    "tagOwnerEmail": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The Email address of the business owner for the application"
-      }
-    }
+    }    
   },
   "variables": {
     "streamAnalyticsName": "[parameters('streamAnalyticsJobName')]",
@@ -103,13 +75,7 @@
       "apiVersion": "[variables('apiVersion')]",
       "name": "[parameters('streamAnalyticsJobName')]",
       "location": "[parameters('location')]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
+       "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "properties": {
         "sku": {
           "name": "standard"

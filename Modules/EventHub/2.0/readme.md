@@ -25,11 +25,7 @@ The following Resources are deployed.
 | `logAnalyticsWorkspaceId` || **Required** | Resource identifier of Log Analytics Workspace
 | `logsRetentionInDays` | 30 |**Optional** | Specifies the number of days that logs will be kept for, a value of 0 will retain data indefinitely
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
-| `tagEnvironment` || **Optional** | The name of the Environment
-| `tagProject` || **Optional** | The name of the project
-| `tagApplication` || **Optional** | The name of the application
-| `tagOwner` || **Optional** | The business owner for the application
-| `tagOwnerEmail` || **Optional** | The Email address of the business owner for the application
+| `tagValues` || **Optional** | Optional. Azure Resource Tags object
 
 ## Outputs
 
@@ -43,9 +39,7 @@ The following Resources are deployed.
 
 ## Scripts
 
-| Script Name | Description |
-| :-          | :-          |
-| `event.hub.akv.secrects.ps1` | Set EventHub Namespace KeyVault Secrets Automation Script
++ There is no Scripts for this Module
 
 ## Considerations
 
@@ -53,4 +47,4 @@ The following Resources are deployed.
 
 ## Additional resources
 
-[Microsoft EventHub template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.eventhub/allversions)
++ [Microsoft EventHub template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.eventhub/allversions)
