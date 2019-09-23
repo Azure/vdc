@@ -6,9 +6,7 @@ This module deploys Application Insights.
 
 The following Resources are deployed.
 
-+ **Microsoft.Insights/components** 
-+ **Microsoft.Storage/storageAccount**
-
++ **Microsoft.Insights/components**
 
 ## Parameters
 
@@ -17,14 +15,8 @@ The following Resources are deployed.
 | `appInsightsName` || **Required** | Name of the Application Insights
 | `appInsightsType` | web | **Optional** | Application type
 | `location` | resourceGroup().location | **Optional** | Location for all Resources
-| `storageAccountName` || **Required** | Storage Account Name
-| `storageAccountType` | Standard_GRS | **Optional** | Storage Account sku type
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
-| `tagEnvironment` || **Optional** | The name of the Environment
-| `tagProject` || **Optional** | The name of the project
-| `tagApplication` || **Optional** | The name of the application
-| `tagOwner` || **Optional** | The business owner for the application
-| `tagOwnerEmail` || **Optional** | The Email address of the business owner for the application
+| `tagValues` || **Optional** | Optional. Azure Resource Tags object
 
 ## Outputs
 
@@ -34,14 +26,12 @@ The following Resources are deployed.
 | `appInsightsResourceId` | Application Insights Resource Id
 | `appInsightsResourceGroup` | Application Insights ResourceGroup
 | `appInsightsKey` | Application Insights Resource Instrumentation Key
-| `appInsightsAppId` | Application Insights Paalication Id
-| `appInsightsStorageAccountName` | Application Insights Logging Storage Account Name
+| `appInsightsAppId` | Application Insights Application Id
 
 ## Scripts
 
 | Output Name | Description |
 | :-          | :-          |
-| `application.insights.akv.secrects.ps1` |  Set Application Insights KeyVault Secrets Automation Script
 | `application.insights.continuous.export.ps1` |  Configures Application Insights Continuous Export Configuration
 
 ## Considerations

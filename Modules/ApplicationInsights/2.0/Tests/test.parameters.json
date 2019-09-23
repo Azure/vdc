@@ -4,10 +4,7 @@
   "parameters": {
     "appInsightsName": {
       "value": "testappInsightsName"
-    },
-    "storageAccountName": {
-      "value": "teststorageAccountName"
-    },    
+    },        
     "cuaId": {
       "value": "00000000-0000-0000-0000-000000000000"
     }

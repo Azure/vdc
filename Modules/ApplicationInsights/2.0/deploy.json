@@ -27,29 +27,6 @@
         "description": "Optional. Location for all Resources"
       }
     },
-    "storageAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Required. Storage Account Name"
-      }
-    },
-    "storageAccountsku": {
-      "type": "string",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Standard_RAGRS",
-        "Standard_ZRS",
-        "Premium_LRS",
-        "Premium_ZRS",
-        "Standard_GZRS",
-        "Standard_RAGZRS"
-      ],
-      "defaultValue": "Standard_GRS",
-      "metadata": {
-        "description": "Optional. Storage Account sku type"
-      }
-    },
     "cuaId": {
       "type": "string",
       "defaultValue": "",
@@ -57,47 +34,18 @@
         "description": "Optional. Customer Usage Attribution id (GUID). This GUID must be previously registered"
       }
     },
-    "tagEnvironment": {
-      "type": "string",
+    "tagValues": {
+      "type": "object",
       "defaultValue": "",
       "metadata": {
-        "description": "Optional. The name of the Environment"
-      }
-    },
-    "tagProject": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the project"
-      }
-    },
-    "tagApplication": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the application"
-      }
-    },
-    "tagOwner": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The business owner for the application"
-      }
-    },
-    "tagOwnerEmail": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The Email address of the business owner for the application"
+        "description": "Optional. Azure Resource Tags object"
       }
     }
   },
   "variables": {
     "appInsightsName": "[parameters('appInsightsName')]",
     "appInsightsresourceId": "[resourceId('Microsoft.Insights/components',parameters('appInsightsName'))]",
-    "apiVersion": "[providers('Microsoft.Insights','components').apiVersions[0]]",
-    "storageAccountName": "[parameters('storageAccountName')]",
+    "appInsightsApiVersion": "[providers('Microsoft.Insights','components').apiVersions[0]]",
     "pidName": "[concat('pid-',parameters('cuaId'))]"
   },
   "resources": [
@@ -117,38 +65,13 @@
     },
     {
       "type": "Microsoft.Insights/components",
-      "apiVersion": "[providers('Microsoft.Insights','components').apiVersions[0]]",
-      "name": "[parameters('appInsightsName')]",
+      "apiVersion": "[variables('appInsightsApiVersion')]",
+      "name": "[variables('appInsightsName')]",
       "location": "[parameters('location')]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },    
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "properties": {
         "ApplicationId": "[parameters('appInsightsName')]",
         "Application_Type": "[parameters('appInsightsType')]"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[providers('Microsoft.Storage','storageAccounts').apiVersions[0]]",
-      "name": "[parameters('storageAccountName')]",
-      "location": "[resourceGroup().location]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
-      "sku": {
-        "name": "[parameters('storageAccountSku')]"
-      },    
-      "properties": {
-        "supportsHttpsTrafficOnly": true
       }
     }
   ],
@@ -176,23 +99,16 @@
     },
     "appInsightsKey": {
       "type": "string",
-      "value": "[reference(variables('appInsightsresourceId'),variables('apiVersion')).instrumentationKey]",
+      "value": "[reference(variables('appInsightsresourceId'),variables('appInsightsApiVersion')).instrumentationKey]",
       "metadata": {
         "description": "Application Insights Resource Instrumentation Key"
       }
     },
     "appInsightsAppId": {
       "type": "string",
-      "value": "[reference(variables('appInsightsresourceId'),variables('apiVersion')).AppId]",
+      "value": "[reference(variables('appInsightsresourceId'),variables('appInsightsApiVersion')).AppId]",
       "metadata": {
-        "description": "Application Insights Paalication Id"
-      }
-    },
-    "appInsightsStorageAccountName": {
-      "type": "string",
-      "value": "[variables('storageAccountName')]",
-      "metadata": {
-        "description": "Application Insights Logging Storage Account Name"
+        "description": "Application Insights Application Id"
       }
     }
   }

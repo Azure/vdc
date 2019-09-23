@@ -36,9 +36,6 @@
 	.PARAMETER appInsightsAppId
 		Specify the Application Insights AppId output parameter.
 
-    .PARAMETER appInsightsStorageAccountName
-		Specify the Application Storage Account Name output parameter.
-
 	.EXAMPLE
 		Default:
 		C:\PS>.\output.tests.ps1
@@ -47,7 +44,6 @@
 			-appInsightsResourceGroup "$(appInsightsResourceGroup)"
             -appInsightsKey "$(appInsightsKey)"
             -appInsightsAppId "$(appInsightsAppId)"
-            -appInsightsStorageAccountName "$(appInsightsStorageAccountName)"
 #>
 
 #Requires -Version 5
@@ -68,10 +64,7 @@ param
 	[string]$appInsightsKey,
 
 	[Parameter(Mandatory = $false)]
-	[string]$appInsightsAppId,
-
-	[Parameter(Mandatory = $false)]
-	[string]$appInsightsStorageAccountName
+	[string]$appInsightsAppId
 )
 
 #region - Application Insights Output Tests
@@ -119,14 +112,5 @@ if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsAppId']))
 else
 {
 	Write-Output "Application Insights AppId: []"
-}
-
-if (-not [string]::IsNullOrWhiteSpace($PSBoundParameters['appInsightsStorageAccountName']))
-{
-	Write-Output "Application Insights Storage Account Name: $($appInsightsStorageAccountName)"
-}
-else
-{
-	Write-Output "Application Insights Storage Account Name: []"
 }
 #endregion

@@ -25,15 +25,16 @@
   	.PARAMETER appInsightsName
 		Specify the Azure Application Insights Name parameter.
 
-  	.PARAMETER appInsightsStorageAccountName
-		Specify the Application Insights Storage Account Name output parameter.
+  	.PARAMETER storageAccountName
+		Specify the Storage Account Name parameter.
 
 	.EXAMPLE
 		Default:
 		C:\PS>.\application.insights.continuous.export.ps1
             -appInsightsName "$(appInsightsName)"
-            -appInsightsStorageAccountName "$(appInsightsStorageAccountName)"
+            -storageAccountName "$(storageAccountName)"
 #>
+
 
 #Requires -Version 5
 #Requires -Module Az.ApplicationInsights
@@ -47,12 +48,12 @@ param
 	[string]$appInsightsName,
 
 	[Parameter(Mandatory = $true)]
-	[string]$appInsightsStorageAccountName
+	[string]$storageAccountName
 )
 
 #region - Application Insights Continuous Export Configuration
-Write-Output "Application Insights Name: 					$appInsightsName"
-Write-Output "Application Insight Storage Account Name: 	$appInsightsStorageAccountName"
+Write-Output "Application Insights Name:  $appInsightsName"
+Write-Output "Storage Account Name: 	  $storageAccountName"
 
 $paramGetAzResource = @{
 	ResourceType = "Microsoft.Insights/components"
@@ -71,7 +72,7 @@ if (-not ($continuousExport))
 {
 	$paramGetAzResource = @{
 		ResourceType = "Microsoft.Storage/storageAccounts"
-		ResourceName = $appInsightsStorageAccountName
+		ResourceName = $storageAccountName
 	}
 	$resource = Get-AzResource @paramGetAzResource
 
@@ -85,11 +86,11 @@ if (-not ($continuousExport))
 		ResourceId = $resource.ResourceId
 		Force	   = $true
 	}
-	$appInsightsStoragekey = (Invoke-AzResourceAction @paramInvokeAzResourceAction).keys[0].value
+	$storagekey = (Invoke-AzResourceAction @paramInvokeAzResourceAction).keys[0].value
 
 	$paramNewAzStorageContext = @{
-		StorageAccountName = $appInsightsStorageAccountName
-		StorageAccountKey  = $appInsightsStoragekey
+		StorageAccountName = $storageAccountName
+		StorageAccountKey  = $storagekey
 	}
 	$context = New-AzStorageContext @paramNewAzStorageContext
 
