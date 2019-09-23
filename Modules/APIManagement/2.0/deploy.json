@@ -5,7 +5,7 @@
     "apiManagementServiceName": {
       "type": "string",
       "metadata": {
-        "description": "Required. The name of the of the API Management service"
+        "description": "Required. The name of the of the Api Management service"
       }
     },
     "publisherEmail": {
@@ -30,7 +30,7 @@
       ],
       "defaultValue": "Developer",
       "metadata": {
-        "description": "Optional.The pricing tier of this API Management service"
+        "description": "Optional.The pricing tier of this Api Management service"
       }
     },
     "skuCount": {
@@ -41,14 +41,14 @@
       ],
       "defaultValue": "1",
       "metadata": {
-        "description": "Optional.The instance size of this API Management service"
+        "description": "Optional.The instance size of this Api Management service"
       }
     },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Optional. Location of the API Management service"
+        "description": "Optional. Location for all Resources"
       }
     },
     "diagnosticStorageAccountId": {
@@ -184,21 +184,21 @@
       "type": "string",
       "value": "[variables('apimServiceName')]",
       "metadata": {
-        "description": "The API Management Service Name"
+        "description": "The Api Management Service Name"
       }
     },
     "apimServiceResourceId": {
       "type": "string",
       "value": "[variables('apimServiceResourceId')]",
       "metadata": {
-        "description": "The Resource Id of the API Management Service"
+        "description": "The Resource Id of the Api Management Service"
       }
     },
     "apimServiceResourceGroup": {
       "type": "string",
       "value": "[resourceGroup().name]",
       "metadata": {
-        "description": "The name of the Resource Group with the API Management Service"
+        "description": "The name of the Resource Group with the Api Management Service"
       }
     }
   }

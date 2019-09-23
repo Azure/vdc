@@ -1,6 +1,6 @@
-# API Management
+# Api Management
 
-This module deploys API Management. 
+This module deploys Api Management. 
 
 ## Resources
 
@@ -13,12 +13,13 @@ The following Resources are deployed.
 
 | Parameter Name | Default Value | Required | Description |
 | :-             | :-            | :-       |:-           |
-| `apiManagementServiceName` || **Required** | The name of the of the API Management Service
+| `apiManagementServiceName` || **Required** | The name of the of the Api Management Service
 | `publisherEmail` || **Required** | The email address of the owner of the service
 | `publisherName` || **Required** | The name of the owner of the service
-| `sku` | Developer | **Optional** | The pricing tier of this API Management service
-| `skuCount` | 1 | **Optional** | The instance size of this API Management service
-| `location` | resourceGroup().location | **Optional** | Location for all resources
+| `notificationSenderEmail` || **Optional** | The notification sender email address for the service
+| `sku` | Developer | **Optional** | The pricing tier of this Api Management service
+| `skuCount` | 1 | **Optional** | The instance size of this Api Management service
+| `location` | resourceGroup().location | **Optional** | Location for all Resources"
 | `diagnosticStorageAccountId` || **Required** | Resource identifier of the Diagnostic Storage Account
 | `logAnalyticsWorkspaceId` || **Required** | Resource identifier of Log Analytics Workspace
 | `logsRetentionInDays` | 30 | **Optional** | Specifies the number of days that logs will be kept for, a value of 0 will retain data indefinitely
@@ -29,13 +30,13 @@ The following Resources are deployed.
 
 | Output Name | Description |
 | :-          | :-          |
-| `apimServiceName` | API Management Service Name output parameter
-| `apimServiceResourceId` | API Management Service ResourceId output parameter
-| `apimServiceResourceGroup` | API Management Service ResourceGroup output parameter
+| `apimServiceName` | Api Management Service Name output parameter
+| `apimServiceResourceId` | Api Management Service ResourceId output parameter
+| `apimServiceResourceGroup` | Api Management Service ResourceGroup output parameter
 
 ## Scripts
 
-+ There is no scripts for this Module.
++ There is no deployment considerations for this Module.
 
 ## Considerations
 
@@ -43,6 +44,5 @@ The following Resources are deployed.
 
 ## Additional resources
 
-[Microsoft API Management template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.apimanagement/allversions)
-[Microsoft API Management diagnostic settings reference](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor#diagnostic-logs)
-
++ [Microsoft Api Management template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.apimanagement/allversions)
++ [Microsoft Api Management diagnostic settings reference](https://docs.microsoft.com/en-us/azure/api-management/api-management-howto-use-azure-monitor#diagnostic-logs)

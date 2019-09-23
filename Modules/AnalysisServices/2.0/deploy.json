@@ -73,39 +73,11 @@
         "description": "Optional. Customer Usage Attribution id (GUID). This GUID must be previously registered"
       }
     },
-    "tagEnvironment": {
-      "type": "string",
+    "tagValues": {
+      "type": "object",
       "defaultValue": "",
       "metadata": {
-        "description": "Optional. The name of the Environment"
-      }
-    },
-    "tagProject": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the project"
-      }
-    },
-    "tagApplication": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the application"
-      }
-    },
-    "tagOwner": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The business owner for the application"
-      }
-    },
-    "tagOwnerEmail": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The Email address of the business owner for the application"
+        "description": "Optional. Azure Resource Tags object"
       }
     }
   },
@@ -133,16 +105,10 @@
     },
     {
       "type": "Microsoft.AnalysisServices/servers",
-      "apiVersion": "[providers('Microsoft.AnalysisServices','servers').apiVersions[0]]",
-      "name": "[parameters('serverName')]",
+      "apiVersion": "2017-08-01,",
+      "name": "[variables('analysisServicesName')]",      
       "location": "[parameters('location')]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "sku": {
         "name": "[parameters('skuName')]",
         "capacity": "[parameters('skuCapacity')]"
@@ -153,11 +119,11 @@
       "resources": [
         {
           "type": "Microsoft.AnalysisServices/servers/providers/diagnosticsettings",
-          "name": "[concat(parameters('serverName'), '/Microsoft.Insights/service')]",
           "apiVersion": "2017-05-01-preview",
-          "location": "[parameters('location')]",
+          "name": "[concat(variables('analysisServicesName'), '/', 'Microsoft.Insights/service')]",
+          "location": "[parameters('location')]",          
           "dependsOn": [
-            "[concat('Microsoft.AnalysisServices/servers/', parameters('serverName'))]"
+            "[variables('analysisServicesResourceId')]"
           ],
           "properties": {
             "storageAccountId": "[variables('diagnosticStorageAccountId')]",
