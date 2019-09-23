@@ -24,6 +24,7 @@
       "type": "string",
       "allowedValues": [
         "Developer",
+        "Basic",
         "Standard",
         "Premium"
       ],
@@ -78,39 +79,11 @@
         "description": "Optional. Customer Usage Attribution Id (GUID). This GUID must be previously registered"
       }
     },
-    "tagEnvironment": {
-      "type": "string",
+    "tagValues": {
+      "type": "object",
       "defaultValue": "",
       "metadata": {
-        "description": "Optional. The name of the Environment"
-      }
-    },
-    "tagProject": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the project"
-      }
-    },
-    "tagApplication": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the application"
-      }
-    },
-    "tagOwner": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The business owner for the application"
-      }
-    },
-    "tagOwnerEmail": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The Email address of the business owner for the application"
+        "description": "Optional. Azure Resource Tags object"
       }
     }
   },
@@ -139,15 +112,9 @@
     {
       "type": "Microsoft.ApiManagement/service",
       "apiVersion": "2019-01-01",
-      "name": "[parameters('apiManagementServiceName')]",
+      "name": "[variables('apimServiceName')]",
       "location": "[parameters('location')]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "sku": {
         "name": "[parameters('sku')]",
         "capacity": "[parameters('skuCount')]"
@@ -155,7 +122,8 @@
       "properties": {
         "publisherEmail": "[parameters('publisherEmail')]",
         "publisherName": "[parameters('publisherName')]",
-        "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com"
+        "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
+        "virtualNetworkType": "None"
       },
       "resources": [
         {
@@ -164,11 +132,12 @@
           "name": "[concat(variables('apimServiceName'), '/', 'Microsoft.Insights/service')]",
           "location": "[parameters('location')]",
           "dependsOn": [
-            "[concat('Microsoft.ApiManagement/service/', variables('apimServiceName'))]"
+            "[variables('apimServiceResourceId')]"
           ],
           "properties": {
             "storageAccountId": "[variables('diagnosticStorageAccountId')]",
             "workspaceId": "[variables('diagnosticWorkspaceId')]",
+            "logAnalyticsDestinationType": "Dedicated",
             "logs": [
               {
                 "category": "GatewayLogs",
