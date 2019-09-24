@@ -84,6 +84,7 @@
   "variables": {
     "analysisServicesName": "[parameters('serverName')]",
     "analysisServicesResourceId": "[resourceId('Microsoft.AnalysisServices/servers',parameters('serverName'))]",
+    "analysisServicesApiVersion": "2017-08-01",
     "diagnosticStorageAccountId": "[parameters('diagnosticStorageAccountId')]",
     "diagnosticWorkspaceId": "[parameters('logAnalyticsWorkspaceId')]",
     "pidName": "[concat('pid-', parameters('cuaId'))]"
@@ -105,8 +106,8 @@
     },
     {
       "type": "Microsoft.AnalysisServices/servers",
-      "apiVersion": "2017-08-01,",
-      "name": "[variables('analysisServicesName')]",      
+      "apiVersion": "[variables('analysisServicesApiVersion')]",
+      "name": "[variables('analysisServicesName')]",
       "location": "[parameters('location')]",
       "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "sku": {
@@ -121,7 +122,7 @@
           "type": "Microsoft.AnalysisServices/servers/providers/diagnosticsettings",
           "apiVersion": "2017-05-01-preview",
           "name": "[concat(variables('analysisServicesName'), '/', 'Microsoft.Insights/service')]",
-          "location": "[parameters('location')]",          
+          "location": "[parameters('location')]",
           "dependsOn": [
             "[variables('analysisServicesResourceId')]"
           ],

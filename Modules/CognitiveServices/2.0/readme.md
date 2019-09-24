@@ -36,4 +36,4 @@ The following Resources are deployed.
 
 ## Additional resources
 
-[Microsoft Cognitve Services template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.cognitiveservices/allversions)
++ [Microsoft Cognitve Services template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.cognitiveservices/allversions)

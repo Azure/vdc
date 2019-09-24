@@ -47,12 +47,12 @@
       "metadata": {
         "description": "Optional. Azure Resource Tags object"
       }
-    }    
+    }
   },
   "variables": {
     "streamAnalyticsName": "[parameters('streamAnalyticsJobName')]",
     "streamAnalyticsResourceId": "[resourceId('Microsoft.StreamAnalytics/StreamingJobs',parameters('streamAnalyticsJobName'))]",
-    "apiVersion": "[providers('Microsoft.StreamAnalytics','StreamingJobs').apiVersions[0]]",
+    "streamAnalyticsApiVersion": "2016-03-01",
     "pidName": "[concat('pid-', parameters('cuaId'))]"
   },
   "resources": [
@@ -72,10 +72,10 @@
     },
     {
       "type": "Microsoft.StreamAnalytics/StreamingJobs",
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "[variables('streamAnalyticsApiVersion')]",
       "name": "[parameters('streamAnalyticsJobName')]",
       "location": "[parameters('location')]",
-       "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "properties": {
         "sku": {
           "name": "standard"

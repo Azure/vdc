@@ -40,4 +40,4 @@ The following Resources are deployed.
 
 ## Additional resources
 
-[Microsoft Insights template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/allversions)
++ [Microsoft Insights template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/allversions)

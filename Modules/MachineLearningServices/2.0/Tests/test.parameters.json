@@ -5,8 +5,8 @@
     "workspaceName": {
       "value": "testworkspaceName"
     },
-    "storageAccountName": {
-      "value": "teststorageAccountName"
+    "storageAccountResourceId": {
+      "value": "/subscriptions/00000000/resourceGroups/resourceGroup"
     },
     "keyVaultResourceId": {
       "value": "/subscriptions/00000000/resourceGroups/resourceGroup"

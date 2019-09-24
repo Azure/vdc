@@ -10,12 +10,12 @@
     },
     "ownerEmail": {
       "value": "someone@ownerEmail.com.test"
-    },    
-    "storageAccountName": {
-      "value": "teststorageAccountName"
-    },    
+    },
+    "storageAccountResourceId": {
+      "value": "/subscriptions/00000000/resourceGroups/resourceGroup"
+    },
     "cuaId": {
       "value": "00000000-0000-0000-0000-000000000000"
-    }    
+    }
   }
 }

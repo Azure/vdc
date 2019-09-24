@@ -8,27 +8,10 @@
         "description": "Required. The name of the Machine Learning Services Workspace"
       }
     },
-    "storageAccountName": {
+    "storageAccountResourceId": {
       "type": "string",
       "metadata": {
-        "description": "Required. Storage Account Name"
-      }
-    },
-    "storageAccountSku": {
-      "type": "string",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Standard_RAGRS",
-        "Standard_ZRS",
-        "Premium_LRS",
-        "Premium_ZRS",
-        "Standard_GZRS",
-        "Standard_RAGZRS"
-      ],
-      "defaultValue": "Standard_GRS",
-      "metadata": {
-        "description": "Optional. Storage Account sku type"
+        "description": "Required. Resource identifier of the Storage Account"
       }
     },
     "keyVaultResourceId": {
@@ -57,46 +40,19 @@
         "description": "Optional. Customer Usage Attribution id (GUID). This GUID must be previously registered"
       }
     },
-    "tagEnvironment": {
-      "type": "string",
+    "tagValues": {
+      "type": "object",
       "defaultValue": "",
       "metadata": {
-        "description": "Optional. The name of the Environment"
-      }
-    },
-    "tagProject": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the project"
-      }
-    },
-    "tagApplication": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The name of the application"
-      }
-    },
-    "tagOwner": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The business owner for the application"
-      }
-    },
-    "tagOwnerEmail": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Optional. The Email address of the business owner for the application"
+        "description": "Optional. Azure Resource Tags object"
       }
     }
   },
   "variables": {
     "machinelearningName": "[parameters('workspaceName')]",
     "machinelearningResourceId": "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-    "storageAccountResourceId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+    "machinelearningApiVersion": "2019-05-01",
+    "storageAccountResourceId": "[parameters('storageAccountResourceId')]",
     "keyVaultResourceId": "[parameters('keyVaultResourceId')]",
     "appInsightsResourceId": "[parameters('appInsightsResourceId')]",
     "pidName": "[concat('pid-',parameters('cuaId'))]"
@@ -117,36 +73,11 @@
       }
     },
     {
-      "type": "Microsoft.Storage/storageAccounts",
-      "apiVersion": "[providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]]",
-      "name": "[parameters('storageAccountName')]",
-      "location": "[parameters('location')]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
-      "sku": {
-        "name": "[parameters('storageAccountSku')]"
-      },
-      "properties": {
-        "supportsHttpsTrafficOnly": true
-      }
-    },
-    {
       "type": "Microsoft.MachineLearningServices/workspaces",
-      "apiVersion": "2018-11-19",
+      "apiVersion": "[variables('machinelearningApiVersion')]",
       "name": "[parameters('workspaceName')]",
       "location": "[parameters('location')]",
-      "tags": {
-        "Environment": "[parameters('tagEnvironment')]",
-        "Application": "[parameters('tagApplication')]",
-        "Project": "[parameters('tagProject')]",
-        "Owner": "[parameters('tagOwner')]",
-        "OwnerEmail": "[parameters('tagOwnerEmail')]"
-      },
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "properties": {
         "friendlyName": "[parameters('workspaceName')]",
         "keyVault": "[variables('keyVaultResourceId')]",

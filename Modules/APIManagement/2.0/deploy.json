@@ -90,6 +90,7 @@
   "variables": {
     "apimServiceName": "[parameters('apiManagementServiceName')]",
     "apimServiceResourceId": "[resourceId('Microsoft.ApiManagement/service',parameters('apiManagementServiceName'))]",
+    "apimServiceApiVersion": "2019-01-01",
     "diagnosticStorageAccountId": "[parameters('diagnosticStorageAccountId')]",
     "diagnosticWorkspaceId": "[parameters('logAnalyticsWorkspaceId')]",
     "pidName": "[concat('pid-', parameters('cuaId'))]"
@@ -111,7 +112,7 @@
     },
     {
       "type": "Microsoft.ApiManagement/service",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "[variables('apimServiceApiVersion')]",
       "name": "[variables('apimServiceName')]",
       "location": "[parameters('location')]",
       "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",

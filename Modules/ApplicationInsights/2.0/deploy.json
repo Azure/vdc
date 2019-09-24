@@ -45,7 +45,7 @@
   "variables": {
     "appInsightsName": "[parameters('appInsightsName')]",
     "appInsightsresourceId": "[resourceId('Microsoft.Insights/components',parameters('appInsightsName'))]",
-    "appInsightsApiVersion": "[providers('Microsoft.Insights','components').apiVersions[0]]",
+    "appInsightsApiVersion": "2015-05-01",
     "pidName": "[concat('pid-',parameters('cuaId'))]"
   },
   "resources": [

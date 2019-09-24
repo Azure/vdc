@@ -8,7 +8,6 @@ The following Resources are deployed.
 
 + **Microsoft.MachineLearning/workspaces** 
 + **Microsoft.MachineLearning/commitmentPlans**
-+ **Microsoft.Storage/storageAccounts** 
 
 ## Parameters
 
@@ -20,15 +19,10 @@ The following Resources are deployed.
 | `skuName` || **Optional** | Machine Learning Plan sku name
 | `skuTier` || **Optional** | Machine Learning Plan account tier
 | `skuCapacity` || **Optional** | Machine Learning Plan scale-out capacity of the resource
+| `storageAccountResourceId` || **Required** | Resource identifier of the Storage Account
 | `location` | resourceGroup().location | **Optional** | Location for all resources
-| `storageAccountName` || **Required** | Storage Account Name
-| `storageAccountSku` | Standard_GRS | **Optional** | Storage Account sku type
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
-| `tagEnvironment` || **Optional** | The name of the Environment
-| `tagProject` || **Optional** | The name of the project
-| `tagApplication` || **Optional** | The name of the application
-| `tagOwner` || **Optional** | The business owner for the application
-| `tagOwnerEmail` || **Optional** | The Email address of the business owner for the application
+| `tagValues` || **Optional** | Optional. Azure Resource Tags object
 
 ## Outputs
 | Output Name | Description |
@@ -39,9 +33,7 @@ The following Resources are deployed.
 
 ## Scripts
 
-| Script Name | Description |
-| :-          | :-          |
-| `machine.learning.akv.secrects.ps1` | Set Machine Learning KeyVault Secrets Automation Script
++ There is no Scripts for this Module
 
 ## Considerations
 
@@ -49,4 +41,4 @@ The following Resources are deployed.
 
 ## Additional resources
 
-[Microsoft Machine Learning template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.machinelearning/allversions)
++ [Microsoft Machine Learning template reference](https://docs.microsoft.com/en-us/azure/templates/microsoft.machinelearning/allversions)

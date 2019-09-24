@@ -40,6 +40,7 @@
   "variables": {
     "cognitiveServicesName": "[parameters('accountName')]",
     "cognitiveServicesResourceId": "[resourceId('Microsoft.CognitiveServices/accounts',parameters('accountName'))]",
+    "cognitiveServicesApiVersion": "2017-04-18",
     "pidName": "[concat('pid-', parameters('cuaId'))]"
   },
   "resources": [
@@ -59,11 +60,11 @@
     },
     {
       "type": "Microsoft.CognitiveServices/accounts",
-      "apiVersion": "[providers('Microsoft.CognitiveServices','accounts').apiVersions[0]]",
+      "apiVersion": "[variables('cognitiveServicesApiVersion')]",
       "name": "[variables('cognitiveServicesName')]",
       "location": "[parameters('location')]",
       "kind": "TextTranslation",
-      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",      
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
       "sku": {
         "name": "[parameters('sku')]"
       },

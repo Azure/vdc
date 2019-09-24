@@ -19,7 +19,10 @@ The following Resources are deployed.
 | `namespaceName` || **Required** | The name of the EventHub namespace
 | `eventHubName` || **Required** | The name of the EventHub
 | `messageRetentionInDays` | 1 | **Optional** | How long to retain the data in EventHub
-| `partitionCount` | 4 | **Optional** | Number of partitions chosen
+| `partitionCount` | 4 | **Optional** | Number of partitions chosen 
+| `skuName` || **Optional** | EventHub Plan sku name
+| `skuTier` || **Optional** | EventHub Plan account tier
+| `skuCapacity` || **Optional** | EventHub Plan scale-out capacity of the resource
 | `location` | resourceGroup().location | **Optional** | Location for all Resources
 | `diagnosticStorageAccountId` || **Required** | Resource identifier of the Diagnostic Storage Account
 | `logAnalyticsWorkspaceId` || **Required** | Resource identifier of Log Analytics Workspace
