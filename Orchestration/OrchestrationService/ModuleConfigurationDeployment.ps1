@@ -1,4 +1,4 @@
-[CmdletBinding()]
+[CmdletBinding(DefaultParametersetName='None')]
     param (
     [Parameter(Mandatory=$false)]
     [string]
@@ -23,7 +23,14 @@
     $TearDownValidationResourceGroup,
     [Parameter(Mandatory=$false)]
     [switch]
-    $TearDownEnvironment)
+    $TearDownEnvironment,
+    [Parameter(ParameterSetName='Transcript',Mandatory=$false)]
+    [switch]
+    $GenerateTranscript,
+    [Parameter(ParameterSetName='Transcript',Mandatory=$true)]
+    [string]
+    $TranscriptPath
+    )
 
 $rootPath = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent;
 $bootstrapModulePath = Join-Path $rootPath -ChildPath '..' -AdditionalChildPath @('Bootstrap', 'Initialize.ps1');
@@ -3198,8 +3205,18 @@ Function Get-ValidationResourceGroup() {
 # Entry point script, used when invoking ModuleConfigurationDeployment.ps1
 # In order to allow the module to be imported (Import-Module), let's
 # verify if the mandatory parameters are not passed.
-
 if (![string]::IsNullOrEmpty($DefinitionPath)) {
+
+    # Start transcript only if the flag is set to true
+    if($GenerateTranscript.IsPresent -eq $true) {
+        $TranscriptPath = `
+            ConvertTo-AbsolutePath `
+                -Path $TranscriptPath `
+                -RootPath $(Get-WorkingDirectory -WorkingDirectory $WorkingDirectory) `
+                -SkipFilePathExistenceCheck;
+        Start-Transcript -Path $TranscriptPath;
+    }
+    try {
         if($TearDownEnvironment.IsPresent) {
             Start-TearDownEnvironment `
                 -ArchetypeInstanceName $ArchetypeInstanceName `
@@ -3217,4 +3234,14 @@ if (![string]::IsNullOrEmpty($DefinitionPath)) {
                 -WorkingDirectory $WorkingDirectory `
                 -Validate:$($Validate.IsPresent);
         }
+    }
+    Catch {
+        Write-Host "Deployment exited unexpectedly."
+    }
+    Finally {
+        # Stop transcript only if the flag is set to true
+        if($GenerateTranscript.IsPresent -eq $true) {
+            Stop-Transcript;
+        }
+    }
 }

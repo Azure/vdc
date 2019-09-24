@@ -79,7 +79,10 @@ Function ConvertTo-AbsolutePath() {
         [Parameter(Mandatory=$true)]
         $Path,
         [Parameter(Mandatory=$false)]
-        $RootPath
+        $RootPath,
+        [Parameter(Mandatory=$false)]
+        [switch]
+        $SkipFilePathExistenceCheck
     )
 
     # This will hold the full path of the file being read.
@@ -123,9 +126,18 @@ Function ConvertTo-AbsolutePath() {
     # Test if the path is valid
     $fileExists = Test-Path -Path $fullFilePath;
 
-    # Return path if file exists (truthy)
-    if($fileExists -eq $true) {
+    # Return path if file exists and SkipFilePathExistenceCheck
+    # is not flag is present. This will check if the file referenced
+    # by the path exists before returning the absolute path.
+    if($fileExists -eq $true -and `
+        $SkipFilePathExistenceCheck.IsPresent -eq $false) {
         return (Get-Item -Path $fullFilePath).FullName;
+    }
+    # Skip file path existence check if SkipFilePathExistenceCheck is
+    # present. This will return the file's absolute without checking
+    # if the file referenced by the path exists.
+    elseif($SkipFilePathExistenceCheck.IsPresent -eq $true) {
+        return $fullFilePath;
     }
     else {
         throw "File does not exists, path: $fullFilePath";
