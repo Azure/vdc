@@ -1,0 +1,122 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "streamAnalyticsJobName": {
+      "type": "string",
+      "metadata": {
+        "description": "Required. Stream Analytics Job Name"
+      }
+    },
+    "numberOfStreamingUnits": {
+      "type": "int",
+      "allowedValues": [
+        1,
+        3,
+        6,
+        12,
+        18,
+        24,
+        30,
+        36,
+        42,
+        48
+      ],
+      "defaultValue": "1",
+      "metadata": {
+        "description": "Optional. Number of Streaming Units"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Optional. Location for all Resources"
+      }
+    },
+    "cuaId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Customer Usage Attribution id (GUID). This GUID must be previously registered"
+      }
+    },
+    "tagValues": {
+      "type": "object",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional. Azure Resource Tags object"
+      }
+    }
+  },
+  "variables": {
+    "streamAnalyticsName": "[parameters('streamAnalyticsJobName')]",
+    "streamAnalyticsResourceId": "[resourceId('Microsoft.StreamAnalytics/StreamingJobs',parameters('streamAnalyticsJobName'))]",
+    "streamAnalyticsApiVersion": "2016-03-01",
+    "pidName": "[concat('pid-', parameters('cuaId'))]"
+  },
+  "resources": [
+    {
+      "condition": "[not(empty(parameters('cuaId')))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-02-01",
+      "name": "[variables('pidName')]",
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "resources": []
+        }
+      }
+    },
+    {
+      "type": "Microsoft.StreamAnalytics/StreamingJobs",
+      "apiVersion": "[variables('streamAnalyticsApiVersion')]",
+      "name": "[parameters('streamAnalyticsJobName')]",
+      "location": "[parameters('location')]",
+      "tags": "[if(empty(parameters('tagValues')), json('null'), parameters('tagValues'))]",
+      "properties": {
+        "sku": {
+          "name": "standard"
+        },
+        "outputErrorPolicy": "stop",
+        "eventsOutOfOrderPolicy": "adjust",
+        "eventsOutOfOrderMaxDelayInSeconds": 0,
+        "eventsLateArrivalMaxDelayInSeconds": 5,
+        "dataLocale": "en-US",
+        "inputs": [],
+        "transformation": {
+          "name": "Transformation",
+          "properties": {
+            "streamingUnits": "[parameters('numberOfStreamingUnits')]",
+            "query": "SELECT\r\n    *\r\nINTO\r\n    [YourOutputAlias]\r\nFROM\r\n    [YourInputAlias]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "streamAnalyticsName": {
+      "type": "string",
+      "value": "[variables('streamAnalyticsName')]",
+      "metadata": {
+        "description": "The Name of the Stream Analytics"
+      }
+    },
+    "streamAnalyticsResourceId": {
+      "type": "string",
+      "value": "[variables('streamAnalyticsResourceId')]",
+      "metadata": {
+        "description": "The Resource Id of the Stream Analytics"
+      }
+    },
+    "streamAnalyticsResourceGroup": {
+      "type": "string",
+      "value": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The name of the Resource Group with the Stream Analytics"
+      }
+    }
+  }
+}

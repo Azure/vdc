@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "value": "testworkspaceName"
+    },
+    "planName": {
+      "value": "testplanName"
+    },
+    "ownerEmail": {
+      "value": "someone@ownerEmail.com.test"
+    },
+    "storageAccountResourceId": {
+      "value": "/subscriptions/00000000/resourceGroups/resourceGroup"
+    },
+    "cuaId": {
+      "value": "00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
