@@ -51,7 +51,6 @@ $global:configurationBuilder = $null;
 $global:customScriptExecution = $null
 $global:factory = $null;
 $defaultLocation = "West US";
-$defaultSupportedVersion = 2.0;
 $defaultModuleConfigurationsFolderName = "Modules";
 $defaultTemplateFileName = "deploy.json";
 $defaultParametersFileName = "parameters.json";
@@ -2044,26 +2043,16 @@ Function Get-DeploymentFileContents {
             Write-Debug "Deployment file not found, creating a default one";
             Write-Debug "Module configurations folder name is: $defaultModuleConfigurationsFolderName";
 
-            # Let's get the module configuration version
-            $moduleConfigurationVersion = `
-                Get-ModuleConfigurationVersion `
-                    -ModuleConfiguration $ModuleConfiguration `
-                    -ModuleConfigurationsPath $ModuleConfigurationsPath;
-
-            # Let's create a relative path using forward slash delimiter
-            $moduleConfigurationRelativePath = `
-                "$($ModuleConfiguration.ModuleDefinitionName)/$moduleConfigurationVersion";
-
-            Write-Debug "New module configuration relative path, including version is: $moduleConfigurationRelativePath";
+            $moduleRelativeFilePath = $ModuleConfiguration.ModuleDefinitionName
 
             if ($DeploymentType.ToLower() -eq "arm") {
-                $moduleConfigurationRelativePath += "/$fileName";
+                $moduleRelativeFilePath += "/$fileName";
             }
             elseif ($DeploymentType.ToLower() -eq "policies") {
-                $moduleConfigurationRelativePath += "/Policy/$fileName";
+                $moduleRelativeFilePath += "/Policy/$fileName";
             }
             elseif ($DeploymentType.ToLower() -eq "rbac") {
-                $moduleConfigurationRelativePath += "/RBAC/$fileName";
+                $moduleRelativeFilePath += "/RBAC/$fileName";
             }
             else {
                 throw "Deployment type not supported";
@@ -2074,7 +2063,7 @@ Function Get-DeploymentFileContents {
             # delimiter for folders plus file name
             $normalizedRelativeFilePath = `
                 New-NormalizePath `
-                    -FilePaths $moduleConfigurationRelativePath.Split('/');
+                    -FilePaths $moduleRelativeFilePath.Split('/');
 
             Write-Debug "Normalized relative path: $normalizedRelativeFilePath";
             # Finally let's get an absolute path by combining the
@@ -2099,68 +2088,6 @@ Function Get-DeploymentFileContents {
     }
     catch {
         Write-Host "An error ocurred while running Get-DeploymentFileContents";
-        Write-Host $_;
-        throw $_;
-    }
-}
-
-Function Get-ModuleConfigurationVersion {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [hashtable]
-        $ModuleConfiguration,
-        [Parameter(Mandatory=$true)]
-        [string]
-        $ModuleConfigurationsPath
-
-    )
-
-    try {
-        Write-Debug "ModuleConfiguration is: $(ConvertTo-Json $ModuleConfiguration)";
-        Write-Debug "ModuleConfigurationsPath is: $ModuleConfigurationsPath";
-
-        $currentVersion = $ModuleConfiguration.Version;
-
-        if ([string]::IsNullOrEmpty($currentVersion)) {
-            Write-Debug "Version property not found, sorting all version folders in desc order and grabbing the first item";
-            # Let's read all folders inside the module configuration
-
-            # Let's Join-Path moduleConfigurationsPath and moduleConfiguration
-            $absolutePath = `
-                Join-Path $ModuleConfigurationsPath $ModuleConfiguration.ModuleDefinitionName
-            Write-Debug "Attempting to get all folders from: $absolutePath";
-
-            $currentVersionFolder = `
-                (Get-ChildItem `
-                    -Path $absolutePath `
-                    -Directory | `
-                 Sort-Object `
-                    -Property Name `
-                    -Descending | `
-                 Select-Object `
-                    -First 1 `
-                    -ErrorAction SilentlyContinue);
-
-            if ($null -eq $currentVersionFolder) {
-                Write-Debug "No folders found, using default version: $defaultSupportedVersion";
-                $currentVersion = $defaultSupportedVersion;
-            }
-            else {
-                $currentVersion = $currentVersionFolder.Name;
-            }
-
-            Write-Debug "Current module configuration version is: $currentVersion";
-        }
-
-        if ($currentVersion -le $defaultSupportedVersion) {
-            throw "Not supported version, version retrieved is: $currentVersion. Supported versions are $defaultSupportedVersion and up.";
-        }
-
-        return $currentVersion;
-    }
-    catch {
-        Write-Host "An error ocurred while running Get-ModuleConfigurationVersion";
         Write-Host $_;
         throw $_;
     }

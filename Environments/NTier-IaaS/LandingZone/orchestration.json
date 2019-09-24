@@ -20,7 +20,6 @@
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}",
             "Comments": "Storage Account that is used to store Diagnostic information of VMs and Non-VM resources",
-            "Version": "2.0",
             "Policies": {
                 "Comments": "Policies is Optional - If no object is specified, no Policies deployment will occur",
                 "OverrideParameters": {
@@ -37,7 +36,7 @@
             },
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
-                "TemplatePath": "../../../Modules/StorageAccounts/2.0/deploy.json",
+                "TemplatePath": "../../../Modules/StorageAccounts/deploy.json",
                 "OverrideParameters": {
                     "storageAccountName": {
                         "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Name}"

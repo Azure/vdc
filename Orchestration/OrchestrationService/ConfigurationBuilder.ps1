@@ -437,13 +437,13 @@ Class ConfigurationBuilder {
         $pathExtracts = @();
 
         # Regex to capture all the patterns below:
-        # "TemplatePath": "../../modules/2.0/deploy.json",
+        # "TemplatePath": "../../modules/deploy.json",
         # "TemplatePath": "../../../modules.json",
-        # "TemplatePath": "/modules/2.0/deploy.json",
+        # "TemplatePath": "/modules/deploy.json",
         # "TemplatePath": "/modules.json",
-        # "TemplatePath": "./modules/StorageAccounts/2.0/deploy.json",
+        # "TemplatePath": "./modules/StorageAccounts/deploy.json",
         # Note: Regex does not capture the below cases:
-        # "TemplatePath": "modules/2.0/deploy.json",
+        # "TemplatePath": "modules/deploy.json",
         # "TemplatePath": "modules.json",
         # TODO: Include the above two cases
         $pathExtractionRegex = "[`"\']([\.\/]+.*?[.]?)[`"\']";

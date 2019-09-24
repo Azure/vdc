@@ -6,7 +6,6 @@
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}",
             "Comments": "Storage Account that is used for ...",
-            "Version": "2.0",
             "Policies": {
                 "Comments": "Optional - If no object is specified, no Policies deployment will occur",
                 "OverrideParameters": {
