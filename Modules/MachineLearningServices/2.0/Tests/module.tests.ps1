@@ -7,16 +7,16 @@
 
 		File:		module.tests.ps1
 
-		Purpose:	Pester - Test EventHub Namespace ARM Templates
+		Purpose:	Pester - Test Machine Learning ARM Templates
 
 		Version: 	2.0.0.0 - 1st September 2019 - Azure Virtual Datacenter Development Team
 		==============================================================================================
 
 	.SYNOPSIS
-		This script contains functionality used to test EventHub Namespace ARM template synatax.
+		This script contains functionality used to test Machine Learning ARM template synatax.
 
 	.DESCRIPTION
-		This script contains functionality used to test EventHub Namespace ARM template synatax.
+		This script contains functionality used to test Machine Learning ARM template synatax.
 
 		Deployment steps of the script are outlined below.
         1) Test Template File Syntax
@@ -66,7 +66,7 @@ ForEach ($file in (Get-ChildItem (Join-Path -Path "$here" -ChildPath "deploy.jso
 #endregion
 
 #region - Run Pester Test Script
-Describe "Template: $template - EventHub Namespace" -Tags -Unit {
+Describe "Template: $template - Machine Learning" -Tags -Unit {
 
 	#region - Template File Syntax
     Context "Template File Syntax" {

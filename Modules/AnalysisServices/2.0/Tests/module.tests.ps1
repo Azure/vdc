@@ -27,135 +27,145 @@
 #Requires -Version 5
 
 #region Parameters
-
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$here = Join-Path $here ".."
+$here = Join-Path -Path $here -ChildPath ".."
 $template = Split-Path -Leaf $here
-$TemplateFileTestCases = @()
-ForEach ( $File in (Get-ChildItem (Join-Path "$here" "deploy.json") -Recurse | Select-Object  -ExpandProperty Name) ) {
-    $TemplateFileTestCases += @{ TemplateFile = $File }
+
+#region - Template File Test Cases
+$templateFileTestCases = @()
+ForEach ($file in (Get-ChildItem (Join-Path -Path "$here" -ChildPath "deploy.json") -Recurse | Select-Object  -ExpandProperty Name)) {
+    $templateFileTestCases += @{ TemplateFile = $file }
 }
-$ParameterFileTestCases = @()
-ForEach ( $File in (Get-ChildItem (Join-Path "$here" "Tests" -AdditionalChildPath @("*parameters.json")) -Recurse -ErrorAction SilentlyContinue | Select-Object  -ExpandProperty Name) ) {
-	$ParameterFileTestCases += @{ ParameterFile = Join-Path "Tests" $File }
+#endregion
+
+#region - Parameter File Test Cases
+$parameterFileTestCases = @()
+ForEach ($file in (Get-ChildItem (Join-Path -Path "$here" -ChildPath "Tests" -AdditionalChildPath @("*parameters.json")) -Recurse -ErrorAction SilentlyContinue | Select-Object  -ExpandProperty Name)) {
+	$parameterFileTestCases += @{ ParameterFile = Join-Path -Path "Tests" $file }
 }
-$Modules = @();
-ForEach ( $File in (Get-ChildItem (Join-Path "$here" "deploy.json") ) ) {
-	$Module = [PSCustomObject]@{
+#endregion
+
+#region - Module Test Cases
+$modules = @()
+ForEach ($file in (Get-ChildItem (Join-Path -Path "$here" -ChildPath "deploy.json"))) {
+	$module = [PSCustomObject]@{
 		'Template' = $null
 		'Parameters' = $null
 	}
-	$Module.Template = $File.FullName;
-	$Parameters = @();
-	ForEach ( $ParameterFile in (Get-ChildItem (Join-Path "$here" "Tests" -AdditionalChildPath @("*parameters.json")) -Recurse -ErrorAction SilentlyContinue | Select-Object  -ExpandProperty Name) ) {
-		$Parameters += (Join-Path "$here" "Tests" -AdditionalChildPath @("$ParameterFile") )
+	$module.Template = $file.FullName
+
+	$parameters = @()
+	ForEach ($parameterFile in (Get-ChildItem (Join-Path -Path "$here" -ChildPath "Tests" -AdditionalChildPath @("*parameters.json")) -Recurse -ErrorAction SilentlyContinue | Select-Object  -ExpandProperty Name)) {
+		$parameters += (Join-Path -Path "$here" -ChildPath "Tests" -AdditionalChildPath @("$ParameterFile"))
 	}
-	$Module.Parameters = $Parameters;
-	$Modules += @{ Module = $Module };
+	$Module.Parameters = $Parameters
+	$Modules += @{Module = $Module}
 }
+#endregion
 
 #endregion
 
-#region Run Pester Test Script
-Describe "Template: $template - Storage Accounts" -Tags Unit {
+#region - Run Pester Test Script
+Describe "Template: $template - Analysis Services" -Tags -Unit {
 
+	#region - Template File Syntax
     Context "Template File Syntax" {
 
         It "Has a JSON template file" {
-            (Join-Path "$here" "deploy.json") | Should Exist
+            (Join-Path -Path "$here" -ChildPath "deploy.json") | Should -Exist
         }
 
-        It "Converts from JSON and has the expected properties" -TestCases $TemplateFileTestCases {
-            Param( $TemplateFile )
+        It "Converts from JSON and has the expected properties" -TestCases $templateFileTestCases {
+            param($templateFile)
 			$expectedProperties = '$schema',
 			'contentVersion',
             'parameters',
             'variables',
 			'resources',
 			'outputs' | Sort-Object
-			$templateProperties = (Get-Content (Join-Path "$here" "$TemplateFile") `
-									| ConvertFrom-Json -ErrorAction SilentlyContinue) `
-									| Get-Member -MemberType NoteProperty `
-									| Sort-Object -Property Name `
-									| ForEach-Object Name
-            $templateProperties | Should Be $expectedProperties
-        }        
+			$templateProperties = (Get-Content (Join-Path -Path "$here" -ChildPath "$templateFile") `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue) `
+					| Get-Member -MemberType NoteProperty `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+            $templateProperties | Should -Be $expectedProperties
+        }
     }
+	#endregion
 
+	#region - Parameter File Syntax
     Context "Parameter File Syntax" {
-	   
-		It "Parameter file does not contains the expected properties" -TestCases $ParameterFileTestCases {
-            Param( $ParameterFile )
+
+		It "Parameter file does not contains the expected properties" -TestCases $parameterFileTestCases {
+            param($parameterFile)
             $expectedProperties = '$schema',
             'contentVersion',
 			'parameters' | Sort-Object
-			Write-Host $ParameterFile
-			Join-Path "$here" "$ParameterFile" | Write-Host
-			$templateFileProperties = (Get-Content (Join-Path "$here" "$ParameterFile") `
-										| ConvertFrom-Json -ErrorAction SilentlyContinue) `
-										| Get-Member -MemberType NoteProperty `
-										| Sort-Object -Property Name `
-										| ForEach-Object Name
-            $templateFileProperties | Should Be $expectedProperties 
+			Write-Output $parameterFile
+			Join-Path -Path "$here" -ChildPath "$parameterFile" | Write-Output
+			$templateFileProperties = (Get-Content (Join-Path -Path "$here" -ChildPath "$parameterFile") `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue) `
+					| Get-Member -MemberType NoteProperty `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+            $templateFileProperties | Should -Be $expectedProperties
         }
-
     }
+	#endregion
 
+	#region - Template and Parameter Compactibility
 	Context "Template and Parameter Compactibility" {
 
-		It "Is count of required parameters in template file equal or lesser than count of all parameters in parameters file" -TestCases $Modules {
-			Param( $Module )
-			
-			$requiredParametersInTemplateFile = (Get-Content "$($Module.Template)" `
-							| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
-							| Where-Object -FilterScript { -not ($_.Value.PSObject.Properties.Name -eq "defaultValue") } `
-							| Sort-Object -Property Name `
-							| ForEach-Object Name
-			ForEach ( $Parameter in $Module.Parameters ) {
-				$allParametersInParametersFile = (Get-Content $Parameter `
-							| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
-							| Sort-Object -Property Name `
-							| ForEach-Object Name
-				$requiredParametersInTemplateFile.Count | Should Not BeGreaterThan $allParametersInParametersFile.Count;
+		It "Is count of required parameters in template file equal or lesser than count of all parameters in parameters file" -TestCases $modules {
+			param($module)
+			$requiredParametersInTemplateFile = (Get-Content "$($module.Template)" `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
+					| Where-Object -FilterScript { -not ($psitem.Value.PSObject.Properties.Name -eq "defaultValue")} `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+			ForEach ( $parameter in $module.Parameters ) {
+				$allParametersInParametersFile = (Get-Content $parameter `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+				$requiredParametersInTemplateFile.Count | Should -Not -BeGreaterThan $allParametersInParametersFile.Count
 			}
 		}
 
-		It "Has all parameters in parameters file existing in template file" -TestCases $Modules {
-			Param( $Module )
-
-			$allParametersInTemplateFile = (Get-Content "$($Module.Template)" `
-							| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
-							| Sort-Object -Property Name `
-							| ForEach-Object Name
-			ForEach ( $Parameter in $Module.Parameters ) {
-				Write-Host "File analyzed: $Parameter";
-				$allParametersInParametersFile = (Get-Content $Parameter `
-								| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
-								| Sort-Object -Property Name `
-								| ForEach-Object Name
-				$result = @($allParametersInParametersFile| Where-Object {$allParametersInTemplateFile -notcontains $_});
-				Write-Host "Invalid parameters: $(ConvertTo-Json $result)";
-				@($allParametersInParametersFile| Where-Object {$allParametersInTemplateFile -notcontains $_}).Count | Should Be 0;
+		It "Has all parameters in parameters file existing in template file" -TestCases $modules {
+			param($module)
+			$allParametersInTemplateFile = (Get-Content "$($module.Template)" `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+			ForEach ($parameter in $module.Parameters) {
+				Write-Output "File analyzed: $parameter"
+				$allParametersInParametersFile = (Get-Content $parameter `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+				$result = @($allParametersInParametersFile| Where-Object {$allParametersInTemplateFile -notcontains $psitem})
+				Write-Output "Invalid parameters: $(ConvertTo-Json $result)"
+				@($allParametersInParametersFile| Where-Object {$allParametersInTemplateFile -notcontains $psitem}).Count | Should -Be 0
 			}
 		}
 
-		It "Has required parameters in template file existing in parameters file" -TestCases $Modules {
-			Param( $Module )
-
-			$requiredParametersInTemplateFile = (Get-Content "$($Module.Template)" `
-							| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
-							| Where-Object -FilterScript { -not ($_.Value.PSObject.Properties.Name -eq "defaultValue") } `
-							| Sort-Object -Property Name `
-							| ForEach-Object Name
-			ForEach ( $Parameter in $Module.Parameters ) {
-				$allParametersInParametersFile = (Get-Content $Parameter `
-								| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
-								| Sort-Object -Property Name `
-								| ForEach-Object Name
-				@($requiredParametersInTemplateFile| Where-Object {$allParametersInParametersFile -notcontains $_}).Count | Should Be 0;
+		It "Has required parameters in template file existing in parameters file" -TestCases $modules {
+			param($module)
+			$requiredParametersInTemplateFile = (Get-Content "$($module.Template)" `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
+					| Where-Object -FilterScript { -not ($psitem.Value.PSObject.Properties.Name -eq "defaultValue") } `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+			ForEach ($parameter in $module.Parameters ) {
+				$allParametersInParametersFile = (Get-Content $parameter `
+					| ConvertFrom-Json -ErrorAction SilentlyContinue).Parameters.PSObject.Properties `
+					| Sort-Object -Property Name `
+					| ForEach-Object Name
+				@($requiredParametersInTemplateFile| Where-Object {$allParametersInParametersFile -notcontains $psitem}).Count | Should -Be 0
 			}
 		}
 	}
-
+	#endregion
 }
 #endregion
