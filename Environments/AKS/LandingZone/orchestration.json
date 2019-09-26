@@ -5,7 +5,6 @@
             "Name": "DiagnosticStorageAccount",
             "ModuleDefinitionName": "StorageAccounts",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}",
-            "Version": "2.0",
             "Policies": {
                 "Comments": "Optional - If no object is specified, no Policies deployment will occur",
                 "OverrideParameters": {
@@ -22,7 +21,7 @@
             },
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
-                "TemplatePath": "../../../Modules/StorageAccounts/2.0/deploy.json",
+                "TemplatePath": "../../../Modules/StorageAccounts/deploy.json",
                 "OverrideParameters": {
                     "storageAccountName": {
                         "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Name}"
@@ -143,7 +142,7 @@
                 "DefaultNSG"
             ],
             "Script": {
-                "Command": "../../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Command": "../../../Modules/NetworkSecurityGroups/Scripts/enable.flow.logs.ps1",
                 "Arguments": {
                     "SubscriptionId": "${Parameters.SubscriptionId}",
                     "NetworkWatcherRegion": "${Parameters.Location}",
@@ -278,7 +277,7 @@
             "Name": "ConsolidateApplicationRules",
             "Comments": "ConsolidateApplicationRules",
             "Script": {
-                "Command": "../../../Modules/AzureFirewall/2.0/Scripts/azure.firewall.addrulecollection.ps1",
+                "Command": "../../../Modules/AzureFirewall/Scripts/azure.firewall.addrulecollection.ps1",
                 "Arguments" : {
                     "SubscriptionId": "${Subscriptions.SharedServices.SubscriptionId}",
                     "AzureFirewallId": "reference(${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}.AzureFirewall.azureFirewallResourceId)",
@@ -291,7 +290,7 @@
             "Name": "ConsolidateNetworkRules",
             "Comments": "ConsolidateNetworkRules",
             "Script": {
-                "Command": "../../../Modules/AzureFirewall/2.0/Scripts/azure.firewall.addrulecollection.ps1",
+                "Command": "../../../Modules/AzureFirewall/Scripts/azure.firewall.addrulecollection.ps1",
                 "Arguments" : {
                     "SubscriptionId": "${Subscriptions.SharedServices.SubscriptionId}",
                     "AzureFirewallId": "reference(${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}.AzureFirewall.azureFirewallResourceId)",
@@ -304,14 +303,13 @@
             "Name": "UpdateAzureFirewall",
             "ModuleDefinitionName": "AzureFirewall",
             "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Kubernetes.ResourceGroup}",
-            "Version": "2.0",
             "DependsOn": [ 
                 "ConsolidateNetworkRules", 
                 "ConsolidateApplicationRules" 
             ],
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
-                "TemplatePath": "../../../Modules/UpdateAzureFirewall/2.0/deploy.json",
+                "TemplatePath": "../../../Modules/UpdateAzureFirewall/deploy.json",
                 "OverrideParameters": {
                     "azureFirewallName": {
                         "value": "${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetwork.NetworkVirtualAppliance.AzureFirewall.Name}"

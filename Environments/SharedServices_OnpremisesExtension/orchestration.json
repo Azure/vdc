@@ -22,7 +22,7 @@
             },
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
-                "TemplatePath": "../../Modules/StorageAccounts/2.0/deploy.json",
+                "TemplatePath": "../../Modules/StorageAccounts/deploy.json",
                 "OverrideParameters": {
                     "storageAccountName": {
                         "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Name}"
@@ -198,7 +198,7 @@
                 "SharedServicesNSG"
             ],
             "Script": {
-                "Command": "../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Command": "../../Modules/NetworkSecurityGroups/Scripts/enable.flow.logs.ps1",
                 "Arguments": {
                     "SubscriptionId": "${Parameters.SubscriptionId}",
                     "NetworkWatcherRegion": "${Parameters.Location}",
@@ -243,7 +243,7 @@
                 "DMZNSG"
             ],
             "Script": {
-                "Command": "../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Command": "../../Modules/NetworkSecurityGroups/Scripts/enable.flow.logs.ps1",
                 "Arguments": {
                     "SubscriptionId": "${Parameters.SubscriptionId}",
                     "NetworkWatcherRegion": "${Parameters.Location}",
@@ -531,7 +531,7 @@
                 "KeyVault"
             ],
             "Script": {
-                "Command": "../../Modules/KeyVault/2.0/Scripts/create.keys.ps1",
+                "Command": "../../Modules/KeyVault/Scripts/create.keys.ps1",
                 "Arguments": {
                     "VaultName": "reference(KeyVault.keyVaultName)",
                     "KeyName": "${Parameters.ModuleConfigurationParameters.Jumpbox.Windows.Kek.Name}",
@@ -546,7 +546,7 @@
                 "KeyVault"
             ],
             "Script": {
-                "Command": "../../Modules/KeyVault/2.0/Scripts/create.keys.ps1",
+                "Command": "../../Modules/KeyVault/Scripts/create.keys.ps1",
                 "Arguments": {
                     "VaultName": "reference(KeyVault.keyVaultName)",
                     "KeyName": "${Parameters.ModuleConfigurationParameters.Jumpbox.Linux.Kek.Name}",
@@ -561,7 +561,7 @@
                 "KeyVault"
             ],
             "Script": {
-                "Command": "../../Modules/KeyVault/2.0/Scripts/create.keys.ps1",
+                "Command": "../../Modules/KeyVault/Scripts/create.keys.ps1",
                 "Arguments": {
                     "VaultName": "reference(KeyVault.keyVaultName)",
                     "KeyName": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.Kek.Name}",
@@ -644,7 +644,7 @@
         {
             "Name": "RegisterAzureBastionFeature",
             "Script": {
-                "Command": "../../Modules/AzureBastion/2.0/Scripts/register.provider.feature.ps1",
+                "Command": "../../Modules/AzureBastion/Scripts/register.provider.feature.ps1",
                 "Arguments": {}
             }
         },

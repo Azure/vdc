@@ -178,7 +178,7 @@
                 "DefaultNSG"
             ],
             "Script": {
-                "Command": "../../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Command": "../../../Modules/NetworkSecurityGroups/Scripts/enable.flow.logs.ps1",
                 "Arguments": {
                     "SubscriptionId": "${Parameters.SubscriptionId}",
                     "NetworkWatcherRegion": "${Parameters.Location}",

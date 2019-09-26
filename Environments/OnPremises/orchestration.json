@@ -22,7 +22,6 @@
             },
             "Deployment": {
                 "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
-                "TemplatePath": "../../Modules/StorageAccounts/2.0/deploy.json",
                 "OverrideParameters": {
                     "storageAccountName": {
                         "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Name}"
@@ -93,7 +92,7 @@
                 "OnPremisesNSG"
             ],
             "Script": {
-                "Command": "../../../Modules/NetworkSecurityGroups/2.0/Scripts/enable.flow.logs.ps1",
+                "Command": "../../Modules/NetworkSecurityGroups/Scripts/enable.flow.logs.ps1",
                 "Arguments": {
                     "SubscriptionId": "${Parameters.SubscriptionId}",
                     "NetworkWatcherRegion": "${Parameters.Location}",
@@ -194,11 +193,11 @@
                 "KeyVault"
             ],
             "Script": {
-                "Command": "../../Modules/VirtualNetworkGateway/2.0/Scripts/virtual.network.gateway.rootcert.ps1",
+                "Command": "../../Modules/VirtualNetworkGateway/Scripts/virtual.network.gateway.rootcert.ps1",
                 "Arguments" : {
                     "KeyVaultName" : "${Parameters.ModuleConfigurationParameters.KeyVault.Name}",
                     "KeyName" : "CACert",
-                    "BashScriptPath": "../../Modules/VirtualNetworkGateway/2.0/Scripts/virtual.network.gateway.rootcert.sh"
+                    "BashScriptPath": "../../Modules/VirtualNetworkGateway/Scripts/virtual.network.gateway.rootcert.sh"
                 }
             }
         },
