@@ -5,13 +5,13 @@ Specifically, we will deploy a [shared services](../Environments/SharedServices)
 
 ## Prerequisites
 
-At a minimum you will need to follow this quickstart:
+At a minimum you will need the following to complete this quickstart:
 * [Docker](https://www.docker.com/get-started)
 * [Git](https://git-scm.com/downloads)
 
 We recommended [Visual Studio Code](https://code.visualstudio.com/) as well, though any text editor will suffice.
 
-You can install these on your local machine, or you can the lab VM provided in the toolkit.
+You can install these on your local machine or you can use the lab VM provided in the toolkit.
 See these instructions for [setting up the lab VM](../LabVM/README.md).
 
 After these prerequisties are installed, we will [clone the reposistory on GitHub](https://help.github.com/en/articles/cloning-a-repository-from-github) and [build a Docker image](https://docs.docker.com/glossary/?term=build).
@@ -82,9 +82,9 @@ Additional details on these cmdlets are here:
 
 Strictly speaking, you do not need a service principal for the purpose of this quickstart.
 You can reuse your user object id in place of the service principal object id.
-However, if you want to deploy using Azure DevOps will need to create the service principal.
+However, if you want to deploy using Azure DevOps you will need to create the service principal.
 
-Follow [thse instructions](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for creating the service principal and note the object id during creation. The service principal will require owner permissions.
+Follow [these instructions](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for creating the service principal and note the object id during creation. The service principal will require owner permissions.
 
 ### Setting the configuration
 
@@ -143,7 +143,7 @@ To use the above script:
 
 1. Return to the running Docker container from earlier in the quickstart.
 1. If you have not already done so, run `Connect-AzAccount` to login and set an Azure context.
-1. To deply the entire shared services environment, you can run a single command:
+1. To deploy the entire shared services environment, you can run a single command:
 
     ``` PowerShell
     ./Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1 -DefinitionPath ./Environments/SharedServices/definition.json
@@ -152,7 +152,7 @@ To use the above script:
 The toolkit will begin deploying the constituent modules and the status will be sent to the terminal.
 Open the [Azure portal](https://portal.azure.com) and you can check the status of the invididual deployments.
 
-## Deploying individual moduels
+## Deploying individual modules
 
 If you prefer you can deploy the constituent modules for shared services individually. 
 The following is the series of commands to execute.
@@ -185,7 +185,7 @@ You can easily tear down the shared services environment by running this command
 ./Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1 -TearDownEnvironment -DefinitionPath ./Environments/SharedServices/definition.json
 ```
 
-> Note: This is the same command you used to deploy expect that you include ` -TearDownEnvironment`.
+> Note: This is the same command you used to deploy except that you include ` -TearDownEnvironment`.
 > It uses the same configuration, so if you change the configuration the tear down may not execute as expected.
 
 For safety reasons, the key vault will not be deleted. Instead, it will be set to a _removed_ state. This means that the name is still considered in use. To fully delete the key vault, use:
