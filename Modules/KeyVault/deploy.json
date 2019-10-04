@@ -18,7 +18,9 @@
         },
         "secretsObject": {
             "type": "secureObject",
-            "defaultValue": [],
+            "defaultValue": {
+                "secrets": []
+            },
             "metadata": {
                 "description": "Optional. All secrets [{\"secretName\":\"\",\"secretValue\":\"\"} wrapped in a secure object]"
             }
