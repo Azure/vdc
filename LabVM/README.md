@@ -3,7 +3,7 @@
 This one click deployment will build the toolkit development box in Azure.
 All of the dependencies required to use the toolkit are installed.
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fvdc%2Fvnext%2FLabVM%2Fazure-deploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fvdc%2Fmaster%2FLabVM%2Fazure-deploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
