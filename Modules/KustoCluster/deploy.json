@@ -5,69 +5,69 @@
         "clusterName": {
             "type": "string",
             "metadata": {
-                "description": "Required. The name of the Kusto Cluster."
+                "description": "Required. The name of the Kusto Cluster to create."
             }
         },
-		"skuName": {
-			"type": "string",
-			"allowedValues": [
-				"Standard_DS13_v2+1TB_PS",
-				"Standard_DS13_v2+2TB_PS",
-				"Standard_DS14_v2+3TB_PS",
-				"Standard_DS14_v2+4TB_PS",
-				"Standard_D13_v2",
-				"Standard_D14_v2",
-				"Standard_L8s",
-				"Standard_L16s",
-				"Standard_D11_v2",
-				"Standard_D12_v2",
-				"Standard_L4s",
-				"Dev(No SLA)_Standard_D11_v2"
-			],
-			"metadata": {
-				"description": "Required. Kusto Cluster sku name."
-			}
-		},
-		"skuTier": {
-			"type": "string",
-			"defaultValue": "Standard",
+        "skuName": {
+            "type": "string",
             "allowedValues": [
-				"Basic",
+                "Standard_DS13_v2+1TB_PS",
+                "Standard_DS13_v2+2TB_PS",
+                "Standard_DS14_v2+3TB_PS",
+                "Standard_DS14_v2+4TB_PS",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_L8s",
+                "Standard_L16s",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_L4s",
+                "Dev(No SLA)_Standard_D11_v2"
+            ],
+            "metadata": {
+                "description": "Required. Kusto Cluster sku name."
+            }
+        },
+        "skuTier": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Basic",
                 "Standard"
             ],
-			"metadata": {
-				"description": "Required. SKU tier."
-			}
-		},
-		"skuCapacity": {
-			"type": "int",
-			"defaultValue": 2,
-			"metadata": {
-				"description": "Optional. The number of instances of the cluster."
-			}
-		},
-		"location": {
-			"type": "string",
-			"defaultValue": "[resourceGroup().location]",
-			"metadata": {
-				"description": "Optional. Location for all Resources."
-			}
-		},
-		"trustedExternalTenants": {
-			"type": "array",
-			"defaultValue": [],
-			"metadata": {
-				"description": "Optional. The cluster's external tenants in the form [{\"value\":\"Tenant ID\"}]."
-			}
-		},
-		"zones": {
+            "metadata": {
+                "description": "Required. SKU tier."
+            }
+        },
+        "skuCapacity": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Optional. The number of instances of the cluster."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Optional. Location for all Resources."
+            }
+        },
+        "trustedExternalTenants": {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "Optional. The cluster's external tenants in the form [{\"value\":\"Tenant ID\"}]."
+            }
+        },
+        "zones": {
             "type": "array",
             "defaultValue": [],
             "metadata": {
                 "description": "Optional. The availability zones of the cluster."
             }
         },
-		"enableDiskEncryption": {
+        "enableDiskEncryption": {
             "type": "bool",
             "defaultValue": true,
             "allowedValues": [
@@ -78,7 +78,7 @@
                 "description": "Optional. A boolean value that indicates if the cluster's disks are encrypted."
             }
         },
-		"enableStreamingIngest": {
+        "enableStreamingIngest": {
             "type": "bool",
             "defaultValue": false,
             "allowedValues": [
@@ -89,14 +89,14 @@
                 "description": "Optional. A boolean value that indicates if the streaming ingest is enabled."
             }
         },
-		"optimizedAutoscaleVersion": {
-			"type": "int",
-			"defaultValue": 1,
-			"metadata": {
-				"description": "Required. The version of the template defined, for instance 1."
-			}
-		},
-		"optimizedAutoscaleIsEnabled": {
+        "optimizedAutoscaleVersion": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Required. The version of the template defined, for instance 1."
+            }
+        },
+        "optimizedAutoscaleIsEnabled": {
             "type": "bool",
             "defaultValue": false,
             "allowedValues": [
@@ -107,77 +107,77 @@
                 "description": "Required. A boolean value that indicate if the optimized autoscale feature is enabled or not."
             }
         },
-		"optimizedAutoscaleMinimum": {
-			"type": "int",
-			"defaultValue": 1,
-			"metadata": {
-				"description": "Required. Minimum allowed instances count."
-			}
-		},
-		"optimizedAutoscaleMaximum": {
-			"type": "int",
-			"defaultValue": 1,
-			"metadata": {
-				"description": "Required. Maximum allowed instances count."
-			}
-		},
-		"subnetId": {
-			"type": "string",
-			"defaultValue": "",
-			"metadata": {
-				"description": "Optional. The subnet resource id."
-			}
-		},
-		"enginePublicIpId": {
-			"type": "string",
-			"defaultValue": "",
-			"metadata": {
-				"description": "Optional. Engine service's public IP address resource id."
-			}
-		},
-		"dataManagementPublicIpId": {
-			"type": "string",
-			"defaultValue": "",
-			"metadata": {
-				"description": "Optional. Data management's service public IP address resource id."
-			}
-		},
+        "optimizedAutoscaleMinimum": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Required. Minimum allowed instances count."
+            }
+        },
+        "optimizedAutoscaleMaximum": {
+            "type": "int",
+            "defaultValue": 1,
+            "metadata": {
+                "description": "Required. Maximum allowed instances count."
+            }
+        },
+        "subnetId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. The subnet resource id."
+            }
+        },
+        "enginePublicIpId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. Engine service's public IP address resource id."
+            }
+        },
+        "dataManagementPublicIpId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. Data management's service public IP address resource id."
+            }
+        }
     },
     "variables": {
-		"setVnetConfiguration": "[if(empty(parameters('subnetId')), bool('false'), bool('true'))]",
-		"virtualNetworkConfiguration": {
-			"subnetId": "[parameters('subnetId')]",
-			"enginePublicIpId": "[parameters('enginePublicIpId')]",
-			"dataManagementPublicIpId": "[parameters('dataManagementPublicIpId')]"
-		}
-	},
+        "setVnetConfiguration": "[if(empty(parameters('subnetId')), bool('false'), bool('true'))]",
+        "virtualNetworkConfiguration": {
+            "subnetId": "[parameters('subnetId')]",
+            "enginePublicIpId": "[parameters('enginePublicIpId')]",
+            "dataManagementPublicIpId": "[parameters('dataManagementPublicIpId')]"
+        }
+    },
     "resources": [
         {
-			"name": "[parameters('clusterName')]",
-			"type": "Microsoft.Kusto/clusters",
-			"apiVersion": "2019-05-15",
-			"tags": {},
-			"location": "[parameters('location')]",
-			"sku": {
-				"name": "[parameters('skuName')]",
-				"capacity": "[parameters('skuCapacity')]",
-				"tier": "[parameters('skuTier')]"
-			},
-			"zones": "[if(empty(parameters('zones')), json('null'), parameters('zones'))]",
-			"properties": {
-				"trustedExternalTenants": "[parameters('trustedExternalTenants')]",
-				"optimizedAutoscale": {
-					"version": "[parameters('optimizedAutoscaleVersion')]",
-					"isEnabled": "[parameters('optimizedAutoscaleIsEnabled')]",
-					"minimum": "[parameters('optimizedAutoscaleMinimum')]",
-					"maximum": "[parameters('optimizedAutoscaleMaximum')]"
-				},
-				"enableDiskEncryption": "[parameters('enableDiskEncryption')]",
-				"enableStreamingIngest": "[parameters('enableStreamingIngest')]",
-				"virtualNetworkConfiguration": "[if(variables('setVnetConfiguration'), variables('virtualNetworkConfiguration'), json('null'))]"
-			},
-			"resources": []
-		}
+            "name": "[parameters('clusterName')]",
+            "type": "Microsoft.Kusto/clusters",
+            "apiVersion": "2019-05-15",
+            "tags": {},
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('skuName')]",
+                "capacity": "[parameters('skuCapacity')]",
+                "tier": "[parameters('skuTier')]"
+            },
+            "zones": "[if(empty(parameters('zones')), json('null'), parameters('zones'))]",
+            "properties": {
+                "trustedExternalTenants": "[parameters('trustedExternalTenants')]",
+                "optimizedAutoscale": {
+                    "version": "[parameters('optimizedAutoscaleVersion')]",
+                    "isEnabled": "[parameters('optimizedAutoscaleIsEnabled')]",
+                    "minimum": "[parameters('optimizedAutoscaleMinimum')]",
+                    "maximum": "[parameters('optimizedAutoscaleMaximum')]"
+                },
+                "enableDiskEncryption": "[parameters('enableDiskEncryption')]",
+                "enableStreamingIngest": "[parameters('enableStreamingIngest')]",
+                "virtualNetworkConfiguration": "[if(variables('setVnetConfiguration'), variables('virtualNetworkConfiguration'), json('null'))]"
+            },
+            "resources": []
+        }
     ],
     "outputs": {}
 }

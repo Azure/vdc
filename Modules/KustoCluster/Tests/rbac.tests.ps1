@@ -5,7 +5,7 @@
 
 		File:		module.tests.ps1
 
-		Purpose:	Pester - Test Kusto Server ARM Templates
+		Purpose:	Pester - Test Kusto Cluster ARM Templates
 
 		Version: 	2.0.0.0 - 1st April 2019 - Azure Virtual Datacenter Development Team
 		==============================================================================================

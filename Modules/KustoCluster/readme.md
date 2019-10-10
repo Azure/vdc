@@ -15,7 +15,7 @@ The following resources are deployed as part of this code block:
 
 | Parameter Name    | Default Value | Description
 | :-                | :-            | :-
-| `clusterName` |     | Required. The name of the Kusto Cluster.
+| `clusterName` |     | Required. The name of the Kusto Cluster to create.
 | `location` |  resourceGroup().location   | Optional. Location for all Resources.
 | `skuName` |     | Required. Kusto Cluster sku name.
 | `skuTier` |  Standard   | Required. SKU tier.
