@@ -1,0 +1,64 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. The name of the Kusto Cluster."
+            }
+        },
+        "databaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "Required. The name of the Kusto Database to create."
+            }
+        },
+        "softDeletePeriod": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. The time the data should be kept before it stops being accessible to queries in TimeSpan."
+            }
+        },
+        "hotCachePeriod": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. The time the data should be kept in cache for fast queries in TimeSpan."
+            }
+        },
+        "databaseSize": {
+            "type": "int",
+            "defaultValue": -1,
+            "metadata": {
+                "description": "Optional. The database size - the total size of compressed data and index in bytes."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Optional. Location for all Resources."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('clusterName'), '/', parameters('databaseName'))]",
+            "type": "Microsoft.Kusto/clusters/databases",
+            "apiVersion": "2019-05-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "softDeletePeriod": "[if(empty(parameters('softDeletePeriod')), json('null'), parameters('softDeletePeriod'))]",
+                "hotCachePeriod": "[if(empty(parameters('hotCachePeriod')), json('null'), parameters('hotCachePeriod'))]",
+                "statistics": {
+                    "size": "[if(equals(parameters('databaseSize'), -1), json('null'), parameters('databaseSize'))]"
+                }
+            },
+            "resources": []
+        }
+    ],
+    "outputs": {}
+}
