@@ -25,7 +25,7 @@ The following Resources are deployed.
 | `skuCapacity` || **Optional** | EventHub Plan scale-out capacity of the resource
 | `location` | resourceGroup().location | **Optional** | Location for all Resources
 | `diagnosticStorageAccountId` || **Required** | Resource identifier of the Diagnostic Storage Account
-| `logAnalyticsWorkspaceId` || **Required** | Resource identifier of Log Analytics Workspace
+| `workspaceId` || **Required** | Required. Resource identifier of Log Analytics.
 | `logsRetentionInDays` | 30 |**Optional** | Specifies the number of days that logs will be kept for, a value of 0 will retain data indefinitely
 | `cuaId` || **Optional** | Customer Usage Attribution Id (GUID). This GUID must be previously registered
 | `tagValues` || **Optional** | Optional. Azure Resource Tags object
