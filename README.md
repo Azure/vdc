@@ -12,7 +12,7 @@ It encourages the use of [modern devops principles](Docs/design-principles.md).
 - Checkout the [latest release notes](Docs/Release/2019-09.md).
 
 ## Repo structure
-Here's what included:
+Here's what is included:
 
 - [Agent](./Agent/readme.md) A self-hosted agent for Azure DevOps. You will need this because the built-in agents have a timeout of 1 hour.
 - [Config](./Config) The configuration used when running the toolkit. This tells the toolkit where to store audit logs.
