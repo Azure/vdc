@@ -81,7 +81,7 @@
     },
     "tagValues": {
       "type": "object",
-      "defaultValue": "",
+      "defaultValue": {},
       "metadata": {
         "description": "Optional. Azure Resource Tags object"
       }
