@@ -186,12 +186,15 @@ Class AzureResourceManagerDeploymentService: IDeploymentService {
 
                     # Call REST API to start the deployment
                     $deployment = `
-                        Invoke-RestMethod `
-                            -Method $method `
-                            -Uri $uri `
-                            -Body $requestBody `
-                            -Headers $headers `
-                            -ContentType "application/json";
+                        Start-ExponentialBackoff `
+                            -Expression { `
+                                Invoke-RestMethod `
+                                    -Method $method `
+                                    -Uri $uri `
+                                    -Body $requestBody `
+                                    -Headers $headers `
+                                    -ContentType "application/json"; }
+                        
 
                     Write-Debug "Result of ARM Invocation is: $(ConvertTo-Json $deployment -Depth 50)";
     

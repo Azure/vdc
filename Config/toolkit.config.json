@@ -10,7 +10,7 @@
         },
         "Cache": {
             "Comments": "Caching service",
-            "StorageType": "AzureDevOps"
+            "StorageType": "Local"
         },
         "ValidationResourceGroup": {
             "Name": "vdc-custom-rg",

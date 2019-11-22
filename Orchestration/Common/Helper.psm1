@@ -423,7 +423,7 @@ Function Start-ExponentialBackoff () {
                     -ScriptBlock $Expression `
                     -ArgumentList $Arguments;
         }
-        catch [System.Threading.Tasks.TaskCanceledException] {
+        catch {
             $newWait = ($i * 60);
             Write-Debug "Sleeping for: $newWait seconds";
             Start-Sleep -Seconds ($i * 60);
@@ -431,10 +431,6 @@ Function Start-ExponentialBackoff () {
             if($MaxRetries -eq 0) {
                 $innerException = Get-Exception -ErrorObject $_;
             }
-        }
-        catch {
-            Throw `
-                $(Get-Exception -ErrorObject $_);
         }
     }
 
