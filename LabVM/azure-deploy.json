@@ -25,7 +25,7 @@
     "LABVM-PUBIPName": "[concat(variables('LABVMName'), '-PIP')]",
     "LABVMInstallHyperVScriptFolder": ".",
     "LABVMInstallHyperVScriptFileName": "InstallLabVM.ps1",
-    "LABVMInstallHyperVURL": "https://raw.githubusercontent.com/Azure/vdc/vnext/LabVM/InstallLabVM.ps1"
+    "LABVMInstallHyperVURL": "https://raw.githubusercontent.com/Azure/vdc/master/LabVM/InstallLabVM.ps1"
   },
   "resources": [
     {
