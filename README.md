@@ -9,12 +9,13 @@ It encourages the use of [modern devops principles](Docs/design-principles.md).
 
 ## Documentation
 - The easiest way to get started with the toolkit is to follow our [quickstart guide](Docs/quickstart.md).
-- Checkout the [latest release notes](Docs/Release/2019-09.md).
+- Checkout the [latest release notes](Docs/Release/2020-04.md).
 
 ## Repo structure
 Here's what is included:
 
 - [Agent](./Agent/readme.md) A self-hosted agent for Azure DevOps. You will need this because the built-in agents have a timeout of 1 hour.
+- [GitHub Actions](./.github/workflows/README.md) GitHub Actions pipeline to deploy both Shared Services & MS-VDI in Azure environment. All the required Azure environment should be added to GitHub secrets.
 - [Config](./Config) The configuration used when running the toolkit. This tells the toolkit where to store audit logs.
 - [Docs](./Docs) Documentation for using the toolkit.
 - [Environments](./Environments) These are sample reference architectures that can be deployed with the toolkit. They are sometimes decomposed into _archetypes_ and _landing zones_. A landing zone represents the portion of the reference architecture that is centrally managed. The archetype is the application specific infrastructure. The json files here are used by the toolkit to deploy the environments. The pipeline.yml files are for use with Azure DevOps; they are not needed if you are deploying locally.

@@ -10,7 +10,7 @@ These steps assume that the `git` command is on your path.
 
 1. Open a terminal window
 2. Navigate to a folder where you want to store the source for the toolkit. For, e.g. `c:\git`, navigate to that folder.
-3. Run `git clone https://github.com/RKSelvi/vdc.git`. This will clone the GitHub repository in a folder named `vdc`.
+3. Run `git clone https://github.com/Azure/vdc.git`. This will clone the GitHub repository in a folder named `vdc`.
 4. Run `cd vdc` to change directory in the source folder.
 5. Run `git checkout master` to switch to the branch with the current in-development version of the toolkit.
 
