@@ -20,7 +20,10 @@
         $LogAnalyticsWorkspaceId,
         [Parameter(Mandatory=$true)]
         [string]
-        $WorkspaceRegion
+        $WorkspaceRegion,
+        [Parameter(Mandatory=$true)]
+        [string]
+        $environmentName
     )
 
 try {
@@ -37,7 +40,6 @@ try {
         Write-Host "No subscription switching is required."
     }
 
-    $WorkspaceRegion = $WorkspaceRegion.Replace(' ', '').ToLower()
     $NetworkWatcherRegion = $NetworkWatcherRegion.Replace(' ', '').ToLower()
 
     $registered = Get-AzResourceProvider -ProviderNamespace Microsoft.Insights
@@ -55,8 +57,18 @@ try {
 
     Write-Host "Registration complete"
 
-    $NW = Get-AzNetworkWatcher -ResourceGroupName NetworkWatcherRg -Name "NetworkWatcher_$NetworkWatcherRegion"
+    $NW = Get-AzNetworkWatcher -ResourceGroupName NetworkWatcherRg -Name "NetworkWatcher_$NetworkWatcherRegion" -ErrorAction SilentlyContinue
 
+    if ($null -eq $NW) {
+        $NWRG = Get-AzResourceGroup -Name NetworkWatcherRG -ErrorAction SilentlyContinue
+        if ($null -eq $NWRG) {
+            $NWRG = New-AzResourceGroup -Name NetworkWatcherRG -Location $NetworkwatcherRegion
+        }
+        
+      $NW =  New-AzNetworkWatcher -ResourceGroupName NetworkWatcherRG -Location $NetworkWatcherRegion -Name "NetworkWatcher_$NetworkWatcherRegion"
+    }
+
+    
     #Configure Version 2 FLow Logs with Traffic Analytics Configured
     Set-AzNetworkWatcherConfigFlowLog -EnableRetention $true -RetentionInDays 365 -NetworkWatcher $NW -TargetResourceId $NetworkSecurityGroupId -StorageAccountId $DiagnosticStorageAccountId -EnableFlowLog $true -FormatType Json -FormatVersion 2 -EnableTrafficAnalytics -WorkspaceResourceId $LogAnalyticsWorkspaceId -WorkspaceGUID $WorkspaceId -WorkspaceLocation $WorkspaceRegion | Out-Null
 }

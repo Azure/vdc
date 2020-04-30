@@ -102,6 +102,13 @@
             "metadata": {
                 "description": "Optional. Location for all resources."
             }
+        },
+        "storageBlobUrl": {
+            "type": "string",
+            "defaultValue": "core.windows.net",
+            "metadata": {
+                "description": "Required. BLOB Storage URL based on Azure Environment."
+            }
         }
     },
     "variables": {
@@ -135,7 +142,7 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/PrepareSQLServer_Install_Modules.ps1')]"
+                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/PrepareSQLServer_Install_Modules.ps1')]"
                             ]
                         },
                         "protectedSettings": {
@@ -182,7 +189,7 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "configuration": {
-                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/PrepareSQLServer.ps1.zip')]",
+                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/PrepareSQLServer.ps1.zip')]",
                                                 "script": "PrepareSqlServer.ps1",
                                                 "function": "SqlServerPrepareDsc"
                                             },
@@ -191,7 +198,7 @@
                                                 "ClusterName": "[parameters('clusterName')]",
                                                 "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
                                                 "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
-                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
+                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.', parameters('storageBlobUrl'))]",
                                                 "witnessStorageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessStorageAccountKey')), '2016-12-01').keys[0].value]"
                                             }
                                         },
@@ -252,7 +259,7 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "fileUris": [
-                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/sleep.ps1')]"
+                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/sleep.ps1')]"
                                             ]
                                         },
                                         "protectedSettings": {
@@ -304,7 +311,7 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "configuration": {
-                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/PrepareSQLServer.ps1.zip')]",
+                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/PrepareSQLServer.ps1.zip')]",
                                                 "script": "PrepareSqlServer.ps1",
                                                 "function": "SqlServerPrepareDsc"
                                             },
@@ -313,7 +320,7 @@
                                                 "ClusterName": "[parameters('clusterName')]",
                                                 "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
                                                 "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
-                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
+                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.', parameters('storageBlobUrl'))]",
                                                 "witnessStorageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessStorageAccountKey')), '2016-12-01').keys[0].value]"
                                             }
                                         },
@@ -374,7 +381,7 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "configuration": {
-                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/CreateHADB.ps1.zip')]",
+                                                "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/CreateHADB.ps1.zip')]",
                                                 "script": "agdb.ps1",
                                                 "function": "SQLServerDBDsc"
                                             },
@@ -383,7 +390,7 @@
                                                 "ClusterName": "[parameters('clusterName')]",
                                                 "ClusterOwnerNode": "[concat(parameters('virtualMachineName'), '1')]",
                                                 "ClusterIP": "[parameters('sqlServerILB_IPAddress')]",
-                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.core.windows.net')]",
+                                                "witnessStorageBlobEndPoint": "[concat('https://', parameters('cloudWitnessStorageAccountName'), '.blob.', parameters('storageBlobUrl'))]",
                                                 "witnessStorageAccountKey": "[listkeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessStorageAccountKey')), '2016-12-01').keys[0].value]"
                                             }
                                         },

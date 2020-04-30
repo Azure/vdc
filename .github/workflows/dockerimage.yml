@@ -1,0 +1,35 @@
+name: Docker Image CI - MSVDI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    env:
+        SERVICE_PRINCIPAL: ${{ secrets.SERVICE_PRINCIPAL }}
+        SERVICE_PRINCIPAL_PASS: ${{ secrets.SERVICE_PRINCIPAL_PASS }}
+        DEVOPS_SERVICE_PRINCIPAL_USER_ID: ${{ secrets.DEVOPS_SERVICE_PRINCIPAL_USER_ID }}
+        ADMIN_USER_NAME: ${{ secrets.ADMIN_USER_NAME }}
+        ADMIN_USER_PWD: ${{ secrets.ADMIN_USER_PWD }}
+        DOMAIN_ADMIN_USERNAME: ${{ secrets.DOMAIN_ADMIN_USERNAME }}
+        DOMAIN_ADMIN_USER_PWD: ${{ secrets.DOMAIN_ADMIN_USER_PWD }}
+        ORGANIZATION_NAME : "MSSK"
+        AZURE_LOCATION : "USGov Arizona"
+        AZURE_ENVIRONMENT_NAME : "AzureUSGovernment"
+        TENANT_ID : ${{ secrets.TENANT_ID }}
+        SUBSCRIPTION_ID : ${{ secrets.SUBSCRIPTION_ID }}
+        KEYVAULT_MANAGEMENT_USER_ID  : ${{ secrets.KEYVAULT_MANAGEMENT_USER_ID }}
+        AZURE_DISCOVERY_URL : "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+        ADMIN_USER_SSH : ${{ secrets.ADMIN_USER_SSH }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+         
+    - name: Build the Docker image & Deploy
+      id : hello
+      uses: rkselvi/vdc@master

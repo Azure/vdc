@@ -90,6 +90,13 @@
             "metadata": {
                 "description": "Optional. Location for all resources."
             }
+        },
+        "storageBlobUrl": {
+            "type": "string",
+            "defaultValue": "core.windows.net",
+            "metadata": {
+                "description": "Required. BLOB Storage URL based on Azure Environment."
+            }
         }
     },
     "variables": {
@@ -122,7 +129,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "configuration": {
-                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/install_ADDS_No_Disk_Format.zip')]",
+                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/', 'scripts/Windows/install_ADDS_No_Disk_Format.zip')]",
                         "script": "azure.ps1",
                         "function": "CreateDomainController"
                     },
@@ -167,7 +174,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/reboot_vm_async.ps1')]"
+                        "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/', 'scripts/Windows/reboot_vm_async.ps1')]"
                     ]
                 },
                 "protectedSettings": {

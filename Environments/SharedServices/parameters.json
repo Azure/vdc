@@ -3,7 +3,11 @@
     "DeploymentName": "shrdsvcs",
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "SharedServices",
-    "Location": "West US",
+    "SubscriptionId": "env(SUBSCRIPTION_ID)",
+    "TenantId": "env(TENANT_ID)",
+    "Location": "env(AZURE_LOCATION)",
+    "EnvironmentName": "env(AZURE_ENVIRONMENT_NAME)",
+    "StorageBlobUrl": "env(AZURE_STORAGE_BLOB_URL)",
     "ModuleConfigurationParameters": {
         "OnPremisesInformation": {
             "InstanceName": "${Parameters.InstanceName}",
@@ -55,7 +59,13 @@
                 "UK South",
                 "West Europe",
                 "West US",
-                "West US 2"
+                "West US 2",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
             ]
         },
         "AutomationAccounts": {
@@ -83,7 +93,13 @@
                 "West Central US",
                 "West Europe",
                 "West US 2",
-                "West US"
+                "West US",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
             ]
         },
         "AzureBastion": {
@@ -96,7 +112,13 @@
                 "West Europe",
                 "South Central US",
                 "Australia East",
-                "Japan East"
+                "Japan East",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
             ]
         },
         "ApplicationSecurityGroups": {
@@ -748,6 +770,7 @@
             "ResourceGroup": "${Parameters.InstanceName}-jumpbox-rg",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
             "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
             "Windows": {
                 "Comments": "Windows VM name cannot exceed 13 characters",
                 "Name": "win-jb-vm",
@@ -790,6 +813,7 @@
             "Comments": "Windows VM name cannot exceed 13 characters.",
             "PrimaryDomainControllerIP": "172.0.0.10",
             "DomainName": "contoso.com",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
             "ADSitename": "Cloud-Site",
             "CloudZone": "contosocloud.com",
             "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
@@ -817,6 +841,7 @@
             "Name": "adds-vm",
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ResourceGroup}",
             "Comments": "Windows VM name cannot exceed 13 characters. Additionally, Make sure that AddsIPAddressStart and ActiveDirectory.PrimaryDomainControllerIP are in the same subnet address prefix and they don't overlap",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
             "AdminPassword": {
                 "keyVault": {

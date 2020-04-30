@@ -29,7 +29,13 @@
                 "West Central US",
                 "West Europe",
                 "West US 2",
-                "West US"
+                "West US",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
             ],
             "metadata": {
                 "description": "Required. Specifies the region for your Automation Account"

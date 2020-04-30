@@ -55,6 +55,24 @@ $defaultModuleConfigurationsFolderName = "Modules";
 $defaultTemplateFileName = "deploy.json";
 $defaultParametersFileName = "parameters.json";
 
+# Get/Set the BLOB Storage & Management URL based on Azure Environment
+$discUrlResponse = Get-AzureApiUrl -AzureEnvironment $ENV:AZURE_ENVIRONMENT_NAME -AzureDiscoveryUrl $ENV:AZURE_DISCOVERY_URL
+$ENV:AZURE_STORAGE_BLOB_URL = $discUrlResponse.suffixes.storage
+$AzureManagementUrl = $discUrlResponse.authentication.audiences[1]
+Write-Debug "AZURE_STORAGE_BLOB_URL: $ENV:AZURE_STORAGE_BLOB_URL"
+Write-Debug "AzureManagementUrl: $AzureManagementUrl"
+$ENV:VDC_SUBSCRIPTIONS = (Get-Content .\Environments\_Common\subscriptions.json -Raw)
+$ENV:VDC_TOOLKIT_SUBSCRIPTION = (Get-Content .\Config\toolkit.subscription.json -Raw)
+Write-Debug "AZURE_STORAGE_BLOB_URL: $ENV:AZURE_STORAGE_BLOB_URL"
+Write-Debug "AzureManagementUrl: $AzureManagementUrl"
+
+
+# Get the config files
+$ENV:VDC_SUBSCRIPTIONS = (Get-Content ./Environments/_Common/subscriptions.json -Raw)
+$ENV:VDC_TOOLKIT_SUBSCRIPTION = (Get-Content ./Config/toolkit.subscription.json -Raw)
+#Write-Debug "ToolkitJSON: $ENV:VDC_SUBSCRIPTIONS"
+#Write-Debug "SubscriptionJson: $ENV:VDC_TOOLKIT_SUBSCRIPTION"
+
 Function Start-Deployment {
     [CmdletBinding()]
     param (
@@ -130,18 +148,18 @@ Function Start-Deployment {
                 $ModuleConfigurationName = `
                     $moduleConfiguration.Name;
 
-                $subscriptionInformation = $null;
-                $subscriptionInformation = `
-                    Get-SubscriptionInformation `
-                        -ArchetypeInstanceJson $archetypeInstanceJson `
-                        -SubscriptionName $archetypeInstanceJson.Parameters.Subscription `
-                        -ModuleConfiguration $moduleConfiguration `
-                        -Mode @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];
+        $subscriptionInformation = $null;
+            $subscriptionInformation = `
+            Get-SubscriptionInformation `
+            -ArchetypeInstanceJson $archetypeInstanceJson `
+            -SubscriptionName $archetypeInstanceJson.Parameters.Subscription `
+            -ModuleConfiguration $moduleConfiguration `
+            -Mode @{ "False" = "deploy"; "True" = "validate"; }[$Validate.ToString()];
 
-                if ($null -eq $subscriptionInformation) {
-                    throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
-                }
-
+        if ($null -eq $subscriptionInformation) {
+            throw "Subscription: $($archetypeInstanceJson.Parameters.Subscription) not found";
+        }
+                
                 # Let's get the current subscription context
                 $sub = Get-AzContext | Select-Object Subscription
 
@@ -331,7 +349,8 @@ Function Start-Deployment {
                                 -ModuleConfiguration $moduleConfiguration.Policies `
                                 -ArchetypeInstanceName $ArchetypeInstanceName `
                                 -Location $location `
-                                -Validate:$($Validate.IsPresent);
+                                -Validate:$($Validate.IsPresent) `
+                                -AzureManagementUrl $AzureManagementUrl;
                             Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $policyResourceState)";
                     }
                     else {
@@ -392,7 +411,8 @@ Function Start-Deployment {
                                 -ModuleConfiguration $moduleConfiguration.RBAC `
                                 -ArchetypeInstanceName $ArchetypeInstanceName `
                                 -Location $location `
-                                -Validate:$($Validate.IsPresent);
+                                -Validate:$($Validate.IsPresent) `
+                                -AzureManagementUrl $AzureManagementUrl;
                         Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $rbacResourceState)";
                     }
                     else {
@@ -413,7 +433,8 @@ Function Start-Deployment {
                                 -ModuleConfiguration $moduleConfiguration.Deployment `
                                 -ArchetypeInstanceName $ArchetypeInstanceName `
                                 -Location $location `
-                                -Validate:$($Validate.IsPresent);
+                                -Validate:$($Validate.IsPresent) `
+                                -AzureManagementUrl $AzureManagementUrl;
                         Write-Debug "Deployment complete, Resource state is: $(ConvertTo-Json -Compress $resourceState)";
                     }
                 }
@@ -745,7 +766,7 @@ Function Start-Init {
 
         $global:customScriptExecution = `
             $factory.GetInstance('CustomScriptExecution');
-
+        
         # Contruct the archetype instance object only if it is not already
         # cached
         $archetypeInstanceJson = `
@@ -763,6 +784,9 @@ Function Start-Init {
         else {
             $location = $archetypeInstanceJson.Parameters.Location
         }
+
+        Write-Debug ($archetypeInstanceJson.Orchestration.ModuleConfigurations.Deployment.OverrideParameters[10].storageBlobUrl | Format-Table | Out-String)
+        Write-Debug ($archetypeInstanceJson.Parameters | Format-Table | Out-String)
 
         # Retrieve the Archetype instance name if not already passed
         # to this function
@@ -802,12 +826,12 @@ Function Get-AllModules {
 
             $topologicalSortRootPath = `
                 Join-Path $rootPath -ChildPath 'TopologicalSort';
-
-            # Adding Out-Null to prevent outputs from the Invoke-Command from being added to
+            
+            # Adding Out-Null to prevent outputs from the Invoke-Command from being added to            
             Invoke-Command -ScriptBlock { dotnet build $topologicalSortRootPath --configuration Release --output ./ } | Out-Null
-
-            $topologicalSortAssemblyPath = `
-                Join-Path $topologicalSortRootPath "TopologicalSort.dll"
+            
+            
+            $topologicalSortAssemblyPath = Join-Path $topologicalSortRootPath "TopologicalSort.dll"
 
             Add-Type -Path $topologicalSortAssemblyPath
 
@@ -1510,7 +1534,7 @@ Function Get-AuditStorageInformation {
             StorageAccountName = ''
             LocalPath = ''
         };
-
+               
         if ($ToolkitConfigurationJson.Configuration.Audit -and
         $ToolkitConfigurationJson.Configuration.Audit.StorageType.ToLower() -eq "storageaccount"){
 
@@ -2180,7 +2204,9 @@ Function New-AzureResourceManagerDeployment {
         $Location,
         [Parameter(Mandatory=$true)]
         [switch]
-        $Validate
+        $Validate,
+        [string]
+        $AzureManagementUrl
     )
 
     try {
@@ -2216,7 +2242,8 @@ Function New-AzureResourceManagerDeployment {
                     $ResourceGroupName,
                     $DeploymentTemplate,
                     $DeploymentParameters,
-                    $Location);
+                    $Location,
+                    $AzureManagementUrl);
         }
     }
     catch {
@@ -3172,3 +3199,5 @@ if (![string]::IsNullOrEmpty($DefinitionPath)) {
         }
     }
 }
+
+

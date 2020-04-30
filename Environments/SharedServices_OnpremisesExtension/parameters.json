@@ -4,6 +4,7 @@
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "SharedServices",
     "Location": "West US",
+    "StorageBlobUrl": "env(AZURE_STORAGE_BLOB_URL)",
     "ModuleConfigurationParameters": {
         "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
@@ -682,7 +683,8 @@
                                     "*.download.opensuse.org",
                                     "download.opensuse.org",
                                     "*.monitoring.azure.com",
-                                    "monitoring.azure.com"
+                                    "monitoring.azure.com",
+                                    "core.usgovcloudapi.net"
                                 ]
                             }
                         ]
@@ -876,6 +878,7 @@
             "Name": "adds-vm",
             "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
             "Comments": "Windows VM name cannot exceed 13 characters. Additionally, Make sure that AddsIPAddressStart and ActiveDirectory.PrimaryDomainControllerIP are in the same subnet address prefix and they don't overlap",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
             "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
             "AdminPassword": {
                 "keyVault": {

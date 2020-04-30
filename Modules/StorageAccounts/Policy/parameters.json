@@ -9,7 +9,7 @@
             "value": "NetworkWatcherRG"
         },
         "resourceGroupLocation": {
-            "value": "West US"
+            "value": "[parameters('location')]"
         }
     }
 }

@@ -491,3 +491,17 @@ Function Format-FilePathSpecificToOS () {
             Join-Path @arguments;
     }
 }
+
+Function Get-AzureApiUrl() {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]
+        $AzureEnvironment = "AzureCloud",
+        [Parameter(Mandatory=$true)]
+        [string]
+        $AzureDiscoveryUrl
+    )
+
+    return ( Invoke-RestMethod -Uri $AzureDiscoveryUrl -Method Get -ContentType "application/json" ) | where { $_.name -eq $AzureEnvironment }
+}

@@ -22,3 +22,4 @@ Here's what is included:
 - [Modules](./Modules) Modules are the building blocks for the reference architectures. An indvidual module is an Azure Reousrce Manager template for deploying a single resource or a set of closely related resources. These modules are structured in a way to facilitate passing outputs to subsequent deployments.
 - [Orchestration](./Orchestration) This folder contains the scripts for the toolkit. The primary entry point is `Orchestration\OrchestrationService\ModuleConfigurationDeployment.ps1`. This script is used for local deployments and by the sample Azure DevOps pipelines.
 - [Scripts](./Scripts) These are additional assets that are used when deploying some of the environments.
+

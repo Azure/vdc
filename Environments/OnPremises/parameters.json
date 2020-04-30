@@ -4,6 +4,7 @@
     "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
     "Subscription": "OnPremises",
     "Location": "West US",
+    "StorageBlobUrl": "env(AZURE_STORAGE_BLOB_URL)",
     "ModuleConfigurationParameters": {
         "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
         "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
@@ -133,6 +134,7 @@
             "ResourceGroup": "${Parameters.InstanceName}-ad-rg",
             "ADSitename": "Cloud-Site",
             "CloudZone": "contosocloud.com",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
             "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
             "DomainAdminPassword": {
                 "keyVault": {

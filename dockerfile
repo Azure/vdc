@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM ubuntu:18.04
 WORKDIR /usr/src/app
 COPY . ./
 RUN  apt-get update \
@@ -11,6 +11,7 @@ RUN  apt-get update \
   && pwsh -Command "Install-Module -Name Az -Force" \
   && pwsh -Command "Install-Module -Name Pester -Force" \
   && pwsh -Command "Install-Module -Name Az.ResourceGraph -Force" \
+  && pwsh -Command "Install-Module -Name Az.Accounts -Force" \
   && export VER="1.4.1" \
   && wget -q https://releases.hashicorp.com/packer/${VER}/packer_${VER}_linux_amd64.zip \
   && unzip packer_${VER}_linux_amd64.zip \
@@ -24,4 +25,8 @@ RUN  apt-get update \
   && apt-get install azure-cli \
   && apt-get install -y dotnet-sdk-2.2 \
   && dotnet build Orchestration/OrchestrationService/TopologicalSort/TopologicalSort.csproj --configuration Release
-ENTRYPOINT [ "pwsh" ]
+
+RUN chmod 755 /usr/src/app
+
+COPY entrypoint1.ps1 /usr/src/app/entrypoint1.ps1
+ENTRYPOINT [ "pwsh", "-c", "./entrypoint1.ps1" ]

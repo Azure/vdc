@@ -51,7 +51,13 @@
                 "UK South",
                 "West Europe",
                 "West US",
-                "West US 2"
+                "West US 2",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
             ],
             "metadata": {
                 "description": "Required. Region used when establishing the workspace"

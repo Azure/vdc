@@ -84,7 +84,11 @@ Strictly speaking, you do not need a service principal for the purpose of this q
 You can reuse your user object id in place of the service principal object id.
 However, if you want to deploy using Azure DevOps you will need to create the service principal.
 
-Follow [these instructions](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) for creating the service principal and note the object id during creation. The service principal will require owner permissions.
+Follow  for creating the service principal and note the object id during creation. The service principal will require owner permissions.
+- [Create SPN via PowerShell for password based authentication](https://docs.microsoft.com/en-us/powershell/azure/create-azure-service-principal-azureps?view=azps-3.8.0#password-based-authentication)
+- [Create SPN via Azure Cli](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest)
+- [Create SPN via Portal](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal)
+- [Verify & add roles/permissions](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal)
 
 ### Setting the configuration
 
@@ -119,7 +123,10 @@ $ENV:VDC_TOOLKIT_SUBSCRIPTION = (Get-Content .\Config\toolkit.subscription.json 
 
 $ENV:ORGANIZATION_NAME = "contoso"
 $ENV:TENANT_ID = "00000000-0000-0000-0000-000000000000"
-
+$ENV:SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
+$ENV:AZURE_ENVIRONMENT_NAME = "AzureCloud"
+$ENV:AZURE_LOCATION = "West US 2"
+$ENV:AZURE_DISCOVERY_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
 $ENV:KEYVAULT_MANAGEMENT_USER_ID  = "00000000-0000-0000-0000-000000000000"
 $ENV:DEVOPS_SERVICE_PRINCIPAL_USER_ID = "00000000-0000-0000-0000-000000000000"
 

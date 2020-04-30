@@ -1058,6 +1058,9 @@
                     },
                     "domainAdminPassword": {
                         "reference": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.DomainAdminPassword}"
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.StorageBlobUrl}"
                     }
                 }
             }

@@ -1,0 +1,349 @@
+{
+    "ModuleConfigurationsPath": "../../Modules",
+    "ModuleConfigurations": [
+        {
+            "Name": "VirtualNetworkSPOKE",
+            "ModuleDefinitionName": "VirtualNetwork",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.ResourceGroup}",
+            "DependsOn": [   
+                "DiagnosticStorageAccount"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "vnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Name}"
+                    },
+                    "vnetAddressPrefixes": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.AddressPrefixes}"
+                    },
+                    "subnets": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Subnets}"
+                    },
+                    "enableDdosProtection": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.EnableDdosProtection}"
+                    },
+                    "enableVmProtection": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.EnableVmProtection}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "VirtualNetworkPeeringHub",
+            "ModuleDefinitionName": "VirtualNetworkPeering",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkHUB.ResourceGroupName}",
+            "DependsOn": [
+                "VirtualNetworkHUB",
+                "VirtualNetworkSPOKE"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "localVnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkHUB.Name}"
+                    },
+                    "peeringName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.LocalPeering.Name}"
+                    },
+                    "remoteVirtualNetworkId": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkSPOKE.Id}"
+                    },
+                    "useRemoteGateways": {
+                        "value": false
+                      }
+                }
+            }
+        },
+        {
+            "Name": "VirtualNetworkPeeringSPOKE",
+            "ModuleDefinitionName": "VirtualNetworkPeering",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.ResourceGroup}",
+            "DependsOn": [
+                "VirtualNetworkSPOKE",
+                "VirtualNetworkHUB"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "localVnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Name}"
+                    },
+                    "peeringName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.VirtualNetworkPeering.LocalPeering.Name}"
+                    },
+                    "remoteVirtualNetworkId": {
+                        "value": "${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkHUB.Id}"
+                    },
+                    "useRemoteGateways": {
+                        "value": false
+                      }
+                }
+            }
+        },
+        {
+            "Name": "DiagnosticStorageAccount",
+            "ModuleDefinitionName": "StorageAccounts",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}",
+            "Comments": "Storage Account that is used for ...",
+            "Policies": {
+                "Comments": "Optional - If no object is specified, no Policies deployment will occur",
+                "OverrideParameters": {
+                    "effect": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Policies.Effect}"
+                    },
+                    "resourceGroup": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.ResourceGroup}"
+                    },
+                    "resourceGroupLocation": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Location}"
+                    }
+                }
+            },
+            "Deployment": {
+                "Comments": "We need the 'update' module instance to lock this resource after the Virtual Network got created",
+                "TemplatePath": "../../Modules/StorageAccounts/deploy.json",
+                "OverrideParameters": {
+                    "storageAccountName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Name}"
+                    },
+                    "storageAccountSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Sku}"
+                    },
+                    "location": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Location}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "EnableServiceEndpointOnDiagnosticStorageAccount",
+            "ModuleDefinitionName": "StorageAccounts",
+            "Updates": "DiagnosticStorageAccount",
+            "Comments": "Enables Service endpoint on the Storage Account",
+            "DependsOn": [
+                "DiagnosticStorageAccount",
+                "VirtualNetworkSPOKE"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "networkAcls": {
+                        "value": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.NetworkAcls}"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetworkSPOKE.vNetResourceId)"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "LogAnalytics",
+            "ModuleDefinitionName": "LogAnalytics",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.LogAnalytics.ResourceGroup}",
+            "DependsOn": [
+                "DiagnosticStorageAccount"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "logAnalyticsWorkspaceName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Name}"
+                    },
+                    "diagnosticStorageAccountName": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountName)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "diagnosticStorageAccountAccessKey": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountAccessKey)"
+                    },
+                    "location": {
+                        "value": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "KeyVault",
+            "ModuleDefinitionName": "KeyVault",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.KeyVault.ResourceGroup}",
+            "DependsOn":[
+                "DiagnosticStorageAccount", 
+                "LogAnalytics",
+                "VirtualNetworkSPOKE"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "keyVaultName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Name}"
+                    },
+                    "accessPolicies": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.AccessPolicies}"
+                    },
+                    "secretsObject": {
+                        "value": {
+                            "secrets": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets}"
+                        }
+                    },
+                    "enableVaultForDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDeployment}"
+                    },
+                    "enableVaultForDiskEncryption": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForDiskEncryption}"
+                    },
+                    "enableVaultForTemplateDeployment": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.EnableVaultForTemplateDeployment}"
+                    },
+                    "vaultSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.KeyVault.Sku}"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetworkSPOKE.vNetResourceId)"
+                    },
+                    "networkAcls": {
+                        "value": {
+                            "bypass": "AzureServices",
+                            "defaultAction": "Allow",
+                            "virtualNetworkRules": [],
+                            "ipRules": []
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "Name": "ArtifactsStorageAccount",
+            "Subscription": "Artifacts",
+            "ModuleDefinitionName": "StorageAccounts",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.ResourceGroup}",
+            "DependsOn": [],
+            "Comments": "Storage Account that is used for ...",
+            "Policies": {
+                "Comments": "Optional - If no object is specified, no Policies deployment will occur",
+                "OverrideParameters": {
+                    "effect": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Policies.Effect}"
+                    },
+                    "resourceGroup": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.ResourceGroup}"
+                    },
+                    "resourceGroupLocation": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Location}"
+                    }
+                }
+            },
+            "Deployment": {
+                "OverrideParameters": {
+                    "storageAccountName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Name}"
+                    },
+                    "storageAccountSku": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Sku}"
+                    },
+                    "location": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ArtifactsStorageAccount.Location}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "JumpboxASG",
+            "ModuleDefinitionName": "ApplicationSecurityGroups",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.ResourceGroup}",
+            "DependsOn": [],
+            "Deployment": {
+                "OverrideParameters": {
+                    "applicationSecurityGroupName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Jumpbox.Name}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "WindowsVM",
+            "ModuleDefinitionName": "VirtualMachines",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.Jumpbox.ResourceGroup}",
+            "DependsOn": [
+                "VirtualNetworkSPOKE",
+                "DiagnosticStorageAccount",
+                "LogAnalytics",
+                "KeyVault",
+                "ArtifactsStorageAccount",
+                "JumpboxASG"
+            ],
+            "Comments": "Creates Windows Jumpbox",
+            "Deployment": {
+                "OverrideParameters": {
+                    "virtualMachineName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.Windows.Name}"
+                    },
+                    "virtualMachineSize": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.Windows.VMSize}"
+                    },
+                    "virtualMachineOSImage": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.Windows.OSImage}"
+                    },
+                    "virtualMachineOSType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.Windows.OSType}"
+                    },
+                    "virtualMachineCount": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.Windows.VMCount}"
+                    },
+                    "workspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceId)"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "logAnalyticsWorkspacePrimarySharedKey": {
+                        "value": "reference(LogAnalytics.logAnalyticsPrimarySharedKey)"
+                    },
+                    "diagnosticStorageAccountId": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountResourceId)"
+                    },
+                    "diagnosticStorageAccountName": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountName)"
+                    },
+                    "diagnosticStorageAccountSasToken": {
+                        "value": "reference(DiagnosticStorageAccount.storageAccountSasToken)"
+                    },
+                    "artifactsStorageAccountKey": {
+                        "value": "reference(ArtifactsStorageAccount.storageAccountAccessKey)"
+                    },
+                    "artifactsStorageAccountName": {
+                        "value": "reference(ArtifactsStorageAccount.storageAccountName)"
+                    },
+                    "artifactsStorageAccountSasKey": {
+                        "value": "reference(ArtifactsStorageAccount.storageAccountSasToken)"
+                    },
+                    "vNetId": {
+                        "value": "reference(VirtualNetworkSPOKE.vNetResourceId)"
+                    },
+                    "subnetName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.SubnetName}"
+                    },
+                    "applicationSecurityGroupId": {
+                        "value": "reference(JumpboxASG.applicationSecurityGroupResourceId)"
+                    },
+                    "adminUsername": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.AdminUsername}"
+                    },
+                    "adminPassword": {
+                        "reference": {
+                            "keyVault": {
+                                "id": "reference(KeyVault.keyVaultResourceId)"
+                            },
+                            "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}"
+                        }
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.StorageBlobUrl}"
+                    }
+                }
+            }
+        }
+    ]
+}

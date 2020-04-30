@@ -74,6 +74,9 @@
                 "OverrideParameters": {
                     "workspaceId": {
                         "value": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)"
+                    },
+                    "environmentName": {
+                        "value": "${Parameters.EnvironmentName}"
                     }
                 }
             }
@@ -207,7 +210,8 @@
                     "DiagnosticStorageAccountId": "reference(DiagnosticStorageAccount.storageAccountResourceId)",
                     "WorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceId)",
                     "LogAnalyticsWorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)",
-                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}",
+                    "environmentName": "${Parameters.EnvironmentName}"
                 }
             }
         },
@@ -252,7 +256,8 @@
                     "DiagnosticStorageAccountId": "reference(DiagnosticStorageAccount.storageAccountResourceId)",
                     "WorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceId)",
                     "LogAnalyticsWorkspaceId": "reference(LogAnalytics.logAnalyticsWorkspaceResourceId)",
-                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                    "WorkspaceRegion": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}",
+                    "environmentName": "${Parameters.EnvironmentName}"
                 }
             }
         },
@@ -621,6 +626,9 @@
                     },
                     "adminPassword": {
                         "reference": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminPassword}"
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.StorageBlobUrl}"
                     }
                 }
             }
@@ -693,6 +701,9 @@
                     },
                     "domainAdminPassword": {
                         "reference": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminPassword}"
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.StorageBlobUrl}"
                     }
                 }
             }
@@ -825,6 +836,9 @@
                             },
                             "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
                         }
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.StorageBlobUrl}"
                     }
                 }
             }
@@ -935,6 +949,9 @@
                             },
                             "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[2].secretName}"
                         }
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.Jumpbox.StorageBlobUrl}"
                     }
                 }
             }
@@ -1048,6 +1065,9 @@
                     },
                     "adminPassword": {
                         "reference": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.AdminPassword}"
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.StorageBlobUrl}"
                     }
                 }
             }
@@ -1092,6 +1112,7 @@
                 "EncryptActiveDirectoryDomainServices"
             ],
             "Comments": "Installs Active Directory Domain Services",
+            
             "Deployment": {
                 "OverrideParameters": {
                     "virtualMachineName": {
@@ -1129,6 +1150,9 @@
                     },
                     "domainAdminPassword": {
                         "reference": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.DomainAdminPassword}"
+                    },
+                    "storageBlobUrl": {
+                        "value": "${Parameters.ModuleConfigurationParameters.ActiveDirectoryDomainServices.StorageBlobUrl}"
                     }
                 }
             }

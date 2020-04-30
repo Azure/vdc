@@ -50,6 +50,13 @@
             "metadata": {
                 "description": "Optional. Location for all resources."
             }
+        },
+        "storageBlobUrl": {
+            "type": "string",
+            "defaultValue": "core.windows.net",
+            "metadata": {
+                "description": "Required. BLOB Storage URL based on Azure Environment."
+            }
         }
     },
     "variables": {
@@ -76,7 +83,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "configuration": {
-                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/iisaspnet.zip')]",
+                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/iisaspnet.zip')]",
                         "script": "iisaspnet.ps1",
                         "function": "IISASPNET"
                     }
@@ -99,7 +106,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "configuration": {
-                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/iisaspnet.zip')]",
+                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/iisaspnet.zip')]",
                         "script": "iisaspnet.ps1",
                         "function": "IISASPNET"
                     }

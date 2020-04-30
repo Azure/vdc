@@ -24,8 +24,9 @@
         },
         "location": {
             "type": "string",
+            "defaultValue": "[resourceGroup().location]",
             "metadata": {
-                "description": "Required. Location used as part of the Policy assignment."
+                "description": "Optional. Location of the Storage Account."
             }
         },
         "listOfResourceTypesWithDiagnosticLogsEnabled": {
@@ -805,13 +806,13 @@
             }
         },
         {
-            "name": "[guid('08e6af2d-db70-460a-bfe9-d5bd474ba9d6')]",
+            "name": "[guid('f6de0be7-9a8a-4b8a-b349-43cf02d22f7c')]",
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2018-05-01",
             "location": "[parameters('location')]",
             "properties": {
-                "displayName": "Network Security Group Rules for Internet facing virtual machines should be hardened",
-                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/08e6af2d-db70-460a-bfe9-d5bd474ba9d6",
+                "displayName": "Internet-facing virtual machines should be protected with Network Security Groups",
+                "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/f6de0be7-9a8a-4b8a-b349-43cf02d22f7c",
                 "scope": "[subscription().id]",
                 "notScopes": [],
                 "parameters": {

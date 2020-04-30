@@ -198,6 +198,13 @@
             "metadata": {
                 "description": "Optional. Location for all resources."
             }
+        },
+        "storageBlobUrl": {
+            "type": "string",
+            "defaultValue": "core.windows.net",
+            "metadata": {
+                "description": "Required. BLOB Storage URL based on Azure Environment."
+            }
         }
     },
     "variables": {
@@ -318,7 +325,7 @@
                     "diagnosticsProfile": {
                         "bootDiagnostics": {
                             "enabled": true,
-                            "storageUri": "[concat('https://', parameters('diagnosticStorageAccountName'), '.blob.core.windows.net/')]"
+                            "storageUri": "[concat('https://', parameters('diagnosticStorageAccountName'), '.blob.', parameters('storageBlobUrl'))]"
                         }
                     },
                     "extensionProfile": {
@@ -639,7 +646,7 @@
                                     "protectedSettings": {
                                         "storageAccountName": "[parameters('diagnosticStorageAccountName')]",
                                         "storageAccountSasToken": "[parameters('diagnosticStorageAccountSasToken')]",
-                                        "storageAccountEndPoint": "https://core.windows.net"
+                                        "storageAccountEndPoint": "[concat('https://', parameters('storageBlobUrl'))]"
                                     }
                                 }
                             },
@@ -661,7 +668,7 @@
                                     "autoUpgradeMinorVersion": true,
                                     "settings": {
                                         "configuration": {
-                                            "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/formatDataDisks.zip')]",
+                                            "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/scripts/Windows/formatDataDisks.zip')]",
                                             "script": "formatDisk.ps1",
                                             "function": "FormatDisk"
                                         },

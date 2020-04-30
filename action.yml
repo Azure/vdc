@@ -1,0 +1,11 @@
+name: 'Build and deploy the VDC toolkit'
+description: 'Builds toolkit for VDC.'
+author: 'Jack '
+
+runs:
+  using: 'docker'
+  image: 'dockerfile'
+  
+branding:
+  color: red
+  icon: flag

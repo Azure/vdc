@@ -14,7 +14,7 @@
         },
         "ValidationResourceGroup": {
             "Name": "vdc-custom-rg",
-            "Location": "West US",
+            "Location": "env(azure_location)",
             "Tags": {
                 "Policy": "Exempt"
             }

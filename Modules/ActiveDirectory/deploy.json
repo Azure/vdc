@@ -84,6 +84,13 @@
             "metadata": {
                 "description": "Optional. Location for all resources."
             }
+        },
+        "storageBlobUrl": {
+            "type": "string",
+            "defaultValue": "core.windows.net",
+            "metadata": {
+                "description": "Required. BLOB Storage URL based on Azure Environment."
+            }
         }
     },
     "variables": {
@@ -107,7 +114,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "configuration": {
-                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/newADDomain.zip?', parameters('artifactsStorageAccountSasKey'))]",
+                        "url": "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/', 'scripts/Windows/newADDomain.zip?', parameters('artifactsStorageAccountSasKey'))]",
                         "script": "newDomain.ps1",
                         "function": "NewDomain"
                     },
@@ -148,7 +155,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/new-dns-zone.ps1')]"
+                        "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/', 'scripts/Windows/new-dns-zone.ps1')]"
                     ]
                 },
                 "protectedSettings": {
@@ -198,7 +205,7 @@
                                         "autoUpgradeMinorVersion": true,
                                         "settings": {
                                             "fileUris": [
-                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.core.windows.net/scripts/Windows/create-new-cloud-ad-site.ps1')]"
+                                                "[concat('https://', parameters('artifactsStorageAccountName'), '.blob.', parameters('storageBlobUrl'), '/', 'scripts/Windows/create-new-cloud-ad-site.ps1')]"
                                             ]
                                         },
                                         "protectedSettings": {
