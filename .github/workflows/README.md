@@ -46,8 +46,8 @@
 3. #### In your dockerimage.yml file you will need to change the following values that suit your need
 	- ORGANIZATION_NAME
 	- AZURE_LOCATION
-	- Update "uses" to your GitHub repo name.
-    	- uses: [YOUR_GITHUB_NAME]/vdc@master
+	- Update (optional) "uses: Azure" to your GitHub repo name.
+    	- uses: **Azure**/vdc@master
 	- Please keep the AZURE_DISCOVERY_URL as is
 
 4. #### Once you have all these changes and updated your GitHub secrets you can push the changes to your repository.
