@@ -1,38 +1,38 @@
 {
-  "Comments": "ToolKit for Jack",
-  "VDCVDI": {
-    "Comments": "Microsoft VDC with VDI environment subscription and tenant information",
-    "TenantId": "000000-000-0000-0000",
-    "SubscriptionId": "000000-000-0000-0000"
-  },
-  "OnPremises": {
-    "Comments": "Simulated On-Premises subscription and tenant information",
-    "TenantId": "000000-000-0000-0000",
-    "SubscriptionId": "000000-000-0000-0000"
-  },
-  "SharedServices": {
-    "Comments": "Shared services subscription and tenant information",
-    "TenantId": "000000-000-0000-0000",
-    "SubscriptionId": "000000-000-0000-0000"
-  },
-  "AKS": {
-    "Comments": "Shared services subscription and tenant information",
-    "TenantId": "000000-000-0000-0000",
-    "SubscriptionId": "000000-000-0000-0000"
-  },
-  "ASE_SQLDB": {
-    "Comments": "Workload subscription and tenant information",
-    "TenantId": "000000-000-0000-0000",
-    "SubscriptionId": "00000000-0000-0000-0000-000000000000"
-  },
-  "NTier_IaaS": {
-    "Comments": "Workload subscription and tenant information",
-    "TenantId": "000000-000-0000-0000",
-    "SubscriptionId": "000000-000-0000-0000"
-  },
-  "Artifacts": {
-    "Comments": "Subscription and tenant information where the Artifacts Storage Account will reside",
-    "TenantId": "000000-000-0000-0000",
-    "SubscriptionId": "000000-000-0000-0000"
-  }
+    "Comments":  "ToolKit for VDC Deployment",
+    "VDCVDI":  {
+        "Comments":  "Microsoft VDC with VDI environment subscription and tenant information",
+        "TenantId":  "000000-000-0000-0000",
+        "SubscriptionId":  "000000-000-0000-0000"
+    },
+    "OnPremises":  {
+        "Comments":  "Simulated On-Premises subscription and tenant information",
+        "TenantId":  "000000-000-0000-0000",
+        "SubscriptionId":  "000000-000-0000-0000"
+    },
+    "SharedServices":  {
+        "Comments":  "Shared services subscription and tenant information",
+        "TenantId":  "000000-000-0000-0000",
+        "SubscriptionId":  "000000-000-0000-0000"
+    },
+    "AKS":  {
+        "Comments":  "Shared services subscription and tenant information",
+        "TenantId":  "000000-000-0000-0000",
+        "SubscriptionId":  "000000-000-0000-0000"
+    },
+    "ASE_SQLDB":  {
+        "Comments":  "Workload subscription and tenant information",
+        "TenantId":  "000000-000-0000-0000",
+        "SubscriptionId":  "00000000-0000-0000-0000-000000000000"
+    },
+    "NTier_IaaS":  {
+        "Comments":  "Workload subscription and tenant information",
+        "TenantId":  "000000-000-0000-0000",
+        "SubscriptionId":  "000000-000-0000-0000"
+    },
+    "Artifacts":  {
+        "Comments":  "Subscription and tenant information where the Artifacts Storage Account will reside",
+        "TenantId":  "000000-000-0000-0000",
+        "SubscriptionId":  "000000-000-0000-0000"
+    }
 }

@@ -1,6 +1,6 @@
 {
-  "Comments": "ToolKit for creating a new Virtual Data Center",
-  "TenantId": "000000-000-0000-0000",
+  "Comments": "Cleaned up from deployment",
+  "TenantId": "00000-0000000-000000-0000-0",
   "SubscriptionId": "000000-000-0000-0000",
-  "Location": "USGov Arizona"
+  "Location": "DUMMYVALUE"
 }

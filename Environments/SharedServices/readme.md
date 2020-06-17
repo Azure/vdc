@@ -85,6 +85,7 @@ $ENV:ADMIN_USER_NAME = "[VM_ADMIN_USER_NAME]"
 $ENV:ADMIN_USER_PWD = "[VM_ADMIN_USER_PASSWORD]"
 $ENV:AZURE_DISCOVERY_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
 $ENV:ADMIN_USER_SSH = "[SSH_KEY]"
+$ENV:AZURE_SENTINEL = "[BOOLEAN]"
 ```
 
 **NOTE:** Examples to setting the env variables
@@ -114,12 +115,20 @@ $ENV:ADMIN_USER_SSH = "[SSH_KEY]"
   - Domain user name - will be used for AD deployment and not yet included in current deployment
 - "[DOMAIN_ADMIN_USER_PASSWORD]"
   - Domain user password - will be used for AD deployment and not yet included in current deployment. Follow the [guidelines](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/faq#what-are-the-password-requirements-when-creating-a-vm) for setting the password.
+  - UPDATE: If the deployment admin wants a random password for the Domain Admin account please set the value to "" 
+    - Ex. $ENV:DOMAIN_ADMIN_USER_PWD=""
 - "[VM_ADMIN_USER_NAME]"
   - VM log in username
 - "[VM_ADMIN_USER_PASSWORD]"
   - VM user password. Follow the [guidelines](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/faq#what-are-the-password-requirements-when-creating-a-vm) for setting the password.
+  - UPDATE: If the deployment admin wants a random password for the VM Admin account please set the value to "" 
+    - Ex. $ENV:ADMIN_USER_PWD=""
 - "[SSH_KEY]"
   - Needs to be a valid public ssh rsa key for SSH to linux box
+- "[BOOLEAN]
+  - This value needs to be "True" or "False"
+    - "True" will deploy Azure Sentinel to the Shared Services Environment
+    - "False" will NOT deploy Azure Sentinel 
   
 To use the above script:
 
@@ -131,6 +140,7 @@ To use the above script:
 
 #### Pre-req script
 ##### This script will ensure that the configuration files are updated with your environment variables.
+##### This script has the functionality for creating random passwords for the VM's
 
   ``` PowerShell
   ./Orchestration/OrchestrationService/Pre_req_script.ps1

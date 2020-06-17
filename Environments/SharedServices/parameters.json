@@ -8,6 +8,7 @@
     "Location": "env(AZURE_LOCATION)",
     "EnvironmentName": "env(AZURE_ENVIRONMENT_NAME)",
     "StorageBlobUrl": "env(AZURE_STORAGE_BLOB_URL)",
+    "AzureSentinel": "env(AZURE_SENTINEL)",
     "ModuleConfigurationParameters": {
         "OnPremisesInformation": {
             "InstanceName": "${Parameters.InstanceName}",
@@ -741,11 +742,19 @@
                 "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
                 "Secrets": [
                     {
-                        "secretName": "admin-user",
+                        "secretName": "vm-admin-user",
+                        "secretValue": "env(ADMIN_USER_NAME)"
+                    },
+                    {
+                        "secretName": "vm-admin-password",
                         "secretValue": "env(ADMIN_USER_PWD)"
                     },
                     {
-                        "secretName": "env(DOMAIN_ADMIN_USERNAME)",
+                        "secretName": "domain-admin-user",
+                        "secretValue": "env(DOMAIN_ADMIN_USERNAME)"
+                    },
+                    {
+                        "secretName": "domain-admin-password",
                         "secretValue": "env(DOMAIN_ADMIN_USER_PWD)"
                     },
                     {
@@ -768,7 +777,7 @@
         "ArtifactsStorageAccount": "file(../_Common/artifactsStorageAccount.json)",
         "Jumpbox": {
             "ResourceGroup": "${Parameters.InstanceName}-jumpbox-rg",
-            "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
             "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}",
             "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
             "Windows": {
@@ -821,7 +830,7 @@
                 "keyVault": {
                     "id": "reference(KeyVault.keyVaultResourceId)"
                 },
-                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}"
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[3].secretName}"
             },
             "VMSize": "Standard_DS3_v2",
             "OSImage": {
@@ -842,12 +851,12 @@
             "ResourceGroup": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ResourceGroup}",
             "Comments": "Windows VM name cannot exceed 13 characters. Additionally, Make sure that AddsIPAddressStart and ActiveDirectory.PrimaryDomainControllerIP are in the same subnet address prefix and they don't overlap",
             "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
-            "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
             "AdminPassword": {
                 "keyVault": {
                     "id": "reference(KeyVault.keyVaultResourceId)"
                 },
-                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}"
             },
             "Kek": {
                 "Name": "AddsKey",

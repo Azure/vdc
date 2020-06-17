@@ -16,15 +16,17 @@ jobs:
         ADMIN_USER_NAME: ${{ secrets.ADMIN_USER_NAME }}
         ADMIN_USER_PWD: ${{ secrets.ADMIN_USER_PWD }}
         DOMAIN_ADMIN_USERNAME: ${{ secrets.DOMAIN_ADMIN_USERNAME }}
-        DOMAIN_ADMIN_USER_PWD: ${{ secrets.DOMAIN_ADMIN_USER_PWD }}
-        ORGANIZATION_NAME : "MSSK"
-        AZURE_LOCATION : "USGov Arizona"
+        DOMAIN_ADMIN_USER_PWD: "Random"
+        ORGANIZATION_NAME : "jvgovm"
+        AZURE_LOCATION : "USGov Virginia"
         AZURE_ENVIRONMENT_NAME : "AzureUSGovernment"
         TENANT_ID : ${{ secrets.TENANT_ID }}
         SUBSCRIPTION_ID : ${{ secrets.SUBSCRIPTION_ID }}
         KEYVAULT_MANAGEMENT_USER_ID  : ${{ secrets.KEYVAULT_MANAGEMENT_USER_ID }}
         AZURE_DISCOVERY_URL : "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
         ADMIN_USER_SSH : ${{ secrets.ADMIN_USER_SSH }}
+        AZURE_SENTINEL : "true"
+        test:  "true"
     runs-on: ubuntu-latest
     
     steps:

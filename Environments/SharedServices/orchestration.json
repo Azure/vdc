@@ -60,6 +60,9 @@
                     },
                     "location": {
                         "value": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}"
+                    },
+                    "azureSentinel": {
+                        "value": "${Parameters.AzureSentinel}"
                     }
                 }
             }
@@ -834,7 +837,7 @@
                             "keyVault": {
                                 "id": "reference(KeyVault.keyVaultResourceId)"
                             },
-                            "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}"
+                            "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}"
                         }
                     },
                     "storageBlobUrl": {
@@ -947,7 +950,7 @@
                             "keyVault": {
                                 "id": "reference(KeyVault.keyVaultResourceId)"
                             },
-                            "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[2].secretName}"
+                            "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[4].secretName}"
                         }
                     },
                     "storageBlobUrl": {

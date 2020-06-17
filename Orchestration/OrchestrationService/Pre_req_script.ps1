@@ -26,3 +26,34 @@ $onprem = (Get-Content -Path .\Environments\_Common\subscriptions.json) | Conver
 $onprem.OnPremises.SubscriptionId = $ENV:SUBSCRIPTION_ID
 $onprem.OnPremises.TenantId = $ENV:TENANT_ID
 $onprem | ConvertTo-Json | Set-Content -Path .\Environments\_Common\subscriptions.json
+
+
+#### Check if random passwords are needed or if passwords are provided for the VM admin accounts and the Active Directory Account
+
+# Random Password Function
+function Get-RandomPassword {
+    $Alphabets = 'a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z'
+    $numbers = 0..9
+    $specialCharacters = '~,!,@,#,$,%,^,&,*,(,),?,\,/,_,-,=,+'
+    $array = @()
+    $counter= Get-Random -Minimum 5 -Maximum 7
+    $array += $Alphabets.Split(',') | Get-Random -Count $counter
+    $array[0] = $array[0].ToUpper()
+    $array[-1] = $array[-1].ToUpper()
+    $array += $numbers | Get-Random -Count $counter
+    $array += $specialCharacters.Split(',') | Get-Random -Count $counter
+    $password = ($array | Get-Random -Count $array.Count) -join "" 
+    
+    return $password #| ConvertTo-SecureString -AsPlainText -Force
+}
+    
+### Check the VM password 
+if (($null -eq $ENV:ADMIN_USER_PWD) -or ("" -eq $ENV:ADMIN_USER_PWD) -or ("Random" -eq $ENV:ADMIN_USER_PWD) ) {
+    $ENV:ADMIN_USER_PWD = Get-RandomPassword
+}
+
+### Check the Active Directory (Domain Password)
+if (($null -eq $ENV:DOMAIN_ADMIN_USER_PWD) -or ("" -eq $ENV:DOMAIN_ADMIN_USER_PWD) -or ("Random" -eq $ENV:DOMAIN_ADMIN_USER_PWD) ) {
+    $ENV:DOMAIN_ADMIN_USER_PWD = Get-RandomPassword
+}
+

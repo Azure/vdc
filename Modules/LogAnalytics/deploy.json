@@ -87,10 +87,21 @@
             "metadata": {
                 "description": "Optional. Automation Account resource identifier, value used to create a LinkedService between Log Analytics and an Automation Account."
             }
+        },
+        "azureSentinel": {
+            "type": "string",
+            "defaultValue": "false",
+            "metadata": {
+                "description": "Install Azure Sentinel as part of the Log Analytics Workspace."
+            }
+
         }
     },
     "variables": {
         "logAnalyticsSearchVersion": 1,
+        "azureSentinelSolutionName": "[concat('SecurityInsights', '(', parameters('logAnalyticsWorkspaceName'), ')')]",
+        "product": "OMSGallery/SecurityInsights",
+        "publisher": "Microsoft",
         "solutions": [
             {
                 "name": "[concat('Updates', '(', parameters('logAnalyticsWorkspaceName'), ')')]",
@@ -1094,6 +1105,25 @@
             "comments": "Resource lock on Log Analytics",
             "properties": {
                 "level": "CannotDelete"
+            }
+        },
+        {
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[variables('azureSentinelSolutionName')]",
+            "condition": "[bool(parameters('azureSentinel'))]",
+            "location": "[parameters('location')]",
+            "plan": {
+                "name": "[variables('azureSentinelSolutionName')]",
+                "promotionCode": "",
+                "product": "[variables('product')]",
+                "publisher": "[variables('publisher')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
+            ],
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
             }
         }
     ],
