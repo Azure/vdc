@@ -1,0 +1,49 @@
+{
+    "Comments": "This is the Input file for your VDC toolkit orchestration",
+    "TenantID": "000-000-000",
+    "azureEnvironmentName": "AzureUSGovernment",
+    "organizationName": "contoso",
+    "azureDiscoveryURL": "https://management.azure.com/metadata/endpoints?api-version=2019-05-01",
+    "azureSentinel": "True",
+    "SharedServices": [
+    {
+        "Hub1": {
+            "Comments": "First Shared Services ",
+            "SubscriptionID": "111-111-111",
+            "location": "USGov Virginia",
+            "keyVaultObjectID": "11-111-11",
+            "devOpsID": "1-1111-1",
+            "adminSSHPubKey": "ssh-RSA 111",
+            "vmAdminUserName": "Allscript",
+            "folderName": "SharedServices"
+        }
+    }        
+    ],
+    "MSVDI": [
+    {
+        "MSVDI1": {
+            "Comments": "First MS-VDI",
+            "SubscriptionID": "333-333-333",
+            "location": "USGov Virginia",
+            "keyVaultObjectID": "33-333-33",
+            "devOpsID": "3-333-3",
+            "adminSSHPubKey": "ssh-RSA 333",
+            "vmAdminUserName": "Allscript",
+            "folderName": "MS-VDI"
+        }
+    },
+    {
+        "MSVDI2": {
+            "Comments": "Second MS-VDI",
+            "SubscriptionID": "444-444-444",
+            "location": "USGov Virginia",
+            "keyVaultObjectID": "44-444-44",
+            "devOpsID": "4-444-4",
+            "adminSSHPubKey": "ssh-RSA 444",
+            "vmAdminUserName": "Allscript",
+            "folderName": "MS-VDI-2"
+        }
+    }
+    
+    ]
+}

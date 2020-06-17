@@ -1,4 +1,5 @@
 
+Write-Host `n"Starting clean up script" -ForegroundColor Green
 $var = (Get-Content -Path .\Config\toolkit.subscription.json) | ConvertFrom-Json
 $var.Comments = "Cleaned up from deployment"
 $var.SubscriptionId = "000000-000-0000-0000"
@@ -10,6 +11,10 @@ $vdc = (Get-Content -Path .\Environments\_Common\subscriptions.json) | Con
 $vdc.VDCVDI.SubscriptionId = "000000-000-0000-0000"
 $vdc.VDCVDI.TenantId = "000000-000-0000-0000"
 $vdc | ConvertTo-Json | Set-Content -Path .\Environments\_Common\subscriptions.json
+$spoke = (Get-Content -Path .\Environments\_Common\subscriptions.json) | ConvertFrom-Json
+$spoke.SPOKE.SubscriptionId = "000000-000-0000-0000"
+$spoke.SPOKE.TenantId = "000000-000-0000-0000"
+$spoke | ConvertTo-Json | Set-Content -Path .\Environments\_Common\subscriptions.json
 $SS = (Get-Content -Path .\Environments\_Common\subscriptions.json) | ConvertFrom-Json
 $SS.SharedServices.SubscriptionId = "000000-000-0000-0000"
 $SS.SharedServices.TenantId ="000000-000-0000-0000"
@@ -22,3 +27,4 @@ $onprem = (Get-Content -Path .\Environments\_Common\subscriptions.json) | 
 $onprem.OnPremises.SubscriptionId = "000000-000-0000-0000"
 $onprem.OnPremises.TenantId = "000000-000-0000-0000"
 $onprem | ConvertTo-Json | Set-Content -Path .\Environments\_Common\subscriptions.json
+Write-Host `n"Clean up script was complete. Config files were cleaned up." -ForegroundColor Cyan

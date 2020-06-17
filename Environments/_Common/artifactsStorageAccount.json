@@ -2,7 +2,7 @@
     "Name": "${Parameters.Organization}cstmartfcts11",
     "ResourceGroup": "${Parameters.Organization}-artifacts-rg",
     "Sku": "Standard_GRS",
-    "Location": "${Parameters.Location}",
+    "Location": "env(ARTIFACT_LOCATION)",
     "InstanceName": "${Parameters.ModuleConfigurationParameters.OnPremisesInformation.InstanceName}",
     "Policies": {
         "Effect": "Audit"

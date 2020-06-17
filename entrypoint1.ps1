@@ -24,9 +24,11 @@ Write-Host "Starting the script for deploying your Shared Services"
 
 Write-Host "The deployment was succesfull if: Exit code $LASTEXITCODE == 0" -Verbose
 
-## Enter the main script for teardown shared services
-Write-Host "Starting the script for tearing down Shared Services"
-./Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1 -TearDownEnvironment -DefinitionPath ./Environments/SharedServices/definition.json
+Write-Host "Starting the script for deploying MS-VDI"
+./Orchestration/OrchestrationService/ModuleConfigurationDeployment.ps1 -DefinitionPath ./Environments/MS-VDI/definition.json
+
+Write-Host "The deployment was succesfull if: Exit code $LASTEXITCODE == 0" -Verbose
+
 
 ## Run the cleanup script so that no values are retained in code for the config files
 Write-Host "Executing the cleanup script"

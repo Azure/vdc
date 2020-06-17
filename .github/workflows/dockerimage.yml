@@ -17,7 +17,7 @@ jobs:
         ADMIN_USER_PWD: ${{ secrets.ADMIN_USER_PWD }}
         DOMAIN_ADMIN_USERNAME: ${{ secrets.DOMAIN_ADMIN_USERNAME }}
         DOMAIN_ADMIN_USER_PWD: "Random"
-        ORGANIZATION_NAME : "jvgovm"
+        ORGANIZATION_NAME : "msgovjv"
         AZURE_LOCATION : "USGov Virginia"
         AZURE_ENVIRONMENT_NAME : "AzureUSGovernment"
         TENANT_ID : ${{ secrets.TENANT_ID }}
@@ -34,4 +34,4 @@ jobs:
          
     - name: Build the Docker image & Deploy
       id : hello
-      uses: Azure/vdc@master
+      uses: "[REPOSITORY_NAME]"/vdc@master

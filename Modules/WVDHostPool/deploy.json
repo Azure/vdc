@@ -1,0 +1,92 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "hostPoolName": {
+            "type": "String",
+            "metadata": {
+                "description": "Windows Virtual Desktop host pool name."
+            }
+        },
+         "baseTime":{
+            "type":"string",
+            "defaultValue": "[utcNow('u')]",
+            "metadata": {
+                "description": "Do not change. This parameter is used for the expiry time of the registration code."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Azure location for the host pool."
+            }
+        },
+        "hostPoolType": {
+            "type": "string",
+            "metadata": {
+                "description": "Host Pool Type. This can be personal or pooled."
+            }
+        },
+        "assignmentType": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional. Only for Personal host pool type."
+            }
+        },
+        "maxSessionLimit": {
+            "type": "string",
+            "defaultValue": "1000",
+            "metadata": {
+                "description": "Optional. The maximum number of users that have concurrent sessions on a session host."
+            }
+        },
+        "loadBalancingAlgorithm": {
+            "type": "string",
+            "metadata": {
+                "description": "Optional - Pooled host type. Breadth-first load balancing distributes new user sessions across all available session hosts in the host pool. Depth-first load balancing distributes new user sessions to an available session host with the highest number of connections but has not reached its maximum session limit threshold."
+            }
+        }
+    },
+    "variables": {
+        "expireTime": "[dateTimeAdd(parameters('baseTime'), 'P15D')]"     
+    },
+    "resources": [
+        {
+           
+            "type": "Microsoft.DesktopVirtualization/hostpools",
+            "apiVersion": "2019-12-10-preview", 
+            "name": "[parameters('hostPoolName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "description": "Created through the WVD extension",
+                "hostPoolType": "[parameters('hostPoolType')]",
+                "personalDesktopAssignmentType": "[parameters('assignmentType')]",
+                "maxSessionLimit": "[parameters('maxSessionLimit')]",
+                "loadBalancerType": "[parameters('loadBalancingAlgorithm')]",
+                "registrationInfo": {
+                    "expirationTime": "[variables('expireTime')]",
+                    "registrationTokenOperation": "update"
+                }
+                
+            }
+        }
+    ],
+    "outputs": {
+        "registrationInfo": {
+            "value": "[reference(parameters('hostPoolName')).registrationInfo.Token]",
+            "type": "string"
+        },
+        "hostPoolName": {
+            "value": "[parameters('hostPoolName')]",
+            "type": "string"
+        },
+        "hostPoolID": {
+            "value": "[resourceId('Microsoft.DesktopVirtualization/hostpools', parameters('hostPoolName'))]",
+            "type": "string"
+        }
+
+
+    }
+}

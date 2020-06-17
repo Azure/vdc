@@ -2,7 +2,8 @@
 
 Deployment steps for [SharedServices](../../Environments/SharedServices) archetypes provided in the toolkit.
 The documentation applies to manually building and running the docker instance. For github action setup click
-[GitHub Action for VDC](../../.github/workflows/README.md)
+[GitHub Action for VDC](../../.github/workflows/README.md). For the NEW master orchestration refer to [Master Orchestration](../../Docs/masterOrchestration) 
+
 
 ### Clone the repository
 
@@ -14,7 +15,14 @@ These steps assume that the `git` command is on your path.
 4. Run `cd vdc` to change directory in the source folder.
 5. Run `git checkout master` to switch to the branch with the current in-development version of the toolkit.
 
-### Build the Docker image
+### Download Dependencies to your workstation
+
+1. Download PowerShell 7.0.1 or later - [PS 7 Download](https://github.com/PowerShell/PowerShell/releases)
+2. Download DOT NET 2.2 - [DOTNET 2.2](https://dotnet.microsoft.com/download/dotnet-core/2.2)
+3. Open the VDC toolkit to the root directory
+
+## Docker setup is ONLY required if you do not use PowerShell 7 on your workstation
+### Build the Docker image 
 
 1. Ensure that the [Docker daemon](https://docs.docker.com/config/daemon/) is running. If you are new to Docker, the easiest way to do this is to install [Docker Desktop](https://www.docker.com/products/docker-desktop).
 1. Open a terminal window
@@ -76,7 +84,9 @@ $ENV:ORGANIZATION_NAME = "[ORGANIZATION_NAME]"
 $ENV:AZURE_ENVIRONMENT_NAME = "[AZURE_ENVIRONMENT]"
 $ENV:AZURE_LOCATION = "[AZURE_REGION]"
 $ENV:TENANT_ID = "[TENANT_ID]"
-$ENV:SUBSCRIPTION_ID = "[SUBSCRIPTION_ID]"
+$ENV:SUBSCRIPTION_ID = "[SPOKE_SUBSCRIPTION_ID]"
+$ENV:HUB_SUB_ID = "[HUB_SUBSCRIPTION_ID]"
+$ENV:ARTIFACT_LOCATION = "[ARTIFACT_STORAGE_LOCATION]"
 $ENV:KEYVAULT_MANAGEMENT_USER_ID  = "[KEY_VAULT_MANAGEMENT_USER_ID]"
 $ENV:DEVOPS_SERVICE_PRINCIPAL_USER_ID = "[SERVICE_PRINCIPAL_USER_ID]"
 $ENV:DOMAIN_ADMIN_USERNAME = "[DOMAIN_ADMIN_USER_NAME]"
@@ -110,7 +120,15 @@ $ENV:AZURE_SENTINEL = "[BOOLEAN]"
 - "[SERVICE_PRINCIPAL_USER_ID]"
   - Used by CI/CD (not yet implemented). Can be same as KEY_VAULT_MANAGEMENT_USER_ID
 - "[TENANT_ID]" - Tenant's GUID
-- "[SUBSCRIPTION_ID]" - Subscription's GUID
+- "[SPOKE_SUBSCRIPTION_ID]" - Subscription's GUID
+  - Spoke environmnet subscription ID GUID 
+  - Example: MS-VDI environment SUB ID 
+- "[HUB_SUBSCRIPTION_ID]"
+  - Hub environment subscription ID
+  - This is usually the "Shared Services" environment ID
+- "[ARTIFACT_STORAGE_LOCATION]"
+  - Azure Location of the artifact storage account 
+  - Usually the Azure location of the "Shared Services" environment
 - "[DOMAIN_ADMIN_USER_NAME]"
   - Domain user name - will be used for AD deployment and not yet included in current deployment
 - "[DOMAIN_ADMIN_USER_PASSWORD]"
@@ -125,13 +143,19 @@ $ENV:AZURE_SENTINEL = "[BOOLEAN]"
     - Ex. $ENV:ADMIN_USER_PWD=""
 - "[SSH_KEY]"
   - Needs to be a valid public ssh rsa key for SSH to linux box
-- "[BOOLEAN]
+- "[BOOLEAN]"
   - This value needs to be "True" or "False"
     - "True" will deploy Azure Sentinel to the Shared Services Environment
     - "False" will NOT deploy Azure Sentinel 
   
 To use the above script:
 
+1. Return to the PS 7 working directory
+2. Make a copy of the above script and replace the necessary values.
+3. Copy the script into the clipboard and paste it in the terminal.
+4. Verify the environment variables are set by running `Get-ChildItem Env:` to view the current values.
+
+If you are using docker:
 1. Return to the running Docker container from earlier in the quickstart.
 2. Confirm that you are in the `/usr/src/app` directory.
 3. Make a copy of the above script and replace the necessary values.
@@ -230,3 +254,4 @@ For safety reasons, the key vault will not be deleted. Instead, it will be set t
 ``` PowerShell
 Get-AzKeyVault -InRemovedState | ? { Write-Host "Removing vault: $($_.VaultName)"; Remove-AzKeyVault -InRemovedState -VaultName $_.VaultName -Location $_.Location -Force }
 ```
+

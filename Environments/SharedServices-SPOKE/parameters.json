@@ -1,0 +1,901 @@
+{
+    "Organization": "env(ORGANIZATION_NAME)",
+    "DeploymentName": "shrdsvcs-DC",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "SPOKE",
+    "Location": "env(AZURE_LOCATION)",
+    "EnvironmentName": "env(AZURE_ENVIRONMENT_NAME)",
+    "StorageBlobUrl": "env(AZURE_STORAGE_BLOB_URL)",
+    "AzureSentinel": "env(AZURE_SENTINEL)",
+    "ModuleConfigurationParameters": {
+        "SharedServices": {
+            "DeploymentName": "shrdsvcs",
+            "ActiveDirectory": {
+                "VmIpAddressStart": [ "172.0.0.10" ]
+            },
+            "VirtualNetworkHUB": {
+                "Id": "/subscriptions/${Subscriptions.SharedServices.SubscriptionId}/resourceGroups/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkHUB.ResourceGroupName}/providers/Microsoft.Network/virtualNetworks/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkHUB.Name}",
+                "Name": "${Parameters.Organization}-shrdsvcs-vnet",
+                "ResourceGroupName": "${Parameters.organization}-shrdsvcs-network-rg",
+                "AddressPrefix": "172.0.0.0/16",
+                "NetworkVirtualAppliance": {
+                    "AzureFirewall": {
+                        "Name": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-azfw"
+                    }
+                }
+            }
+        },
+        "OnPremisesInformation": {
+            "InstanceName": "${Parameters.InstanceName}",
+            "Comments": "This InstanceName is a temporal value, this value is used in artifactsStorageAccount.json, the idea is to have a global set of services and this name should point to the InstanceName (deployment name) of the global services archetype"
+        },
+        "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
+        "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
+        "Comments": "Deployment UserId corresponds to the AAD Object Id of the user that wants to manage Key Vault through the Portal. DevOpsServicePrincipalId corresponds the service principal (SPN) - Object Id - of your service connection from Azure DevOps pipeline, to get this value run the following az cli command: az ad sp show --id YOUR_APP_ID --query 'objectId'",
+        "DiagnosticStorageAccount": {
+            "Name": "${Parameters.Organization}${Parameters.DeploymentName}diag01",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.Location}",
+            "Sku": "Standard_GRS",
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            },
+            "Policies": {
+                "Effect": "Audit"
+            }
+        },
+        "LogAnalytics": {
+            "Name": "${Parameters.InstanceName}-la",
+            "Comments": "Log Analytics and Diagnostic Storage Account must be deployed in the same region",
+            "ResourceGroup": "${Parameters.InstanceName}-diagnostics-rg",
+            "Location": "${Parameters.ModuleConfigurationParameters.DiagnosticStorageAccount.Location}",
+            "ListOfAllowedRegions": [
+                "Australia Central",
+                "Australia East",
+                "Australia Southeast",
+                "Canada Central",
+                "Central India",
+                "Central US",
+                "East Asia",
+                "East US",
+                "East US 2",
+                "France Central",
+                "Japan East",
+                "Korea Central",
+                "North Europe",
+                "South Central US",
+                "Southeast Asia",
+                "UK South",
+                "West Europe",
+                "West US",
+                "West US 2",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
+            ]
+        },
+        "AutomationAccounts": {
+            "Name": "${Parameters.InstanceName}-automation",
+            "Comments": "Automation Account and Log Analytics must be deployed in the same region",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.LogAnalytics.ResourceGroup}",
+            "Location": "${Parameters.ModuleConfigurationParameters.LogAnalytics.Location}",
+            "UpdateManagementTimeZone": "America/Chicago",
+            "ListOfAllowedRegions": [
+                "Australia Central",
+                "Australia East",
+                "Australia Southeast",
+                "Brazil South",
+                "Canada Central",
+                "Central India",
+                "East US",
+                "East US 2",
+                "France Central",
+                "Japan East",
+                "Korea Central",
+                "North Europe",
+                "South Central US",
+                "Southeast Asia",
+                "UK South",
+                "West Central US",
+                "West Europe",
+                "West US 2",
+                "West US",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
+            ]
+        },
+        "AzureBastion": {
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "Name": "${Parameters.InstanceName}-bastion",
+            "Location": "${Parameters.Location}",
+            "ListOfAllowedRegions": [
+                "West US",
+                "East US",
+                "West Europe",
+                "South Central US",
+                "Australia East",
+                "Japan East",
+                "USGov Virginia",
+                "USGov Iowa",
+                "USGov Arizona",
+                "USGov Texas",
+                "USDoD Central",
+                "USDoD East"
+            ]
+        },
+        "ApplicationSecurityGroups": {
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "Jumpbox": {
+                "Name": "jumpbox-asg"
+            },
+            "DomainController": {
+                "Name": "dc-asg"
+            }
+        },
+        "NetworkSecurityGroups": {
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "Comments": "Virtual Network (TCP and UDP) to Application Security Group rules are required for DNS resolution",
+            "SharedServices": {
+                "Name": "${Parameters.DeploymentName}-nsg",
+                "Rules": [
+                    {
+                        "name": "allow-tcp-between-adds",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRange": "",
+                            "destinationPortRanges": [
+                                "389",
+                                "42",
+                                "88",
+                                "636",
+                                "3268",
+                                "3269",
+                                "445",
+                                "25",
+                                "135",
+                                "5722",
+                                "464",
+                                "9389",
+                                "139",
+                                "53",
+                                "49152-65535"
+                            ],
+                            "direction": "Inbound",
+                            "priority": 100,
+                            "protocol": "Tcp",
+                            "sourceAddressPrefix": "",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "allow-udp-between-adds",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRange": "",
+                            "destinationPortRanges": [
+                                "389",
+                                "88",
+                                "445",
+                                "123",
+                                "464",
+                                "138",
+                                "137",
+                                "53",
+                                "49152-65535"
+                            ],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "direction": "Inbound",
+                            "priority": 110,
+                            "protocol": "Udp",
+                            "sourceAddressPrefix": "",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "sourceApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "allow-rdp-into-dc",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRange": "3389",
+                            "destinationPortRanges": [],
+                            "direction": "Inbound",
+                            "priority": 140,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Jumpbox.Name}"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "allow-rdp-ssh-into-jb",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "3389",
+                                "22"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 150,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Jumpbox.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-tcp-vnet-adds",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "389",
+                                "42",
+                                "88",
+                                "636",
+                                "3268",
+                                "3269",
+                                "445",
+                                "25",
+                                "135",
+                                "5722",
+                                "464",
+                                "9389",
+                                "139",
+                                "53",
+                                "49152-65535"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 160,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-udp-vnet-adds",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "389",
+                                "88",
+                                "445",
+                                "123",
+                                "464",
+                                "138",
+                                "137",
+                                "53",
+                                "49152-65535"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 170,
+                            "protocol": "UDP",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.DomainController.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-azure-bastion-rdp-into-jb",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefixes": [],
+                            "destinationAddressPrefix": "",
+                            "destinationPortRanges": [
+                                "3389",
+                                "22"
+                            ],
+                            "destinationPortRange": "",
+                            "direction": "Inbound",
+                            "priority": 180,
+                            "protocol": "TCP",
+                            "sourceAddressPrefix": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[5].addressPrefix}",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [
+                                {
+                                    "name": "${Parameters.ModuleConfigurationParameters.ApplicationSecurityGroups.Jumpbox.Name}"
+                                }
+                            ],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "deny-vnet",
+                        "properties": {
+                            "access": "Deny",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefixes": [],
+                            "destinationPortRange": "*",
+                            "destinationPortRanges": [],
+                            "direction": "Inbound",
+                            "priority": 4096,
+                            "protocol": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    },
+                    {
+                        "name": "allow-vnet",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefix": "*",
+                            "destinationAddressPrefixes": [],
+                            "destinationPortRange": "*",
+                            "destinationPortRanges": [],
+                            "direction": "Outbound",
+                            "priority": 100,
+                            "protocol": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    }
+                ]
+            },
+            "DMZ": {
+                "Name": "dmz-nsg",
+                "Rules": [
+                    {
+                        "name": "allow-vnet",
+                        "properties": {
+                            "access": "Allow",
+                            "destinationAddressPrefix": "*",
+                            "destinationAddressPrefixes": [],
+                            "destinationPortRange": "*",
+                            "destinationPortRanges": [],
+                            "direction": "Inbound",
+                            "priority": 100,
+                            "protocol": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "sourcePortRange": "*",
+                            "sourcePortRanges": [],
+                            "destinationApplicationSecurityGroups": [],
+                            "sourceApplicationSecurityGroups": []
+                        }
+                    }
+                ]
+            }
+        },
+        "RouteTables": {
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "SharedServices": {
+                "Name": "${Parameters.DeploymentName}-udr",
+                "Routes": [
+                    
+                    
+                ]
+            }
+        },
+        "VirtualNetwork": {
+            "Name": "${Parameters.InstanceName}-vnet",
+            "ResourceGroup": "${Parameters.InstanceName}-network-rg",
+            "AddressPrefixes": [
+                "172.30.0.0/16"
+            ],
+            "EnableDdosProtection": false,
+            "EnableVmProtection": false,
+            "Subnets": [
+                {
+                    "name": "shrdsvcs-dc",
+                    "addressPrefix": "172.30.0.0/24",
+                    "networkSecurityGroupName": "${Parameters.ModuleConfigurationParameters.NetworkSecurityGroups.SharedServices.Name}",
+                    "routeTableName": "${Parameters.ModuleConfigurationParameters.RouteTables.SharedServices.Name}",
+                    "serviceEndpoints": [
+                        {
+                            "service": "Microsoft.EventHub"
+                        },
+                        {
+                            "service": "Microsoft.Sql"
+                        },
+                        {
+                            "service": "Microsoft.Storage"
+                        },
+                        {
+                            "service": "Microsoft.KeyVault"
+                        }
+                    ]
+                },
+                {
+                    "name": "GatewaySubnet",
+                    "addressPrefix": "172.30.2.0/28",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": []
+                },
+                {
+                    "name": "AccessLayerSubnet",
+                    "addressPrefix": "172.30.3.0/28",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": []
+                }
+                ,
+                {
+                    "name": "ResourceLayerSubnet",
+                    "addressPrefix": "172.30.4.0/28",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": []
+                },
+                {
+                    "name": "ControlLayerSubnet",
+                    "addressPrefix": "172.30.5.0/28",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": []
+                },
+                {
+                    "name": "AzureBastionSubnet",
+                    "addressPrefix": "172.30.6.0/27",
+                    "networkSecurityGroupName": "",
+                    "routeTableName": "",
+                    "serviceEndpoints": []
+                }
+            ],
+            "DnsServers": [
+                "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}"
+            ]
+        },
+        "VirtualNetworkGateway": {
+            "Name": "${Parameters.InstanceName}-vgw",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "VirtualNetworkGatewayType": "vpn",
+            "VirtualNetworkGatewaySku": "VpnGw1",
+            "VpnType": "RouteBased",
+            "EnableBgp": false,
+            "VpnSharedKey": "asodgfhjkaw4tu0w9vuijv0qu3409tu",
+            "LocalConnection": {
+                "Name": "${Parameters.Organization}-to-onprem"
+            },
+            "RemoteConnection": {
+                "Name": "onprem-to-${Parameters.Organization}"
+            }
+        },
+        "AzureFirewall": {
+            "Name": "${Parameters.InstanceName}-azfw",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.ResourceGroup}",
+            "ApplicationRuleCollections": [
+                {
+                    "name": "allow-app-rules",
+                    "properties": {
+                        "priority": 100,
+                        "action": {
+                            "type": "allow"
+                        },
+                        "rules": [
+                            {
+                                "name": "allow-ase-tags",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "protocols": [
+                                    {
+                                        "protocolType": "HTTP",
+                                        "port": "80"
+                                    },
+                                    {
+                                        "protocolType": "HTTPS",
+                                        "port": "443"
+                                    }
+                                ],
+                                "fqdnTags": [
+                                    "AppServiceEnvironment",
+                                    "WindowsUpdate"
+                                ]
+                            },
+                            {
+                                "name": "allow-ase-management",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "protocols": [
+                                    {
+                                        "protocolType": "HTTP",
+                                        "port": "80"
+                                    },
+                                    {
+                                        "protocolType": "HTTPS",
+                                        "port": "443"
+                                    }
+                                ],
+                                "targetFqdns": [
+                                    "management.azure.com",
+                                    "*.digicert.com",
+                                    "*.data.microsoft.com",
+                                    "global.metrics.nsatc.net",
+                                    "ocsp.msocsp.com"
+                                ]
+                            },
+                            {
+                                "name": "allow-sites",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "protocols": [
+                                    {
+                                        "protocolType": "HTTP",
+                                        "port": "80"
+                                    },
+                                    {
+                                        "protocolType": "HTTPS",
+                                        "port": "443"
+                                    }
+                                ],
+                                "targetFqdns": [
+                                    "*.trafficmanager.net",
+                                    "*.azureedge.net",
+                                    "*.microsoft.com",
+                                    "*.core.windows.net",
+                                    "*.windows.com",
+                                    "*.opinsights.azure.com",
+                                    "*.azure-automation.net",
+                                    "*.visualstudio.com",
+                                    "*.bing.com",
+                                    "*.ubuntu.com",
+                                    "api.snapcraft.io",
+                                    "api.rubygems.org",
+                                    "*.powershellgallery.com",
+                                    "powershellgallery.com",
+                                    "*.msecnd.net",
+                                    "msecnd.net",
+                                    "*.nuget.org",
+                                    "nuget.org",
+                                    "*.azureprofilerfrontdoor.cloudapp.net",
+                                    "azureprofilerfrontdoor.cloudapp.net",
+                                    "*.download.opensuse.org",
+                                    "download.opensuse.org",
+                                    "*.monitoring.azure.com",
+                                    "monitoring.azure.com"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ],
+            "NetworkRuleCollections": [
+                {
+                    "name": "allow-network-rules",
+                    "properties": {
+                        "priority": 100,
+                        "action": {
+                            "type": "allow"
+                        },
+                        "rules": [
+                            {
+                                "name": "allow-ntp",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "destinationAddresses": [
+                                    "*"
+                                ],
+                                "destinationPorts": [
+                                    "123",
+                                    "12000"
+                                ],
+                                "protocols": [
+                                    "Any"
+                                ]
+                            },
+                            {
+                                "name": "allow-windows-activation-server",
+                                "sourceAddresses": [
+                                    "*"
+                                ],
+                                "destinationAddresses": [
+                                    "23.102.135.246"
+                                ],
+                                "destinationPorts": [
+                                    "1688"
+                                ],
+                                "protocols": [
+                                    "TCP"
+                                ]
+                            },
+                            {
+                                "name": "allow-udp-adds",
+                                "sourceAddresses": [
+                                    "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].addressPrefix}"
+                                ],
+                                "destinationAddresses": [
+                                    "*"
+                                ],
+                                "destinationPorts": [
+                                    "*"
+                                ],
+                                "protocols": [
+                                    "UDP"
+                                ]
+                            },
+                            {
+                                "name": "allow-tcp-adds",
+                                "sourceAddresses": [
+                                    "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].addressPrefix}"
+                                ],
+                                "destinationAddresses": [
+                                    "*"
+                                ],
+                                "destinationPorts": [
+                                    "*"
+                                ],
+                                "protocols": [
+                                    "TCP"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "KeyVault": {
+            "Name": "${Parameters.InstanceName}-kv",
+            "ResourceGroup": "${Parameters.InstanceName}-keyvault-rg",
+            "Sku": "Premium",
+            "EnableVaultForDeployment": true,
+            "EnableVaultForDiskEncryption": true,
+            "EnableVaultForTemplateDeployment": true,
+            "AccessPolicies": [
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.KeyVaultManagementUserId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                },
+                {
+                    "tenantId": "${Parameters.TenantId}",
+                    "objectId": "${Parameters.ModuleConfigurationParameters.DevOpsServicePrincipalId}",
+                    "permissions": {
+                        "certificates": [
+                            "All"
+                        ],
+                        "keys": [
+                            "All"
+                        ],
+                        "secrets": [
+                            "All"
+                        ]
+                    }
+                }
+            ],
+            "SecretsObject": {
+                "Comments": "Creating an object so we can use a secretsobject parameter type in our ARM template",
+                "Secrets": [
+                    {
+                        "secretName": "VM-admin-user-name",
+                        "secretValue": "env(ADMIN_USER_NAME)"
+                    },
+                    {
+                        "secretName": "VM-admin-pw",
+                        "secretValue": "env(ADMIN_USER_PWD)"
+                    },
+                    {
+                        "secretName": "Domain-Admin-Username",
+                        "secretValue": "env(DOMAIN_ADMIN_USERNAME)"
+                    },
+                    {
+                        "secretName": "Domain-Admin-PW",
+                        "secretValue": "env(DOMAIN_ADMIN_USER_PWD)"
+                    },
+                    {
+                        "secretName": "admin-user-ssh",
+                        "secretValue": "env(ADMIN_USER_SSH)"
+                    }
+                ]
+            },
+            "NetworkAcls": {
+                "bypass": "AzureServices",
+                "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "subnet": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].Name}"
+                    }
+                ],
+                "ipRules": []
+            }
+        },
+        "ArtifactsStorageAccount": "file(../_Common/artifactsStorageAccount.json)",
+        "Jumpbox": {
+            "ResourceGroup": "${Parameters.InstanceName}-jumpbox-rg",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
+            "Windows": {
+                "Comments": "Windows VM name cannot exceed 13 characters",
+                "Name": "win-jb-vm",
+                "VMCount": 1,
+                "OSType": "Windows",
+                "VMSize": "Standard_DS2_v2",
+                "OSImage": {
+                    "offer": "WindowsServer",
+                    "publisher": "MicrosoftWindowsServer",
+                    "sku": "2016-Datacenter"
+                },
+                "Kek": {
+                    "Name": "WindowsJumpboxKey",
+                    "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                    "Destination": "HSM"
+                }
+            },
+            "Linux": {
+                "Comments": "Linux VM name cannot exceed 63 characters",
+                "Name": "linux-jb-vm",
+                "VMCount": 1,
+                "OSType": "Linux",
+                "VMSize": "Standard_DS2_v2",
+                "OSImage": {
+                    "publisher": "Canonical",
+                    "offer": "UbuntuServer",
+                    "sku": "18.04-LTS",
+                    "version": "latest"
+                },
+                "Kek": {
+                    "Name": "LinuxJumpboxKey",
+                    "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                    "Destination": "HSM"
+                }
+            }
+        },
+        "ActiveDirectory": {
+            "Name": "primary-ad",
+            "ResourceGroup": "${Parameters.InstanceName}-adds-rg",
+            "Comments": "Windows VM name cannot exceed 13 characters.",
+            "PrimaryDomainControllerIP": "172.30.0.10",
+            "DomainName": "contoso.com",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
+            "ADSitename": "Cloud-Site",
+            "CloudZone": "contosocloud.com",
+            "DomainAdminUsername": "env(DOMAIN_ADMIN_USERNAME)",
+            "DomainAdminPassword": {
+                "keyVault": {
+                    "id": "reference(KeyVault.keyVaultResourceId)"
+                },
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[3].secretName}"
+            },
+            "VMSize": "Standard_DS3_v2",
+            "OSImage": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            },
+            "OSType": "Windows",
+            "Kek": {
+                "Name": "AdKey",
+                "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                "Destination": "HSM"
+            },
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}"
+        },
+        "ActiveDirectoryDomainServices": {
+            "Name": "adds-vm",
+            "ResourceGroup": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ResourceGroup}",
+            "Comments": "Windows VM name cannot exceed 13 characters. Additionally, Make sure that AddsIPAddressStart and ActiveDirectory.PrimaryDomainControllerIP are in the same subnet address prefix and they don't overlap",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
+            "AdminPassword": {
+                "keyVault": {
+                    "id": "reference(KeyVault.keyVaultResourceId)"
+                },
+                "secretName": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[1].secretName}"
+            },
+            "Kek": {
+                "Name": "AddsKey",
+                "Comments": "Destination can be HSM or Software. Use HSM to create Production keys.",
+                "Destination": "HSM"
+            },
+            "DomainAdminUsername": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminUsername}",
+            "DomainAdminPassword": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainAdminPassword}",
+            "VMCount": 2,
+            "VMSize": "Standard_DS3_v2",
+            "OSType": "Windows",
+            "OSImage": {
+                "offer": "WindowsServer",
+                "publisher": "MicrosoftWindowsServer",
+                "sku": "2016-Datacenter"
+            },
+            "AddsIPAddressStart": "172.30.0.20",
+            "DomainName": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.DomainName}",
+            "PrimaryDomainControllerIP": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.PrimaryDomainControllerIP}",
+            "ADSitename": "${Parameters.ModuleConfigurationParameters.ActiveDirectory.ADSitename}",
+            "DomaincontrollerDriveLetter": "F",
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetwork.Subnets[0].name}",
+            "DataDisks": [
+                {
+                    "size": 127,
+                    "driveLetter": "F",
+                    "diskId": 2
+                }
+            ]
+        }
+    }
+}

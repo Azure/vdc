@@ -9,7 +9,8 @@ It encourages the use of [modern devops principles](Docs/design-principles.md).
 
 ## Documentation
 - The easiest way to get started with the toolkit is to follow our [quickstart guide](Docs/quickstart.md).
-- Checkout the [latest release notes](Docs/Release/2020-04.md).
+- Checkout the [latest release notes](Docs/Release/2019-09.md).
+- If you want to utilize the master orchestration script please refer to the following [documentation](Docs/masterOrchestration)
 
 ## Repo structure
 Here's what is included:

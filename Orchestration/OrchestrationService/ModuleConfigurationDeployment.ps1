@@ -819,13 +819,12 @@ Function Get-AllModules {
 
             $topologicalSortRootPath = `
                 Join-Path $rootPath -ChildPath 'TopologicalSort';
-            
             # Adding Out-Null to prevent outputs from the Invoke-Command from being added to            
             Invoke-Command -ScriptBlock { dotnet build $topologicalSortRootPath --configuration Release --output ./ } | Out-Null
             
-            
+          
             $topologicalSortAssemblyPath = Join-Path $topologicalSortRootPath "TopologicalSort.dll"
-
+          
             Add-Type -Path $topologicalSortAssemblyPath
 
             $graph = [VDC.Core.DirectedGraph]::new()

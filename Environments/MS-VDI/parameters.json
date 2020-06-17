@@ -245,7 +245,7 @@
         "ArtifactsStorageAccount": "file(../_Common/artifactsStorageAccount.json)",
         "Jumpbox": {
             "ResourceGroup": "${Parameters.InstanceName}-jumpbox-rg",
-            "AdminUsername": "${Parameters.ModuleConfigurationParameters.KeyVault.SecretsObject.Secrets[0].secretName}",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
             "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Subnets[0].name}",
             "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
             "Windows": {
@@ -265,7 +265,81 @@
                     "Destination": "HSM"
                 }
             }
+        },
+        "citrixStoreFrontVMs": {
+            "ResourceGroup": "${Parameters.InstanceName}-storefront-rg",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Subnets[0].name}",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
+            "Windows": {
+                "Comments": "Windows VM name cannot exceed 13 characters",
+                "Name": "ctx-sf-vm",
+                "VMCount": 2,
+                "OSType": "Windows",
+                "VMSize": "Standard_DS2_v2",
+                "OSImage": {
+                    "offer": "WindowsServer",
+                    "publisher": "MicrosoftWindowsServer",
+                    "sku": "2016-Datacenter"
+                }
+            }
+        },
+        "xenDesktopBrokerVMs": {
+            "ResourceGroup": "${Parameters.InstanceName}-broker-rg",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Subnets[0].name}",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
+            "Windows": {
+                "Comments": "Windows VM name cannot exceed 13 characters",
+                "Name": "ctx-brker-vm",
+                "VMCount": 2,
+                "OSType": "Windows",
+                "VMSize": "Standard_DS2_v2",
+                "OSImage": {
+                    "offer": "WindowsServer",
+                    "publisher": "MicrosoftWindowsServer",
+                    "sku": "2016-Datacenter"
+                }
+            }
+        },
+        "CTXSQLCluster": {
+            "ResourceGroup": "${Parameters.InstanceName}-ctxsql-rg",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Subnets[0].name}",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
+            "Windows": {
+                "Comments": "Windows VM name cannot exceed 13 characters",
+                "Name": "ctx-sql-vm",
+                "VMCount": 3,
+                "OSType": "Windows",
+                "VMSize": "Standard_DS2_v2",
+                "OSImage": {
+                    "offer": "WindowsServer",
+                    "publisher": "MicrosoftWindowsServer",
+                    "sku": "2016-Datacenter"
+                }
+            }
+        },
+        "CTXDesktopServers": {
+            "ResourceGroup": "${Parameters.InstanceName}-ctxdesktops-rg",
+            "AdminUsername": "env(ADMIN_USER_NAME)",
+            "SubnetName": "${Parameters.ModuleConfigurationParameters.VirtualNetworkSPOKE.Subnets[0].name}",
+            "StorageBlobUrl": "${Parameters.StorageBlobUrl}",
+            "Windows": {
+                "Comments": "Windows VM name cannot exceed 13 characters",
+                "Name": "ctx-dsk-vm",
+                "VMCount": 3,
+                "OSType": "Windows",
+                "VMSize": "Standard_DS2_v2",
+                "OSImage": {
+                    "offer": "WindowsServer",
+                    "publisher": "MicrosoftWindowsServer",
+                    "sku": "2016-Datacenter"
+                }
+            }
         }
         
+        
+
     }
 }

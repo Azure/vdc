@@ -19,8 +19,7 @@ After these prerequisties are installed, we will [clone the reposistory on GitHu
 This quickstart assumes that you will be interacting with the toolkit through the Docker image.
 
 ## Deploy Shared Services
-
-**Follow the steps [from here](./environments/sharedservices/../../../Environments/SharedServices/readme.md) to deploy Shared Services environment**
+Follow the steps [from here](./environments/sharedservices/../../../Environments/SharedServices/readme.md) to deploy Shared Services environment
 
 ### Next steps
 

@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "hostPoolId": {
+            "type": "String",
+            "metadata": {
+                "description": "Windows Virtual Desktop host pool name."
+            }
+        },
+         "baseTime":{
+            "type":"string",
+            "defaultValue": "[utcNow('u')]",
+            "metadata": {
+                "description": "Do not change. This parameter is used for the expiry time of the registration code."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Azure location for the host pool."
+            }
+        },
+        "applicationGroupName": {
+            "type": "string",
+            "defaultValue": "appGroup",
+            "metadata": {
+                "description": "App group name for the application group."
+            }
+        },
+        "appGroupType": {
+            "type": "string",
+            "defaultValue": "Desktop",
+            "metadata": {
+                "description": "App group type. Can Be Desktop or RemoteApp for the application group."
+            }
+        }
+    },
+    "variables": {     
+    },
+    "resources": [
+         
+        {
+            "type": "Microsoft.DesktopVirtualization/applicationgroups",
+            "apiVersion": "2019-12-10-preview",
+            "name": "[parameters('applicationGroupName')]",
+            "location": "[parameters('location')]",
+            "kind": "[parameters('appGroupType')]",
+            "properties": {
+                "hostPoolArmPath": "[parameters('hostPoolId')]",
+                "description": "Desktop Application Group created through the ARM",
+                "applicationGroupType": "[parameters('appGroupType')]"
+            }
+        
+        }
+       
+    ],
+    "outputs": {
+
+
+    }
+}

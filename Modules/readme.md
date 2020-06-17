@@ -1,6 +1,6 @@
 # Modules 2.0
 
-A module is a reusable set of artifacts that can be composed into an archetype.
+A module is a reusable set of artifacts that can be composed into an archetype (environment).
 The modules can be deployed by anything that can deploy ARM templates. There is no need for a proprietary tool for deploying a single module.
 This document is about the 2.0 format for modules.
 

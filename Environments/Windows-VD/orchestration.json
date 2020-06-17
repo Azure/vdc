@@ -1,0 +1,54 @@
+{
+    "ModuleConfigurationsPath": "../../Modules",
+    "ModuleConfigurations": [
+        {
+            "Name": "HostPool",
+            "ModuleDefinitionName": "WVDHostPool",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.HostPool.ResourceGroup}",
+            "DependsOn": [   
+                
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "hostPoolName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.HostPool.Name}"
+                    },
+                    "hostPoolType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.HostPool.hostPoolType}"
+                    },
+                    "assignmentType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.HostPool.assignmentType}"
+                    },
+                    "maxSessionLimit": {
+                        "value": "${Parameters.ModuleConfigurationParameters.HostPool.maxSessionLimit}"
+                    },
+                    "loadBalancingAlgorithm": {
+                        "value": "${Parameters.ModuleConfigurationParameters.HostPool.loadBalancingAlgorithm}"
+                    }
+                }
+            }
+        },
+        {
+            "Name": "ApplicationGroup",
+            "ModuleDefinitionName": "WVDApplicationGroup",
+            "ResourceGroupName": "${Parameters.ModuleConfigurationParameters.HostPool.ResourceGroup}",
+            "DependsOn": [   
+                "HostPool"
+            ],
+            "Deployment": {
+                "OverrideParameters": {
+                    "hostPoolId": {
+                        "value": "reference(HostPool.HostPoolId)"
+                    },
+                    "applicationGroupName": {
+                        "value": "${Parameters.ModuleConfigurationParameters.applicationGroup.name}"
+                    },
+                    "appGroupType": {
+                        "value": "${Parameters.ModuleConfigurationParameters.applicationGroup.appGroupType}"
+                    }
+                }
+            }
+        }
+        
+    ]
+}

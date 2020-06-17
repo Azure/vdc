@@ -15,6 +15,11 @@
         "TenantId":  "000000-000-0000-0000",
         "SubscriptionId":  "000000-000-0000-0000"
     },
+    "SPOKE": {
+      "Comments": "Shared services subscription and tenant information",
+      "TenantId": "000000-000-0000-0000",
+      "SubscriptionId": "000000-000-0000-0000"
+    },
     "AKS":  {
         "Comments":  "Shared services subscription and tenant information",
         "TenantId":  "000000-000-0000-0000",

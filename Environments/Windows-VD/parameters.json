@@ -1,0 +1,59 @@
+{
+    "Organization": "env(ORGANIZATION_NAME)",
+    "DeploymentName": "wvd",
+    "InstanceName": "${Parameters.Organization}-${Parameters.DeploymentName}",
+    "Subscription": "VDCVDI",
+    "Location": "env(AZURE_LOCATION)",
+    "StorageBlobUrl": "env(AZURE_STORAGE_BLOB_URL)",
+    "ModuleConfigurationParameters": {
+        "SharedServices": {
+            "DeploymentName": "shrdsvcs",
+            "ActiveDirectory": {
+                "VmIpAddressStart": [ "172.0.0.10" ]
+            },
+            "VirtualNetworkHUB": {
+                "Id": "/subscriptions/${Subscriptions.SharedServices.SubscriptionId}/resourceGroups/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkHUB.ResourceGroupName}/providers/Microsoft.Network/virtualNetworks/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkHUB.Name}",
+                "Name": "${Parameters.Organization}-shrdsvcs-vnet",
+                "ResourceGroupName": "${Parameters.organization}-shrdsvcs-network-rg",
+                "AddressPrefix": "172.0.0.0/16",
+                "NetworkVirtualAppliance": {
+                    "AzureFirewall": {
+                        "Name": "${Parameters.Organization}-${Parameters.ModuleConfigurationParameters.SharedServices.DeploymentName}-azfw"
+                    }
+                }
+            },
+            "VirtualNetworkSPOKE": {
+                "Id": "/subscriptions/${Subscriptions.VDCVDI.SubscriptionId}/resourceGroups/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkSPOKE.ResourceGroupName}/providers/Microsoft.Network/virtualNetworks/${Parameters.ModuleConfigurationParameters.SharedServices.VirtualNetworkSPOKE.Name}",
+                "Name": "${Parameters.InstanceName}-SPOKE",
+                "ResourceGroupName": "${Parameters.InstanceName}-spokenetwork-rg",
+                "AddressPrefixes": "172.60.0.0/16"
+                }
+        },
+        
+        "OnPremisesInformation": {
+            "InstanceName": "${Parameters.InstanceName}",
+            "Comments": "This InstanceName is a temporal value, this value is used in artifactsStorageAccount.json, the idea is to have a global set of services and this name should point to the InstanceName (deployment name) of the global services archetype"
+        },
+        "KeyVaultManagementUserId": "env(KEYVAULT_MANAGEMENT_USER_ID)",
+        "DevOpsServicePrincipalId": "env(DEVOPS_SERVICE_PRINCIPAL_USER_ID)",
+       
+        "HostPool": {
+            "Name": "hostPoolTest",
+            "ResourceGroup": "${Parameters.InstanceName}-wvd-rg",
+            "Location": "${Parameters.Location}",
+            "hostPoolType": "Pooled",
+            "assignmentType": "",
+            "maxSessionLimit": "20",
+            "loadBalancingAlgorithm": "breadthfirst"
+        },
+        "applicationGroup": {
+            "Name": "appGroup",
+            "ResourceGroup": "${Parameters.InstanceName}-wvd-rg",
+            "Location": "${Parameters.Location}",
+            "appGroupType": "Desktop" 
+        }
+        
+        
+    }
+}
+ 
